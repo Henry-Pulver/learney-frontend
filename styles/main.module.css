@@ -1,0 +1,55 @@
+.disableTouchActions {
+  touch-action: none;
+}
+
+#cy {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  z-index: 0;
+}
+
+.top-toolbar {
+  position: absolute;
+}
+
+#profileImageButton {
+  display: block;
+  border: none;
+}
+
+.profileImage {
+  border-radius: 50%;
+  background-color: #f4f4f4;
+  margin: 5px;
+}
+
+.profileImage:hover {
+  margin: 0;
+  cursor: pointer;
+  border: 5px solid rgba(91, 91, 91, .80);
+}
+
+#profile-div{
+  border: 2px solid rgba(60, 60, 60, 1);
+  display: none;
+  text-align: center;
+  background-color: white;
+}
+
+.profileEmail {
+  color: #5b5b5b;
+  font-weight: normal;
+  overflow-wrap: anywhere;
+}
+
+#loading {
+  position: absolute;
+  left: 45%;
+  top: 43%;
+  width: 10%;
+  max-height: 14%;
+}
