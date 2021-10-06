@@ -1,7 +1,15 @@
-import 'tailwindcss/tailwind.css'
+import "tailwindcss/tailwind.css";
+import React from "react";
+import PropTypes from "prop-types";
+import "../styles/global.css";
+import "../styles/tooltip.css";
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+export default function MyApp({ Component, pageProps }) {
+  console.log(Component);
+  return <Component {...pageProps} />;
 }
 
-export default MyApp
+MyApp.propTypes = {
+  Component: PropTypes.node,
+  pageProps: PropTypes.object,
+};
