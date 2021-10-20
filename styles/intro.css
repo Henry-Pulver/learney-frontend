@@ -38,12 +38,6 @@
 }
 
 /* Intro */
-.introButtonContainer {
-    position: fixed;
-    left: 0;
-    top: 0;
-}
-
 .intro-text {
     margin: 6px;
     color: black;
