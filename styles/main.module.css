@@ -2,42 +2,21 @@
   touch-action: none;
 }
 
-#cy {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background: #000;
-  z-index: 0;
-}
-
 .top-toolbar {
   position: absolute;
-}
-
-#profileImageButton {
-  display: block;
-  border: none;
 }
 
 .profileImage {
   border-radius: 50%;
   background-color: #f4f4f4;
   margin: 5px;
+  display: initial;
 }
 
 .profileImage:hover {
   margin: 0;
   cursor: pointer;
-  border: 5px solid rgba(91, 91, 91, .80);
-}
-
-#profile-div{
-  border: 2px solid rgba(60, 60, 60, 1);
-  display: none;
-  text-align: center;
-  background-color: white;
+  border: 5px solid rgba(91, 91, 91, 0.8);
 }
 
 .profileEmail {
@@ -46,10 +25,25 @@
   overflow-wrap: anywhere;
 }
 
-#loading {
-  position: absolute;
-  left: 45%;
-  top: 43%;
-  width: 10%;
-  max-height: 14%;
+/*DESKTOP*/
+@media only screen and (min-device-width: 768px) {
+  .profileImage {
+    width: 2em;
+    height: 2em;
+  }
+  .profileImage:hover {
+    width: calc(2em + 10px);
+    height: calc(2em + 10px);
+  }
+}
+/*MOBILE*/
+@media only screen and (max-device-width: 769px) {
+  .profileImage {
+    width: 3em;
+    height: 3em;
+  }
+  .profileImage:hover {
+    width: calc(3em + 10px);
+    height: calc(3em + 10px);
+  }
 }
