@@ -4,7 +4,7 @@ import {
 } from "../lib/learningAndPlanning";
 import { handleFetchResponses, LightenDarkenColorByFactor } from "../lib/utils";
 import { goToFormFunction } from "../lib/suggestions";
-import { jsonHeaders } from "../lib/csrf";
+import { jsonHeaders } from "../lib/headers";
 import {
   fitCytoTo,
   dagreLayout,
