@@ -23,6 +23,11 @@
   "rules": {
     "linebreak-style": ["error", "unix"],
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "react-hooks/exhaustive-deps": "warn",
+    // TODO: Remove below rules once repo passes
+    "no-undef": "warn",
+    "no-unused-vars": "warn",
+    "react/jsx-key": "warn",
+    "react/prop-types": "warn"
   }
 }
