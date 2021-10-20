@@ -1,4 +1,5 @@
 # Learney Frontend
+
 Learney's frontend code.
 
 Written in React, deployed using docker and NextJS. Communicates with Django backend
