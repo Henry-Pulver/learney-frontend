@@ -1,7 +1,7 @@
 import React from "react";
 import MapPage from "../../../components/mapPage";
 import { withPageAuthRequired, getSession } from "@auth0/nextjs-auth0";
-import { cacheHeaders } from "../../../lib/csrf";
+import { cacheHeaders } from "../../../lib/headers";
 
 export default function Map({ mapUUID, mapUrlExtension, mapJson }) {
   return (
@@ -22,7 +22,7 @@ export const getServerSideProps = withPageAuthRequired({
   async getServerSideProps(ctx) {
     const mapResponse = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v0/knowledge_maps?` +
-        new URLSearchParams({ url_extension: params.mapUrlExtension }),
+        new URLSearchParams({ url_extension: ctx.params.mapUrlExtension }),
       {
         method: "GET",
         headers: cacheHeaders,
@@ -30,7 +30,7 @@ export const getServerSideProps = withPageAuthRequired({
     );
     const mapInfoJson = await mapResponse.json();
     let props = {
-      mapUrlExtension: params.mapUrlExtension,
+      mapUrlExtension: ctx.params.mapUrlExtension,
       mapJson: mapInfoJson.map_json,
       mapUUID: mapInfoJson.map_uuid,
     };
