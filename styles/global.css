@@ -1,0 +1,329 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  color: rgb(117, 117, 118);
+}
+
+#cy {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  z-index: 0;
+}
+
+iframe {
+  border: none;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+#profileImageButton {
+  display: block;
+  border: none;
+}
+
+#profile-div {
+  border: 2px solid rgba(60, 60, 60, 1);
+  display: none;
+  text-align: center;
+  background-color: white;
+}
+
+#profile-div > h2 {
+  color: black;
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 0.5em 0;
+}
+
+/*MOBILE*/
+@media only screen and (max-device-width: 768px) {
+  html,
+  body {
+    font: 20px helvetica neue, helvetica, arial, sans-serif;
+  }
+  .overallProfileDiv {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  #profileImageButton {
+    width: 4em;
+    height: 4em;
+    margin-left: 1em;
+    margin-bottom: 0.2em;
+    margin-right: auto;
+  }
+  #profile-div {
+    padding: 30px;
+    margin: 10px;
+    max-width: 100%;
+  }
+}
+/*DESKTOP*/
+@media only screen and (min-device-width: 768px) {
+  html,
+  body {
+    font: 14px helvetica neue, helvetica, arial, sans-serif;
+  }
+  .overallProfileDiv {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  #profileImageButton {
+    width: 3em;
+    height: 3em;
+    margin-right: 5px;
+    margin-left: auto;
+  }
+  #profile-div {
+    border-radius: 5px;
+    padding: 15px;
+    margin: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 200px;
+  }
+}
+
+button {
+  background-color: #001fab;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 0.25em;
+  font-family: helvetica neue, helvetica, arial, sans-serif;
+  outline: 0;
+}
+
+button:hover {
+  background-color: #2341c9;
+}
+
+button.close {
+  position: absolute;
+  margin: 10px;
+  padding: 2px 5px 0;
+  top: 0;
+  right: 0;
+  background-color: red;
+}
+
+button.close:hover {
+  background-color: #747475;
+}
+
+button.circle {
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+button.large {
+  padding: 0 20px;
+  font-size: 1.5em;
+}
+
+.select2-search__field {
+  height: 1em !important;
+  resize: none !important;
+  overflow: hidden !important;
+}
+
+.select2-dropdown {
+  color: black;
+}
+
+/*MOBILE*/
+@media only screen and (max-device-width: 768px) {
+  button {
+    font-size: 1em;
+    margin: 0 5px;
+  }
+  button.close {
+    font-size: 16px;
+  }
+  #reset-progress {
+    width: 50%;
+  }
+  #reset-pan {
+    width: 50%;
+  }
+  button.circle {
+    width: 3em;
+    height: 3em;
+  }
+  #concept-search-bar-label {
+    margin: 0 5px;
+  }
+  #feedback-button {
+    display: none;
+  }
+  .suggestionButton {
+    display: none;
+  }
+}
+
+/*DESKTOP*/
+@media only screen and (min-device-width: 769px) {
+  button {
+    margin: 2px 5px 2px 0;
+  }
+  #concept-search-bar-label {
+    max-width: 16rem;
+    margin-right: 10px;
+  }
+  #reset-progress {
+    width: 100%;
+    max-width: 8rem;
+  }
+  #slack-button {
+    margin-bottom: 5px;
+  }
+}
+
+#reset-progress {
+  background-color: #bf0000;
+  font-weight: 600;
+}
+
+#concept-search-bar-label {
+  width: 100%;
+}
+
+#feedback-button:hover {
+  background-color: #accaff;
+  box-shadow: 0 0 10px #accaff;
+  animation: none;
+}
+
+#reset-progress:hover {
+  background-color: #dc0000;
+}
+
+#feedbackIcon {
+  height: 80%;
+  margin: 10% 0;
+}
+
+#slack-button {
+  background-color: #ffffff;
+  padding: 0;
+}
+
+#slack-button:hover {
+  background-color: #dfdfdf;
+}
+
+#slackLogo {
+  padding: 10%;
+}
+
+#closeButton {
+  display: block;
+  margin: auto;
+}
+
+p.switch-text {
+  text-align: right;
+  margin: 0 2px 0 auto;
+  color: black;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+@media only screen and (max-device-width: 768px) {
+  .slider:before {
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+  }
+
+  input:focus + .slider {
+    box-shadow: 0 0 2px #2196f3;
+  }
+
+  input:checked + .slider:before {
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+  }
+
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 48px;
+  }
+}
+@media only screen and (min-device-width: 769px) {
+  .slider:before {
+    height: 13px;
+    width: 13px;
+    left: 2px;
+    bottom: 2px;
+  }
+
+  input:checked + .slider {
+    background-color: #2196f3;
+  }
+
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196f3;
+  }
+
+  input:checked + .slider:before {
+    -webkit-transform: translateX(13px);
+    -ms-transform: translateX(13px);
+    transform: translateX(13px);
+  }
+
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+}
+
+a.link-preview {
+  text-decoration: none;
+  padding-right: 60px;
+}
+
+a.link-preview:hover {
+  text-decoration: none;
+  background-color: #c9c9c9;
+}
+
+ol {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+input.vote-checkbox {
+  display: none;
+}
+
+input:checked + .triangle.up {
+  border-bottom-color: #67dc47;
+}
+input:checked + .triangle.up:hover {
+  border-bottom-color: #92f975;
+}
+
+input:checked + .triangle.down {
+  border-top-color: #c45555;
+}
+input:checked + .triangle.down:hover {
+  border-top-color: #fc7676;
+}
