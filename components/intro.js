@@ -43,7 +43,6 @@ export default function IntroButtonInclTooltip({
       content={
         <IntroSection
           introSlides={introSlidesJson}
-          // introSlides={slides}
           prevSlide={prevSlide}
           nextSlide={nextSlide}
           introSlideNumber={introSlideNumber}
@@ -52,7 +51,7 @@ export default function IntroButtonInclTooltip({
       }
     >
       <button
-        className={buttonStyles.large}
+        className={`${buttonStyles.button} ${buttonStyles.large}`}
         id="open-intro"
         onClick={introShown ? hideIntroTooltip : showIntroTooltip}
       >
@@ -71,7 +70,7 @@ export function IntroSection({
 }) {
   return (
     <div className={"intro-content-container"}>
-      <button className={"close"} id={"close-intro"} onClick={closeIntro}>
+      <button className={`close ${buttonStyles.button}`} onClick={closeIntro}>
         {"X"}
       </button>
       <div className={"intro-container"}>
