@@ -5,8 +5,8 @@ import { setupMap } from "../lib/main";
 import {
   setGoalNodesGlobal,
   setLearnedNodesGlobal,
-    goalNodes,
-    learnedNodes
+  goalNodes,
+  learnedNodes,
 } from "../lib/learningAndPlanning";
 
 export default function Map({
@@ -24,17 +24,17 @@ export default function Map({
   setLearnedState,
   goals,
   onSetGoalClick,
-  setGoalsState
+  setGoalsState,
 }) {
   const [userVotes, setUserVote] = React.useState({});
   const initialiseUserVotes = (initialVotes) => {
     console.log(initialVotes);
-    for (const [url, voteDirection] of Object.entries(initialVotes)){
-      setUserVote(prevVotes => ({...prevVotes, [url]: voteDirection}));
+    for (const [url, voteDirection] of Object.entries(initialVotes)) {
+      setUserVote((prevVotes) => ({ ...prevVotes, [url]: voteDirection }));
     }
-  }
+  };
   const onVote = (node, url, up) => {
-    setUserVote(prevVotes => ({...prevVotes, [url]: up}));
+    setUserVote((prevVotes) => ({ ...prevVotes, [url]: up }));
     saveVote(url, up, node, backendUrl, userId, mapUUID, sessionId);
   };
 
@@ -56,7 +56,8 @@ export default function Map({
         let [initLearnedNodes, initGoalNodes, initVotes] =
           await getDataFromStorage(backendUrl, userId, mapUUID);
 
-        if (typeof initVotes === "string") initialiseUserVotes(JSON.parse(initVotes));
+        if (typeof initVotes === "string")
+          initialiseUserVotes(JSON.parse(initVotes));
         else initialiseUserVotes(initVotes);
 
         setGoalNodesGlobal(initGoalNodes);

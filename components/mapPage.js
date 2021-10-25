@@ -59,15 +59,18 @@ export default function MapPage({
 
   const [goals, setNewGoalsState] = React.useState({});
   const setGoalsState = function (goalState) {
-    for (const [nodeId, _] of Object.entries(goals)){
+    for (const [nodeId, _] of Object.entries(goals)) {
       if (!(nodeId in goalState)) {
-        setNewGoalsState((prevGoals) => ({...prevGoals, [nodeId]: undefined}));
+        setNewGoalsState((prevGoals) => ({
+          ...prevGoals,
+          [nodeId]: undefined,
+        }));
       }
     }
-    for (const [nodeId, isGoal] of Object.entries(goalState)){
-      setNewGoalsState((prevGoals) => ({...prevGoals, [nodeId]: isGoal}));
+    for (const [nodeId, isGoal] of Object.entries(goalState)) {
+      setNewGoalsState((prevGoals) => ({ ...prevGoals, [nodeId]: isGoal }));
     }
-  }
+  };
   const onSetGoalClick = function (node, userId, sessionId) {
     setGoalClick(node, backendUrl, userId, mapUUID, sessionId);
     setGoalsState(goalNodes);
@@ -80,18 +83,23 @@ export default function MapPage({
     // });
   };
 
-
   const [learned, setNewLearnedState] = React.useState({});
   const setLearnedState = function (learnedState) {
-    for (const [nodeId, _] of Object.entries(learned)){
+    for (const [nodeId, _] of Object.entries(learned)) {
       if (!(nodeId in learnedState)) {
-        setNewLearnedState((prevLearned) => ({...prevLearned, [nodeId]: undefined}));
+        setNewLearnedState((prevLearned) => ({
+          ...prevLearned,
+          [nodeId]: undefined,
+        }));
       }
     }
-    for (const [nodeId, isLearned] of Object.entries(learnedState)){
-      setNewLearnedState((prevLearned) => ({...prevLearned, [nodeId]: isLearned}));
+    for (const [nodeId, isLearned] of Object.entries(learnedState)) {
+      setNewLearnedState((prevLearned) => ({
+        ...prevLearned,
+        [nodeId]: isLearned,
+      }));
     }
-  }
+  };
   const onLearnedClick = function (node, userId, sessionId) {
     learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
     setLearnedState(learnedNodes);
