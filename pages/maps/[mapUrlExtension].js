@@ -1,6 +1,6 @@
 import React from "react";
 import MapPage from "../../components/mapPage";
-import { cacheHeaders } from "../../lib/csrf";
+import { cacheHeaders } from "../../lib/headers";
 
 export default function Map({
   mapUrlExtension,
