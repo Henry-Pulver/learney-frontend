@@ -94,7 +94,7 @@ function ConceptInfo({
   userEmail,
   onVote,
   userVotes,
-  allVotes
+  allVotes,
 }) {
   let urls;
   if (node.data().urls !== undefined) {
@@ -136,7 +136,7 @@ function ConceptInfo({
         </div>
       </div>
       <ol className="tooltip-link">
-        {urls.map(url => (
+        {urls.map((url) => (
           <ConceptLinkPreview
             key={url}
             node={node}
@@ -187,19 +187,19 @@ function ConceptLinkPreview({
 
   return (
     <li className="link-preview-list-element">
-        <a
+      <a
         href={url}
         className="link-preview"
         target="_blank"
-        onClick={
-          () => logContentClick(
-                  url,
-                  node.data().id,
-                  backendUrl,
-                  userId,
-                  mapUUID,
-                  sessionId
-                )
+        onClick={() =>
+          logContentClick(
+            url,
+            node.data().id,
+            backendUrl,
+            userId,
+            mapUUID,
+            sessionId
+          )
         }
       >
         <div className="link-preview-image-container">
@@ -292,7 +292,7 @@ const fetchLinkPreview = async ({ node, url, backendUrl, mapUUID }) => {
     }
   );
   let responseJson = await handleFetchResponses(response);
-    if (response.status !== 200)
+  if (response.status !== 200)
     responseJson = { title: "", description: "", image_url: "" };
   if (responseJson.title === "") responseJson.title = node.data().name;
   if (responseJson.image_url === "")
