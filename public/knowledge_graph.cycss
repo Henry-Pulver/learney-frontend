@@ -27,17 +27,17 @@ node:child:selected {
 
 node:child.goal {
   background-color: #ff9e00;
-  color: #ff9e00;
+  color: white;
 }
 
 node:child.path {
-  background-color: #2196F3;
-  color: #2196F3;
+  background-color: #1D4ED8;
+  color: white;
 }
 
 node:child.learned {
-  background-color: #299427;
-  color: #299427;
+  background-color: #059669;
+  color: white;
 }
 
 node:parent {
@@ -64,14 +64,14 @@ edge {
 }
 
 edge.path {
-  line-color: #2196F3;
-  mid-target-arrow-color: #2196F3;
+  line-color: #1D4ED8;
+  mid-target-arrow-color: #93C5FD;
   opacity: 1;
 }
 
 edge.learned {
-  line-color: green;
-  mid-target-arrow-color: lightgreen;
+  line-color: #059669;
+  mid-target-arrow-color: #34D399;
   opacity: 1;
 }
 
