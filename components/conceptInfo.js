@@ -191,6 +191,7 @@ function ConceptLinkPreview({
         href={url}
         className="link-preview"
         target="_blank"
+        rel="noreferrer"
         onClick={() =>
           logContentClick(
             url,
