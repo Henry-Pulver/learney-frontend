@@ -1,3 +1,16 @@
+.button {
+  background-color: #001fab;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 0.25em;
+  font-family: helvetica neue, helvetica, arial, sans-serif;
+  outline: 0;
+}
+
+.button:hover {
+  background-color: #2341c9;
+}
+
 .buttonToolbarDiv {
   display: contents;
 }
@@ -38,6 +51,10 @@
 @media only screen and (max-device-width: 767px) {
   .introButtonContainer {
     display: none;
+  }
+  .button {
+    font-size: 1em;
+    margin: 0 5px;
   }
 }
 
@@ -101,6 +118,9 @@
   .topButtonToolbar {
     right: 60px;
     width: 60%;
+  }
+  .button {
+    margin: 2px 5px 2px 0;
   }
 }
 
