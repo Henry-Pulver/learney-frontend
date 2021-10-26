@@ -43,7 +43,9 @@
         "a",
         {
           "style": { "cursor": "pointer" },
-          "onClick": "https://join.slack.com/t/learneyalphatesters/shared_invite/zt-q1rnj8tt-4895F06RAImSEDtMNE6sUg"
+          "href": "https://join.slack.com/t/learneyalphatesters/shared_invite/zt-q1rnj8tt-4895F06RAImSEDtMNE6sUg",
+          "target":"_blank",
+          "rel":"noreferrer"
         },
         "Slack"
       ]
@@ -77,7 +79,9 @@
         "a",
         {
           "style": { "cursor": "pointer" },
-          "onClick": "https://join.slack.com/t/learneyalphatesters/shared_invite/zt-q1rnj8tt-4895F06RAImSEDtMNE6sUg"
+          "href": "https://join.slack.com/t/learneyalphatesters/shared_invite/zt-q1rnj8tt-4895F06RAImSEDtMNE6sUg",
+          "target":"_blank",
+          "rel": "noreferrer"
         },
         "join the Slack"
       ],
@@ -86,7 +90,9 @@
         "a",
         {
           "style": { "cursor": "pointer" },
-          "onClick": "mailto:matthew@learney.me?subject=Feedback about Learney&cc=henry@learney.me"
+          "href": "mailto:matthew@learney.me?subject=Feedback about Learney&cc=henry@learney.me",
+          "target": "_blank",
+          "rel":"noreferrer"
         },
         "email"
       ],
