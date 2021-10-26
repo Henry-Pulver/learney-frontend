@@ -267,7 +267,7 @@ function ConceptLinkPreview({
             onClick={
               userVotes[url] === false
                 ? () => onVote(node, url, null)
-                : userVotes[url] === null
+                : userVotes[url] === null || userVotes[url] === undefined
                 ? () => onVote(node, url, false)
                 : () => onVote(node, url, null)
             }
