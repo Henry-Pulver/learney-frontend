@@ -1,9 +1,8 @@
 # Install dependencies only when needed
 FROM node:14-alpine
 RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh
+    apk add --no-cache bash git openssh libc6-compat
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN git config --global url."https://".insteadOf ssh:// && npm ci
@@ -27,8 +26,9 @@ RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nextjs -u 1001
 
 # You only need to copy next.config.js if you are NOT using the default configuration
-# COPY --from=builder /app/next.config.js ./
+COPY --from=1 /app/next.config.js ./
 COPY --from=1 /app/public ./public
+COPY --from=1 /app/.env.production ./.env.production
 COPY --from=1 --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=1 /app/node_modules ./node_modules
 COPY --from=1 /app/package.json ./package.json
