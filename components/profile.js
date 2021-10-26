@@ -78,6 +78,7 @@ function ProfileSelectedDiv({
 function LogOut({ buttonPressFunction }) {
   return (
     <button
+      className={`${buttonStyles.button} px-2 py-1`}
       id="log-out"
       onClick={buttonPressFunction(function () {
         location.href = "/api/auth/logout";
@@ -92,8 +93,8 @@ function LogIn({ buttonPressFunction }) {
   return (
     <button
       id="log-in"
-      className={`${buttonStyles.large} ${buttonStyles.flashing}`}
-      onClick={buttonPressFunction(function () {
+      className={`${buttonStyles.large} ${buttonStyles.button}`}
+      onClick={buttonPressFunction(() => {
         location.href = "/api/auth/login";
       }, "log-in")}
     >
