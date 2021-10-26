@@ -16,6 +16,9 @@ export default function OriginalMap({ mapJson, mapUUID }) {
 }
 
 export async function getServerSideProps() {
+  console.log(
+    `process.env.NEXT_PUBLIC_BACKEND_URL: ${process.env.NEXT_PUBLIC_BACKEND_URL}`
+  );
   const mapResponse = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v0/knowledge_maps?` +
       new URLSearchParams({ url_extension: "original_map" }),
