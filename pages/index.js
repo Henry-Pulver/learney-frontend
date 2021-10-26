@@ -2,10 +2,10 @@ import React from "react";
 import MapPage from "../components/mapPage";
 import { cacheHeaders } from "../lib/headers";
 
-export default function OriginalMap({ mapJson, mapUUID }) {
+export default function OriginalMap({ mapJson, mapUUID, backendUrl }) {
   return (
     <MapPage
-      backendUrl={process.env.NEXT_PUBLIC_BACKEND_URL}
+      backendUrl={backendUrl}
       mapUUID={mapUUID}
       mapUrlExtension={"maps/original_map"}
       allowSuggestions={true}
@@ -16,9 +16,6 @@ export default function OriginalMap({ mapJson, mapUUID }) {
 }
 
 export async function getServerSideProps() {
-  console.log(
-    `process.env.NEXT_PUBLIC_BACKEND_URL: ${process.env.NEXT_PUBLIC_BACKEND_URL}`
-  );
   const mapResponse = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v0/knowledge_maps?` +
       new URLSearchParams({ url_extension: "original_map" }),
@@ -32,6 +29,7 @@ export async function getServerSideProps() {
     props: {
       mapJson: mapInfoJson.map_json,
       mapUUID: mapInfoJson.map_uuid,
+      backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL
     },
   };
 }

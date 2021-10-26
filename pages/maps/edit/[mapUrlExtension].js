@@ -3,10 +3,10 @@ import MapPage from "../../../components/mapPage";
 import { withPageAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import { cacheHeaders } from "../../../lib/headers";
 
-export default function Map({ mapUUID, mapUrlExtension, mapJson }) {
+export default function Map({ mapUUID, mapUrlExtension, mapJson, backendUrl }) {
   return (
     <MapPage
-      backendUrl={process.env.NEXT_PUBLIC_BACKEND_URL}
+      backendUrl={backendUrl}
       mapUUID={mapUUID}
       mapUrlExtension={mapUrlExtension}
       allowSuggestions={false}
@@ -33,6 +33,7 @@ export const getServerSideProps = withPageAuthRequired({
       mapUrlExtension: ctx.params.mapUrlExtension,
       mapJson: mapInfoJson.map_json,
       mapUUID: mapInfoJson.map_uuid,
+      backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL
     };
     return { props: props };
   },
