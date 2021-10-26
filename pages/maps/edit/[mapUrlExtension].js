@@ -33,7 +33,7 @@ export const getServerSideProps = withPageAuthRequired({
       mapUrlExtension: ctx.params.mapUrlExtension,
       mapJson: mapInfoJson.map_json,
       mapUUID: mapInfoJson.map_uuid,
-      backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL
+      backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
     };
     return { props: props };
   },

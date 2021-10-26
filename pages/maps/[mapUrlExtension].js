@@ -7,7 +7,7 @@ export default function Map({
   mapJson,
   mapUUID,
   allowSuggestions,
-  backendUrl
+  backendUrl,
 }) {
   return (
     <MapPage
@@ -37,7 +37,7 @@ export async function getServerSideProps({ params }) {
       mapJson: mapInfoJson.map_json,
       mapUUID: mapInfoJson.map_uuid,
       allowSuggestions: mapInfoJson.allow_suggestions,
-      backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL
+      backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
     },
   };
 }

@@ -44,8 +44,8 @@
         {
           "style": { "cursor": "pointer" },
           "href": "https://join.slack.com/t/learneyalphatesters/shared_invite/zt-q1rnj8tt-4895F06RAImSEDtMNE6sUg",
-          "target":"_blank",
-          "rel":"noreferrer"
+          "target": "_blank",
+          "rel": "noreferrer"
         },
         "Slack"
       ]
@@ -80,7 +80,7 @@
         {
           "style": { "cursor": "pointer" },
           "href": "https://join.slack.com/t/learneyalphatesters/shared_invite/zt-q1rnj8tt-4895F06RAImSEDtMNE6sUg",
-          "target":"_blank",
+          "target": "_blank",
           "rel": "noreferrer"
         },
         "join the Slack"
@@ -92,7 +92,7 @@
           "style": { "cursor": "pointer" },
           "href": "mailto:matthew@learney.me?subject=Feedback about Learney&cc=henry@learney.me",
           "target": "_blank",
-          "rel":"noreferrer"
+          "rel": "noreferrer"
         },
         "email"
       ],
