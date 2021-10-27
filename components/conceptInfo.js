@@ -295,7 +295,7 @@ const fetchLinkPreview = async ({ node, url, backendUrl, mapUUID }) => {
   let responseJson = await handleFetchResponses(response);
   if (response.status !== 200 || responseJson.status !== 201)
     responseJson = { title: "", description: "", image_url: "" };
-  if (responseJson.title === "") responseJson.title = node.data().name;
+  if (responseJson.title === "") responseJson.title = "Loading...";
   if (responseJson.image_url === "")
     responseJson.image_url = "/images/learney_logo_256x256.png";
   return responseJson;
