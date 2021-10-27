@@ -212,7 +212,7 @@ function ConceptLinkPreview({
         </div>
         <div className="link-preview-text-container">
           <h4 className="link-preview-title">
-            {data ? data.title : node.data().name}
+            {data ? data.title : "Loading..."}
           </h4>
           <p className="link-preview-description">
             {data ? data.description : ""}
@@ -293,9 +293,9 @@ const fetchLinkPreview = async ({ node, url, backendUrl, mapUUID }) => {
     }
   );
   let responseJson = await handleFetchResponses(response);
-  if (response.status !== 200 || responseJson.status !== 201)
+  if (response.status !== 200 && responseJson.status !== 201)
     responseJson = { title: "", description: "", image_url: "" };
-  if (responseJson.title === "") responseJson.title = "Loading...";
+  if (responseJson.title === "") responseJson.title = node.data().name;
   if (responseJson.image_url === "")
     responseJson.image_url = "/images/learney_logo_256x256.png";
   return responseJson;
