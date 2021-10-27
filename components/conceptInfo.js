@@ -244,7 +244,7 @@ function ConceptLinkPreview({
         </div>
         {/*Vote count number*/}
         <div className={"text-sm font-semibold py-1"}>
-          {allVotes && Math.abs(allVotes[url]) > 0
+          {allVotes && Math.abs(allVotes[url]) > 5
             ? userVotes[url] === true
               ? `+${(allVotes[url] + 1).toString()}`
               : userVotes[url] === false
@@ -293,7 +293,7 @@ const fetchLinkPreview = async ({ node, url, backendUrl, mapUUID }) => {
     }
   );
   let responseJson = await handleFetchResponses(response);
-  if (response.status !== 200)
+  if (response.status !== 200 || responseJson.status !== 201)
     responseJson = { title: "", description: "", image_url: "" };
   if (responseJson.title === "") responseJson.title = node.data().name;
   if (responseJson.image_url === "")
