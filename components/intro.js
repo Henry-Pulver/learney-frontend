@@ -1,6 +1,7 @@
 import React from "react";
 import Tippy from "@tippyjs/react";
 import buttonStyles from "../styles/buttons.module.css";
+import { classNames } from "../lib/reactUtils";
 
 export default function IntroButtonInclTooltip({
   introShown,
@@ -43,7 +44,6 @@ export default function IntroButtonInclTooltip({
       content={
         <IntroSection
           introSlides={introSlidesJson}
-          // introSlides={slides}
           prevSlide={prevSlide}
           nextSlide={nextSlide}
           introSlideNumber={introSlideNumber}
@@ -52,7 +52,7 @@ export default function IntroButtonInclTooltip({
       }
     >
       <button
-        className={buttonStyles.large}
+        className={`${buttonStyles.button} ${buttonStyles.large}`}
         id="open-intro"
         onClick={introShown ? hideIntroTooltip : showIntroTooltip}
       >
@@ -71,7 +71,7 @@ export function IntroSection({
 }) {
   return (
     <div className={"intro-content-container"}>
-      <button className={"close"} id={"close-intro"} onClick={closeIntro}>
+      <button className={`close ${buttonStyles.button}`} onClick={closeIntro}>
         {"X"}
       </button>
       <div className={"intro-container"}>
@@ -120,13 +120,9 @@ function IntroTextSection({ introSlides, introSlideNumber }) {
           elementArray.push(textItem);
         }
       } else if (textItem[0] === "a") {
-        elementArray.push(
-          <a {...addOnClickLink(textItem[1])}>{textItem[2]}</a>
-        );
+        elementArray.push(<a {...textItem[1]}>{textItem[2]}</a>);
       } else if (textItem[0] === "b") {
-        elementArray.push(
-          <b {...addOnClickLink(textItem[1])}>{textItem[2]}</b>
-        );
+        elementArray.push(<b {...textItem[1]}>{textItem[2]}</b>);
       }
     }
   }
@@ -139,28 +135,55 @@ function SlideDiv({ prevSlide, nextSlide, introSlideNumber, numSlides }) {
 
   return (
     <div className="intro-slide-change-div">
-      <div
-        className={firstSlide ? "triangle left grey" : "triangle left blue"}
-        // className={""}
-        style={firstSlide ? {} : { cursor: "pointer" }}
+      <button
         onClick={firstSlide ? () => {} : prevSlide}
-      />
-      <div className={"intro-slide-num-div"}>
+        className={classNames(
+          firstSlide
+            ? "bg-gray-300 cursor-default "
+            : "cursor-pointer bg-blue-600 hover:bg-blue-500 ",
+          "text-white border border-transparent text-sm font-medium rounded-lg inline-flex items-center px-4 py-2"
+        )}
+      >
+        <svg
+          className="w-5 h-5 mr-2"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fillRule="evenodd"
+            d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Prev
+      </button>
+      <div className={"text-gray-700 px-4 py-2"}>
         {(introSlideNumber + 1).toString() + "/" + numSlides.toString()}
       </div>
-      <div
-        className={lastSlide ? "triangle right grey" : "triangle right blue"}
-        style={lastSlide ? {} : { cursor: "pointer" }}
+      <button
         onClick={lastSlide ? () => {} : nextSlide}
-      />
+        className={classNames(
+          lastSlide
+            ? "bg-gray-300 cursor-default "
+            : "cursor-pointer bg-blue-600 hover:bg-blue-500 ",
+          "text-white border border-transparent text-sm font-medium rounded-lg inline-flex items-center px-4 py-2"
+        )}
+      >
+        Next
+        <svg
+          className="w-5 h-5 ml-2"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fillRule="evenodd"
+            d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
     </div>
   );
-}
-
-function addOnClickLink(attributes) {
-  if (!("onClick" in attributes))
-    console.warn("addOnClick called when attributes don't contain onClick!");
-  let onClickLink = attributes.onClick;
-  attributes.onClick = () => window.open(onClickLink, "_blank");
-  return attributes;
 }

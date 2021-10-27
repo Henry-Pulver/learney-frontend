@@ -13,7 +13,6 @@ import {
 } from "./buttons";
 import React, { useEffect } from "react";
 import { setupTracking } from "../lib/trackingScripts";
-import { setupSite } from "../lib/main";
 import { useUser } from "@auth0/nextjs-auth0";
 import {
   getButtonPressFunction,
@@ -23,6 +22,14 @@ import {
 import IntroButtonInclTooltip from "../components/intro";
 import { isMobile } from "../lib/graph";
 import MapHeader from "./mapHeader";
+import Map from "./map";
+import {
+  goalNodes,
+  learnedNodes,
+  learnedSliderClick,
+  setGoalClick,
+  initialiseSignInTooltip,
+} from "../lib/learningAndPlanning";
 // import SearchBar, {getSearchOptions} from "./search";
 
 export default function MapPage({
@@ -37,13 +44,8 @@ export default function MapPage({
   // const [searchOptions, setSearchOptions] = React.useState([]);
   // const updateSearchOptions = (elements) => setSearchOptions(getSearchOptions(elements));
 
-  // POPUP VISIBLE
-  // const [popupVisible, setPopupVisible] = React.useState(true);
-  // const show = () => setPopupVisible(true);
-  // const hide = () => setPopupVisible(false);
-
-  const { user, error, isLoading } = useUser();
-  const [userIdState, setUserIdState] = React.useState(undefined);
+  const { user, isLoading } = useUser();
+  const [userId, setUserId] = React.useState(undefined);
   const [userEmail, setUserEmail] = React.useState("");
   const [sessionId, setSessionId] = React.useState(null);
 
@@ -55,9 +57,50 @@ export default function MapPage({
     setIntroShown(false);
   };
 
+  const [goals, setNewGoalsState] = React.useState({});
+  const setGoalsState = function (goalState) {
+    for (const [nodeId, _] of Object.entries(goals)) {
+      if (!(nodeId in goalState)) {
+        setNewGoalsState((prevGoals) => ({
+          ...prevGoals,
+          [nodeId]: undefined,
+        }));
+      }
+    }
+    for (const [nodeId, isGoal] of Object.entries(goalState)) {
+      setNewGoalsState((prevGoals) => ({ ...prevGoals, [nodeId]: isGoal }));
+    }
+  };
+  const onSetGoalClick = function (node, userId, sessionId) {
+    setGoalClick(node, backendUrl, userId, mapUUID, sessionId);
+    setGoalsState(goalNodes);
+  };
+
+  const [learned, setNewLearnedState] = React.useState({});
+  const setLearnedState = function (learnedState) {
+    for (const [nodeId, _] of Object.entries(learned)) {
+      if (!(nodeId in learnedState)) {
+        setNewLearnedState((prevLearned) => ({
+          ...prevLearned,
+          [nodeId]: undefined,
+        }));
+      }
+    }
+    for (const [nodeId, isLearned] of Object.entries(learnedState)) {
+      setNewLearnedState((prevLearned) => ({
+        ...prevLearned,
+        [nodeId]: isLearned,
+      }));
+    }
+  };
+  const onLearnedClick = function (node, userId, sessionId) {
+    learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
+    setLearnedState(learnedNodes);
+  };
+
   const buttonPressFunction = getButtonPressFunction(
     backendUrl,
-    userIdState,
+    userId,
     sessionId
   );
 
@@ -67,27 +110,19 @@ export default function MapPage({
         let responseJson = await logPageView(user, backendUrl, mapUrlExtension);
         setSessionId(responseJson.session_id);
 
-        let userId;
+        let newUserId;
         if (user !== undefined) {
-          userId = user.sub;
-          setUserIdState(user.sub);
+          newUserId = user.sub;
           setUserEmail(user.email);
         } else {
-          userId = responseJson.user_id;
-          setUserIdState(responseJson.user_id);
+          newUserId = responseJson.user_id;
         }
-        await setupSite(
-          backendUrl,
-          userId,
-          allowSuggestions,
-          editMap,
-          mapJson,
-          mapUUID,
-          responseJson.session_id
-          // updateSearchOptions
-        );
+        setUserId(newUserId);
+
         setupTracking();
-        if (isAnonymousUser(userId) && !isMobile()) showIntroTooltip();
+
+        if (isAnonymousUser(newUserId) && !isMobile()) showIntroTooltip();
+        if (isAnonymousUser(newUserId)) initialiseSignInTooltip();
       }
     })();
   }, [isLoading]);
@@ -96,7 +131,23 @@ export default function MapPage({
     <div>
       <MapHeader />
 
-      <div id="cy" />
+      <Map
+        backendUrl={backendUrl}
+        userId={userId}
+        userEmail={userEmail}
+        allowSuggestions={allowSuggestions}
+        editMap={editMap}
+        mapJson={mapJson}
+        mapUUID={mapUUID}
+        sessionId={sessionId}
+        buttonPressFunction={buttonPressFunction}
+        learned={learned}
+        onLearnedClick={onLearnedClick}
+        setLearnedState={setLearnedState}
+        goals={goals}
+        onSetGoalClick={onSetGoalClick}
+        setGoalsState={setGoalsState}
+      />
 
       <Profile buttonPressFunction={buttonPressFunction} userdata={user} />
 
@@ -116,14 +167,18 @@ export default function MapPage({
             allowSuggestions={allowSuggestions}
             buttonPressFunction={buttonPressFunction}
             userEmail={userEmail}
+            buttonName="make-suggestion"
+            text="Make Suggestion"
           />
         </div>
         <label id="concept-search-bar-label">
           {/*<SearchBar searchOptions={ searchOptions }/>*/}
           <select
             id={"concept-search-bar"}
+            className="pt-0"
             name="concept"
             style={{ width: "100%" }}
+            tabIndex="0"
           />
         </label>
         <div className={buttonStyles.buttonToolbarDiv}>
@@ -135,7 +190,7 @@ export default function MapPage({
           />
           <ResetLayoutButton
             buttonPressFunction={buttonPressFunction}
-            userId={userIdState}
+            userId={userId}
             editMap={editMap}
           />
           <RunDagreButton
@@ -146,9 +201,11 @@ export default function MapPage({
             editMap={editMap}
             buttonPressFunction={buttonPressFunction}
             backendUrl={backendUrl}
-            userId={userIdState}
+            userId={userId}
             mapUUID={mapUUID}
             sessionId={sessionId}
+            setGoalsState={setNewGoalsState}
+            setLearnedState={setNewLearnedState}
           />
           <ResetPanButton buttonPressFunction={buttonPressFunction} />
         </div>

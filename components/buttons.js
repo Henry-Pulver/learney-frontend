@@ -14,9 +14,48 @@ import {
   originalMapJSON,
   presetLayout,
 } from "../lib/graph";
-import React from "react";
 import buttonStyles from "../styles/buttons.module.css";
 import Tippy from "@tippyjs/react";
+import React, { useEffect } from "react";
+import { classNames } from "../lib/reactUtils";
+
+export function IconToggleButtonWithCheckbox({
+  checked,
+  onCheck,
+  Icon,
+  text,
+  colour = "blue",
+}) {
+  useEffect(() => {
+    console.log(`${text} is checked: ${checked}`);
+  }, [checked]);
+  return (
+    <span className="relative z-0 inline-flex items-center shadow-sm rounded-md">
+      <button
+        onClick={onCheck}
+        className={classNames(
+          colour === "blue"
+            ? "bg-blue-600 hover:bg-blue-500 focus:ring-blue-500 "
+            : "bg-green-600 hover:bg-green-500 focus:ring-green-500",
+          "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white  focus:outline-none focus:ring-2 focus:ring-offset-2"
+        )}
+      >
+        <Icon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+        {text}
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={() => {}}
+          className={classNames(
+            checked ? "ring-white ring-2 " : "",
+            colour === "blue" ? "text-blue-600 " : "text-green-600 ",
+            `cursor-pointer h-4 w-4 ml-2 border-gray-300 rounded select-none`
+          )}
+        />
+      </button>
+    </span>
+  );
+}
 
 // SIMPLE BUTTONS
 export function FeedBackButton({ buttonPressFunction }) {
@@ -32,7 +71,7 @@ export function FeedBackButton({ buttonPressFunction }) {
       }
     >
       <button
-        className={`${buttonStyles.circle} ${buttonStyles.flashing}`}
+        className={`${buttonStyles.button} ${buttonStyles.circle} ${buttonStyles.flashing}`}
         id="feedback-button"
         onClick={buttonPressFunction(
           () =>
@@ -66,7 +105,7 @@ export function SlackButton({ buttonPressFunction }) {
       }
     >
       <button
-        className={buttonStyles.circle}
+        className={`${buttonStyles.button} ${buttonStyles.circle}`}
         id="slack-button"
         onClick={buttonPressFunction(function () {
           window.open(
@@ -85,18 +124,19 @@ export function MakeSuggestionButton({
   allowSuggestions,
   buttonPressFunction,
   userEmail,
+  buttonName,
+  text,
 }) {
   return (
     <button
       onClick={buttonPressFunction(
         goToFormFunction("concept", userEmail),
-        "make-suggestion"
+        buttonName
       )}
-      className={buttonStyles.suggestionButton}
-      id="make-suggestion"
+      className={`${buttonStyles.button} ${buttonStyles.suggestionButton}`}
       style={!allowSuggestions ? { display: "none" } : {}}
     >
-      Make Suggestion
+      {text}
     </button>
   );
 }
@@ -109,6 +149,7 @@ export function SaveMapButton({
 }) {
   return (
     <button
+      className={buttonStyles.button}
       style={!editMapEnabled ? { display: "none" } : {}}
       onClick={buttonPressFunction(
         () => saveMap(backendUrl, mapUUID),
@@ -158,6 +199,7 @@ async function saveMap(backendUrl, mapUUID) {
 export function ResetLayoutButton({ buttonPressFunction, userId, editMap }) {
   return (
     <button
+      className={buttonStyles.button}
       style={!editMap ? { display: "none" } : {}}
       onClick={buttonPressFunction(() => resetLayout(userId), "reset-layout")}
       id={"reset-layout"}
@@ -178,6 +220,7 @@ function resetLayout(userId) {
 export function RunDagreButton({ buttonPressFunction, editMapEnabled }) {
   return (
     <button
+      className={buttonStyles.button}
       style={!editMapEnabled ? { display: "none" } : {}}
       onClick={buttonPressFunction(autoGenerateLayout, "run-dagre")}
       id={"run-dagre"}
@@ -199,13 +242,22 @@ export function ResetProgressButton({
   userId,
   mapUUID,
   sessionId,
+  setGoalsState,
+  setLearnedState,
 }) {
   const [buttonAlreadyPressed, setValue] = React.useState(false);
 
   const buttonPressed = buttonPressFunction(
     function resetProgButtonPress() {
       if (buttonAlreadyPressed) {
-        resetProgress(backendUrl, userId, mapUUID, sessionId);
+        resetProgress(
+          backendUrl,
+          userId,
+          mapUUID,
+          sessionId,
+          setGoalsState,
+          setLearnedState
+        );
         unhighlightNodes(cy.nodes());
       } else {
         setTimeout(function () {
@@ -223,6 +275,7 @@ export function ResetProgressButton({
     <button
       style={editMap ? { display: "none" } : {}}
       onClick={buttonPressed}
+      className={buttonStyles.button}
       id={"reset-progress"}
     >
       {!buttonAlreadyPressed ? "Reset Progress" : "Are you sure?"}
@@ -237,6 +290,7 @@ export function ResetPanButton({ buttonPressFunction }) {
         fitCytoTo({ eles: cy.nodes(), padding: 50 });
       }, "reset-pan")}
       id={"reset-pan"}
+      className={buttonStyles.button}
     >
       Centre View
     </button>
