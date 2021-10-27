@@ -121,7 +121,7 @@ button.large {
 }
 
 .select2-search__field {
-  height: 1em !important;
+  height: 1.2em !important;
   resize: none !important;
   overflow: hidden !important;
 }

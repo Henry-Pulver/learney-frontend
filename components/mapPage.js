@@ -74,13 +74,6 @@ export default function MapPage({
   const onSetGoalClick = function (node, userId, sessionId) {
     setGoalClick(node, backendUrl, userId, mapUUID, sessionId);
     setGoalsState(goalNodes);
-    // setNewGoalsState((prevGoals) => {
-    //   if (prevGoals[node.data().id]) {
-    //     return {...prevGoals, [node.data().id]: undefined};
-    //   } else {
-    //     return {...prevGoals, [node.data().id]: true};
-    //   }
-    // });
   };
 
   const [learned, setNewLearnedState] = React.useState({});
@@ -103,9 +96,6 @@ export default function MapPage({
   const onLearnedClick = function (node, userId, sessionId) {
     learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
     setLearnedState(learnedNodes);
-    // for (const [nodeId, isLearned] of Object.entries(learnedNodesAdded)){
-    //   setNewLearnedState((prevLearned) => ({...prevLearned, [nodeId]: isLearned}));
-    // }
   };
 
   const buttonPressFunction = getButtonPressFunction(
@@ -185,8 +175,10 @@ export default function MapPage({
           {/*<SearchBar searchOptions={ searchOptions }/>*/}
           <select
             id={"concept-search-bar"}
+            className="pt-0"
             name="concept"
             style={{ width: "100%" }}
+            tabIndex="0"
           />
         </label>
         <div className={buttonStyles.buttonToolbarDiv}>
