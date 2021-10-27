@@ -6,7 +6,6 @@
 .slider-container {
   border-top: 1px solid #555555;
   padding: 5px 10px;
-  display: flex;
 }
 
 .switch-container {
@@ -173,9 +172,6 @@
   .switch-text {
     font-size: 0.8em;
   }
-  .slider-container {
-    justify-content: flex-end;
-  }
   .link-preview-title {
     font-size: 18px;
   }
@@ -234,25 +230,20 @@
   height: 30px;
 }
 
-.upvote {
-  margin-bottom: 10px;
-  display: block;
-}
-
 .triangle {
   width: 0;
   height: 0;
-  border: 15px solid transparent;
+  border-width: 15px;
 }
 
 .triangle.up {
   border-top: 0 solid transparent;
-  border-bottom: 30px solid #555;
+  border-bottom-width: 30px;
 }
 
 .triangle.down {
   border-bottom: 0 solid transparent;
-  border-top: 30px solid #555;
+  border-top-width: 30px;
 }
 
 .triangle.right {
@@ -269,14 +260,6 @@
 
 .triangle.left.blue {
   border-right: 30px solid #2196f3;
-}
-
-.triangle.up:hover {
-  border-bottom-color: #c9c9c9;
-}
-
-.triangle.down:hover {
-  border-top-color: #c9c9c9;
 }
 
 .triangle.right.blue:hover {

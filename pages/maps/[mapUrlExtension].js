@@ -1,16 +1,17 @@
 import React from "react";
 import MapPage from "../../components/mapPage";
-import { cacheHeaders } from "../../lib/csrf";
+import { cacheHeaders } from "../../lib/headers";
 
 export default function Map({
   mapUrlExtension,
   mapJson,
   mapUUID,
   allowSuggestions,
+  backendUrl,
 }) {
   return (
     <MapPage
-      backendUrl={process.env.NEXT_PUBLIC_BACKEND_URL}
+      backendUrl={backendUrl}
       mapUUID={mapUUID}
       mapUrlExtension={mapUrlExtension}
       allowSuggestions={allowSuggestions}
@@ -36,6 +37,7 @@ export async function getServerSideProps({ params }) {
       mapJson: mapInfoJson.map_json,
       mapUUID: mapInfoJson.map_uuid,
       allowSuggestions: mapInfoJson.allow_suggestions,
+      backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
     },
   };
 }
