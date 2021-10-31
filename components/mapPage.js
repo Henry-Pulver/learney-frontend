@@ -5,6 +5,7 @@ import {
   AddEdgesButton,
   AddNodeButton,
   CursorButton,
+  DeleteElementButton,
   FeedBackButton,
   MakeSuggestionButton,
   ResetLayoutButton,
@@ -287,9 +288,10 @@ export default function MapPage({
       </div>
       {editMap && (
         <div className={`${buttonStyles.editTools}`}>
-          <CursorButton setEditType={setEditType} />
-          <AddNodeButton setEditType={setEditType} />
-          <AddEdgesButton setEditType={setEditType} />
+          <CursorButton editType={editType} setEditType={setEditType} />
+          <AddNodeButton editType={editType} setEditType={setEditType} />
+          <AddEdgesButton editType={editType} setEditType={setEditType} />
+          <DeleteElementButton editType={editType} setEditType={setEditType} />
         </div>
       )}
       {showEditNodeData && (
