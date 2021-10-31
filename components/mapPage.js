@@ -2,6 +2,9 @@ import Profile from "./profile";
 import buttonStyles from "../styles/buttons.module.css";
 import mainStyles from "../styles/main.module.css";
 import {
+  AddEdgesButton,
+  AddNodeButton,
+  CursorButton,
   FeedBackButton,
   MakeSuggestionButton,
   ResetLayoutButton,
@@ -127,6 +130,69 @@ export default function MapPage({
     })();
   }, [isLoading]);
 
+  const [editType, setEditType] = React.useState("cursor");
+  const addNode = function (e) {
+    // TODO: This is an awful way to find the nextNodeID. Ask Henry
+    let nextNodeID = -Infinity;
+    window.cy // Get the map
+      .json() // Get map data in JSON
+      .elements.nodes // Get nodes only
+      .forEach((node) => {
+        // Filter out nodes that are topic labels, then find the largest node ID number
+        if (Number(node.data.id) && Number(node.data.id) > nextNodeID) {
+          nextNodeID = Number(node.data.id);
+        }
+      });
+    // The next node ID is the largest previous node ID number + 1
+    nextNodeID += 1;
+
+    const newNode = {
+      data: {
+        id: `${nextNodeID}`,
+        name: "",
+        lectures: "",
+        description: "",
+        urls: [],
+        nodetype: "concept",
+        relative_importance: 1,
+        parent: "",
+      },
+      renderedPosition: {
+        x: e.renderedPosition.x,
+        y: e.renderedPosition.y,
+      },
+    };
+
+    window.cy.add([newNode]);
+    window.cy.removeListener("tap", addNode);
+
+    setEditNodeData(newNode.data);
+    setEditType("cursor");
+    setShowEditNodeData(true);
+  };
+  useEffect(() => {
+    if (editType === "addNode") window.cy.on("tap", addNode);
+  }, [editType]);
+
+  const [showEditNodeData, setShowEditNodeData] = React.useState(false);
+  const [editNodeData, setEditNodeData] = React.useState({
+    id: Infinity,
+    name: "",
+    lectures: "",
+    description: "",
+    urls: "",
+    nodetype: "concept",
+    relative_importance: 1,
+    parent: "",
+  });
+  const saveEditNodeData = function () {
+    let newNodeData = { ...editNodeData };
+    if (typeof newNodeData.urls === "string")
+      newNodeData.urls = newNodeData.urls.split(",");
+    window.cy.getElementById(editNodeData.id).data(newNodeData);
+    setShowEditNodeData(false);
+  };
+
   return (
     <div>
       <MapHeader />
@@ -147,6 +213,9 @@ export default function MapPage({
         goals={goals}
         onSetGoalClick={onSetGoalClick}
         setGoalsState={setGoalsState}
+        editType={editType}
+        setEditNodeData={setEditNodeData}
+        setShowEditNodeData={setShowEditNodeData}
       />
 
       <Profile buttonPressFunction={buttonPressFunction} userdata={user} />
@@ -216,6 +285,61 @@ export default function MapPage({
         <FeedBackButton buttonPressFunction={buttonPressFunction} />
         {!editMap && <SlackButton buttonPressFunction={buttonPressFunction} />}
       </div>
+      {editMap && (
+        <div className={`${buttonStyles.editTools}`}>
+          <CursorButton setEditType={setEditType} />
+          <AddNodeButton setEditType={setEditType} />
+          <AddEdgesButton setEditType={setEditType} />
+        </div>
+      )}
+      {showEditNodeData && (
+        <div className={`${buttonStyles.editNodeData}`}>
+          <div>Concept Name</div>
+          <input
+            type="text"
+            value={editNodeData.name}
+            onChange={(e) =>
+              setEditNodeData({ ...editNodeData, name: e.target.value })
+            }
+          />
+          <div>Description</div>
+          <textarea
+            value={editNodeData.description}
+            onChange={(e) =>
+              setEditNodeData({ ...editNodeData, description: e.target.value })
+            }
+          />
+          <div>Topic Group</div>
+          <input
+            type="text"
+            value={editNodeData.parent}
+            onChange={(e) =>
+              setEditNodeData({ ...editNodeData, parent: e.target.value })
+            }
+          />
+          <div>URLs (separated by a comma)</div>
+          <input
+            type="text"
+            value={editNodeData.urls}
+            onChange={(e) =>
+              setEditNodeData({ ...editNodeData, urls: e.target.value })
+            }
+          />
+          <div>Relative Size</div>
+          <input
+            type="number"
+            value={editNodeData.relative_importance}
+            onChange={(e) =>
+              setEditNodeData({
+                ...editNodeData,
+                relative_importance: e.target.value,
+              })
+            }
+          />
+          <span onClick={() => saveEditNodeData()}>Save</span>
+          <span onClick={() => setShowEditNodeData(false)}>Cancel</span>
+        </div>
+      )}
     </div>
   );
 }
