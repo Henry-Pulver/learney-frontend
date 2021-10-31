@@ -296,3 +296,41 @@ export function ResetPanButton({ buttonPressFunction }) {
     </button>
   );
 }
+
+export function AddEdgesButton({ setEditType }) {
+  return (
+    <svg onClick={() => setEditType("addEdges")} viewBox="0 0 347.341 347.341">
+      <polygon points="347.341,107.783 347.339,0 239.559,0.002 282.843,43.285 0,326.128 21.213,347.341 304.056,64.498 " />
+    </svg>
+  );
+}
+
+export function AddNodeButton({ setEditType }) {
+  return (
+    <svg onClick={() => setEditType("addNode")} viewBox="0 0 60 60">
+      <circle
+        cx="30"
+        cy="30"
+        fill="none"
+        r="15"
+        stroke="black"
+        strokeWidth="1.5"
+      />
+    </svg>
+  );
+}
+
+export function CursorButton({ setEditType }) {
+  return (
+    <svg onClick={() => setEditType("cursor")} viewBox="0 0 28 28">
+      <rect
+        x="12.5"
+        y="13.6"
+        transform="matrix(0.9221 -0.3871 0.3871 0.9221 -5.7605 6.5909)"
+        width="1.5"
+        height="8"
+      />
+      <polygon points="9.2,7.3 9.2,18.5 12.2,15.6 12.6,15.5 17.4,15.5 " />
+    </svg>
+  );
+}
