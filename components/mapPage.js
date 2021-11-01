@@ -171,8 +171,54 @@ export default function MapPage({
     setEditType("cursor");
     setShowEditNodeData(true);
   };
+  // const handleRemove = function (e) {
+  //   console.log(e.target);
+  //   e.target.remove();
+  // };
   useEffect(() => {
-    if (editType === "addNode") window.cy.on("tap", addNode);
+    setShowEditNodeData(false);
+
+    switch (editType) {
+      case "addNode":
+        window.cy.on("tap", addNode);
+        break;
+      case "addEdges":
+        console.log(window.cy.edges());
+        console.log("addEdges");
+        window.cy.edgehandles().enableDrawMode();
+        window.cy.on(
+          "ehcomplete",
+          (event, sourceNode, targetNode, addedEdge) => {
+            console.log(event);
+            console.log(sourceNode);
+            console.log(targetNode);
+            console.log(addedEdge);
+            console.log(sourceNode.id(), targetNode.id());
+            addedEdge.style("opacity", 0.4);
+            // addedEdge.data("id", `${sourceNode.id()}_${targetNode.id()}`);
+            // source: `${sourceNode.id()}`,
+            // targetNode: `${targetNode.id()}`,
+            // style: {
+            //   opacity: {
+            //     name: "opacity",
+            //     value: 0.4,
+            //   },
+            // },
+            // });
+            console.log(addedEdge.data());
+            console.log(addedEdge.style());
+            console.log(addedEdge.transparent());
+          }
+        );
+        break;
+      case "delete":
+        break;
+      default:
+        break;
+    }
+    // else if (editType === "delete") {
+    //   window.cy.on("tap", handleRemove);
+    // }
   }, [editType]);
 
   const [showEditNodeData, setShowEditNodeData] = React.useState(false);
