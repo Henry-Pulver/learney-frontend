@@ -26,9 +26,6 @@ export default function Map({
   goals,
   onSetGoalClick,
   setGoalsState,
-  editType,
-  setEditNodeData,
-  setShowEditNodeData,
 }) {
   const [userVotes, setUserVote] = React.useState({});
   const initialiseUserVotes = (initialVotes) => {
@@ -81,10 +78,7 @@ export default function Map({
           sessionId,
           showConceptTippy,
           hideConceptTippy,
-          onSetGoalClick,
-          editType,
-          setEditNodeData,
-          setShowEditNodeData
+          onSetGoalClick
         );
         // TODO: if goal is set, zoom there instead of to the bottom?
         panByAndZoom(-cy.width() / 6, (-cy.height() * 4) / 9, 1.5, function () {});
