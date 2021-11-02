@@ -37,6 +37,8 @@ import {
 // import SearchBar, {getSearchOptions} from "./search";
 import { panByAndZoom } from "../lib/graph";
 
+let eh = null;
+
 export default function MapPage({
   backendUrl,
   mapUrlExtension,
@@ -179,10 +181,17 @@ export default function MapPage({
     setEditNodeData(e.target.data());
     setShowEditNodeData(true);
   };
+
   useEffect(() => {
     if (window.cy.edgehandles) {
+      console.log(window.cy.getElementById("1").parent());
+      console.log(window.cy.getElementById("Linear_Algebra").parent());
+
       window.cy.removeListener("tap");
-      window.cy.edgehandles().destroy();
+      if (eh !== null) {
+        console.log("DisableDrawMore");
+        eh.disableDrawMode();
+      }
 
       switch (editType) {
         case "addNode":
@@ -191,7 +200,18 @@ export default function MapPage({
           break;
         case "addEdges":
           console.log("addEdges");
-          window.cy.edgehandles().enableDrawMode();
+          eh = window.cy.edgehandles({
+            canConnect: function (sourceNode, targetNode) {
+              // whether an edge can be created between source and target
+              return (
+                !sourceNode.same(targetNode) && // No loops
+                sourceNode.parent() && // No links from parent nodes
+                targetNode.parent() // No links to parent nodes
+              );
+            },
+          });
+          eh.enableDrawMode();
+          // setTimeout(() => eh.disableDrawMode(), 5000);
           break;
         case "cursor":
           console.log("cursor");
