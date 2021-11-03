@@ -37,7 +37,6 @@ import {
 } from "../lib/learningAndPlanning";
 // import SearchBar, {getSearchOptions} from "./search";
 
-let eh = null;
 
 export default function MapPage({
   backendUrl,
@@ -137,16 +136,11 @@ export default function MapPage({
   const [editType, setEditType] = React.useState("cursor");
   const addNode = function (e) {
     // [1.0] Create the next node ID
-    // TODO: This is an awful way to find the nextNodeID
     let nextNodeID = -Infinity;
-    window.cy // Get the map
-      .json() // Get map data in JSON
-      .elements.nodes // Get nodes only
+    window.cy.nodes('[nodetype = "concept"]') // Get concept nodes only
       .forEach((node) => {
-        // Filter out nodes that are topic labels, then find the largest node ID number
-        if (Number(node.data.id) && Number(node.data.id) > nextNodeID) {
-          nextNodeID = Number(node.data.id);
-        }
+        // Find the largest concept ID number
+        if (Number(node.data().id) > nextNodeID) nextNodeID = Number(node.data().id);
       });
     // The next node ID is the largest previous node ID number + 1
     nextNodeID += 1;
@@ -198,6 +192,8 @@ export default function MapPage({
     setEditNodeData(e.target.data());
     setShowEditNodeData(true);
   };
+
+  let eh = null;  // Edge handles variable
 
   useEffect(() => {
     // [1.0] Ensure cytoscape map is initialized
@@ -259,7 +255,7 @@ export default function MapPage({
     // [1.0] Copy Previous Data
     let newNodeData = { ...editNodeData };
 
-    // [2.0] Convery url string to array
+    // [2.0] Convert url string to array
     if (typeof newNodeData.urls === "string")
       newNodeData.urls = newNodeData.urls.split(",");
 
@@ -294,10 +290,9 @@ export default function MapPage({
         .move({ parent: newNodeData.parent.replace(/ /g, "_") });
 
       // [3.3] Remove empty parent nodes
-      window.cy.nodes().forEach((node) => {
+      window.cy.nodes('[nodetype = "field"]').forEach((node) => {
         if (
-          node.data().nodetype === "field" &&
-          node.data().name === "" &&
+          // node.data().name === "" &&
           node.isChildless()
         )
           node.remove();
@@ -422,7 +417,7 @@ export default function MapPage({
         {!editMap && <SlackButton buttonPressFunction={buttonPressFunction} />}
       </div>
       {editMap && (
-        <div className={`${buttonStyles.editTools}`}>
+        <div className={`bg-white cursor-pointer ${buttonStyles.editTools}`}>
           <CursorButton editType={editType} setEditType={setEditType} />
           <AddNodeButton editType={editType} setEditType={setEditType} />
           <AddEdgesButton editType={editType} setEditType={setEditType} />
