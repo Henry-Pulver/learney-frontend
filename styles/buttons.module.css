@@ -170,10 +170,8 @@
 }
 
 .editTools {
-  background: white;
   border-radius: 4px;
   bottom: 4px;
-  cursor: pointer;
   left: 4px;
   position: absolute;
 }
@@ -187,5 +185,5 @@
 }
 
 .editTools div:hover {
-  background: rgb(50, 78, 235);
+  /*background: rgb(50, 78, 235);*/
 }
