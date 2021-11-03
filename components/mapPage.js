@@ -136,6 +136,7 @@ export default function MapPage({
 
   const [editType, setEditType] = React.useState("cursor");
   const addNode = function (e) {
+    // [1.0] Create the next node ID
     // TODO: This is an awful way to find the nextNodeID
     let nextNodeID = -Infinity;
     window.cy // Get the map
@@ -149,6 +150,21 @@ export default function MapPage({
       });
     // The next node ID is the largest previous node ID number + 1
     nextNodeID += 1;
+
+    // [2.0] Create the new nodes
+    const newParentNode = {
+      group: "nodes",
+      data: {
+        colour: "#610061",
+        id: `${nextNodeID}_topic_group`,
+        name: "",
+        nodetype: "field",
+      },
+      renderedPosition: {
+        x: e.renderedPosition.x,
+        y: e.renderedPosition.y,
+      },
+    };
 
     const newNode = {
       data: {
@@ -167,22 +183,10 @@ export default function MapPage({
       },
     };
 
-    const newParentNode = {
-      group: "nodes",
-      data: {
-        colour: "#610061",
-        id: `${nextNodeID}_topic_group`,
-        name: "",
-        nodetype: "field",
-      },
-      renderedPosition: {
-        x: e.renderedPosition.x,
-        y: e.renderedPosition.y,
-      },
-    };
-
+    // [3.0] Add the new nodes
     window.cy.add([newParentNode, newNode]);
 
+    // [4.0] Update UI
     setEditNodeData(newNode.data);
     setEditType("cursor");
     setShowEditNodeData(true);
@@ -196,10 +200,13 @@ export default function MapPage({
   };
 
   useEffect(() => {
+    // [1.0] Ensure cytoscape map is initialized
     if (window.cy.edgehandles) {
+      // [2.0] Remove old event listeners
       window.cy.removeListener("tap");
       if (eh !== null) eh.disableDrawMode();
 
+      // [3.0] Add new event listeners
       switch (editType) {
         case "addNode":
           window.cy.on("tap", addNode);
@@ -301,7 +308,7 @@ export default function MapPage({
     window.cy.getElementById(newNodeData.id).data(newNodeData);
 
     // [5.0] Save the results
-    // saveMap(backendUrl, mapUUID);
+    saveMap(backendUrl, mapUUID);
     setShowEditNodeData(false);
   };
 
