@@ -162,7 +162,7 @@ export function SaveMapButton({
   );
 }
 
-async function saveMap(backendUrl, mapUUID) {
+export async function saveMap(backendUrl, mapUUID) {
   let mapJson = { nodes: [], edges: [] };
   cy.nodes().forEach(function (node) {
     let nodeData = { data: node.data(), position: node.position() };

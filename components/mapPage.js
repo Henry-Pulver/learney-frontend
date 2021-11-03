@@ -12,6 +12,7 @@ import {
   ResetPanButton,
   ResetProgressButton,
   RunDagreButton,
+  saveMap,
   SaveMapButton,
   SlackButton,
 } from "./buttons";
@@ -159,7 +160,7 @@ export default function MapPage({
         urls: [],
         nodetype: "concept",
         relative_importance: 1,
-        parent: "",
+        parent: `${nextNodeID}_topic_group`,
       },
       renderedPosition: {
         x: e.renderedPosition.x,
@@ -167,8 +168,21 @@ export default function MapPage({
       },
     };
 
-    window.cy.add([newNode]);
-    window.cy.removeListener("tap", addNode);
+    const newParentNode = {
+      group: "nodes",
+      data: {
+        colour: "#610061",
+        id: `${nextNodeID}_topic_group`,
+        name: "",
+        nodetype: "field",
+      },
+      renderedPosition: {
+        x: e.renderedPosition.x,
+        y: e.renderedPosition.y,
+      },
+    };
+
+    window.cy.add([newParentNode, newNode]);
 
     setEditNodeData(newNode.data);
     setEditType("cursor");
@@ -184,41 +198,38 @@ export default function MapPage({
 
   useEffect(() => {
     if (window.cy.edgehandles) {
-      console.log(window.cy.getElementById("1").parent());
-      console.log(window.cy.getElementById("Linear_Algebra").parent());
-
       window.cy.removeListener("tap");
-      if (eh !== null) {
-        console.log("DisableDrawMore");
-        eh.disableDrawMode();
-      }
+      if (eh !== null) eh.disableDrawMode();
 
       switch (editType) {
         case "addNode":
-          console.log("addNode");
           window.cy.on("tap", addNode);
           break;
         case "addEdges":
-          console.log("addEdges");
           eh = window.cy.edgehandles({
             canConnect: function (sourceNode, targetNode) {
               // whether an edge can be created between source and target
               return (
                 !sourceNode.same(targetNode) && // No loops
-                sourceNode.parent() && // No links from parent nodes
-                targetNode.parent() // No links to parent nodes
+                !sourceNode.isParent() && // No links from parent nodes
+                !targetNode.isParent() // No links to parent nodes
               );
             },
+            noEdgeEventsInDraw: false,
+            snap: false,
           });
+
           eh.enableDrawMode();
-          // setTimeout(() => eh.disableDrawMode(), 5000);
           break;
         case "cursor":
-          console.log("cursor");
           window.cy.on("tap", 'node[nodetype = "concept"]', handleEditNodeData);
+          window.cy.on(
+            "tap",
+            'node[nodetype = "field"]',
+            handleEditParentNodeData
+          );
           break;
         case "delete":
-          console.log("Delete");
           window.cy.on("tap", removeElement);
           break;
         default:
@@ -239,11 +250,67 @@ export default function MapPage({
     parent: "",
   });
   const saveEditNodeData = function () {
+    // [1.0] Copy Previous Data
     let newNodeData = { ...editNodeData };
+
+    // [2.0] Convery url string to array
     if (typeof newNodeData.urls === "string")
       newNodeData.urls = newNodeData.urls.split(",");
-    window.cy.getElementById(editNodeData.id).data(newNodeData);
+
+    // [3.0] If parent was changed, move node to new parent
+    const oldParent = window.cy.getElementById(newNodeData.id).data("parent");
+    if (oldParent !== newNodeData.parent) {
+      // [3.1] If the new parent doesn't exist, create new parent node
+      if (
+        window.cy.getElementById(newNodeData.parent.replace(/ /g, "_")) !==
+        undefined
+      ) {
+        const newParentNode = {
+          group: "nodes",
+          data: {
+            colour: "#610061",
+            id: `${newNodeData.parent}`.replace(/ /g, "_"),
+            name: newNodeData.parent,
+            nodetype: "field",
+          },
+          renderedPosition: {
+            x: window.cy.getElementById(newNodeData.id).x,
+            y: window.cy.getElementById(newNodeData.id).y,
+          },
+        };
+
+        window.cy.add([newParentNode]);
+      }
+
+      // [3.2] Move node to new parent
+      window.cy
+        .getElementById(newNodeData.id)
+        .move({ parent: newNodeData.parent });
+    }
+
+    // [4.0] Update node data
+    window.cy.getElementById(newNodeData.id).data(newNodeData);
+
+    // [5.0] Save the results
+    // saveMap(backendUrl, mapUUID);
     setShowEditNodeData(false);
+  };
+
+  const [showEditParentNodeData, setShowEditParentNodeData] =
+    React.useState(false);
+  const [editParentNodeData, setEditParentNodeData] = React.useState({
+    colour: "",
+    id: "",
+    name: "",
+    nodetype: "",
+  });
+  const handleEditParentNodeData = function (e) {
+    setEditParentNodeData(e.target.data());
+    setShowEditParentNodeData(true);
+  };
+  const saveEditParentNodeData = function () {
+    const newParentNodeData = { ...editParentNodeData };
+    window.cy.getElementById(newParentNodeData.id).data(newParentNodeData);
   };
 
   return (
@@ -266,6 +333,8 @@ export default function MapPage({
         goals={goals}
         onSetGoalClick={onSetGoalClick}
         setGoalsState={setGoalsState}
+        handleEditNodeData={handleEditNodeData}
+        handleEditParentNodeData={handleEditParentNodeData}
       />
 
       <Profile buttonPressFunction={buttonPressFunction} userdata={user} />
@@ -389,6 +458,50 @@ export default function MapPage({
           />
           <span onClick={() => saveEditNodeData()}>Save</span>
           <span onClick={() => setShowEditNodeData(false)}>Cancel</span>
+          <span
+            onClick={() => {
+              window.cy.getElementById(editNodeData.id).remove();
+              setShowEditNodeData(false);
+            }}
+          >
+            Delete
+          </span>
+        </div>
+      )}
+      {showEditParentNodeData && (
+        <div className={`${buttonStyles.editNodeData}`}>
+          <div>Topic Group</div>
+          <input
+            type="text"
+            value={editParentNodeData.name}
+            onChange={(e) =>
+              setEditParentNodeData({
+                ...editParentNodeData,
+                name: e.target.value,
+              })
+            }
+          />
+          <div>Colour</div>
+          <input
+            type="text"
+            value={editParentNodeData.colour}
+            onChange={(e) =>
+              setEditParentNodeData({
+                ...editParentNodeData,
+                colour: e.target.value,
+              })
+            }
+          />
+          <span onClick={() => saveEditParentNodeData()}>Save</span>
+          <span onClick={() => setShowEditParentNodeData(false)}>Cancel</span>
+          <span
+            onClick={() => {
+              window.cy.getElementById(editParentNodeData.id).remove();
+              setShowEditParentNodeData(false);
+            }}
+          >
+            Delete
+          </span>
         </div>
       )}
     </div>
