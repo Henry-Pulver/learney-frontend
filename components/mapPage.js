@@ -36,7 +36,6 @@ import {
   initialiseSignInTooltip,
 } from "../lib/learningAndPlanning";
 // import SearchBar, {getSearchOptions} from "./search";
-import { panByAndZoom } from "../lib/graph";
 
 let eh = null;
 
@@ -137,7 +136,7 @@ export default function MapPage({
 
   const [editType, setEditType] = React.useState("cursor");
   const addNode = function (e) {
-    // TODO: This is an awful way to find the nextNodeID. Ask Henry
+    // TODO: This is an awful way to find the nextNodeID
     let nextNodeID = -Infinity;
     window.cy // Get the map
       .json() // Get map data in JSON
@@ -285,7 +284,17 @@ export default function MapPage({
       // [3.2] Move node to new parent
       window.cy
         .getElementById(newNodeData.id)
-        .move({ parent: newNodeData.parent });
+        .move({ parent: newNodeData.parent.replace(/ /g, "_") });
+
+      // [3.3] Remove empty parent nodes
+      window.cy.nodes().forEach((node) => {
+        if (
+          node.data().nodetype === "field" &&
+          node.data().name === "" &&
+          node.isChildless()
+        )
+          node.remove();
+      });
     }
 
     // [4.0] Update node data
@@ -311,6 +320,7 @@ export default function MapPage({
   const saveEditParentNodeData = function () {
     const newParentNodeData = { ...editParentNodeData };
     window.cy.getElementById(newParentNodeData.id).data(newParentNodeData);
+    setShowEditParentNodeData(false);
   };
 
   return (
