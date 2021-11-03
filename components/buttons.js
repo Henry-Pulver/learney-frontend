@@ -18,6 +18,7 @@ import buttonStyles from "../styles/buttons.module.css";
 import Tippy from "@tippyjs/react";
 import React, { useEffect } from "react";
 import { classNames } from "../lib/reactUtils";
+import {PlusCircleIcon} from "@heroicons/react/outline";
 
 export function IconToggleButtonWithCheckbox({
   checked,
@@ -300,13 +301,13 @@ export function ResetPanButton({ buttonPressFunction }) {
 export function AddEdgesButton({ editType, setEditType }) {
   return (
     <div
-      style={
-        editType === "addEdges" ? { background: "rgb(50, 78, 235)" } : null
+      className={
+        classNames(editType === "addEdges" ? "bg-blue-600" : "", "hover:bg-blue-500")
       }
     >
       <svg
         onClick={() => setEditType("addEdges")}
-        style={{ transform: "scale(50%)" }}
+        className={"scale-50"}
         viewBox="0 0 347.341 347.341"
       >
         <polygon points="347.341,107.783 347.339,0 239.559,0.002 282.843,43.285 0,326.128 21.213,347.341 304.056,64.498 " />
@@ -318,18 +319,19 @@ export function AddEdgesButton({ editType, setEditType }) {
 export function AddNodeButton({ editType, setEditType }) {
   return (
     <div
-      style={editType === "addNode" ? { background: "rgb(50, 78, 235)" } : null}
+      className={classNames(editType === "addNode" ? "bg-blue-600" : "", "align-center hover:bg-blue-500")}
     >
-      <svg onClick={() => setEditType("addNode")} viewBox="0 0 60 60">
-        <circle
-          cx="30"
-          cy="30"
-          fill="none"
-          r="15"
-          stroke="black"
-          strokeWidth="1.5"
-        />
-      </svg>
+      <PlusCircleIcon className="text-black w-10 h-10" onClick={() => setEditType("addNode")}/>
+      {/*<svg onClick={() => setEditType("addNode")} viewBox="0 0 60 60">*/}
+      {/*  <circle*/}
+      {/*    cx="30"*/}
+      {/*    cy="30"*/}
+      {/*    fill="none"*/}
+      {/*    r="15"*/}
+      {/*    stroke="black"*/}
+      {/*    strokeWidth="1.5"*/}
+      {/*  />*/}
+      {/*</svg>*/}
     </div>
   );
 }
@@ -337,11 +339,11 @@ export function AddNodeButton({ editType, setEditType }) {
 export function CursorButton({ editType, setEditType }) {
   return (
     <div
-      style={editType === "cursor" ? { background: "rgb(50, 78, 235)" } : null}
+      className={classNames(editType === "cursor" ? "bg-blue-600" : "", "hover:bg-blue-500")}
     >
       <svg
         onClick={() => setEditType("cursor")}
-        style={{ transform: "scale(90%)" }}
+        className={"scale-90"}
         viewBox="0 0 28 28"
       >
         <rect
@@ -360,11 +362,11 @@ export function CursorButton({ editType, setEditType }) {
 export function DeleteElementButton({ editType, setEditType }) {
   return (
     <div
-      style={editType === "delete" ? { background: "rgb(50, 78, 235)" } : null}
+      className={classNames(editType === "delete" ? "bg-blue-600" : "", "hover:bg-blue-500")}
     >
       <svg
         onClick={() => setEditType("delete")}
-        style={{ transform: "scale(40%)" }}
+        className={"scale-40"}
         viewBox="0 0 460.775 460.775"
       >
         <path
