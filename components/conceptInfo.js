@@ -97,10 +97,36 @@ function ConceptInfo({
   allVotes,
 }) {
   let urls;
-  if (node.data().urls !== undefined) {
-    urls = getValidURLs(node.data().urls);
-  } else {
-    urls = [];
+  if (node.data().urls !== undefined) urls = getValidURLs(node.data().urls);
+  else urls = [];
+
+  let linkPreviews = urls.map((url) => (
+    <ConceptLinkPreview
+      key={url}
+      node={node}
+      url={url}
+      userId={userId}
+      backendUrl={backendUrl}
+      mapUUID={mapUUID}
+      sessionId={sessionId}
+      userVotes={userVotes}
+      allVotes={allVotes}
+      onVote={onVote}
+    />
+  ));
+
+  let linkPreviewOrder = urls.map((url, index) => index);
+
+  if (allVotes) {
+    linkPreviewOrder.sort((a, b) => {
+      let bNumVotes;
+      if (allVotes[urls[b]] === undefined) bNumVotes = 0;
+      else bNumVotes = allVotes[urls[b]];
+      let aNumVotes;
+      if (allVotes[urls[a]] === undefined) aNumVotes = 0;
+      else aNumVotes = allVotes[urls[a]];
+      return bNumVotes - aNumVotes;
+    });
   }
 
   return (
@@ -136,20 +162,7 @@ function ConceptInfo({
         </div>
       </div>
       <ol className="tooltip-link">
-        {urls.map((url) => (
-          <ConceptLinkPreview
-            key={url}
-            node={node}
-            url={url}
-            userId={userId}
-            backendUrl={backendUrl}
-            mapUUID={mapUUID}
-            sessionId={sessionId}
-            userVotes={userVotes}
-            allVotes={allVotes}
-            onVote={onVote}
-          />
-        ))}
+        {linkPreviewOrder.map((index) => linkPreviews[index])}
       </ol>
       {allowSuggestions && (
         <div>
@@ -247,7 +260,7 @@ function ConceptLinkPreview({
         <div className={"text-sm font-semibold py-1"}>
           {allVotes && Math.abs(allVotes[url]) > 5
             ? userVotes[url] === true
-              ? `+${(allVotes[url] + 1).toString()}`
+              ? allVotes[url] + 1
               : userVotes[url] === false
               ? allVotes[url] - 1
               : allVotes[url]
