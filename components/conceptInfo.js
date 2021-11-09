@@ -189,7 +189,8 @@ function ConceptLinkPreview({
     <li className="link-preview-list-element">
       <a
         href={url}
-        className="link-preview"
+        style={{paddingRight: "60px", height: "100px"}}
+        className="bg-gray-100 hover:bg-white visited:bg-gray-300 rounded-sm max-w-screen-sm overflow-hidden flex text-left m-0.5"
         target="_blank"
         rel="noreferrer"
         onClick={() =>
