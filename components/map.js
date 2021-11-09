@@ -21,6 +21,8 @@ export default function Map({
   buttonPressFunction,
   learned,
   onLearnedClick,
+  onTestSuccess,
+  onTestFail,
   setLearnedState,
   goals,
   onSetGoalClick,
@@ -98,6 +100,8 @@ export default function Map({
         reference={cytoscapeRef}
         learnedNodes={learned}
         goalNodes={goals}
+        onTestSuccess={onTestSuccess}
+        onTestFail={onTestFail}
         onLearnedClick={onLearnedClick}
         onSetGoalClick={onSetGoalClick}
         allowSuggestions={allowSuggestions}
