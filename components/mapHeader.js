@@ -12,15 +12,15 @@ export default function MapHeader() {
       <meta
         name="image"
         property="og:image"
-        content="https://app.learney.me/static/images/2021/05/19/learney_background.png"
+        content="https://app.learney.me/images/2021/05/19/learney_background.png"
       />
       <meta
         property="og:image:url"
-        content="https://app.learney.me/static/images/2021/05/19/learney_background.png"
+        content="https://app.learney.me/images/2021/05/19/learney_background.png"
       />
       <meta
         property="og:image:secure_url"
-        content="https://app.learney.me/static/images/2021/05/19/learney_background.png"
+        content="https://app.learney.me/images/2021/05/19/learney_background.png"
       />
       <meta property="og:type" content="website" />
       <meta property="og:url" content="https://app.learney.me" />
