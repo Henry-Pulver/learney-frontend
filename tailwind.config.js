@@ -7,7 +7,7 @@ module.exports = {
   },
   variants: {
     extend: {
-      backgroundColor: ['visited'],
+      backgroundColor: ["visited"],
     },
   },
   plugins: [require("@tailwindcss/forms")],
