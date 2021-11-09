@@ -1,10 +1,11 @@
+import React from "react";
+import Tippy from "@tippyjs/react";
+import { jsonHeaders } from "../lib/headers";
 import {
   initialiseGraphState,
   resetProgress,
 } from "../lib/learningAndPlanning";
-import { handleFetchResponses, LightenDarkenColorByFactor } from "../lib/utils";
 import { goToFormFunction } from "../lib/suggestions";
-import { jsonHeaders } from "../lib/headers";
 import {
   fitCytoTo,
   dagreLayout,
@@ -14,45 +15,63 @@ import {
   originalMapJSON,
   presetLayout,
 } from "../lib/graph";
-import buttonStyles from "../styles/buttons.module.css";
-import Tippy from "@tippyjs/react";
-import React, { useEffect } from "react";
+import { LoadingSpinner } from "./animations";
 import { classNames } from "../lib/reactUtils";
+import { handleFetchResponses, LightenDarkenColorByFactor } from "../lib/utils";
+import buttonStyles from "../styles/buttons.module.css";
 
 export function IconToggleButtonWithCheckbox({
   checked,
   onCheck,
   Icon,
   text,
+  loading = false,
+  disabled = false,
   colour = "blue",
 }) {
-  useEffect(() => {
-    console.log(`${text} is checked: ${checked}`);
-  }, [checked]);
+  if (!["blue", "green", "red"].includes(colour))
+    throw new Error(`Colour: ${colour} is not a supported button colour!`);
   return (
-    <span className="relative z-0 inline-flex items-center shadow-sm rounded-md">
-      <button
-        onClick={onCheck}
+    <span className="relative group z-0 inline-flex items-center shadow-sm rounded-md">
+      <div
+        onClick={loading || disabled ? () => {} : onCheck}
         className={classNames(
-          colour === "blue"
-            ? "bg-blue-600 hover:bg-blue-500 focus:ring-blue-500 "
-            : "bg-green-600 hover:bg-green-500 focus:ring-green-500",
-          "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white  focus:outline-none focus:ring-2 focus:ring-offset-2"
+          disabled || loading ? "cursor-default" : "cursor-pointer",
+          disabled
+            ? "bg-gray-400"
+            : colour === "blue"
+            ? "bg-blue-600 group-hover:bg-blue-500 focus:ring-blue-500"
+            : colour === "green"
+            ? "bg-green-600 group-hover:bg-green-500 focus:ring-green-500"
+            : "bg-red-600 group-hover:bg-red-500 focus:ring-red-500",
+          "inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
         )}
       >
         <Icon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
         {text}
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={() => {}}
-          className={classNames(
-            checked ? "ring-white ring-2 " : "",
-            colour === "blue" ? "text-blue-600 " : "text-green-600 ",
-            `cursor-pointer h-4 w-4 ml-2 border-gray-300 rounded select-none`
-          )}
-        />
-      </button>
+        {loading ? (
+          <LoadingSpinner classes="ml-2 h-4 w-4 text-white" />
+        ) : (
+          <input
+            type="checkbox"
+            checked={checked}
+            onChange={() => {}}
+            disabled={disabled}
+            className={classNames(
+              checked ? "ring-white ring-2 " : "",
+              !disabled
+                ? colour === "blue"
+                  ? "text-blue-600 group-hover:text-blue-500"
+                  : colour === "green"
+                  ? "text-green-600 group-hover:text-green-500"
+                  : "text-red-600 group-hover:text-red-500"
+                : "text-gray-400 ",
+              !disabled ? "cursor-pointer" : "",
+              `h-4 w-4 ml-2 border-gray-300 rounded select-none`
+            )}
+          />
+        )}
+      </div>
     </span>
   );
 }

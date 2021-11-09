@@ -11,7 +11,7 @@ import {
   SaveMapButton,
   SlackButton,
 } from "./buttons";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { setupTracking } from "../lib/trackingScripts";
 import { useUser } from "@auth0/nextjs-auth0";
 import {
@@ -30,6 +30,8 @@ import {
   setGoalClick,
   initialiseSignInTooltip,
 } from "../lib/learningAndPlanning";
+import NotificationManager from "./notifications";
+import { getNextNodeToLearn } from "../lib/questions";
 // import SearchBar, {getSearchOptions} from "./search";
 
 export default function MapPage({
@@ -55,6 +57,27 @@ export default function MapPage({
   };
   const hideIntroTooltip = () => {
     setIntroShown(false);
+  };
+
+  const [notificationInfo, setNotificationInfo] = useState({});
+  const updateNotificationInfo = (newNotificationInfo) => {
+    setNotificationInfo((prevState) => ({
+      ...prevState,
+      type: undefined,
+      nodeName: undefined,
+      nextNode: undefined,
+      ...newNotificationInfo,
+    }));
+    setTimeout(
+      () =>
+        setNotificationInfo((prevState) => ({
+          ...prevState,
+          type: undefined,
+          nodeName: undefined,
+          nextNode: undefined,
+        })),
+      5000
+    );
   };
 
   const [goals, setNewGoalsState] = React.useState({});
@@ -93,9 +116,45 @@ export default function MapPage({
       }));
     }
   };
-  const onLearnedClick = function (node, userId, sessionId) {
+  const onLearned = function (node, userId, sessionId) {
     learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
     setLearnedState(learnedNodes);
+  };
+  const onSuccessfulTest = function (node, userId, sessionId) {
+    learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
+    setLearnedState(learnedNodes);
+    const nextNodeToLearn = getNextNodeToLearn(node);
+
+    if (node.classes().includes("goal")) {
+      // If goal achieved
+      updateNotificationInfo({
+        type: "goalAchieved",
+        nodeName: node.data().name,
+        nextNode: nextNodeToLearn,
+      });
+      if (nextNodeToLearn !== undefined) nextNodeToLearn.emit("tap");
+    } else if (nextNodeToLearn === undefined) {
+      // If no goal set - prompt to set goal
+      updateNotificationInfo({
+        type: "noGoal",
+        nodeName: node.data().name,
+      });
+    } else {
+      // If concept on path learned
+      updateNotificationInfo({
+        type: "progress",
+        nodeName: node.data().name,
+        nextNode: nextNodeToLearn.data().name,
+      });
+      nextNodeToLearn.emit("tap");
+    }
+  };
+  const onTestFail = (node) => {
+    updateNotificationInfo({
+      type: "failed",
+      nodeName: node.data().name,
+    });
+    node.emit("tap");
   };
 
   const buttonPressFunction = getButtonPressFunction(
@@ -142,7 +201,9 @@ export default function MapPage({
         sessionId={sessionId}
         buttonPressFunction={buttonPressFunction}
         learned={learned}
-        onLearnedClick={onLearnedClick}
+        onTestSuccess={onSuccessfulTest}
+        onTestFail={onTestFail}
+        onLearnedClick={onLearned}
         setLearnedState={setLearnedState}
         goals={goals}
         onSetGoalClick={onSetGoalClick}
@@ -175,9 +236,8 @@ export default function MapPage({
           {/*<SearchBar searchOptions={ searchOptions }/>*/}
           <select
             id={"concept-search-bar"}
-            className="pt-0"
+            className="pt-0 w-full"
             name="concept"
-            style={{ width: "100%" }}
             tabIndex="0"
           />
         </label>
@@ -217,6 +277,10 @@ export default function MapPage({
         <FeedBackButton buttonPressFunction={buttonPressFunction} />
         {!editMap && <SlackButton buttonPressFunction={buttonPressFunction} />}
       </div>
+      <NotificationManager
+        notificationInfo={notificationInfo}
+        setNotificationInfo={setNotificationInfo}
+      />
     </div>
   );
 }

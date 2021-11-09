@@ -1,12 +1,17 @@
 import Tippy from "@tippyjs/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useAsync } from "react-async";
-import { getValidURLs, logContentClick } from "../lib/utils";
 import { CheckCircleIcon, FlagIcon } from "@heroicons/react/outline";
 import { IconToggleButtonWithCheckbox, MakeSuggestionButton } from "./buttons";
-import { handleFetchResponses } from "../lib/utils";
+import { cacheHeaders, jsonHeaders } from "../lib/headers";
+import QuestionModal from "./questionModal";
+import { completeTest } from "../lib/questions";
 import { classNames } from "../lib/reactUtils";
-import { cacheHeaders } from "../lib/headers";
+import {
+  getValidURLs,
+  logContentClick,
+  handleFetchResponses,
+} from "../lib/utils";
 import buttonStyles from "../styles/buttons.module.css";
 
 export function ConceptTippy({
@@ -21,6 +26,8 @@ export function ConceptTippy({
   reference,
   learnedNodes,
   goalNodes,
+  onTestSuccess,
+  onTestFail,
   onLearnedClick,
   onSetGoalClick,
   allowSuggestions,
@@ -62,8 +69,10 @@ export function ConceptTippy({
             hideTippy={hideTippy}
             learnedNodes={learnedNodes}
             goalNodes={goalNodes}
-            onLearnedClick={onLearnedClick}
+            onTestSuccess={onTestSuccess}
+            onTestFail={onTestFail}
             onSetGoalClick={onSetGoalClick}
+            onLearnedClick={onLearnedClick}
             allowSuggestions={allowSuggestions}
             buttonPressFunction={buttonPressFunction}
             userVotes={userVotes}
@@ -88,6 +97,8 @@ function ConceptInfo({
   learnedNodes,
   goalNodes,
   onLearnedClick,
+  onTestSuccess,
+  onTestFail,
   onSetGoalClick,
   allowSuggestions,
   buttonPressFunction,
@@ -103,66 +114,125 @@ function ConceptInfo({
     urls = [];
   }
 
+  // Question stuff
+  const { data, isPending, reload } = useAsync({
+    promiseFn: fetchQuestionSet,
+    backendUrl: backendUrl,
+    mapUUID: mapUUID,
+    userId: userId,
+    conceptId: node.data().id,
+  });
+  useEffect(() => reload(), [node]); // Each time a node is selected, rerun this
+  const [questionModalShown, setQuestionModalShown] = React.useState(false);
+
   return (
-    <div className="tooltip-contents disableTouchActions">
-      <h4 className="tooltip-heading">{node.data().name}</h4>
-      <div className="tooltip-description">{node.data().description}</div>
-      <button
-        className={`close ${buttonStyles.button}`}
-        onClick={
-          node ? buttonPressFunction(hideTippy, "close-concept") : () => {}
-        }
-      >
-        {"X"}
-      </button>
-      <div className="slider-container grid items-center grid-flow-col">
-        <div>
-          <IconToggleButtonWithCheckbox
-            checked={learnedNodes[node.data().id]}
-            onCheck={() => onLearnedClick(node, userId, sessionId)}
-            Icon={CheckCircleIcon}
-            text={"I Know This!"}
-            colour={"green"}
-          />
-        </div>
-        <div>
-          <IconToggleButtonWithCheckbox
-            checked={goalNodes[node.data().id]}
-            onCheck={() => onSetGoalClick(node, userId, sessionId)}
-            Icon={FlagIcon}
-            text={"Set Goal"}
-            colour={"blue"}
-          />
-        </div>
-      </div>
-      <ol className="tooltip-link">
-        {urls.map((url) => (
-          <ConceptLinkPreview
-            key={url}
-            node={node}
-            url={url}
-            userId={userId}
-            backendUrl={backendUrl}
-            mapUUID={mapUUID}
-            sessionId={sessionId}
-            userVotes={userVotes}
-            allVotes={allVotes}
-            onVote={onVote}
-          />
-        ))}
-      </ol>
-      {allowSuggestions && (
-        <div>
-          <MakeSuggestionButton
-            allowSuggestions={allowSuggestions}
-            buttonPressFunction={buttonPressFunction}
-            userEmail={userEmail}
-            buttonName={"content-suggestion"}
-            text={"Suggest Content!"}
-          />
-        </div>
+    <>
+      {data && data.correct_threshold !== 0 ? (
+        <QuestionModal
+          questionSet={data.question_set}
+          modalShown={questionModalShown}
+          setModalShown={setQuestionModalShown}
+          onCompletion={(answersGiven) => {
+            completeTest(
+              answersGiven,
+              node,
+              learnedNodes,
+              goalNodes,
+              data.question_set,
+              data.correct_threshold,
+              () => onTestSuccess(node, userId, sessionId),
+              () => {
+                reload();
+                onTestFail(node);
+              }
+            );
+            setQuestionModalShown(false);
+          }}
+          backendUrl={backendUrl}
+          userId={userId}
+          sessionId={sessionId}
+        />
+      ) : (
+        <></>
       )}
-    </div>
+
+      <div className="tooltip-contents disableTouchActions">
+        <h4 className="tooltip-heading">{node.data().name}</h4>
+        <div className="tooltip-description">{node.data().description}</div>
+        <button
+          className={`close ${buttonStyles.button}`}
+          onClick={
+            node ? buttonPressFunction(hideTippy, "close-concept") : () => {}
+          }
+        >
+          {"X"}
+        </button>
+        <div className="slider-container grid items-center grid-flow-col">
+          <div>
+            <IconToggleButtonWithCheckbox
+              text={
+                !learnedNodes[node.data().id] &&
+                data &&
+                data.correct_threshold > 0
+                  ? "Test me!"
+                  : "Set Known"
+              }
+              Icon={CheckCircleIcon}
+              checked={learnedNodes[node.data().id]}
+              // onCheck={}
+              onCheck={
+                !learnedNodes[node.data().id] &&
+                data &&
+                data.correct_threshold > 0
+                  ? () => {
+                      hideTippy();
+                      setQuestionModalShown(true);
+                    }
+                  : () => onLearnedClick(node, userId, sessionId)
+              }
+              colour="green"
+              loading={isPending} // Truthy value of data
+            />
+          </div>
+          <div>
+            <IconToggleButtonWithCheckbox
+              text={"Set Goal"}
+              Icon={FlagIcon}
+              checked={goalNodes[node.data().id]}
+              onCheck={() => onSetGoalClick(node, userId, sessionId)}
+              colour={"blue"}
+            />
+          </div>
+        </div>
+        <ol className="tooltip-link">
+          {urls.map((url) => (
+            <ConceptLinkPreview
+              key={url}
+              node={node}
+              url={url}
+              userId={userId}
+              backendUrl={backendUrl}
+              mapUUID={mapUUID}
+              sessionId={sessionId}
+              userVotes={userVotes}
+              allVotes={allVotes}
+              onVote={onVote}
+            />
+          ))}
+        </ol>
+        {allowSuggestions && (
+          <div>
+            <MakeSuggestionButton
+              allowSuggestions={allowSuggestions}
+              buttonPressFunction={buttonPressFunction}
+              userEmail={userEmail}
+              buttonName={"content-suggestion"}
+              text={"Suggest Content!"}
+            />
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -312,4 +382,34 @@ const fetchTotalVotes = async ({ backendUrl, mapUUID }) => {
   );
   if (!response.ok) throw new Error(response.status.toString());
   return handleFetchResponses(response);
+};
+
+const fetchQuestionSet = async ({ backendUrl, mapUUID, userId, conceptId }) => {
+  console.log("FETCHING QUESTIONS");
+  const response = await fetch(
+    `${backendUrl}/api/v0/questions?` +
+      new URLSearchParams({
+        map_uuid: mapUUID,
+        user_id: userId,
+        concept_id: conceptId,
+      }),
+    {
+      method: "GET",
+      headers: jsonHeaders,
+    }
+  );
+  let responseJson = await handleFetchResponses(response);
+  // {
+  //  correct_threshold: 3,
+  //  question_set: [{question_text: "...",
+  //                  answer_text: ["...", "..."],
+  //                  feedback_text: "..."}]
+  // }
+  responseJson.question_set.forEach((question) => {
+    question.correct_answer = question.answer_text[0];
+    question.answers_order_randomised = question.answer_text.sort(
+      (a, b) => 0.5 - Math.random()
+    );
+  });
+  return responseJson;
 };
