@@ -1,13 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import { ConceptTippy } from "./conceptInfo";
 import { getDataFromStorage, saveVote } from "../lib/tooltips";
-import { setupMap } from "../lib/main";
 import {
   setGoalNodesGlobal,
   setLearnedNodesGlobal,
   goalNodes,
   learnedNodes,
 } from "../lib/learningAndPlanning";
+import {initCy, panByAndZoom} from "../lib/graph";
+import {setupCtoCentre} from "../lib/buttons";
 
 export default function Map({
   backendUrl,
@@ -64,21 +65,24 @@ export default function Map({
         setGoalsState(goalNodes);
         setLearnedNodesGlobal(initLearnedNodes);
         setLearnedState(learnedNodes);
-        console.log(`initial goals: ${JSON.stringify(goalNodes)}`);
-        console.log(`initial Learned: ${JSON.stringify(learnedNodes)}`);
 
-        await setupMap(
+        const styleResponse = await fetch(`/knowledge_graph.cycss`);
+        const styleText = await styleResponse.text();
+        await initCy(
+          mapJson,
+          styleText,
           backendUrl,
           userId,
-          allowSuggestions,
-          editMap,
-          mapJson,
           mapUUID,
+          editMap,
           sessionId,
           showConceptTippy,
           hideConceptTippy,
           onSetGoalClick
         );
+        // TODO: if goal is set, zoom there instead of to the bottom?
+        panByAndZoom(-cy.width() / 6, (-cy.height() * 4) / 9, 1.5, function () {});
+        setupCtoCentre();
       }
     })();
   }, [sessionId, userId]);
