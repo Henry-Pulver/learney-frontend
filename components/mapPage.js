@@ -150,7 +150,6 @@ export default function MapPage({
       />
 
       <Profile buttonPressFunction={buttonPressFunction} userdata={user} />
-
       <div
         className={`${buttonStyles.topButtonToolbar} ${mainStyles.disableTouchActions}`}
       >
