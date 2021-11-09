@@ -85,18 +85,6 @@
   box-shadow: rgba(0, 0, 0, 0.2) 0 1px 3px;
 }
 
-.link-preview {
-  border-radius: 4px;
-  height: 100px;
-  max-width: 600px;
-  overflow: hidden;
-  display: flex;
-  text-align: left;
-  margin-right: 2px;
-  margin-left: 2px;
-  margin-bottom: 2px;
-}
-
 .link-preview-text-container {
   max-height: 100%;
   margin-top: 0;
