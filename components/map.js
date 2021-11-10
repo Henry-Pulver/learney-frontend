@@ -7,8 +7,8 @@ import {
   goalNodes,
   learnedNodes,
 } from "../lib/learningAndPlanning";
-import {initCy, panByAndZoom} from "../lib/graph";
-import {setupCtoCentre} from "../lib/buttons";
+import { initCy, panByAndZoom } from "../lib/graph";
+import { setupCtoCentre } from "../lib/buttons";
 
 export default function Map({
   backendUrl,
@@ -85,7 +85,12 @@ export default function Map({
           handleEditParentNodeData
         );
         // TODO: if goal is set, zoom there instead of to the bottom?
-        panByAndZoom(-cy.width() / 6, (-cy.height() * 4) / 9, 1.5, function () {});
+        panByAndZoom(
+          -cy.width() / 6,
+          (-cy.height() * 4) / 9,
+          1.5,
+          function () {}
+        );
         setupCtoCentre();
       }
     })();
@@ -93,7 +98,7 @@ export default function Map({
 
   return (
     <div>
-      <div id="cy" ref={cytoscapeRef} />
+      <div id="cy" className="z-0" ref={cytoscapeRef} />
       <ConceptTippy
         visible={conceptTippyShown}
         node={nodeSelected}
