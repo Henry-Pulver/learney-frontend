@@ -18,7 +18,8 @@ import buttonStyles from "../styles/buttons.module.css";
 import Tippy from "@tippyjs/react";
 import React, { useEffect } from "react";
 import { classNames } from "../lib/reactUtils";
-import {PlusCircleIcon} from "@heroicons/react/outline";
+import { PlusCircleIcon } from "@heroicons/react/outline";
+import { followCursor } from "tippy.js";
 
 export function IconToggleButtonWithCheckbox({
   checked,
@@ -72,7 +73,7 @@ export function FeedBackButton({ buttonPressFunction }) {
       }
     >
       <button
-        className={`${buttonStyles.button} ${buttonStyles.circle} ${buttonStyles.flashing}`}
+        className={`z-20 ${buttonStyles.button} ${buttonStyles.circle} ${buttonStyles.flashing}`}
         id="feedback-button"
         onClick={buttonPressFunction(
           () =>
@@ -300,52 +301,60 @@ export function ResetPanButton({ buttonPressFunction }) {
 
 export function AddEdgesButton({ editType, setEditType }) {
   return (
-    <div
-      className={
-        classNames(editType === "addEdges" ? "bg-blue-600" : "", "hover:bg-blue-500")
-      }
+    <Tippy
+      content="Add dependency"
+      followCursor={true}
+      plugins={[followCursor]}
+      delay={[500, 0]}
+      theme="light"
     >
-      <svg
+      <div
+        className={classNames(
+          editType === "addEdges" ? "bg-blue-600" : "",
+          "hover:bg-blue-500"
+        )}
         onClick={() => setEditType("addEdges")}
-        className={"scale-50"}
-        viewBox="0 0 347.341 347.341"
       >
-        <polygon points="347.341,107.783 347.339,0 239.559,0.002 282.843,43.285 0,326.128 21.213,347.341 304.056,64.498 " />
-      </svg>
-    </div>
+        <svg className={"scale-50"} viewBox="0 0 347.341 347.341">
+          <polygon points="347.341,107.783 347.339,0 239.559,0.002 282.843,43.285 0,326.128 21.213,347.341 304.056,64.498 " />
+        </svg>
+      </div>
+    </Tippy>
   );
 }
 
 export function AddNodeButton({ editType, setEditType }) {
   return (
-    <div
-      className={classNames(editType === "addNode" ? "bg-blue-600" : "", "align-center hover:bg-blue-500")}
+    <Tippy
+      content="Add concept"
+      followCursor={true}
+      plugins={[followCursor]}
+      delay={[500, 0]}
+      theme="light"
     >
-      <PlusCircleIcon className="text-black w-10 h-10" onClick={() => setEditType("addNode")}/>
-      {/*<svg onClick={() => setEditType("addNode")} viewBox="0 0 60 60">*/}
-      {/*  <circle*/}
-      {/*    cx="30"*/}
-      {/*    cy="30"*/}
-      {/*    fill="none"*/}
-      {/*    r="15"*/}
-      {/*    stroke="black"*/}
-      {/*    strokeWidth="1.5"*/}
-      {/*  />*/}
-      {/*</svg>*/}
-    </div>
+      <div
+        className={classNames(
+          editType === "addNode" ? "bg-blue-600" : "",
+          "grid content-center justify-center hover:bg-blue-500"
+        )}
+        onClick={() => setEditType("addNode")}
+      >
+        <PlusCircleIcon className="text-black w-10 h-10" />
+      </div>
+    </Tippy>
   );
 }
 
 export function CursorButton({ editType, setEditType }) {
   return (
     <div
-      className={classNames(editType === "cursor" ? "bg-blue-600" : "", "hover:bg-blue-500")}
+      className={classNames(
+        editType === "cursor" ? "bg-blue-600" : "",
+        "hover:bg-blue-500"
+      )}
+      onClick={() => setEditType("cursor")}
     >
-      <svg
-        onClick={() => setEditType("cursor")}
-        className={"scale-90"}
-        viewBox="0 0 28 28"
-      >
+      <svg className={"scale-90"} viewBox="0 0 28 28">
         <rect
           x="12.5"
           y="13.6"
@@ -361,23 +370,31 @@ export function CursorButton({ editType, setEditType }) {
 
 export function DeleteElementButton({ editType, setEditType }) {
   return (
-    <div
-      className={classNames(editType === "delete" ? "bg-blue-600" : "", "hover:bg-blue-500")}
+    <Tippy
+      content="Delete"
+      followCursor={true}
+      plugins={[followCursor]}
+      delay={[500, 0]}
+      theme="light"
     >
-      <svg
+      <div
+        className={classNames(
+          editType === "delete" ? "bg-red-600" : "",
+          "hover:bg-red-500"
+        )}
         onClick={() => setEditType("delete")}
-        className={"scale-40"}
-        viewBox="0 0 460.775 460.775"
       >
-        <path
-          d="M285.08,230.397L456.218,59.27c6.076-6.077,6.076-15.911,0-21.986L423.511,4.565c-2.913-2.911-6.866-4.55-10.992-4.55
+        <svg className={"scale-40"} viewBox="0 0 460.775 460.775">
+          <path
+            d="M285.08,230.397L456.218,59.27c6.076-6.077,6.076-15.911,0-21.986L423.511,4.565c-2.913-2.911-6.866-4.55-10.992-4.55
 	c-4.127,0-8.08,1.639-10.993,4.55l-171.138,171.14L59.25,4.565c-2.913-2.911-6.866-4.55-10.993-4.55
 	c-4.126,0-8.08,1.639-10.992,4.55L4.558,37.284c-6.077,6.075-6.077,15.909,0,21.986l171.138,171.128L4.575,401.505
 	c-6.074,6.077-6.074,15.911,0,21.986l32.709,32.719c2.911,2.911,6.865,4.55,10.992,4.55c4.127,0,8.08-1.639,10.994-4.55
 	l171.117-171.12l171.118,171.12c2.913,2.911,6.866,4.55,10.993,4.55c4.128,0,8.081-1.639,10.992-4.55l32.709-32.719
 	c6.074-6.075,6.074-15.909,0-21.986L285.08,230.397z"
-        />
-      </svg>
-    </div>
+          />
+        </svg>
+      </div>
+    </Tippy>
   );
 }
