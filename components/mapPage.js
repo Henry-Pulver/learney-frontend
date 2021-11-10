@@ -37,6 +37,7 @@ import {
 } from "../lib/learningAndPlanning";
 // import SearchBar, {getSearchOptions} from "./search";
 
+let eh; // Edge handles variable
 
 export default function MapPage({
   backendUrl,
@@ -137,10 +138,12 @@ export default function MapPage({
   const addNode = function (e) {
     // [1.0] Create the next node ID
     let nextNodeID = -Infinity;
-    window.cy.nodes('[nodetype = "concept"]') // Get concept nodes only
+    window.cy
+      .nodes('[nodetype = "concept"]') // Get concept nodes only
       .forEach((node) => {
         // Find the largest concept ID number
-        if (Number(node.data().id) > nextNodeID) nextNodeID = Number(node.data().id);
+        if (Number(node.data().id) > nextNodeID)
+          nextNodeID = Number(node.data().id);
       });
     // The next node ID is the largest previous node ID number + 1
     nextNodeID += 1;
@@ -183,24 +186,27 @@ export default function MapPage({
     // [4.0] Update UI
     setEditNodeData(newNode.data);
     setEditType("cursor");
-    setShowEditNodeData(true);
+    setShowEditData("concept");
   };
   const removeElement = function (e) {
-    if (e.target.data().id !== undefined) e.target.remove();
+    if (e.target.data().id !== undefined) {
+      e.target.remove();
+      window.cy.nodes('[nodetype = "field"]').forEach((node) => {
+        if (node.isChildless()) node.remove();
+      });
+    }
   };
   const handleEditNodeData = function (e) {
     setEditNodeData(e.target.data());
-    setShowEditNodeData(true);
+    setShowEditData("concept");
   };
-
-  let eh = null;  // Edge handles variable
 
   useEffect(() => {
     // [1.0] Ensure cytoscape map is initialized
     if (window.cy.edgehandles) {
       // [2.0] Remove old event listeners
       window.cy.removeListener("tap");
-      if (eh !== null) eh.disableDrawMode();
+      if (eh !== undefined) eh.disableDrawMode();
 
       // [3.0] Add new event listeners
       switch (editType) {
@@ -240,7 +246,7 @@ export default function MapPage({
     }
   }, [editType]);
 
-  const [showEditNodeData, setShowEditNodeData] = React.useState(false);
+  const [showEditData, setShowEditData] = React.useState(null);
   const [editNodeData, setEditNodeData] = React.useState({
     id: Infinity,
     name: "",
@@ -271,7 +277,7 @@ export default function MapPage({
           group: "nodes",
           data: {
             colour: "#610061",
-            id: `${newNodeData.parent}`.replace(/ /g, "_"),
+            id: newNodeData.parent.replace(/ /g, "_"),
             name: newNodeData.parent,
             nodetype: "field",
           },
@@ -291,11 +297,7 @@ export default function MapPage({
 
       // [3.3] Remove empty parent nodes
       window.cy.nodes('[nodetype = "field"]').forEach((node) => {
-        if (
-          // node.data().name === "" &&
-          node.isChildless()
-        )
-          node.remove();
+        if (node.isChildless()) node.remove();
       });
     }
 
@@ -304,11 +306,9 @@ export default function MapPage({
 
     // [5.0] Save the results
     saveMap(backendUrl, mapUUID);
-    setShowEditNodeData(false);
+    setShowEditData(null);
   };
 
-  const [showEditParentNodeData, setShowEditParentNodeData] =
-    React.useState(false);
   const [editParentNodeData, setEditParentNodeData] = React.useState({
     colour: "",
     id: "",
@@ -317,12 +317,12 @@ export default function MapPage({
   });
   const handleEditParentNodeData = function (e) {
     setEditParentNodeData(e.target.data());
-    setShowEditParentNodeData(true);
+    setShowEditData("topic");
   };
   const saveEditParentNodeData = function () {
     const newParentNodeData = { ...editParentNodeData };
     window.cy.getElementById(newParentNodeData.id).data(newParentNodeData);
-    setShowEditParentNodeData(false);
+    setShowEditData(null);
   };
 
   return (
@@ -416,18 +416,35 @@ export default function MapPage({
         <FeedBackButton buttonPressFunction={buttonPressFunction} />
         {!editMap && <SlackButton buttonPressFunction={buttonPressFunction} />}
       </div>
+
       {editMap && (
-        <div className={`bg-white cursor-pointer ${buttonStyles.editTools}`}>
+        <div
+          className={`bg-white cursor-pointer ${buttonStyles.editTools} z-20`}
+        >
           <CursorButton editType={editType} setEditType={setEditType} />
           <AddNodeButton editType={editType} setEditType={setEditType} />
           <AddEdgesButton editType={editType} setEditType={setEditType} />
           <DeleteElementButton editType={editType} setEditType={setEditType} />
         </div>
       )}
-      {showEditNodeData && (
+      {editMap && ["addNode", "addEdges", "delete"].includes(editType) && (
+        <div
+          className={
+            "cursor-default absolute bottom-5 text-center w-full text-white z-10"
+          }
+        >
+          {editType === "addEdges"
+            ? "Click and hold to add a dependency"
+            : editType === "addNode"
+            ? "Click to add a concept"
+            : "Delete a concept, subject or dependency by clicking on it"}
+        </div>
+      )}
+      {showEditData === "concept" && (
         <div className={`${buttonStyles.editNodeData}`}>
           <div>Concept Name</div>
           <input
+            className="text-black text-xl"
             type="text"
             value={editNodeData.name}
             onChange={(e) =>
@@ -436,6 +453,7 @@ export default function MapPage({
           />
           <div>Description</div>
           <textarea
+            className="text-black"
             value={editNodeData.description}
             onChange={(e) =>
               setEditNodeData({ ...editNodeData, description: e.target.value })
@@ -443,6 +461,7 @@ export default function MapPage({
           />
           <div>Topic Group</div>
           <input
+            className="text-black"
             type="text"
             value={editNodeData.parent}
             onChange={(e) =>
@@ -451,6 +470,7 @@ export default function MapPage({
           />
           <div>URLs (separated by a comma)</div>
           <input
+            className="text-black"
             type="text"
             value={editNodeData.urls}
             onChange={(e) =>
@@ -459,6 +479,7 @@ export default function MapPage({
           />
           <div>Relative Size</div>
           <input
+            className="text-black"
             type="number"
             value={editNodeData.relative_importance}
             onChange={(e) =>
@@ -468,22 +489,34 @@ export default function MapPage({
               })
             }
           />
-          <span onClick={() => saveEditNodeData()}>Save</span>
-          <span onClick={() => setShowEditNodeData(false)}>Cancel</span>
           <span
+            className="text-white bg-blue-600 hover:bg-blue-500"
+            onClick={() => saveEditNodeData()}
+          >
+            Save
+          </span>
+          <span
+            className="text-white bg-blue-600 hover:bg-blue-500"
+            onClick={() => setShowEditData(null)}
+          >
+            Cancel
+          </span>
+          <span
+            className="text-white bg-red-600 hover:bg-red-500 border border-transparent text-sm font-medium rounded-lg inline-flex items-center px-4 py-2"
             onClick={() => {
               window.cy.getElementById(editNodeData.id).remove();
-              setShowEditNodeData(false);
+              setShowEditData(null);
             }}
           >
             Delete
           </span>
         </div>
       )}
-      {showEditParentNodeData && (
+      {showEditData === "topic" && (
         <div className={`${buttonStyles.editNodeData}`}>
-          <div>Topic Group</div>
+          <div className="font-bold">Topic Name</div>
           <input
+            className="text-black text-xl"
             type="text"
             value={editParentNodeData.name}
             onChange={(e) =>
@@ -493,23 +526,34 @@ export default function MapPage({
               })
             }
           />
-          <div>Colour</div>
-          <input
-            type="text"
-            value={editParentNodeData.colour}
-            onChange={(e) =>
-              setEditParentNodeData({
-                ...editParentNodeData,
-                colour: e.target.value,
-              })
-            }
-          />
-          <span onClick={() => saveEditParentNodeData()}>Save</span>
-          <span onClick={() => setShowEditParentNodeData(false)}>Cancel</span>
+          {/*<div>Colour</div>*/}
+          {/*<input*/}
+          {/*  type="text"*/}
+          {/*  value={editParentNodeData.colour}*/}
+          {/*  onChange={(e) =>*/}
+          {/*    setEditParentNodeData({*/}
+          {/*      ...editParentNodeData,*/}
+          {/*      colour: e.target.value,*/}
+          {/*    })*/}
+          {/*  }*/}
+          {/*/>*/}
           <span
+            className="text-white bg-blue-600 hover:bg-blue-500 border border-transparent text-sm font-medium rounded-lg inline-flex items-center px-4 py-2"
+            onClick={() => saveEditParentNodeData()}
+          >
+            Save
+          </span>
+          <span
+            className="text-white bg-blue-600 hover:bg-blue-500 border border-transparent text-sm font-medium rounded-lg inline-flex items-center px-4 py-2"
+            onClick={() => setShowEditData(null)}
+          >
+            Cancel
+          </span>
+          <span
+            className="text-white bg-red-600 hover:bg-red-500 border border-transparent text-sm font-medium rounded-lg inline-flex items-center px-4 py-2"
             onClick={() => {
               window.cy.getElementById(editParentNodeData.id).remove();
-              setShowEditParentNodeData(false);
+              setShowEditData(null);
             }}
           >
             Delete
