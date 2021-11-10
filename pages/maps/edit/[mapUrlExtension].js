@@ -28,13 +28,24 @@ export const getServerSideProps = withPageAuthRequired({
         headers: cacheHeaders,
       }
     );
+    const session = getSession(ctx.req, ctx.res);
     const mapInfoJson = await mapResponse.json();
-    let props = {
-      mapUrlExtension: ctx.params.mapUrlExtension,
-      mapJson: mapInfoJson.map_json,
-      mapUUID: mapInfoJson.map_uuid,
-      backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
+    // TODO: Currently we redirect, change to showing custom 'blocked' page & link to map
+    if (
+      session.user.email.toLowerCase() !==
+      mapInfoJson.author_user_id.toLowerCase()
+    ) {
+      return {
+        redirect: { destination: `/maps/${ctx.params.mapUrlExtension}` },
+      };
+    }
+    return {
+      props: {
+        mapUrlExtension: ctx.params.mapUrlExtension,
+        mapJson: mapInfoJson.map_json,
+        mapUUID: mapInfoJson.unique_id,
+        backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
+      },
     };
-    return { props: props };
   },
 });
