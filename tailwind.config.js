@@ -5,8 +5,9 @@ module.exports = {
   theme: {
     extend: {
       scale: {
-        "40": ".4"
-      }},
+        40: ".4",
+      },
+    },
   },
   variants: {
     extend: {
