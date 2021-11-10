@@ -35,7 +35,7 @@ export async function getServerSideProps({ params }) {
     props: {
       mapUrlExtension: params.mapUrlExtension,
       mapJson: mapInfoJson.map_json,
-      mapUUID: mapInfoJson.map_uuid,
+      mapUUID: mapInfoJson.unique_id,
       allowSuggestions: mapInfoJson.allow_suggestions,
       backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
     },
