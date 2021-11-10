@@ -5,6 +5,7 @@ core {
 node {
   color: white;
   content: data(name);
+  opacity: 1;
   text-wrap: wrap;
 }
 
@@ -92,4 +93,12 @@ edge.not-path {
 edge.path {
   opacity: 0.666;
   z-index: 0;
+}
+
+.eh-preview {
+  opacity: 0;
+}
+
+.eh-ghost {
+  label: "";
 }

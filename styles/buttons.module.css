@@ -128,3 +128,62 @@
   padding: 0 20px;
   font-size: 1.5em;
 }
+
+.editNodeData {
+  background: white;
+  border-radius: 10px;
+  max-height: calc(100vh - 4px - 38px);
+  overflow-y: auto;
+  padding: 12px 0 24px 0;
+  position: absolute;
+  right: 4px;
+  top: 38px;
+  width: 400px;
+}
+
+.editNodeData div {
+  color: rgb(29, 30, 32);
+  font-size: 16px;
+  font-weight: 500;
+  margin: 4px 21px;
+}
+
+.editNodeData input,
+.editNodeData textarea {
+  border-radius: 4px;
+  margin: 2px 20px 12px 20px;
+  width: calc(100% - 40px);
+}
+
+.editNodeData textarea {
+  height: calc(37px * 3);
+  resize: none;
+}
+
+.editNodeData span {
+  border: 1px solid black;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block;
+  margin: 10px 0 0 20px;
+  padding: 8px;
+}
+
+.editTools {
+  border-radius: 4px;
+  bottom: 4px;
+  left: 4px;
+  position: absolute;
+}
+
+.editTools div {
+  border-radius: 4px;
+  height: 50px;
+  margin: 5px;
+  transition: background-color 0.2s;
+  width: 50px;
+}
+
+.editTools div:hover {
+  /*background: rgb(50, 78, 235);*/
+}
