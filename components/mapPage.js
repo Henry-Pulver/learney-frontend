@@ -126,7 +126,7 @@ export default function MapPage({
         }
         setUserId(newUserId);
 
-        setupTracking();
+        // setupTracking();
 
         if (isAnonymousUser(newUserId) && !isMobile()) showIntroTooltip();
         if (isAnonymousUser(newUserId)) initialiseSignInTooltip();
