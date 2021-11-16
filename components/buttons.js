@@ -2,13 +2,12 @@ import {
   initialiseGraphState,
   resetProgress,
 } from "../lib/learningAndPlanning";
-import { handleFetchResponses, LightenDarkenColorByFactor } from "../lib/utils";
+import { handleFetchResponses } from "../lib/utils";
 import { goToFormFunction } from "../lib/suggestions";
 import { jsonHeaders } from "../lib/headers";
 import {
   fitCytoTo,
   dagreLayout,
-  darkenFactor,
   unhighlightNodes,
   dagreOnSubjects,
   originalMapJSON,
@@ -166,18 +165,11 @@ export function SaveMapButton({
 
 export async function saveMap(backendUrl, mapUUID) {
   let mapJson = { nodes: [], edges: [] };
-  cy.nodes().forEach(function (node) {
-    let nodeData = { data: node.data(), position: node.position() };
-    if (nodeData.data.colour !== undefined) {
-      nodeData.data.colour = LightenDarkenColorByFactor(
-        nodeData.data.colour,
-        1 / darkenFactor
-      );
-    }
-    mapJson.nodes.push(nodeData);
-  });
   cy.edges().forEach(function (edge) {
     mapJson.edges.push({ data: edge.data() });
+  });
+  cy.nodes().forEach(function (node) {
+    mapJson.nodes.push({ data: node.data(), position: node.position() });
   });
   const response = await fetch(`${backendUrl}/api/v0/knowledge_maps`, {
     method: "PUT",
@@ -188,14 +180,6 @@ export async function saveMap(backendUrl, mapUUID) {
     }),
   });
   handleFetchResponses(response);
-  cy.nodes().forEach(function (node) {
-    if (node.data().colour !== undefined) {
-      node.data().colour = LightenDarkenColorByFactor(
-        node.data().colour,
-        darkenFactor
-      );
-    }
-  });
 }
 
 export function ResetLayoutButton({ buttonPressFunction, userId, editMap }) {
