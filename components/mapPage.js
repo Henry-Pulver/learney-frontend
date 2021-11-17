@@ -1,3 +1,4 @@
+import ReactGA from "react-ga";
 import Profile from "./profile";
 import buttonStyles from "../styles/buttons.module.css";
 import mainStyles from "../styles/main.module.css";
@@ -50,6 +51,11 @@ export default function MapPage({
   // SEARCH OPTIONS
   // const [searchOptions, setSearchOptions] = React.useState([]);
   // const updateSearchOptions = (elements) => setSearchOptions(getSearchOptions(elements));
+  if (backendUrl === "https://api.learney.me") {
+    ReactGA.initialize("UA-197170313-2");
+  } else {
+    ReactGA.initialize("UA-197170313-1", { debug: true });
+  }
 
   const { user, isLoading } = useUser();
   const [userId, setUserId] = React.useState(undefined);
@@ -126,7 +132,8 @@ export default function MapPage({
         }
         setUserId(newUserId);
 
-        setupTracking();
+        // setupTracking();
+        ReactGA.pageview(window.location.pathname);
 
         if (isAnonymousUser(newUserId) && !isMobile()) showIntroTooltip();
         if (isAnonymousUser(newUserId)) initialiseSignInTooltip();
