@@ -1,5 +1,4 @@
 import ReactGA from "react-ga";
-import Profile from "./profile";
 import buttonStyles from "../styles/buttons.module.css";
 import mainStyles from "../styles/main.module.css";
 import {
@@ -8,7 +7,7 @@ import {
   CursorButton,
   DeleteElementButton,
   FeedBackButton,
-  MakeSuggestionButton,
+  MakeSuggestionIconButton,
   ResetLayoutButton,
   ResetPanButton,
   ResetProgressButton,
@@ -28,7 +27,7 @@ import {
   isAnonymousUser,
   logPageView,
 } from "../lib/utils";
-import IntroButtonInclTooltip from "../components/intro";
+import IntroButton from "../components/intro";
 import { isMobile } from "../lib/graph";
 import MapHeader from "./mapHeader";
 import Map from "./map";
@@ -39,6 +38,8 @@ import {
   setGoalClick,
   initialiseSignInTooltip,
 } from "../lib/learningAndPlanning";
+import Navbar from "./navbar";
+import { classNames } from "../lib/reactUtils";
 // import SearchBar, {getSearchOptions} from "./search";
 
 let eh; // Edge handles variable
@@ -72,14 +73,6 @@ export default function MapPage({
   const [userId, setUserId] = React.useState(undefined);
   const [userEmail, setUserEmail] = React.useState("");
   const [sessionId, setSessionId] = React.useState(null);
-
-  const [introShown, setIntroShown] = React.useState(false);
-  const showIntroTooltip = () => {
-    setIntroShown(true);
-  };
-  const hideIntroTooltip = () => {
-    setIntroShown(false);
-  };
 
   const [goals, setNewGoalsState] = React.useState({});
   const setGoalsState = function (goalState) {
@@ -147,7 +140,6 @@ export default function MapPage({
         ReactGA.pageview(window.location.pathname);
         initialiseMixpanelTracking(newUserId);
 
-        if (isAnonymousUser(newUserId) && !isMobile()) showIntroTooltip();
         if (isAnonymousUser(newUserId)) initialiseSignInTooltip();
       }
     })();
@@ -364,7 +356,28 @@ export default function MapPage({
 
   return (
     <div>
-      <MapHeader mapUrlExtension={mapUrlExtension} />
+      <MapHeader mapUrlExtension={mapUrlExtension} editMap={editMap} />
+      {!isLoading && (
+        <Navbar
+          user={user}
+          leftSideButtons={[
+            <IntroButton
+              openAtStart={user === undefined}
+              buttonPressFunction={buttonPressFunction}
+            />,
+            <MakeSuggestionIconButton
+              buttonPressFunction={buttonPressFunction}
+              userEmail={user !== undefined ? user.email : ""}
+            />,
+          ]}
+          rightSideButtons={[
+            <FeedBackButton buttonPressFunction={buttonPressFunction} />,
+            <SlackButton buttonPressFunction={buttonPressFunction} />,
+          ]}
+          buttonPressFunction={buttonPressFunction}
+        />
+      )}
+
       <Map
         backendUrl={backendUrl}
         userId={userId}
@@ -385,85 +398,63 @@ export default function MapPage({
         handleEditParentNodeData={handleEditParentNodeData}
       />
 
-      <Profile buttonPressFunction={buttonPressFunction} userdata={user} />
       <div
-        className={`${buttonStyles.topButtonToolbar} ${mainStyles.disableTouchActions}`}
+        className={`absolute top-0 flex mt-1 justify-end disableTouchActions`}
       >
-        <div className={buttonStyles.introButtonContainer}>
-          {!editMap && (
-            <IntroButtonInclTooltip
-              introShown={introShown}
-              hideIntroTooltip={hideIntroTooltip}
-              showIntroTooltip={showIntroTooltip}
+        <div className={buttonStyles.buttonToolbarDiv}>
+          {editMap && (
+            <SaveMapButton
               buttonPressFunction={buttonPressFunction}
+              backendUrl={backendUrl}
+              mapUUID={mapUUID}
             />
           )}
-          <MakeSuggestionButton
-            allowSuggestions={allowSuggestions}
-            buttonPressFunction={buttonPressFunction}
-            userEmail={userEmail}
-            buttonName="make-suggestion"
-            text="Make Suggestion"
-          />
+          {editMap && (
+            <ResetLayoutButton
+              buttonPressFunction={buttonPressFunction}
+              userId={userId}
+            />
+          )}
+          {editMap && (
+            <RunDagreButton buttonPressFunction={buttonPressFunction} />
+          )}
+          {editMap && (
+            <ResetProgressButton
+              buttonPressFunction={buttonPressFunction}
+              backendUrl={backendUrl}
+              userId={userId}
+              mapUUID={mapUUID}
+              sessionId={sessionId}
+              setGoalsState={setNewGoalsState}
+              setLearnedState={setNewLearnedState}
+            />
+          )}
         </div>
-        <label id="concept-search-bar-label">
-          {/*<SearchBar searchOptions={ searchOptions }/>*/}
-          <select
-            id={"concept-search-bar"}
-            className="pt-0"
-            name="concept"
-            style={{ width: "100%" }}
-            tabIndex="0"
-          />
-        </label>
-        <div className={buttonStyles.buttonToolbarDiv}>
-          <SaveMapButton
-            userId={userId}
-            editMapEnabled={editMap}
-            buttonPressFunction={buttonPressFunction}
-            backendUrl={backendUrl}
-            mapUUID={mapUUID}
-          />
-          <ResetLayoutButton
-            buttonPressFunction={buttonPressFunction}
-            userId={userId}
-            editMap={editMap}
-          />
-          <RunDagreButton
-            buttonPressFunction={buttonPressFunction}
-            editMapEnabled={editMap}
-          />
-          <ResetProgressButton
-            editMap={editMap}
-            buttonPressFunction={buttonPressFunction}
-            backendUrl={backendUrl}
-            userId={userId}
-            mapUUID={mapUUID}
-            sessionId={sessionId}
-            setGoalsState={setNewGoalsState}
-            setLearnedState={setNewLearnedState}
-          />
+      </div>
+
+      <div
+        className={classNames(
+          `flex flex-row items-end absolute bottom-0 left-0 m-4 disableTouchActions`
+        )}
+      >
+        {editMap && (
+          <div
+            className={`block bg-white cursor-pointer rounded m-1 ${buttonStyles.editTools} z-20`}
+          >
+            <CursorButton editType={editType} setEditType={setEditType} />
+            <AddNodeButton editType={editType} setEditType={setEditType} />
+            <AddEdgesButton editType={editType} setEditType={setEditType} />
+            <DeleteElementButton
+              editType={editType}
+              setEditType={setEditType}
+            />
+          </div>
+        )}
+        <div className="block">
           <ResetPanButton buttonPressFunction={buttonPressFunction} />
         </div>
       </div>
 
-      <div
-        className={`${buttonStyles.feedbackButtons} ${mainStyles.disableTouchActions}`}
-      >
-        <FeedBackButton buttonPressFunction={buttonPressFunction} />
-        {!editMap && <SlackButton buttonPressFunction={buttonPressFunction} />}
-      </div>
-
-      {editMap && (
-        <div
-          className={`bg-white cursor-pointer ${buttonStyles.editTools} z-20`}
-        >
-          <CursorButton editType={editType} setEditType={setEditType} />
-          <AddNodeButton editType={editType} setEditType={setEditType} />
-          <AddEdgesButton editType={editType} setEditType={setEditType} />
-          <DeleteElementButton editType={editType} setEditType={setEditType} />
-        </div>
-      )}
       {editMap && ["addNode", "addEdges", "delete"].includes(editType) && (
         <div
           className={
