@@ -1,104 +1,4 @@
-.tooltip-contents {
-  background-color: #d9d9d9;
-  width: 70vw;
-}
-
-.slider-container {
-  border-top: 1px solid #555555;
-  padding: 5px 10px;
-}
-
-.switch-container {
-  display: flex;
-  margin-bottom: 3px;
-  margin-right: 5px;
-}
-
-/* The switch - the box around the slider */
-@media only screen and (max-device-width: 768px) {
-  .switch {
-    position: relative;
-    width: 45px;
-    height: 26px;
-  }
-}
-@media only screen and (min-device-width: 769px) {
-  .switch {
-    position: relative;
-    width: 30px;
-    height: 17px;
-  }
-}
-
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  background-color: white;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
-.tooltip-heading {
-  color: black;
-  font-size: 22pt;
-  text-align: center;
-  margin: 0;
-}
-
-.tooltip-description {
-  color: black;
-  text-align: left;
-  max-width: 95%;
-  margin: 0 auto 10px auto;
-}
-
-.link-preview-list-element {
-  background-color: #f4f4f4;
-  color: black;
-  position: relative;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 3px;
-  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 3px;
-  box-shadow: rgba(0, 0, 0, 0.2) 0 1px 3px;
-}
-
-.link-preview-text-container {
-  max-height: 100%;
-  margin-top: 0;
-  margin-bottom: 0;
-  margin-left: 5px;
-  text-decoration: none;
-  overflow: auto;
-}
-
 .link-preview-title {
-  margin-top: 2px;
-  margin-bottom: 4px;
-  overflow: hidden;
-  text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
@@ -129,12 +29,6 @@
 
 /*MOBILE*/
 @media only screen and (max-device-width: 768px) {
-  .tooltip-description {
-    font-size: 1rem;
-  }
-  .slider-container {
-    justify-content: space-around;
-  }
   .switch-text {
     font-size: 16px;
   }
@@ -153,9 +47,6 @@
 @media only screen and (min-device-width: 769px) {
   .tooltip-contents {
     max-width: 600px;
-  }
-  .tooltip-description {
-    font-size: 1rem;
   }
   .switch-text {
     font-size: 0.8em;

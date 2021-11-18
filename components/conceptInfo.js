@@ -7,7 +7,7 @@ import { IconToggleButtonWithCheckbox, MakeSuggestionButton } from "./buttons";
 import { handleFetchResponses } from "../lib/utils";
 import { classNames } from "../lib/reactUtils";
 import { cacheHeaders } from "../lib/headers";
-import buttonStyles from "../styles/buttons.module.css";
+import { XIcon } from "@heroicons/react/outline";
 
 export function ConceptTippy({
   visible,
@@ -130,18 +130,26 @@ function ConceptInfo({
   }
 
   return (
-    <div className="tooltip-contents disableTouchActions">
-      <h4 className="tooltip-heading">{node.data().name}</h4>
-      <div className="tooltip-description">{node.data().description}</div>
-      <button
-        className={`close ${buttonStyles.button}`}
+    <div style={{ width: "70vw" }} className={`bg-white disableTouchActions`}>
+      <h4 className="text-black text-2xl m-0 text-center">
+        {node.data().name}
+      </h4>
+      <div
+        style={{ maxWidth: "95%" }}
+        className="text-left text-black mt-0 mx-auto mb-4"
+      >
+        {node.data().description}
+      </div>
+      <div
+        className="absolute m-1 sm:m-2 top-0 right-0"
         onClick={
           node ? buttonPressFunction(hideTippy, "close-concept") : () => {}
         }
       >
-        {"X"}
-      </button>
-      <div className="slider-container grid items-center grid-flow-col">
+        <span className="sr-only">Close</span>
+        <XIcon className="text-gray-400 w-6 h-6 hover:text-gray-500" />
+      </div>
+      <div className="justify-around border-t border-solid border-gray-600 px-2 py-4 grid items-center grid-flow-col">
         <div>
           <IconToggleButtonWithCheckbox
             checked={learnedNodes[node.data().id]}
@@ -161,18 +169,19 @@ function ConceptInfo({
           />
         </div>
       </div>
-      <ol className="tooltip-link">
+      <ol className="list-none pl-0 m-0">
         {linkPreviewOrder.map((index) => linkPreviews[index])}
       </ol>
       {allowSuggestions && (
         <div>
-          <MakeSuggestionButton
-            allowSuggestions={allowSuggestions}
-            buttonPressFunction={buttonPressFunction}
-            userEmail={userEmail}
-            buttonName={"content-suggestion"}
-            text={"Suggest Content!"}
-          />
+          {allowSuggestions && (
+            <MakeSuggestionButton
+              buttonPressFunction={buttonPressFunction}
+              userEmail={userEmail}
+              buttonName={"content-suggestion"}
+              text={"Suggest Content!"}
+            />
+          )}
         </div>
       )}
     </div>
@@ -199,7 +208,7 @@ function ConceptLinkPreview({
   });
 
   return (
-    <li className="link-preview-list-element">
+    <li className="text-black relative">
       <a
         href={url}
         style={{ paddingRight: "60px", height: "100px" }}
@@ -224,8 +233,8 @@ function ConceptLinkPreview({
             alt={data ? data.title : node.data().name}
           />
         </div>
-        <div className="link-preview-text-container">
-          <h4 className="link-preview-title">
+        <div className="max-h-full my-0 ml-1 no-underline overflow-auto">
+          <h4 className="py-2 overflow-hidden overflow-ellipsis text-xl">
             {data ? data.title : "Loading..."}
           </h4>
           <p className="link-preview-description">
@@ -244,15 +253,12 @@ function ConceptLinkPreview({
                 : "border-b-gray-500 hover:border-b-gray-400",
               "triangle up cursor-pointer border-t-transparent border-l-transparent border-r-transparent"
             )}
-            // true  ->  null
-            // null  ->  true
-            // false ->  null
             onClick={
               userVotes[url]
-                ? () => onVote(node, url, null)
+                ? () => onVote(node, url, null) // true  ->  null
                 : userVotes[url] === null
-                ? () => onVote(node, url, true)
-                : () => onVote(node, url, true)
+                ? () => onVote(node, url, true) // null  ->  true
+                : () => onVote(node, url, null) // false ->  null
             }
           />
         </div>
@@ -275,15 +281,12 @@ function ConceptLinkPreview({
                 : "border-t-gray-500 hover:border-t-gray-400",
               "triangle down cursor-pointer border-b-transparent border-l-transparent border-r-transparent"
             )}
-            // false ->  null
-            // null  ->  false
-            // true  ->  null
             onClick={
               userVotes[url] === false
-                ? () => onVote(node, url, null)
+                ? () => onVote(node, url, null) // false ->  null
                 : userVotes[url] === null || userVotes[url] === undefined
-                ? () => onVote(node, url, false)
-                : () => onVote(node, url, null)
+                ? () => onVote(node, url, false) // null  ->  false
+                : () => onVote(node, url, null) // true  ->  null
             }
           />
         </div>

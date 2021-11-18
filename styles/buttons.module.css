@@ -1,73 +1,5 @@
-.button {
-  background-color: #001fab;
-  color: #fff;
-  cursor: pointer;
-  border-radius: 0.25em;
-  font-family: helvetica neue, helvetica, arial, sans-serif;
-  outline: 0;
-}
-
-.button:hover {
-  background-color: #2341c9;
-}
-
 .buttonToolbarDiv {
   display: contents;
-}
-
-@keyframes glowing {
-  0% {
-    background-color: #2578fc;
-    box-shadow: 0 0 5px #2578fc;
-  }
-  50% {
-    background-color: #83adff;
-    box-shadow: 0 0 15px #83adff;
-  }
-  100% {
-    background-color: #2578fc;
-    box-shadow: 0 0 5px #2578fc;
-  }
-}
-.flashing {
-  animation: glowing 1300ms infinite;
-}
-
-.topButtonToolbar {
-  position: absolute;
-  top: 0;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 2px;
-}
-
-.introButtonContainer {
-  position: fixed;
-  left: 0;
-  top: 0;
-}
-
-/*MOBILE*/
-@media only screen and (max-device-width: 767px) {
-  .introButtonContainer {
-    display: none;
-  }
-  .button {
-    font-size: 1em;
-    margin: 0 5px;
-  }
-}
-
-.feedbackButtons {
-  right: 0;
-  bottom: 0;
-  position: absolute;
-  display: grid;
-  margin: 1em;
-}
-
-.feedback-tooltip-text {
-  max-width: 200px;
 }
 
 .suggestionButton:hover {
@@ -78,55 +10,12 @@
   background-image: linear-gradient(40deg, #ff0080, #008ef2);
   font-size: 1em;
   font-weight: bold;
+  color: white;
   margin: 0.5em 1em;
   padding: 0.5em 2em;
   border-radius: 0.5em;
   border-width: 0;
   transition: all 0.2s ease-in-out;
-}
-
-.circle {
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  border-radius: 50%;
-  border: 2px solid white;
-  display: grid;
-  align-content: center;
-  justify-content: center;
-  justify-items: center;
-  align-items: center;
-}
-
-/*MOBILE*/
-@media only screen and (max-device-width: 768px) {
-  .circle {
-    width: 3em;
-    height: 3em;
-  }
-  .topButtonToolbar {
-    right: 0;
-    width: 100%;
-  }
-}
-
-/*DESKTOP*/
-@media only screen and (min-device-width: 769px) {
-  .circle {
-    width: 4em;
-    height: 4em;
-  }
-  .topButtonToolbar {
-    right: 60px;
-    width: 60%;
-  }
-  .button {
-    margin: 2px 5px 2px 0;
-  }
-}
-
-.large {
-  padding: 0 20px;
-  font-size: 1.5em;
 }
 
 .editNodeData {
@@ -169,21 +58,10 @@
   padding: 8px;
 }
 
-.editTools {
-  border-radius: 4px;
-  bottom: 4px;
-  left: 4px;
-  position: absolute;
-}
-
 .editTools div {
   border-radius: 4px;
   height: 50px;
   margin: 5px;
   transition: background-color 0.2s;
   width: 50px;
-}
-
-.editTools div:hover {
-  /*background: rgb(50, 78, 235);*/
 }
