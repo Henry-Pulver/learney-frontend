@@ -1,7 +1,6 @@
 import React from "react";
 import buttonStyles from "../styles/buttons.module.css";
-import {LogoutIcon, UserAddIcon} from "@heroicons/react/outline";
-
+import { LogoutIcon, UserAddIcon } from "@heroicons/react/outline";
 
 export function ProfileSelectedDiv({ userdata, buttonPressFunction }) {
   return (
@@ -37,23 +36,25 @@ export function LogOutIconButton({ user, buttonPressFunction }) {
       }, "log-out")}
     >
       <span className="sr-only">Log out</span>
-      <LogoutIcon className="w-7 h-7"/>
+      <LogoutIcon className="w-7 h-7" />
     </button>
   );
 }
 
 export function LogInIconButton({ buttonPressFunction }) {
   return (
-      <button
-          className="mobile-icon-button group"
+    <button
+      className="mobile-icon-button group"
       onClick={buttonPressFunction(() => {
         location.href = "/api/auth/login";
       }, "log-in")}
     >
-      <div className="block lg:hidden px-2 sm:px-4 font-bold text-black">Sign in</div>
+      <div className="block lg:hidden px-2 sm:px-4 font-bold text-black">
+        Sign in
+      </div>
       <div className="lg:white-icon-btn p-1">
-          <span className="sr-only">Sign in</span>
-          <UserAddIcon className="h-7 w-7 text-blue-500 group-hover:text-blue-600" />
+        <span className="sr-only">Sign in</span>
+        <UserAddIcon className="h-7 w-7 text-blue-500 group-hover:text-blue-600" />
       </div>
     </button>
   );
