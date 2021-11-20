@@ -91,7 +91,7 @@ export default function Map({
           1.5,
           function () {}
         );
-        setupCtoCentre();
+        setupCtoCentre(editMap);
       }
     })();
   }, [sessionId, userId]);
