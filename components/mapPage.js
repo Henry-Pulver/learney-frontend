@@ -39,6 +39,14 @@ import {
 // import SearchBar, {getSearchOptions} from "./search";
 
 let eh; // Edge handles variable
+const topicColours = [
+  "#001d4d",
+  "#006161",
+  "#001975",
+  "#001d4d",
+  "#210042",
+  "#610061",
+];
 
 export default function MapPage({
   backendUrl,
@@ -154,22 +162,37 @@ export default function MapPage({
       });
     // The next node ID is the largest previous node ID number + 1
     nextNodeID += 1;
+    let nodeClicked = e.target;
 
-    // [2.0] Create the new nodes
-    const newParentNode = {
-      group: "nodes",
-      data: {
-        colour: "#610061",
-        id: `${nextNodeID}_topic_group`,
-        name: "",
-        nodetype: "field",
-      },
-      renderedPosition: {
-        x: e.renderedPosition.x,
-        y: e.renderedPosition.y,
-      },
-    };
+    // [2.0] Get parent node if one was clicked!
+    let parentNodeId;
+    let newParentNodeData;
+    if ("nodetype" in nodeClicked.data()) {
+      // Clicked on a node or parent node!
+      if (nodeClicked.data().nodetype === "field") {
+        parentNodeId = nodeClicked.data().id;
+      } else {
+        parentNodeId = nodeClicked.parent().data().id;
+      }
+    } else {
+      // Clicked in empty space - create new parent node!
+      parentNodeId = `${nextNodeID}_topic_group`;
+      newParentNodeData = {
+        group: "nodes",
+        data: {
+          colour: topicColours[Math.floor(Math.random() * topicColours.length)],
+          id: parentNodeId,
+          name: "",
+          nodetype: "field",
+        },
+        renderedPosition: {
+          x: e.renderedPosition.x,
+          y: e.renderedPosition.y,
+        },
+      };
+    }
 
+    // [2.1] Create new node
     const newNode = {
       data: {
         id: `${nextNodeID}`,
@@ -179,7 +202,7 @@ export default function MapPage({
         urls: [],
         nodetype: "concept",
         relative_importance: 1,
-        parent: `${nextNodeID}_topic_group`,
+        parent: parentNodeId,
       },
       renderedPosition: {
         x: e.renderedPosition.x,
@@ -188,7 +211,9 @@ export default function MapPage({
     };
 
     // [3.0] Add the new nodes
-    window.cy.add([newParentNode, newNode]);
+    if (newParentNodeData !== undefined)
+      window.cy.add([newParentNodeData, newNode]);
+    else window.cy.add([newNode]);
 
     // [4.0] Update UI
     setEditNodeData(newNode.data);
@@ -283,7 +308,8 @@ export default function MapPage({
         const newParentNode = {
           group: "nodes",
           data: {
-            colour: "#610061",
+            colour:
+              topicColours[Math.floor(Math.random() * topicColours.length)],
             id: newNodeData.parent.replace(/ /g, "_"),
             name: newNodeData.parent,
             nodetype: "field",
@@ -437,7 +463,7 @@ export default function MapPage({
       {editMap && ["addNode", "addEdges", "delete"].includes(editType) && (
         <div
           className={
-            "cursor-default absolute bottom-5 text-center w-full text-white z-10"
+            "cursor-default absolute bottom-5 text-center w-full text-lg text-white z-10"
           }
         >
           {editType === "addEdges"
