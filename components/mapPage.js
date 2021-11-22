@@ -463,7 +463,7 @@ export default function MapPage({
       {editMap && ["addNode", "addEdges", "delete"].includes(editType) && (
         <div
           className={
-            "cursor-default absolute bottom-5 text-center w-full text-lg text-white z-10"
+            "cursor-default pointer-events-none absolute bottom-5 text-center w-full text-lg text-white z-10"
           }
         >
           {editType === "addEdges"
