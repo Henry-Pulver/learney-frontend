@@ -1,4 +1,5 @@
 import ReactGA from "react-ga";
+import mixpanel from "mixpanel-browser";
 import Profile from "./profile";
 import buttonStyles from "../styles/buttons.module.css";
 import mainStyles from "../styles/main.module.css";
@@ -18,7 +19,7 @@ import {
   SlackButton,
 } from "./buttons";
 import React, { useEffect } from "react";
-import { setupTracking } from "../lib/trackingScripts";
+import { setupTracking, initialiseMixpanelTracking } from "../lib/trackingScripts";
 import { useUser } from "@auth0/nextjs-auth0";
 import {
   getButtonPressFunction,
@@ -140,8 +141,9 @@ export default function MapPage({
         }
         setUserId(newUserId);
 
-        // setupTracking();
+        setupTracking();
         ReactGA.pageview(window.location.pathname);
+        initialiseMixpanelTracking(user);
 
         if (isAnonymousUser(newUserId) && !isMobile()) showIntroTooltip();
         if (isAnonymousUser(newUserId)) initialiseSignInTooltip();
@@ -463,7 +465,7 @@ export default function MapPage({
       {editMap && ["addNode", "addEdges", "delete"].includes(editType) && (
         <div
           className={
-            "cursor-default absolute bottom-5 text-center w-full text-lg text-white z-10"
+            "cursor-default pointer-events-none absolute bottom-5 text-center w-full text-lg text-white z-10"
           }
         >
           {editType === "addEdges"
