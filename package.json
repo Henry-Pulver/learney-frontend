@@ -19,6 +19,7 @@
     "dotenv": "^10.0.0",
     "jose": "^3.20.1",
     "jquery": "^3.6.0",
+    "mixpanel-browser": "^2.42.0",
     "next": "latest",
     "next-csrf": "^0.1.2",
     "popper": "^1.0.1",
