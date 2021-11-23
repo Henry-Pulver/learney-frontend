@@ -32,7 +32,6 @@ export default function IntroButtonInclTooltip({
 
   return (
     <Tippy
-      id={"intro-tippy"}
       visible={introShown}
       theme={"light"}
       onClickOutside={hideIntroTooltip}
