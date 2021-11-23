@@ -19,7 +19,10 @@ import {
   SlackButton,
 } from "./buttons";
 import React, { useEffect } from "react";
-import { setupTracking, initialiseMixpanelTracking } from "../lib/trackingScripts";
+import {
+  setupTracking,
+  initialiseMixpanelTracking,
+} from "../lib/trackingScripts";
 import { useUser } from "@auth0/nextjs-auth0";
 import {
   getButtonPressFunction,
