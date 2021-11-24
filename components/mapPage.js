@@ -156,7 +156,7 @@ export default function MapPage({
   const [editType, setEditType] = React.useState("cursor");
   const addNode = function (e) {
     // [1.0] Create the next node ID
-    let nextNodeID = -Infinity;
+    let nextNodeID = 0;
     window.cy
       .nodes('[nodetype = "concept"]') // Get concept nodes only
       .forEach((node) => {
