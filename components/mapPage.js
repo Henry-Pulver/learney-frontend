@@ -1,5 +1,4 @@
 import ReactGA from "react-ga";
-import mixpanel from "mixpanel-browser";
 import Profile from "./profile";
 import buttonStyles from "../styles/buttons.module.css";
 import mainStyles from "../styles/main.module.css";
@@ -146,7 +145,7 @@ export default function MapPage({
 
         setupTracking();
         ReactGA.pageview(window.location.pathname);
-        initialiseMixpanelTracking(user);
+        initialiseMixpanelTracking(newUserId);
 
         if (isAnonymousUser(newUserId) && !isMobile()) showIntroTooltip();
         if (isAnonymousUser(newUserId)) initialiseSignInTooltip();
@@ -294,7 +293,7 @@ export default function MapPage({
     relative_importance: 1,
     parent: "",
   });
-  const saveEditNodeData = function () {
+  const saveEditNodeData = function (userId) {
     // [1.0] Copy Previous Data
     let newNodeData = { ...editNodeData };
 
@@ -343,7 +342,7 @@ export default function MapPage({
     window.cy.getElementById(newNodeData.id).data(newNodeData);
 
     // [5.0] Save the results
-    saveMap(backendUrl, mapUUID);
+    saveMap(userId, backendUrl, mapUUID);
     setShowEditData(null);
   };
 
@@ -420,6 +419,7 @@ export default function MapPage({
         </label>
         <div className={buttonStyles.buttonToolbarDiv}>
           <SaveMapButton
+            userId={userId}
             editMapEnabled={editMap}
             buttonPressFunction={buttonPressFunction}
             backendUrl={backendUrl}
@@ -529,7 +529,7 @@ export default function MapPage({
           />
           <span
             className="text-white bg-blue-600 hover:bg-blue-500"
-            onClick={() => saveEditNodeData()}
+            onClick={() => saveEditNodeData(userId)}
           >
             Save
           </span>

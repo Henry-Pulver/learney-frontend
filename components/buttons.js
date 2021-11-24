@@ -143,6 +143,7 @@ export function MakeSuggestionButton({
 }
 
 export function SaveMapButton({
+  userId,
   buttonPressFunction,
   editMapEnabled,
   backendUrl,
@@ -153,7 +154,7 @@ export function SaveMapButton({
       className={buttonStyles.button}
       style={!editMapEnabled ? { display: "none" } : {}}
       onClick={buttonPressFunction(
-        () => saveMap(backendUrl, mapUUID),
+        () => saveMap(userId, backendUrl, mapUUID),
         "save-layout"
       )}
       id={"save-layout"}
@@ -163,7 +164,7 @@ export function SaveMapButton({
   );
 }
 
-export async function saveMap(backendUrl, mapUUID) {
+export async function saveMap(userId, backendUrl, mapUUID) {
   let mapJson = { nodes: [], edges: [] };
   cy.edges().forEach(function (edge) {
     mapJson.edges.push({ data: edge.data() });
@@ -175,6 +176,7 @@ export async function saveMap(backendUrl, mapUUID) {
     method: "PUT",
     headers: jsonHeaders,
     body: JSON.stringify({
+      user_id: userId,
       map_uuid: mapUUID,
       map_data: mapJson,
     }),
