@@ -1,3 +1,6 @@
+import React, { Fragment, useEffect, useState } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import Tippy from "@tippyjs/react";
 import {
   initialiseGraphState,
   resetProgress,
@@ -13,17 +16,17 @@ import {
   originalMapJSON,
   presetLayout,
 } from "../lib/graph";
-import buttonStyles from "../styles/buttons.module.css";
-import Tippy from "@tippyjs/react";
-import React, { useEffect } from "react";
-import { classNames } from "../lib/reactUtils";
 import {
   ChatIcon,
+  CogIcon,
   LightBulbIcon,
+  MapIcon,
   PlusCircleIcon,
   ThumbUpIcon,
+  TrashIcon,
 } from "@heroicons/react/outline";
-import { followCursor } from "tippy.js";
+import { AreYouSureModal } from "./modal";
+import { classNames } from "../lib/reactUtils";
 
 export function IconToggleButtonWithCheckbox({
   checked,
@@ -70,7 +73,8 @@ export function IconButtonTippy(props) {
       animation="scale"
       maxWidth={"12em"}
       content={props.content}
-      className="invisible lg:visible"
+      disabled={props.disabled === true}
+      className="invisible lg:visible text-center"
     >
       {props.children}
     </Tippy>
@@ -165,7 +169,9 @@ export function MakeSuggestionButton({
         goToFormFunction("concept", userEmail),
         buttonName
       )}
-      className={`${buttonStyles.suggestionButton}`}
+      className={
+        "text-white btn-grow bg-learney font-bold py-2 px-8 my-2 mx-4 rounded-lg border-0"
+      }
     >
       {text}
     </button>
@@ -175,13 +181,12 @@ export function MakeSuggestionButton({
 export function SaveMapButton({
   userId,
   buttonPressFunction,
-  editMapEnabled,
   backendUrl,
   mapUUID,
 }) {
   return (
     <button
-      className="btn-blue"
+      className="btn-blue ml-4"
       onClick={buttonPressFunction(
         () => saveMap(userId, backendUrl, mapUUID),
         "save-layout"
@@ -213,18 +218,6 @@ export async function saveMap(userId, backendUrl, mapUUID) {
   handleFetchResponses(response);
 }
 
-export function ResetLayoutButton({ buttonPressFunction, userId }) {
-  return (
-    <button
-      className="btn-blue"
-      onClick={buttonPressFunction(() => resetLayout(userId), "reset-layout")}
-      id={"reset-layout"}
-    >
-      Reset Layout
-    </button>
-  );
-}
-
 function resetLayout(userId) {
   cy.remove(cy.elements());
   cy.add(JSON.parse(JSON.stringify(originalMapJSON)));
@@ -233,24 +226,12 @@ function resetLayout(userId) {
   initialiseGraphState(userId);
 }
 
-export function RunDagreButton({ buttonPressFunction }) {
-  return (
-    <button
-      className="btn-blue"
-      onClick={buttonPressFunction(autoGenerateLayout, "run-dagre")}
-      id={"run-dagre"}
-    >
-      Auto-generate Layout
-    </button>
-  );
-}
-
 function autoGenerateLayout() {
   cy.layout(dagreLayout).run();
   dagreOnSubjects();
 }
 
-export function ResetProgressButton({
+export function ResetProgressIconButton({
   buttonPressFunction,
   backendUrl,
   userId,
@@ -259,26 +240,19 @@ export function ResetProgressButton({
   setGoalsState,
   setLearnedState,
 }) {
-  const [buttonAlreadyPressed, setValue] = React.useState(false);
+  const [areYouSureModalShown, setModalShown] = useState(false);
 
   const buttonPressed = buttonPressFunction(
-    function resetProgButtonPress() {
-      if (buttonAlreadyPressed) {
-        resetProgress(
-          backendUrl,
-          userId,
-          mapUUID,
-          sessionId,
-          setGoalsState,
-          setLearnedState
-        );
-        unhighlightNodes(cy.nodes());
-      } else {
-        setTimeout(function () {
-          setValue(false);
-        }, 3000);
-      }
-      setValue(!buttonAlreadyPressed);
+    () => {
+      resetProgress(
+        backendUrl,
+        userId,
+        mapUUID,
+        sessionId,
+        setGoalsState,
+        setLearnedState
+      );
+      unhighlightNodes(cy.nodes());
     },
     "reset-progress",
     backendUrl,
@@ -286,9 +260,22 @@ export function ResetProgressButton({
   );
 
   return (
-    <button onClick={buttonPressed} className="btn-blue" id={"reset-progress"}>
-      {!buttonAlreadyPressed ? "Reset Progress" : "Are you sure?"}
-    </button>
+    <>
+      <IconButtonTippy content={"Reset your progress"} placement={"top"}>
+        <button onClick={() => setModalShown(true)} className="gray-icon-btn">
+          <span className="sr-only">Reset your progress</span>
+          <TrashIcon className="w-7 h-7" />
+        </button>
+      </IconButtonTippy>
+      <AreYouSureModal
+        modalShown={areYouSureModalShown}
+        setModalShown={setModalShown}
+        titleText="Reset all Progress & Goals"
+        descriptionText="This will remove all goals and concepts learned from the map!"
+        actionButtonText="Reset Progress"
+        actionButtonFunction={buttonPressed}
+      />
+    </>
   );
 }
 
@@ -330,19 +317,145 @@ export function ResetPanButton({ buttonPressFunction }) {
   );
 }
 
-export function AddEdgesButton({ editType, setEditType }) {
+export function MapSettingsIconButton({ buttonPressFunction, userId }) {
+  return (
+    <Menu as="div" className="ml-3 relative">
+      {({ open }) => (
+        <>
+          <div>
+            <IconButtonTippy
+              content={"Map layout settings"}
+              placement={"bottom"}
+              disabled={open}
+            >
+              <Menu.Button className="gray-icon-btn">
+                <span className="sr-only">Map layout settings</span>
+                <div className="relative h-7 w-7">
+                  <MapIcon className="absolute h-6 w-6 right-0.5 top-0.5" />
+                  <CogIcon className="bg-white rounded-full absolute h-4 w-4 left-4 bottom-3.5" />
+                </div>
+              </Menu.Button>
+            </IconButtonTippy>
+          </div>
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <Menu.Items className="origin-top-left absolute left-0 mt-2 w-48 rounded-md shadow-lg z-20 py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <Menu.Item>
+                {({ active }) => (
+                  <button
+                    onClick={buttonPressFunction(
+                      () => resetLayout(userId),
+                      "reset-layout"
+                    )}
+                    className={classNames(
+                      active ? "bg-gray-100" : "",
+                      "block px-4 py-2 w-48 text-sm text-left text-gray-700"
+                    )}
+                  >
+                    Reset Layout
+                  </button>
+                )}
+              </Menu.Item>
+              <Menu.Item>
+                {({ active }) => (
+                  <button
+                    onClick={buttonPressFunction(
+                      autoGenerateLayout,
+                      "run-dagre"
+                    )}
+                    className={classNames(
+                      active ? "bg-gray-100" : "",
+                      "block px-4 py-2 w-48 text-sm text-left text-gray-700"
+                    )}
+                  >
+                    Auto-generate Layout
+                  </button>
+                )}
+              </Menu.Item>
+            </Menu.Items>
+          </Transition>
+        </>
+      )}
+    </Menu>
+  );
+}
+
+const editToolsButtonClasses =
+  "transition duration-200 ease-in-out rounded-md m-1.5 h-14 w-14";
+
+export function CursorButton({ editType, setEditType }) {
   return (
     <Tippy
-      content="Add dependency"
-      followCursor={true}
-      plugins={[followCursor]}
+      content="Edit nodes"
+      placement={"right"}
       delay={[500, 0]}
       theme="light"
     >
       <div
         className={classNames(
-          editType === "addEdges" ? "bg-blue-600" : "",
-          "hover:bg-blue-500"
+          editType === "cursor" ? "bg-blue-500" : "",
+          "hover:bg-blue-600",
+          editToolsButtonClasses
+        )}
+        onClick={() => setEditType("cursor")}
+      >
+        <svg className={"scale-90"} viewBox="0 0 28 28">
+          <rect
+            x="12.5"
+            y="13.6"
+            transform="matrix(0.9221 -0.3871 0.3871 0.9221 -5.7605 6.5909)"
+            width="1.5"
+            height="8"
+          />
+          <polygon points="9.2,7.3 9.2,18.5 12.2,15.6 12.6,15.5 17.4,15.5 " />
+        </svg>
+      </div>
+    </Tippy>
+  );
+}
+
+export function AddNodeButton({ editType, setEditType }) {
+  return (
+    <Tippy
+      content="Add concept"
+      placement={"right"}
+      delay={[500, 0]}
+      theme="light"
+    >
+      <div
+        className={classNames(
+          editType === "addNode" ? "bg-blue-500" : "",
+          "grid content-center justify-center hover:bg-blue-600",
+          editToolsButtonClasses
+        )}
+        onClick={() => setEditType("addNode")}
+      >
+        <PlusCircleIcon className="text-black w-10 h-10" />
+      </div>
+    </Tippy>
+  );
+}
+
+export function AddEdgesButton({ editType, setEditType }) {
+  return (
+    <Tippy
+      content="Add dependency"
+      placement={"right"}
+      delay={[500, 0]}
+      theme="light"
+    >
+      <div
+        className={classNames(
+          editType === "addEdges" ? "bg-blue-500" : "",
+          "hover:bg-blue-600",
+          editToolsButtonClasses
         )}
         onClick={() => setEditType("addEdges")}
       >
@@ -354,64 +467,14 @@ export function AddEdgesButton({ editType, setEditType }) {
   );
 }
 
-export function AddNodeButton({ editType, setEditType }) {
-  return (
-    <Tippy
-      content="Add concept"
-      followCursor={true}
-      plugins={[followCursor]}
-      delay={[500, 0]}
-      theme="light"
-    >
-      <div
-        className={classNames(
-          editType === "addNode" ? "bg-blue-600" : "",
-          "grid content-center justify-center hover:bg-blue-500"
-        )}
-        onClick={() => setEditType("addNode")}
-      >
-        <PlusCircleIcon className="text-black w-10 h-10" />
-      </div>
-    </Tippy>
-  );
-}
-
-export function CursorButton({ editType, setEditType }) {
-  return (
-    <div
-      className={classNames(
-        editType === "cursor" ? "bg-blue-600" : "",
-        "hover:bg-blue-500"
-      )}
-      onClick={() => setEditType("cursor")}
-    >
-      <svg className={"scale-90"} viewBox="0 0 28 28">
-        <rect
-          x="12.5"
-          y="13.6"
-          transform="matrix(0.9221 -0.3871 0.3871 0.9221 -5.7605 6.5909)"
-          width="1.5"
-          height="8"
-        />
-        <polygon points="9.2,7.3 9.2,18.5 12.2,15.6 12.6,15.5 17.4,15.5 " />
-      </svg>
-    </div>
-  );
-}
-
 export function DeleteElementButton({ editType, setEditType }) {
   return (
-    <Tippy
-      content="Delete"
-      followCursor={true}
-      plugins={[followCursor]}
-      delay={[500, 0]}
-      theme="light"
-    >
+    <Tippy content="Delete" placement={"right"} delay={[500, 0]} theme="light">
       <div
         className={classNames(
-          editType === "delete" ? "bg-red-600" : "",
-          "hover:bg-red-500"
+          editType === "delete" ? "bg-red-500" : "",
+          "hover:bg-red-600",
+          editToolsButtonClasses
         )}
         onClick={() => setEditType("delete")}
       >
