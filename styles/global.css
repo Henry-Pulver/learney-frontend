@@ -21,6 +21,14 @@
   .btn-green {
     @apply btn-activated bg-green-600 hover:bg-green-700 focus:ring-green-500;
   }
+
+  .btn-2 {
+    @apply btn-activated bg-gray-400 hover:bg-gray-500 focus:ring-gray-300;
+  }
+  .btn-3 {
+    @apply btn-with-text cursor-pointer text-base text-gray-600 hover:text-gray-800 border-transparent;
+  }
+
   .white-icon-btn {
     @apply flex-shrink-0 bg-white shadow-sm hover:shadow-md w-auto rounded-full focus:outline-none;
   }
@@ -29,6 +37,9 @@
   }
   .mobile-icon-button {
     @apply flex flex-row justify-between items-center w-full max-w-3xl mx-auto rounded-md py-2 px-3 text-base font-medium text-gray-500;
+  }
+  .btn-grow {
+    @apply hover:transform hover:scale-105 ease-in-out duration-200;
   }
 }
 
@@ -58,17 +69,24 @@ html {
   color: black;
 }
 
-/*MOBILE*/
-@media only screen and (max-device-width: 768px) {
-  #reset-progress {
-    width: 50%;
-  }
+/* Community voting arrows */
+.vote-arrow {
+  width: 30px;
+  height: 30px;
 }
 
-/*DESKTOP*/
-@media only screen and (min-device-width: 769px) {
-  #reset-progress {
-    width: 100%;
-    max-width: 8rem;
-  }
+.triangle {
+  width: 0;
+  height: 0;
+  border-width: 15px;
+}
+
+.triangle.up {
+  border-top: 0 solid transparent;
+  border-bottom-width: 30px;
+}
+
+.triangle.down {
+  border-bottom: 0 solid transparent;
+  border-top-width: 30px;
 }
