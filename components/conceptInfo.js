@@ -8,6 +8,7 @@ import { handleFetchResponses } from "../lib/utils";
 import { classNames } from "../lib/reactUtils";
 import { cacheHeaders } from "../lib/headers";
 import { XIcon } from "@heroicons/react/outline";
+import { LoadingSpinner } from "./animations";
 
 export function ConceptTippy({
   visible,
@@ -130,18 +131,15 @@ function ConceptInfo({
   }
 
   return (
-    <div style={{ width: "70vw" }} className={`bg-white disableTouchActions`}>
-      <h4 className="text-black text-2xl m-0 text-center">
+    <div className={`text-center bg-white disableTouchActions`}>
+      <h4 className="text-black text-4xl m-0 mb-1 text-center">
         {node.data().name}
       </h4>
-      <div
-        style={{ maxWidth: "95%" }}
-        className="text-left text-black mt-0 mx-auto mb-4"
-      >
+      <div className="text-left text-black max-w-screen-sm mt-0 mx-auto mb-4">
         {node.data().description}
       </div>
       <div
-        className="absolute m-1 sm:m-2 top-0 right-0"
+        className="absolute cursor-pointer m-1 sm:m-2 top-0 right-0"
         onClick={
           node ? buttonPressFunction(hideTippy, "close-concept") : () => {}
         }
@@ -173,7 +171,7 @@ function ConceptInfo({
         {linkPreviewOrder.map((index) => linkPreviews[index])}
       </ol>
       {allowSuggestions && (
-        <div>
+        <div className="">
           {allowSuggestions && (
             <MakeSuggestionButton
               buttonPressFunction={buttonPressFunction}
@@ -212,7 +210,7 @@ function ConceptLinkPreview({
       <a
         href={url}
         style={{ paddingRight: "60px", height: "100px" }}
-        className="bg-gray-100 hover:bg-white visited:bg-gray-300 rounded-sm max-w-screen-sm overflow-hidden flex text-left m-0.5"
+        className="bg-gray-100 hover:bg-white visited:bg-gray-300 rounded-sm w-screen-sm overflow-hidden flex text-left m-0.5"
         target="_blank"
         rel="noreferrer"
         onClick={() =>
@@ -226,24 +224,30 @@ function ConceptLinkPreview({
           )
         }
       >
-        <div className="link-preview-image-container">
-          <img
-            src={data ? data.image_url : "/images/loading.jpg"}
-            className="link-preview-image"
-            alt={data ? data.title : node.data().name}
-          />
+        <div className="flex items-center max-h-full w-1/4">
+          {data ? (
+            <img
+              src={data.image_url}
+              className="m-auto max-h-full"
+              alt={data.title}
+            />
+          ) : (
+            <LoadingSpinner classes="h-3/5 w-3/5 m-auto" />
+          )}
         </div>
-        <div className="max-h-full my-0 ml-1 no-underline overflow-auto">
-          <h4 className="py-2 overflow-hidden overflow-ellipsis text-xl">
+        <div className="max-h-full w-full my-0 ml-1 no-underline overflow-hidden">
+          <h4 className="py-2 overflow-hidden whitespace-nowrap overflow-ellipsis text-xl">
             {data ? data.title : "Loading..."}
           </h4>
-          <p className="link-preview-description">
+          <p className="mt-0 mb-1 font-lg sm:font-base overflow-hidden overflow-ellipsis text-black max-h-70 sm:max-h-40">
             {data ? data.description : ""}
           </p>
-          <p className="link-preview-url">{url}</p>
+          <p className="hidden sm:block font-sm text-gray-500 whitespace-nowrap overflow-ellipsis overflow-hidden max-w-xs my-0">
+            {url}
+          </p>
         </div>
       </a>
-      <div className="voting">
+      <div className="absolute right-0 top-0 w-8 h-24 m-3">
         <div className="vote-arrow upvote">
           {/*<div className={classNames(allVotes[urlInfo.url] ? "" : "", "triangle up cursor-pointer")} onClick={voteFunction(true, )}/>*/}
           <div
