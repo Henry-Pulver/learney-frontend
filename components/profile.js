@@ -1,5 +1,4 @@
 import React from "react";
-import buttonStyles from "../styles/buttons.module.css";
 import { LogoutIcon, UserAddIcon } from "@heroicons/react/outline";
 
 export function ProfileSelectedDiv({ userdata, buttonPressFunction }) {
