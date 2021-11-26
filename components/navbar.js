@@ -1,12 +1,7 @@
 import React, { Fragment } from "react";
 import { Menu, Popover, Transition } from "@headlessui/react";
 import { SearchIcon } from "@heroicons/react/solid";
-import {
-  BellIcon,
-  MenuIcon,
-  XIcon,
-  UserAddIcon,
-} from "@heroicons/react/outline";
+import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { classNames } from "../lib/reactUtils";
 import {
   LogInIconButton,
@@ -34,7 +29,7 @@ export default function Navbar({
       >
         {({ open }) => (
           <>
-            <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+            <div className="max-w-95 mx-auto px-2 sm:px-4 lg:px-8">
               <div className="relative flex justify-between lg:gap-8">
                 <div className="flex md:absolute md:left-0 md:inset-y-0 lg:static xl:col-span-2">
                   <div className="flex-shrink-0 flex items-center">
@@ -52,7 +47,7 @@ export default function Navbar({
                 </div>
                 <div className="min-w-0 flex-1 lg:px-0 xl:col-span-6">
                   {/*SEARCH*/}
-                  <div className="flex items-center px-2 md:px-6 py-4 md:max-w-3xl md:mx-auto lg:max-w-none lg:mx-0 xl:px-0">
+                  <div className="flex items-center px-2 md:px-6 py-4 md:max-w-xl md:mx-auto lg:max-w-none lg:mx-0 xl:px-0">
                     <div className="w-full">
                       <label htmlFor="search" className="sr-only">
                         Search
@@ -95,7 +90,7 @@ export default function Navbar({
                   <Menu as="div" className="flex-shrink-0 relative ml-5">
                     <div id="profileImageButton">
                       {user !== undefined ? (
-                        <Menu.Button className="bg-white p-0.5 rounded-full flex-shrink-0 focus:outline-none focus:ring-2 hover:ring-offset-0 focus:ring-offset-0 focus:ring-blue-500 hover:ring-blue-500 hover:ring-2 hover:ring-opacity-75">
+                        <Menu.Button className="bg-transparent p-0.5 rounded-full flex-shrink-0 focus:outline-none focus:ring-2 hover:bg-white hover:ring-offset-0 focus:ring-offset-0 focus:ring-blue-500 hover:ring-blue-500 hover:ring-2 hover:ring-opacity-75">
                           <span className="sr-only">Open user menu</span>
                           <img
                             className="h-8 w-8 rounded-full"
