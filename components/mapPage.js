@@ -1,6 +1,4 @@
 import ReactGA from "react-ga";
-import buttonStyles from "../styles/buttons.module.css";
-import mainStyles from "../styles/main.module.css";
 import {
   AddEdgesButton,
   AddNodeButton,
@@ -8,13 +6,12 @@ import {
   DeleteElementButton,
   FeedBackButton,
   MakeSuggestionIconButton,
-  ResetLayoutButton,
   ResetPanButton,
-  ResetProgressButton,
-  RunDagreButton,
+  ResetProgressIconButton,
   saveMap,
   SaveMapButton,
   SlackButton,
+  MapSettingsIconButton,
 } from "./buttons";
 import React, { useEffect } from "react";
 import {
@@ -28,7 +25,6 @@ import {
   logPageView,
 } from "../lib/utils";
 import IntroButton from "../components/intro";
-import { isMobile } from "../lib/graph";
 import MapHeader from "./mapHeader";
 import Map from "./map";
 import {
@@ -39,7 +35,10 @@ import {
   initialiseSignInTooltip,
 } from "../lib/learningAndPlanning";
 import Navbar from "./navbar";
-import { classNames } from "../lib/reactUtils";
+import {
+  EditConceptDataSidebar,
+  EditTopicDataSidebar,
+} from "./editor/editConceptDataSidebar";
 // import SearchBar, {getSearchOptions} from "./search";
 
 let eh; // Edge handles variable
@@ -360,20 +359,58 @@ export default function MapPage({
       {!isLoading && (
         <Navbar
           user={user}
-          leftSideButtons={[
-            <IntroButton
-              openAtStart={user === undefined}
-              buttonPressFunction={buttonPressFunction}
-            />,
-            <MakeSuggestionIconButton
-              buttonPressFunction={buttonPressFunction}
-              userEmail={user !== undefined ? user.email : ""}
-            />,
-          ]}
-          rightSideButtons={[
-            <FeedBackButton buttonPressFunction={buttonPressFunction} />,
-            <SlackButton buttonPressFunction={buttonPressFunction} />,
-          ]}
+          leftSideButtons={
+            !editMap
+              ? [
+                  <IntroButton
+                    key="IntroButton"
+                    openAtStart={user === undefined}
+                    buttonPressFunction={buttonPressFunction}
+                  />,
+                  <MakeSuggestionIconButton
+                    key="MakeSuggestionButton"
+                    buttonPressFunction={buttonPressFunction}
+                    userEmail={user !== undefined ? user.email : ""}
+                  />,
+                ]
+              : [
+                  <MapSettingsIconButton
+                    key="MapSettingsButton"
+                    buttonPressFunction={buttonPressFunction}
+                  />,
+                  <MakeSuggestionIconButton
+                    key="MakeSuggestionButton"
+                    buttonPressFunction={buttonPressFunction}
+                    userEmail={user !== undefined ? user.email : ""}
+                  />,
+                ]
+          }
+          rightSideButtons={
+            !editMap
+              ? [
+                  <FeedBackButton
+                    key="FeedbackButton"
+                    buttonPressFunction={buttonPressFunction}
+                  />,
+                  <SlackButton
+                    key="SlackButton"
+                    buttonPressFunction={buttonPressFunction}
+                  />,
+                ]
+              : [
+                  <SaveMapButton
+                    key="SaveMap"
+                    userId={userId}
+                    buttonPressFunction={buttonPressFunction}
+                    backendUrl={backendUrl}
+                    mapUUID={mapUUID}
+                  />,
+                  <FeedBackButton
+                    key="FeedbackButton"
+                    buttonPressFunction={buttonPressFunction}
+                  />,
+                ]
+          }
           buttonPressFunction={buttonPressFunction}
         />
       )}
@@ -401,46 +438,23 @@ export default function MapPage({
       <div
         className={`absolute top-0 flex mt-1 justify-end disableTouchActions`}
       >
-        <div className={buttonStyles.buttonToolbarDiv}>
-          {editMap && (
-            <SaveMapButton
-              buttonPressFunction={buttonPressFunction}
-              backendUrl={backendUrl}
-              mapUUID={mapUUID}
-            />
-          )}
-          {editMap && (
-            <ResetLayoutButton
-              buttonPressFunction={buttonPressFunction}
-              userId={userId}
-            />
-          )}
-          {editMap && (
-            <RunDagreButton buttonPressFunction={buttonPressFunction} />
-          )}
-          {editMap && (
-            <ResetProgressButton
-              buttonPressFunction={buttonPressFunction}
-              backendUrl={backendUrl}
-              userId={userId}
-              mapUUID={mapUUID}
-              sessionId={sessionId}
-              setGoalsState={setNewGoalsState}
-              setLearnedState={setNewLearnedState}
-            />
-          )}
+        <div className="contents">
+          {/*{editMap && (*/}
+          {/*  <>*/}
+          {/*    <ResetLayoutButton*/}
+          {/*      buttonPressFunction={buttonPressFunction}*/}
+          {/*      userId={userId}*/}
+          {/*    />*/}
+          {/*    <RunDagreButton buttonPressFunction={buttonPressFunction} />*/}
+          {/*  </>*/}
+          {/*)}*/}
         </div>
       </div>
-
-      <div
-        className={classNames(
-          `flex flex-row items-end absolute bottom-0 left-0 m-4 disableTouchActions`
-        )}
-      >
-        {editMap && (
-          <div
-            className={`block bg-white cursor-pointer rounded m-1 ${buttonStyles.editTools} z-20`}
-          >
+      {editMap && (
+        <div
+          className={`flex flex-row items-end absolute bottom-0 left-0 m-4 disableTouchActions`}
+        >
+          <div className="block bg-white cursor-pointer rounded-lg m-1 z-20">
             <CursorButton editType={editType} setEditType={setEditType} />
             <AddNodeButton editType={editType} setEditType={setEditType} />
             <AddEdgesButton editType={editType} setEditType={setEditType} />
@@ -449,144 +463,57 @@ export default function MapPage({
               setEditType={setEditType}
             />
           </div>
-        )}
-        <div className="block">
-          <ResetPanButton buttonPressFunction={buttonPressFunction} />
         </div>
+      )}
+      <div
+        className={`flex flex-row items-end absolute bottom-0 right-0 mx-8 my-4 disableTouchActions`}
+      >
+        <ResetPanButton buttonPressFunction={buttonPressFunction} />
+        {!editMap && (
+          <ResetProgressIconButton
+            buttonPressFunction={buttonPressFunction}
+            backendUrl={backendUrl}
+            userId={userId}
+            mapUUID={mapUUID}
+            sessionId={sessionId}
+            setGoalsState={setGoalsState}
+            setLearnedState={setLearnedState}
+          />
+        )}
       </div>
 
-      {editMap && ["addNode", "addEdges", "delete"].includes(editType) && (
+      {editMap && (
         <div
           className={
             "cursor-default pointer-events-none absolute bottom-5 text-center w-full text-lg text-white z-10"
           }
         >
-          {editType === "addEdges"
+          {editType === "cursor"
+            ? "Click nodes or groups of nodes to edit or move them"
+            : editType === "addEdges"
             ? "Click and hold to add a dependency"
             : editType === "addNode"
             ? "Click to add a concept"
             : "Delete a concept, subject or dependency by clicking on it"}
         </div>
       )}
-      {showEditData === "concept" && (
-        <div className={`${buttonStyles.editNodeData}`}>
-          <div>Concept Name</div>
-          <input
-            className="text-black text-xl"
-            type="text"
-            value={editNodeData.name}
-            onChange={(e) =>
-              setEditNodeData({ ...editNodeData, name: e.target.value })
-            }
+      {showEditData === "concept" ? (
+        <EditConceptDataSidebar
+          editNodeData={editNodeData}
+          setEditNodeData={setEditNodeData}
+          setShowEditData={setShowEditData}
+          saveEditNodeData={saveEditNodeData}
+          userId={userId}
+        />
+      ) : (
+        showEditData === "topic" && (
+          <EditTopicDataSidebar
+            editParentNodeData={editParentNodeData}
+            setEditParentNodeData={setEditParentNodeData}
+            saveEditParentNodeData={saveEditParentNodeData}
+            setShowEditData={setShowEditData}
           />
-          <div>Description</div>
-          <textarea
-            className="text-black"
-            value={editNodeData.description}
-            onChange={(e) =>
-              setEditNodeData({ ...editNodeData, description: e.target.value })
-            }
-          />
-          <div>Topic Group</div>
-          <input
-            className="text-black"
-            type="text"
-            value={editNodeData.parent}
-            onChange={(e) =>
-              setEditNodeData({ ...editNodeData, parent: e.target.value })
-            }
-          />
-          <div>URLs (separated by a comma)</div>
-          <input
-            className="text-black"
-            type="text"
-            value={editNodeData.urls}
-            onChange={(e) =>
-              setEditNodeData({ ...editNodeData, urls: e.target.value })
-            }
-          />
-          <div>Relative Size</div>
-          <input
-            className="text-black"
-            type="number"
-            value={editNodeData.relative_importance}
-            onChange={(e) =>
-              setEditNodeData({
-                ...editNodeData,
-                relative_importance: e.target.value,
-              })
-            }
-          />
-          <span
-            className="text-white bg-blue-600 hover:bg-blue-500"
-            onClick={() => saveEditNodeData(userId)}
-          >
-            Save
-          </span>
-          <span
-            className="text-white bg-blue-600 hover:bg-blue-500"
-            onClick={() => setShowEditData(null)}
-          >
-            Cancel
-          </span>
-          <span
-            className="text-white bg-red-600 hover:bg-red-500 border border-transparent text-sm font-medium rounded-lg inline-flex items-center px-4 py-2"
-            onClick={() => {
-              window.cy.getElementById(editNodeData.id).remove();
-              setShowEditData(null);
-            }}
-          >
-            Delete
-          </span>
-        </div>
-      )}
-      {showEditData === "topic" && (
-        <div className={`${buttonStyles.editNodeData}`}>
-          <div className="font-bold">Topic Name</div>
-          <input
-            className="text-black text-xl"
-            type="text"
-            value={editParentNodeData.name}
-            onChange={(e) =>
-              setEditParentNodeData({
-                ...editParentNodeData,
-                name: e.target.value,
-              })
-            }
-          />
-          {/*<div>Colour</div>*/}
-          {/*<input*/}
-          {/*  type="text"*/}
-          {/*  value={editParentNodeData.colour}*/}
-          {/*  onChange={(e) =>*/}
-          {/*    setEditParentNodeData({*/}
-          {/*      ...editParentNodeData,*/}
-          {/*      colour: e.target.value,*/}
-          {/*    })*/}
-          {/*  }*/}
-          {/*/>*/}
-          <span
-            className="text-white bg-blue-600 hover:bg-blue-500 border border-transparent text-sm font-medium rounded-lg inline-flex items-center px-4 py-2"
-            onClick={() => saveEditParentNodeData()}
-          >
-            Save
-          </span>
-          <span
-            className="text-white bg-blue-600 hover:bg-blue-500 border border-transparent text-sm font-medium rounded-lg inline-flex items-center px-4 py-2"
-            onClick={() => setShowEditData(null)}
-          >
-            Cancel
-          </span>
-          <span
-            className="text-white bg-red-600 hover:bg-red-500 border border-transparent text-sm font-medium rounded-lg inline-flex items-center px-4 py-2"
-            onClick={() => {
-              window.cy.getElementById(editParentNodeData.id).remove();
-              setShowEditData(null);
-            }}
-          >
-            Delete
-          </span>
-        </div>
+        )
       )}
     </div>
   );
