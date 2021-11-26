@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { InformationCircleIcon } from "@heroicons/react/outline";
 import { IconButtonTippy } from "./buttons";
 import Modal from "./modal";
@@ -7,11 +7,11 @@ export default function IntroButton({ openAtStart, buttonPressFunction }) {
   const [introShown, setIntroShown] = useState(openAtStart);
 
   // Here so the slide number is remembered between closing & opening the modal
-  const [introSlideNumber, setIntroSlide] = React.useState(0);
+  const [introSlideNumber, setIntroSlide] = useState(0);
 
-  const [introSlidesJson, setIntroSlidesJson] = React.useState(null);
+  const [introSlidesJson, setIntroSlidesJson] = useState(null);
   // TODO: replace below with useAsync() so it's in line with the rest of the codebase
-  React.useEffect(() => {
+  useEffect(() => {
     (async function () {
       const response = await fetch("/introSlides.json");
       const slides = await response.json();
@@ -27,11 +27,7 @@ export default function IntroButton({ openAtStart, buttonPressFunction }) {
       <IconButtonTippy content="How to use Learney">
         <button
           className="mobile-icon-button lg:gray-icon-btn"
-          onClick={
-            introShown
-              ? () => setIntroShown(false)
-              : () => setTimeout(() => setIntroShown(true), 1000)
-          }
+          onClick={() => setIntroShown(true)}
         >
           <div className="block lg:hidden px-2 sm:px-4 text-black">
             How to use Learney
