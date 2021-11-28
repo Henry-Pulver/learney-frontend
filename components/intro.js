@@ -38,7 +38,7 @@ export default function IntroButton({ openAtStart, buttonPressFunction }) {
       </IconButtonTippy>
       <Modal
         open={introShown}
-        setOpen={setIntroShown}
+        setClosed={() => setIntroShown(false)}
         initialFocus={initialFocus}
       >
         <IntroSection

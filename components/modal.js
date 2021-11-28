@@ -1,6 +1,7 @@
 import React, { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationIcon, XIcon } from "@heroicons/react/outline";
+import { getValidURLs } from "../lib/utils";
 
 export default function Modal(props) {
   return (
@@ -9,7 +10,7 @@ export default function Modal(props) {
         as="div"
         className="fixed z-10 inset-0 overflow-y-auto"
         initialFocus={props.initialFocus}
-        onClose={props.setOpen}
+        onClose={props.setClosed}
       >
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
@@ -46,7 +47,7 @@ export default function Modal(props) {
                 <button
                   type="button"
                   className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  onClick={() => props.setOpen(false)}
+                  onClick={props.setClosed}
                 >
                   <span className="sr-only">Close</span>
                   <XIcon className="h-6 w-6" aria-hidden="true" />
@@ -63,18 +64,17 @@ export default function Modal(props) {
 
 export function AreYouSureModal({
   modalShown,
-  setModalShown,
+  setModalClosed,
   titleText,
   descriptionText,
   actionButtonText,
   actionButtonFunction,
 }) {
   const actionButtonRef = useRef(null);
-  console.log(modalShown);
   return (
     <Modal
       open={modalShown}
-      setOpen={setModalShown}
+      setClosed={setModalClosed}
       initialFocus={actionButtonRef}
     >
       <div className="sm:flex sm:items-start">
@@ -103,7 +103,7 @@ export function AreYouSureModal({
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
           onClick={() => {
             actionButtonFunction();
-            setModalShown(false);
+            setModalClosed(false);
           }}
         >
           {actionButtonText}
@@ -111,11 +111,32 @@ export function AreYouSureModal({
         <button
           type="button"
           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
-          onClick={() => setModalShown(false)}
+          onClick={() => setModalClosed(false)}
         >
           Cancel
         </button>
       </div>
     </Modal>
   );
+}
+
+export function getAreYouSureDescriptionText(deleteNodeData) {
+  let detailedInfoText;
+  if (deleteNodeData.nodetype === "field") {
+    const numChildren = window.cy
+      .nodes(`[id="${deleteNodeData.id}"]`)
+      .children()
+      .size();
+    detailedInfoText = (
+      <b>{`This topic has ${numChildren} concepts, which will all be deleted!`}</b>
+    );
+  } else {
+    detailedInfoText = (
+      <b>{`This concept has ${deleteNodeData.urls.length} URLs associated with it, which will all be lost if you delete it!`}</b>
+    );
+  }
+  return [
+    `Are you sure you want to delete ${deleteNodeData.nodetype} ${deleteNodeData.name}? `,
+    detailedInfoText,
+  ];
 }
