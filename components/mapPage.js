@@ -526,6 +526,14 @@ export default function MapPage({
           setEditNodeData={setEditNodeData}
           setShowEditData={setShowEditData}
           saveEditNodeData={saveEditNodeData}
+          deletebuttonClickFunction={(nodeId) =>
+            setDeleteNodeData((prevState) => {
+              return {
+                ...prevState,
+                ...window.cy.nodes(`[id = "${nodeId}"]`).data(),
+              };
+            })
+          }
           userId={userId}
         />
       ) : (
@@ -534,6 +542,14 @@ export default function MapPage({
             editParentNodeData={editParentNodeData}
             setEditParentNodeData={setEditParentNodeData}
             saveEditParentNodeData={saveEditParentNodeData}
+            deletebuttonClickFunction={(nodeId) =>
+              setDeleteNodeData((prevState) => {
+                return {
+                  ...prevState,
+                  ...window.cy.nodes(`[id = "${nodeId}"]`).data(),
+                };
+              })
+            }
             setShowEditData={setShowEditData}
           />
         )
