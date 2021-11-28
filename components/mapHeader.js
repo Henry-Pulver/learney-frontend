@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 
-export default function MapHeader({ mapUrlExtension, editMode }) {
+export default function MapHeader({ editMode, mapUrlExtension }) {
   const isStatQuest = mapUrlExtension.endsWith("StatQuest");
   return (
     <Head>
