@@ -39,6 +39,7 @@ import {
   EditConceptDataSidebar,
   EditTopicDataSidebar,
 } from "./editor/editConceptDataSidebar";
+import { AreYouSureModal, getAreYouSureDescriptionText } from "./modal";
 // import SearchBar, {getSearchOptions} from "./search";
 
 let eh; // Edge handles variable
@@ -50,6 +51,16 @@ const topicColours = [
   "#210042",
   "#610061",
 ];
+const emptyNodeData = {
+  id: Infinity,
+  name: "",
+  lectures: "",
+  description: "",
+  urls: "",
+  nodetype: "concept",
+  relative_importance: 1,
+  parent: "",
+};
 
 export default function MapPage({
   backendUrl,
@@ -215,13 +226,18 @@ export default function MapPage({
     setEditType("cursor");
     setShowEditData("concept");
   };
-  const removeElement = function (e) {
+  const deleteModeClick = function (e) {
     if (e.target.data().id !== undefined) {
-      e.target.remove();
-      window.cy.nodes('[nodetype = "field"]').forEach((node) => {
-        if (node.isChildless()) node.remove();
+      setDeleteNodeData((prevState) => {
+        return { ...prevState, ...e.target.data() };
       });
     }
+  };
+  const removeElement = function (elementId) {
+    const element = window.cy.nodes(`[id = "${elementId}"]`);
+    const parentNode = element.parent();
+    element.remove();
+    if (parentNode.isChildless()) parentNode.remove();
   };
   const handleEditNodeData = function (e) {
     setEditNodeData(e.target.data());
@@ -265,7 +281,7 @@ export default function MapPage({
           );
           break;
         case "delete":
-          window.cy.on("tap", removeElement);
+          window.cy.on("tap", deleteModeClick);
           break;
         default:
           break;
@@ -274,16 +290,10 @@ export default function MapPage({
   }, [editType]);
 
   const [showEditData, setShowEditData] = React.useState(null);
-  const [editNodeData, setEditNodeData] = React.useState({
-    id: Infinity,
-    name: "",
-    lectures: "",
-    description: "",
-    urls: "",
-    nodetype: "concept",
-    relative_importance: 1,
-    parent: "",
+  const [deleteNodeData, setDeleteNodeData] = React.useState({
+    ...emptyNodeData,
   });
+  const [editNodeData, setEditNodeData] = React.useState({ ...emptyNodeData });
   const saveEditNodeData = function (userId) {
     // [1.0] Copy Previous Data
     let newNodeData = { ...editNodeData };
@@ -377,6 +387,7 @@ export default function MapPage({
                   <MapSettingsIconButton
                     key="MapSettingsButton"
                     buttonPressFunction={buttonPressFunction}
+                    userId={userId}
                   />,
                   <MakeSuggestionIconButton
                     key="MakeSuggestionButton"
@@ -462,6 +473,18 @@ export default function MapPage({
               editType={editType}
               setEditType={setEditType}
             />
+            <AreYouSureModal
+              modalShown={!!deleteNodeData.name}
+              setModalClosed={() => setDeleteNodeData(() => emptyNodeData)}
+              titleText={`Delete ${deleteNodeData.nodetype} ${deleteNodeData.name}?`}
+              descriptionText={
+                deleteNodeData.name
+                  ? getAreYouSureDescriptionText(deleteNodeData)
+                  : ""
+              }
+              actionButtonText={`Delete ${deleteNodeData.nodetype}`}
+              actionButtonFunction={() => removeElement(deleteNodeData.id)}
+            />
           </div>
         </div>
       )}
@@ -489,7 +512,7 @@ export default function MapPage({
           }
         >
           {editType === "cursor"
-            ? "Click nodes or groups of nodes to edit or move them"
+            ? "Click concepts or topics to edit and drag to move them"
             : editType === "addEdges"
             ? "Click and hold to add a dependency"
             : editType === "addNode"

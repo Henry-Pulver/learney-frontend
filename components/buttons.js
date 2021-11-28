@@ -269,7 +269,7 @@ export function ResetProgressIconButton({
       </IconButtonTippy>
       <AreYouSureModal
         modalShown={areYouSureModalShown}
-        setModalShown={setModalShown}
+        setModalClosed={() => setModalShown(false)}
         titleText="Reset all Progress & Goals"
         descriptionText="This will remove all goals and concepts learned from the map!"
         actionButtonText="Reset Progress"
