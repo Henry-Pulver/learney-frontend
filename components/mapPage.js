@@ -365,7 +365,7 @@ export default function MapPage({
 
   return (
     <div>
-      <MapHeader />
+      <MapHeader mapUrlExtension={mapUrlExtension} />
       {!isLoading && (
         <Navbar
           user={user}
