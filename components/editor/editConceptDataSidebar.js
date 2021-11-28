@@ -6,6 +6,7 @@ export function EditConceptDataSidebar({
   setEditNodeData,
   setShowEditData,
   saveEditNodeData,
+  deletebuttonClickFunction,
   userId,
 }) {
   return (
@@ -58,7 +59,7 @@ export function EditConceptDataSidebar({
         <span
           className="btn-3 ml-3"
           onClick={() => {
-            window.cy.getElementById(editNodeData.id).remove();
+            deletebuttonClickFunction(editNodeData.id);
             setShowEditData(null);
           }}
         >
@@ -87,6 +88,7 @@ export function EditTopicDataSidebar({
   editParentNodeData,
   setEditParentNodeData,
   saveEditParentNodeData,
+  deletebuttonClickFunction,
   setShowEditData,
 }) {
   return (
@@ -118,7 +120,7 @@ export function EditTopicDataSidebar({
         <span
           className="btn-3 ml-3"
           onClick={() => {
-            window.cy.getElementById(editParentNodeData.id).remove();
+            deletebuttonClickFunction(editParentNodeData.id);
             setShowEditData(null);
           }}
         >
