@@ -364,8 +364,7 @@ export default function MapPage({
 
   return (
     <div>
-      <MapHeader />
-
+      <MapHeader mapUrlExtension={mapUrlExtension} />
       <Map
         backendUrl={backendUrl}
         userId={userId}
