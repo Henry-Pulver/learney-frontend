@@ -27,7 +27,7 @@ export function EditConceptDataSidebar({
           setEditNodeData({ ...editNodeData, description: e.target.value })
         }
       />
-      <EditDataLabel>Topic Group</EditDataLabel>
+      <EditDataLabel>Topic Name</EditDataLabel>
       <EditDataInput
         className="text-black"
         type="text"
@@ -36,7 +36,7 @@ export function EditConceptDataSidebar({
           setEditNodeData({ ...editNodeData, parent: e.target.value })
         }
       />
-      <EditDataLabel>URLs (separated by a comma)</EditDataLabel>
+      <EditDataLabel>Resource URLs (separate with a comma)</EditDataLabel>
       <EditDataInput
         type="text"
         value={editNodeData.urls}
