@@ -145,10 +145,15 @@ export default function Navbar({
             <div className="max-w-95 mx-auto px-2 sm:px-4 lg:px-8">
               <div className="relative flex justify-between lg:gap-8">
                 <div className="flex md:absolute md:left-0 md:inset-y-0 lg:static xl:col-span-2">
-                  <div className="flex-shrink-0 flex items-center">
+                  <div className="group flex-shrink-0 flex items-center">
                     <img
-                      className="block h-10 w-auto"
-                      src="https://app.learney.me/images/learney_logo_256x256.png"
+                      className="h-10 w-auto block group-hover:hidden"
+                      src="/images/learney_logo_256x256.png"
+                      alt="Learney"
+                    />
+                    <img
+                      className="h-10 w-auto hidden group-hover:block"
+                      src="/learney_logo_emoji_size.gif"
                       alt="Learney"
                     />
                   </div>
