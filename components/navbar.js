@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useRef, useState, useEffect } from "react";
 import { Menu, Popover, Transition } from "@headlessui/react";
 import { SearchIcon } from "@heroicons/react/solid";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
@@ -8,7 +8,7 @@ import {
   LogOutIconButton,
   ProfileSelectedDiv,
 } from "./profile";
-import IntroButton from "./intro";
+import IntroButton, { IntroSection } from "./intro";
 import {
   FeedBackButton,
   MakeSuggestionIconButton,
@@ -16,6 +16,7 @@ import {
   SaveMapButton,
   SlackButton,
 } from "./buttons";
+import Modal from "./modal";
 
 export function EditNavbar({
   user,
@@ -58,33 +59,66 @@ export function EditNavbar({
 }
 
 export function LearnNavbar({ user, buttonPressFunction }) {
+  const [introShown, setIntroShown] = useState(user === undefined);
+
+  // Here so the slide number is remembered between closing & opening the modal
+  const [introSlideNumber, setIntroSlide] = useState(0);
+
+  const [introSlidesJson, setIntroSlidesJson] = useState(null);
+  // TODO: replace below with useAsync() so it's in line with the rest of the codebase
+  useEffect(() => {
+    (async function () {
+      const response = await fetch("/introSlides.json");
+      const slides = await response.json();
+      setIntroSlidesJson(slides);
+    })();
+  }, []);
+
+  // So the 'next slide' button is focused on load
+  const initialFocus = useRef(null);
+
   return (
-    <Navbar
-      user={user}
-      leftSideButtons={[
-        <IntroButton
-          key="IntroButton"
-          openAtStart={user === undefined}
+    <>
+      <Navbar
+        user={user}
+        leftSideButtons={[
+          <IntroButton
+            key="IntroButton"
+            setIntroShown={setIntroShown}
+            buttonPressFunction={buttonPressFunction}
+          />,
+          <MakeSuggestionIconButton
+            key="MakeSuggestionButton"
+            buttonPressFunction={buttonPressFunction}
+            userEmail={user !== undefined ? user.email : ""}
+          />,
+        ]}
+        rightSideButtons={[
+          <FeedBackButton
+            key="FeedbackButton"
+            buttonPressFunction={buttonPressFunction}
+          />,
+          <SlackButton
+            key="SlackButton"
+            buttonPressFunction={buttonPressFunction}
+          />,
+        ]}
+        buttonPressFunction={buttonPressFunction}
+      />
+      <Modal
+        open={introShown}
+        setClosed={() => setIntroShown(false)}
+        initialFocus={initialFocus}
+      >
+        <IntroSection
+          introSlideNumber={introSlideNumber}
+          setIntroSlide={setIntroSlide}
+          introSlides={introSlidesJson}
           buttonPressFunction={buttonPressFunction}
-        />,
-        <MakeSuggestionIconButton
-          key="MakeSuggestionButton"
-          buttonPressFunction={buttonPressFunction}
-          userEmail={user !== undefined ? user.email : ""}
-        />,
-      ]}
-      rightSideButtons={[
-        <FeedBackButton
-          key="FeedbackButton"
-          buttonPressFunction={buttonPressFunction}
-        />,
-        <SlackButton
-          key="SlackButton"
-          buttonPressFunction={buttonPressFunction}
-        />,
-      ]}
-      buttonPressFunction={buttonPressFunction}
-    />
+          initialFocus={initialFocus}
+        />
+      </Modal>
+    </>
   );
 }
 
