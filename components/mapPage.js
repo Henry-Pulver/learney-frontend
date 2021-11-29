@@ -19,7 +19,6 @@ import {
   isAnonymousUser,
   logPageView,
 } from "../lib/utils";
-import IntroButton from "../components/intro";
 import MapHeader from "./mapHeader";
 import Map from "./map";
 import {
@@ -29,7 +28,7 @@ import {
   setGoalClick,
   initialiseSignInTooltip,
 } from "../lib/learningAndPlanning";
-import Navbar from "./navbar";
+import { EditNavbar, LearnNavbar } from "./navbar";
 import Editor from "./editor/editor";
 // import SearchBar, {getSearchOptions} from "./search";
 
@@ -129,65 +128,18 @@ export default function MapPage({
   return (
     <div>
       <MapHeader editMode={editMap} mapUrlExtension={mapUrlExtension} />
-      {!isLoading && (
-        <Navbar
-          user={user}
-          leftSideButtons={
-            !editMap
-              ? [
-                  <IntroButton
-                    key="IntroButton"
-                    openAtStart={user === undefined}
-                    buttonPressFunction={buttonPressFunction}
-                  />,
-                  <MakeSuggestionIconButton
-                    key="MakeSuggestionButton"
-                    buttonPressFunction={buttonPressFunction}
-                    userEmail={user !== undefined ? user.email : ""}
-                  />,
-                ]
-              : [
-                  <MapSettingsIconButton
-                    key="MapSettingsButton"
-                    buttonPressFunction={buttonPressFunction}
-                    userId={userId}
-                  />,
-                  <MakeSuggestionIconButton
-                    key="MakeSuggestionButton"
-                    buttonPressFunction={buttonPressFunction}
-                    userEmail={user !== undefined ? user.email : ""}
-                  />,
-                ]
-          }
-          rightSideButtons={
-            !editMap
-              ? [
-                  <FeedBackButton
-                    key="FeedbackButton"
-                    buttonPressFunction={buttonPressFunction}
-                  />,
-                  <SlackButton
-                    key="SlackButton"
-                    buttonPressFunction={buttonPressFunction}
-                  />,
-                ]
-              : [
-                  <SaveMapButton
-                    key="SaveMap"
-                    userId={userId}
-                    buttonPressFunction={buttonPressFunction}
-                    backendUrl={backendUrl}
-                    mapUUID={mapUUID}
-                  />,
-                  <FeedBackButton
-                    key="FeedbackButton"
-                    buttonPressFunction={buttonPressFunction}
-                  />,
-                ]
-          }
-          buttonPressFunction={buttonPressFunction}
-        />
-      )}
+      {!isLoading &&
+        (editMap ? (
+          <EditNavbar
+            user={user}
+            userId={userId}
+            buttonPressFunction={buttonPressFunction}
+            backendUrl={backendUrl}
+            mapUUID={mapUUID}
+          />
+        ) : (
+          <LearnNavbar user={user} buttonPressFunction={buttonPressFunction} />
+        ))}
 
       <Map
         backendUrl={backendUrl}
