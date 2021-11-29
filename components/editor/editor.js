@@ -212,7 +212,6 @@ export default function Editor({
             y: window.cy.getElementById(newNodeData.id).y,
           },
         };
-
         window.cy.add([newParentNode]);
       }
 
