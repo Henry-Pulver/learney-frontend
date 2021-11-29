@@ -8,6 +8,85 @@ import {
   LogOutIconButton,
   ProfileSelectedDiv,
 } from "./profile";
+import IntroButton from "./intro";
+import {
+  FeedBackButton,
+  MakeSuggestionIconButton,
+  MapSettingsIconButton,
+  SaveMapButton,
+  SlackButton,
+} from "./buttons";
+
+export function EditNavbar({
+  user,
+  userId,
+  buttonPressFunction,
+  backendUrl,
+  mapUUID,
+}) {
+  return (
+    <Navbar
+      user={user}
+      leftSideButtons={[
+        <MapSettingsIconButton
+          key="MapSettingsButton"
+          buttonPressFunction={buttonPressFunction}
+          userId={userId}
+        />,
+        <MakeSuggestionIconButton
+          key="MakeSuggestionButton"
+          buttonPressFunction={buttonPressFunction}
+          userEmail={user !== undefined ? user.email : ""}
+        />,
+      ]}
+      rightSideButtons={[
+        <SaveMapButton
+          key="SaveMap"
+          userId={userId}
+          buttonPressFunction={buttonPressFunction}
+          backendUrl={backendUrl}
+          mapUUID={mapUUID}
+        />,
+        <FeedBackButton
+          key="FeedbackButton"
+          buttonPressFunction={buttonPressFunction}
+        />,
+      ]}
+      buttonPressFunction={buttonPressFunction}
+    />
+  );
+}
+
+export function LearnNavbar({ user, buttonPressFunction }) {
+  return (
+    <Navbar
+      user={user}
+      leftSideButtons={[
+        <IntroButton
+          key="IntroButton"
+          openAtStart={user === undefined}
+          buttonPressFunction={buttonPressFunction}
+        />,
+        <MakeSuggestionIconButton
+          key="MakeSuggestionButton"
+          buttonPressFunction={buttonPressFunction}
+          userEmail={user !== undefined ? user.email : ""}
+        />,
+      ]}
+      rightSideButtons={[
+        <FeedBackButton
+          key="FeedbackButton"
+          buttonPressFunction={buttonPressFunction}
+        />,
+        <SlackButton
+          key="SlackButton"
+          buttonPressFunction={buttonPressFunction}
+        />,
+      ]}
+      buttonPressFunction={buttonPressFunction}
+    />
+  );
+}
 
 export default function Navbar({
   user,
