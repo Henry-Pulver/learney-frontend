@@ -259,18 +259,6 @@ export default function Editor({
           <AddNodeButton editType={editType} setEditType={setEditType} />
           <AddEdgesButton editType={editType} setEditType={setEditType} />
           <DeleteElementButton editType={editType} setEditType={setEditType} />
-          <AreYouSureModal
-            modalShown={!!deleteNodeData.name}
-            setModalClosed={() => setDeleteNodeData(() => emptyNodeData)}
-            titleText={`Delete ${deleteNodeData.nodetype} ${deleteNodeData.name}?`}
-            descriptionText={
-              deleteNodeData.name
-                ? getAreYouSureDescriptionText(deleteNodeData)
-                : ""
-            }
-            actionButtonText={`Delete ${deleteNodeData.nodetype}`}
-            actionButtonFunction={() => removeElement(deleteNodeData.id)}
-          />
         </div>
       </div>
       <div
@@ -320,6 +308,18 @@ export default function Editor({
           />
         )
       )}
+      <AreYouSureModal
+        modalShown={!!deleteNodeData.name}
+        setModalClosed={() => setDeleteNodeData(() => emptyNodeData)}
+        titleText={`Delete ${deleteNodeData.nodetype} ${deleteNodeData.name}?`}
+        descriptionText={
+          deleteNodeData.name
+            ? getAreYouSureDescriptionText(deleteNodeData)
+            : ""
+        }
+        actionButtonText={`Delete ${deleteNodeData.nodetype}`}
+        actionButtonFunction={() => removeElement(deleteNodeData.id)}
+      />
     </>
   );
 }
