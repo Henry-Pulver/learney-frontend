@@ -1,33 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import { InformationCircleIcon } from "@heroicons/react/outline";
 import { IconButtonTippy } from "./buttons";
-import Modal from "./modal";
 
-export default function IntroButton({ openAtStart, buttonPressFunction }) {
-  const [introShown, setIntroShown] = useState(openAtStart);
-
-  // Here so the slide number is remembered between closing & opening the modal
-  const [introSlideNumber, setIntroSlide] = useState(0);
-
-  const [introSlidesJson, setIntroSlidesJson] = useState(null);
-  // TODO: replace below with useAsync() so it's in line with the rest of the codebase
-  useEffect(() => {
-    (async function () {
-      const response = await fetch("/introSlides.json");
-      const slides = await response.json();
-      setIntroSlidesJson(slides);
-    })();
-  }, []);
-
-  // So the 'next slide' button is focused on load
-  const initialFocus = useRef(null);
-
+export default function IntroButton({ setIntroShown, buttonPressFunction }) {
   return (
     <>
       <IconButtonTippy content="How to use Learney">
         <button
           className="mobile-icon-button lg:gray-icon-btn"
-          onClick={() => setIntroShown(true)}
+          onClick={buttonPressFunction(() => setIntroShown(true), "open-intro")}
         >
           <div className="block lg:hidden px-2 sm:px-4 text-black">
             How to use Learney
@@ -36,19 +17,6 @@ export default function IntroButton({ openAtStart, buttonPressFunction }) {
           <InformationCircleIcon className="h-7 w-7" />
         </button>
       </IconButtonTippy>
-      <Modal
-        open={introShown}
-        setClosed={() => setIntroShown(false)}
-        initialFocus={initialFocus}
-      >
-        <IntroSection
-          introSlideNumber={introSlideNumber}
-          setIntroSlide={setIntroSlide}
-          introSlides={introSlidesJson}
-          buttonPressFunction={buttonPressFunction}
-          initialFocus={initialFocus}
-        />
-      </Modal>
     </>
   );
 }
@@ -70,7 +38,7 @@ export function IntroSection({
   );
 
   return (
-    <div className="text-black block">
+    <div className="text-black">
       <h2 className="text-black m-2 text-2xl font-bold">
         {introSlides ? introSlides[introSlideNumber].title : ""}
       </h2>
