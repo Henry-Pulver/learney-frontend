@@ -365,7 +365,7 @@ export default function MapPage({
 
   return (
     <div>
-      <MapHeader mapUrlExtension={mapUrlExtension} />
+      <MapHeader editMode={editMap} mapUrlExtension={mapUrlExtension} />
       {!isLoading && (
         <Navbar
           user={user}
@@ -446,21 +446,6 @@ export default function MapPage({
         handleEditParentNodeData={handleEditParentNodeData}
       />
 
-      <div
-        className={`absolute top-0 flex mt-1 justify-end disableTouchActions`}
-      >
-        <div className="contents">
-          {/*{editMap && (*/}
-          {/*  <>*/}
-          {/*    <ResetLayoutButton*/}
-          {/*      buttonPressFunction={buttonPressFunction}*/}
-          {/*      userId={userId}*/}
-          {/*    />*/}
-          {/*    <RunDagreButton buttonPressFunction={buttonPressFunction} />*/}
-          {/*  </>*/}
-          {/*)}*/}
-        </div>
-      </div>
       {editMap && (
         <div
           className={`flex flex-row items-end absolute bottom-0 left-0 m-4 disableTouchActions`}
