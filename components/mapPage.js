@@ -10,7 +10,11 @@ import {
   initialiseMixpanelTracking,
 } from "../lib/trackingScripts";
 import { useUser } from "@auth0/nextjs-auth0";
-import { isAnonymousUser, logPageView } from "../lib/utils";
+import {
+  buttonPress,
+  isAnonymousUser,
+  logPageView,
+} from "../lib/utils";
 import MapHeader from "./mapHeader";
 import Map from "./map";
 import {
@@ -88,6 +92,10 @@ export default function MapPage({
     setLearnedState(learnedNodes);
   };
 
+  const buttonPressFunction = function (runFirst, buttonName) {
+    return buttonPress(runFirst, buttonName, backendUrl, userId);
+  };
+
   const [pageLoaded, setPageLoaded] = React.useState(false);
   useEffect(() => {
     (async function () {
@@ -115,8 +123,8 @@ export default function MapPage({
 
   const [nextConcept, setNextConcept] = useState(null);
   useEffect(() => {
-    if (pageLoaded) setNextConcept(getNextNodeToLearn());
-  }, [pageLoaded, learned, goals]);
+    if (!editMap && pageLoaded) setNextConcept(getNextNodeToLearn());
+  }, [learned, goals]);
 
   return (
     <div>
@@ -180,9 +188,6 @@ export default function MapPage({
           backendUrl={backendUrl}
           userId={userId}
           mapUUID={mapUUID}
-          sessionId={sessionId}
-          setGoalsState={setGoalsState}
-          setLearnedState={setLearnedState}
         />
       )}
     </div>
