@@ -165,10 +165,12 @@ export default function MapPage({
       <div
         className={`flex flex-row items-end absolute bottom-0 right-0 mx-8 my-4 disableTouchActions`}
       >
-        <GetNextConceptButton
-          nextConcept={nextConcept}
-          buttonPressFunction={buttonPressFunction}
-        />
+        {!editMap && (
+          <GetNextConceptButton
+            nextConcept={nextConcept}
+            buttonPressFunction={buttonPressFunction}
+          />
+        )}
         <ResetPanButton buttonPressFunction={buttonPressFunction} />
         {!editMap && (
           <ResetProgressIconButton
