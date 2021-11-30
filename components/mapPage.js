@@ -10,11 +10,7 @@ import {
   initialiseMixpanelTracking,
 } from "../lib/trackingScripts";
 import { useUser } from "@auth0/nextjs-auth0";
-import {
-  getButtonPressFunction,
-  isAnonymousUser,
-  logPageView,
-} from "../lib/utils";
+import { isAnonymousUser, logPageView } from "../lib/utils";
 import MapHeader from "./mapHeader";
 import Map from "./map";
 import {
@@ -91,12 +87,6 @@ export default function MapPage({
     learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
     setLearnedState(learnedNodes);
   };
-
-  const buttonPressFunction = getButtonPressFunction(
-    backendUrl,
-    userId,
-    sessionId
-  );
 
   const [pageLoaded, setPageLoaded] = React.useState(false);
   useEffect(() => {
