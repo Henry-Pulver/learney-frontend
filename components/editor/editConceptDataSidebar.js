@@ -10,11 +10,11 @@ export function EditConceptDataSidebar({
   userId,
 }) {
   return (
-    <div className="absolute right-1 top-24 pt-4 pb-8 bg-white rounded-lg max-h-screen-80 w-120 overflow-y-auto">
+    <div className="absolute right-1 top-24 py-4 bg-white rounded-lg max-h-screen-80 w-120 overflow-y-auto">
       <EditDataLabel>Concept Name</EditDataLabel>
       <EditDataInput
-        classes="text-xl"
         type="text"
+        classes="text-xl"
         value={editNodeData.name}
         onChange={(e) =>
           setEditNodeData({ ...editNodeData, name: e.target.value })
@@ -57,7 +57,7 @@ export function EditConceptDataSidebar({
       />
       <div className="flex justify-between">
         <span
-          className="btn-3 ml-3"
+          className="btn-3 ml-7 mt-3"
           onClick={() => {
             deletebuttonClickFunction(editNodeData.id);
             setShowEditData(null);
@@ -92,13 +92,13 @@ export function EditTopicDataSidebar({
   setShowEditData,
 }) {
   return (
-    <div className="absolute right-1 top-24 pt-4 pb-8 bg-white rounded-lg max-h-screen-80 w-120">
+    <div className="absolute right-1 top-24 py-4 bg-white rounded-lg max-h-screen-80 w-120">
       <EditDataLabel>Topic Name</EditDataLabel>
       <EditDataInput
         classes="text-xl"
         type="text"
         value={editParentNodeData.name}
-        setValue={(e) =>
+        onChange={(e) =>
           setEditParentNodeData({
             ...editParentNodeData,
             name: e.target.value,
@@ -109,7 +109,7 @@ export function EditTopicDataSidebar({
       <EditDataInput
         type="text"
         value={editParentNodeData.colour}
-        setValue={(e) =>
+        onChange={(e) =>
           setEditParentNodeData({
             ...editParentNodeData,
             colour: e.target.value,
@@ -118,7 +118,7 @@ export function EditTopicDataSidebar({
       />
       <div className="flex justify-between">
         <span
-          className="btn-3 ml-3"
+          className="btn-3 ml-7 mt-3"
           onClick={() => {
             deletebuttonClickFunction(editParentNodeData.id);
             setShowEditData(null);
@@ -163,7 +163,7 @@ function EditDataTextArea({ value, editValue }) {
   );
 }
 
-function EditDataInput({ type, classes, value, setValue }) {
+function EditDataInput({ type, classes, value, onChange }) {
   return (
     <input
       className={classNames(
@@ -172,7 +172,7 @@ function EditDataInput({ type, classes, value, setValue }) {
       )}
       type={type}
       value={value}
-      onChange={setValue}
+      onChange={onChange}
     />
   );
 }
