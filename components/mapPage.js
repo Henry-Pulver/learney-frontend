@@ -1,10 +1,5 @@
 import ReactGA from "react-ga";
 import {
-  FeedBackButton,
-  MakeSuggestionIconButton,
-  SaveMapButton,
-  SlackButton,
-  MapSettingsIconButton,
   ResetPanButton,
   ResetProgressIconButton,
 } from "./buttons";
