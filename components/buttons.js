@@ -110,7 +110,7 @@ export function FeedBackButton({ buttonPressFunction }) {
 
 export function SlackButton({ buttonPressFunction }) {
   return (
-    <IconButtonTippy content="Say Hi in our Slack!">
+    <IconButtonTippy content="Say Hi in our Slack community!">
       <button
         className="mobile-icon-button lg:gray-icon-btn"
         onClick={buttonPressFunction(function () {
