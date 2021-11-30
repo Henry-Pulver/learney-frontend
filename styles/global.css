@@ -1,123 +1,62 @@
-html,
-body {
-  width: 100%;
-  height: 100%;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-with-text {
+    @apply py-2 px-4 inline-flex items-center border border-transparent text-white text-sm font-medium rounded-lg;
+  }
+  .btn-deactivated {
+    @apply btn-with-text cursor-default bg-gray-300 focus:ring-transparent;
+  }
+  .btn-activated {
+    @apply btn-with-text cursor-pointer shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-75;
+  }
+  .btn-blue {
+    @apply btn-activated bg-blue-600 hover:bg-blue-700 focus:ring-blue-500;
+  }
+  .btn-red {
+    @apply btn-activated bg-red-600 hover:bg-red-700 focus:ring-red-500;
+  }
+  .btn-green {
+    @apply btn-activated bg-green-600 hover:bg-green-700 focus:ring-green-500;
+  }
+
+  .btn-2 {
+    @apply btn-activated bg-gray-400 hover:bg-gray-500 focus:ring-gray-300;
+  }
+  .btn-3 {
+    @apply mx-4 my-2 cursor-pointer inline-flex items-center text-base font-medium rounded-lg text-gray-500 hover:text-black border border-transparent;
+  }
+
+  .white-icon-btn {
+    @apply flex-shrink-0 bg-white shadow-sm hover:shadow-md w-auto rounded-full focus:outline-none;
+  }
+  .gray-icon-btn {
+    @apply white-icon-btn ml-1 lg:ml-6 p-1 text-gray-400 hover:text-gray-500;
+  }
+  .mobile-icon-button {
+    @apply flex flex-row justify-between items-center w-full max-w-3xl mx-auto rounded-md py-2 px-3 text-base font-medium text-gray-500;
+  }
+  .btn-grow {
+    @apply hover:transform hover:scale-105 ease-in-out duration-200;
+  }
+}
+
+.disableTouchActions {
+  touch-action: none;
+}
+
+html {
   overflow: hidden;
-  margin: 0;
-  padding: 0;
-  color: rgb(117, 117, 118);
 }
 
-#cy {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  background: #000;
-  z-index: 0;
-}
-
-iframe {
-  border: none;
-  max-width: 100%;
-  max-height: 100%;
-}
-
-#profileImageButton {
-  display: block;
-  border: none;
-}
-
-#profile-div {
-  border: 2px solid rgba(60, 60, 60, 1);
-  display: none;
-  text-align: center;
-  background-color: white;
-}
-
-#profile-div > h2 {
-  color: black;
-  font-size: 1.5em;
-  font-weight: 600;
-  margin: 0.5em 0;
-}
-
-/*MOBILE*/
-@media only screen and (max-device-width: 768px) {
-  html,
-  body {
-    font: 20px helvetica neue, helvetica, arial, sans-serif;
-  }
-  .overallProfileDiv {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    flex-direction: column-reverse;
-  }
-  #profileImageButton {
-    width: 4em;
-    height: 4em;
-    margin-left: 1em;
-    margin-bottom: 0.2em;
-    margin-right: auto;
-  }
-  #profile-div {
-    padding: 30px;
-    margin: 10px;
-    max-width: 100%;
-  }
-}
 /*DESKTOP*/
 @media only screen and (min-device-width: 768px) {
   html,
   body {
     font: 14px helvetica neue, helvetica, arial, sans-serif;
   }
-  .overallProfileDiv {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
-  #profileImageButton {
-    width: 3em;
-    height: 3em;
-    margin-right: 5px;
-    margin-left: auto;
-  }
-  #profile-div {
-    border-radius: 5px;
-    padding: 15px;
-    margin: 5px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    max-width: 200px;
-  }
-}
-
-button.close {
-  position: absolute;
-  margin: 10px;
-  padding: 2px 5px 0;
-  top: 0;
-  right: 0;
-  background-color: red;
-}
-
-button.close:hover {
-  background-color: #747475;
-}
-
-button.circle {
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  border-radius: 50%;
-  border: 2px solid white;
-}
-
-button.large {
-  padding: 0 20px;
-  font-size: 1.5em;
 }
 
 .select2-search__field {
@@ -130,97 +69,24 @@ button.large {
   color: black;
 }
 
-/*MOBILE*/
-@media only screen and (max-device-width: 768px) {
-  button.close {
-    font-size: 16px;
-  }
-  #reset-progress {
-    width: 50%;
-  }
-  #reset-pan {
-    width: 50%;
-  }
-  button.circle {
-    width: 3em;
-    height: 3em;
-  }
-  #concept-search-bar-label {
-    margin: 0 5px;
-  }
-  #feedback-button {
-    display: none;
-  }
-  .suggestionButton {
-    display: none;
-  }
+/* Community voting arrows */
+.vote-arrow {
+  width: 30px;
+  height: 30px;
 }
 
-/*DESKTOP*/
-@media only screen and (min-device-width: 769px) {
-  #concept-search-bar-label {
-    max-width: 16rem;
-    margin-right: 10px;
-  }
-  #reset-progress {
-    width: 100%;
-    max-width: 8rem;
-  }
-  #slack-button {
-    margin-bottom: 5px;
-  }
+.triangle {
+  width: 0;
+  height: 0;
+  border-width: 15px;
 }
 
-#reset-progress {
-  background-color: #bf0000;
-  font-weight: 600;
+.triangle.up {
+  border-top: 0 solid transparent;
+  border-bottom-width: 30px;
 }
 
-#concept-search-bar-label {
-  width: 100%;
-}
-
-#feedback-button:hover {
-  background-color: #accaff;
-  box-shadow: 0 0 10px #accaff;
-  animation: none;
-}
-
-#reset-progress:hover {
-  background-color: #dc0000;
-}
-
-#feedbackIcon {
-  height: 80%;
-  margin: 10% 0;
-}
-
-#slack-button {
-  background-color: #ffffff;
-  padding: 0;
-}
-
-#slack-button:hover {
-  background-color: #dfdfdf;
-}
-
-#slackLogo {
-  padding: 10%;
-}
-
-#closeButton {
-  display: block;
-  margin: auto;
-}
-
-p.switch-text {
-  text-align: right;
-  margin: 0 2px 0 auto;
-  color: black;
-}
-
-ol {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
+.triangle.down {
+  border-bottom: 0 solid transparent;
+  border-top-width: 30px;
 }
