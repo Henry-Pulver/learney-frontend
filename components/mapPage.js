@@ -1,9 +1,10 @@
 import ReactGA from "react-ga";
 import {
+  GetNextConceptButton,
   ResetPanButton,
   ResetProgressIconButton,
 } from "./buttons";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   setupTracking,
   initialiseMixpanelTracking,
@@ -25,6 +26,7 @@ import {
 } from "../lib/learningAndPlanning";
 import { EditNavbar, LearnNavbar } from "./navbar";
 import Editor from "./editor/editor";
+import { getNextNodeToLearn } from "../lib/questions";
 // import SearchBar, {getSearchOptions} from "./search";
 
 export default function MapPage({
@@ -96,6 +98,7 @@ export default function MapPage({
     sessionId
   );
 
+  const [pageLoaded, setPageLoaded] = React.useState(false);
   useEffect(() => {
     (async function () {
       if (!isLoading) {
@@ -119,6 +122,11 @@ export default function MapPage({
       }
     })();
   }, [isLoading]);
+
+  const [nextConcept, setNextConcept] = useState(null);
+  useEffect(() => {
+    if (pageLoaded) setNextConcept(getNextNodeToLearn());
+  }, [learned, goals]);
 
   return (
     <div>
@@ -152,10 +160,15 @@ export default function MapPage({
         goals={goals}
         onSetGoalClick={onSetGoalClick}
         setGoalsState={setGoalsState}
+        setPageLoaded={setPageLoaded}
       />
       <div
         className={`flex flex-row items-end absolute bottom-0 right-0 mx-8 my-4 disableTouchActions`}
       >
+        <GetNextConceptButton
+          nextConcept={nextConcept}
+          buttonPressFunction={buttonPressFunction}
+        />
         <ResetPanButton buttonPressFunction={buttonPressFunction} />
         {!editMap && (
           <ResetProgressIconButton
