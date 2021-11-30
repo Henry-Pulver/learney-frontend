@@ -19,6 +19,7 @@ import {
 import {
   ChatIcon,
   CogIcon,
+  GlobeAltIcon,
   LightBulbIcon,
   MapIcon,
   PlusCircleIcon,
@@ -284,9 +285,43 @@ export function ResetPanButton({ buttonPressFunction }) {
     <IconButtonTippy content={"Centre map"} placement={"top"}>
       <button
         onClick={buttonPressFunction(function () {
-          fitCytoTo({ eles: cy.nodes(), padding: 50 });
+          fitCytoTo({ eles: window.cy.nodes(), padding: 50 });
         }, "reset-pan")}
         className="gray-icon-btn"
+      >
+        <span className="sr-only">Centre map</span>
+        <GlobeAltIcon className="h-7 w-7" />
+      </button>
+    </IconButtonTippy>
+  );
+}
+
+export function GetNextConceptButton({ nextConcept, buttonPressFunction }) {
+  return (
+    <IconButtonTippy
+      content={
+        nextConcept ? (
+          "Your next concept"
+        ) : (
+          <>
+            Your next concept <b>(first set a goal)</b>
+          </>
+        )
+      }
+      placement={"top"}
+    >
+      <button
+        onClick={
+          nextConcept
+            ? buttonPressFunction(() => {
+                nextConcept.emit("tap");
+              }, "reset-pan")
+            : () => {}
+        }
+        className={classNames(
+          !nextConcept && "cursor-default",
+          "gray-icon-btn"
+        )}
       >
         <span className="sr-only">Centre map</span>
         <svg

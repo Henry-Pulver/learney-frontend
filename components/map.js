@@ -26,6 +26,7 @@ export default function Map({
   goals,
   onSetGoalClick,
   setGoalsState,
+  setPageLoaded,
 }) {
   const [userVotes, setUserVote] = React.useState({});
   const initialiseUserVotes = (initialVotes) => {
@@ -87,6 +88,7 @@ export default function Map({
           function () {}
         );
         setupCtoCentre(editMap);
+        setPageLoaded(true);
       }
     })();
   }, [sessionId, userId]);
