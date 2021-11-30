@@ -1,76 +1,14 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { signInTooltip } from "../lib/learningAndPlanning";
-import mainStyles from "../styles/main.module.css";
-import buttonStyles from "../styles/buttons.module.css";
+import { LogoutIcon, UserAddIcon } from "@heroicons/react/outline";
 
-Profile.propTypes = {
-  userdata: PropTypes.object.isRequired,
-  buttonPressFunction: PropTypes.func.isRequired,
-};
-
-export default function Profile({ userdata, buttonPressFunction }) {
-  const [profileDivSelected, setValue] = React.useState(false);
-  const onProfileSelected = buttonPressFunction(function () {
-    if (signInTooltip !== null) {
-      if (!profileDivSelected) {
-        signInTooltip.enable();
-      } else {
-        signInTooltip.hide();
-        signInTooltip.disable();
-      }
-    }
-    setValue(!profileDivSelected);
-  }, "profile-image-button");
-
+export function ProfileSelectedDiv({ userdata, buttonPressFunction }) {
   return (
-    <div
-      className={`overallProfileDiv ${mainStyles.disableTouchActions}`}
-      onClick={onProfileSelected}
-    >
-      <div>
-        <div id="profileImageButton">
-          <img
-            className={mainStyles.profileImage}
-            src={userdata !== undefined ? userdata.picture : "/images/user.svg"}
-            style={
-              userdata !== undefined
-                ? { backgroundColor: "transparent" }
-                : { backgroundColor: "white" }
-            }
-            alt="Profile Picture"
-          />
-        </div>
-      </div>
-      <ProfileSelectedDiv
-        userdata={userdata}
-        profileDivSelected={profileDivSelected}
-        buttonPressFunction={buttonPressFunction}
-      />
-    </div>
-  );
-}
-
-function ProfileSelectedDiv({
-  userdata,
-  profileDivSelected,
-  buttonPressFunction,
-}) {
-  return (
-    <div
-      id="profile-div"
-      style={!profileDivSelected ? { display: "none" } : { display: "block" }}
-    >
-      {userdata !== undefined
-        ? [
-            <h2>Welcome, {userdata.name}!</h2>,
-            <h5 className={mainStyles.profileEmail}>{userdata.email}</h5>,
-            <LogOut buttonPressFunction={buttonPressFunction} />,
-          ]
-        : [
-            <h2>Welcome!</h2>,
-            <LogIn buttonPressFunction={buttonPressFunction} />,
-          ]}
+    <div className="text-center bg-white p-4 rounded-md m-2 sm:max-w-8xl">
+      <h2 className="my-2 text-black font-bold text-xl">
+        Welcome, {userdata.name}!
+      </h2>
+      <h5 className="my-2 text-gray-500 font-normal">{userdata.email}</h5>
+      <LogOut buttonPressFunction={buttonPressFunction} />
     </div>
   );
 }
@@ -78,8 +16,7 @@ function ProfileSelectedDiv({
 function LogOut({ buttonPressFunction }) {
   return (
     <button
-      className={`${buttonStyles.button} px-2 py-1`}
-      id="log-out"
+      className="btn-blue"
       onClick={buttonPressFunction(function () {
         location.href = "/api/auth/logout";
       }, "log-out")}
@@ -89,16 +26,35 @@ function LogOut({ buttonPressFunction }) {
   );
 }
 
-function LogIn({ buttonPressFunction }) {
+export function LogOutIconButton({ user, buttonPressFunction }) {
   return (
     <button
-      id="log-in"
-      className={`${buttonStyles.large} ${buttonStyles.button}`}
+      className="gray-icon-btn"
+      onClick={buttonPressFunction(function () {
+        location.href = "/api/auth/logout";
+      }, "log-out")}
+    >
+      <span className="sr-only">Log out</span>
+      <LogoutIcon className="w-7 h-7" />
+    </button>
+  );
+}
+
+export function LogInIconButton({ buttonPressFunction }) {
+  return (
+    <button
+      className="mobile-icon-button group"
       onClick={buttonPressFunction(() => {
         location.href = "/api/auth/login";
       }, "log-in")}
     >
-      Log In
+      <div className="block lg:hidden px-2 sm:px-4 font-bold text-black">
+        Sign in
+      </div>
+      <div className="lg:white-icon-btn p-1">
+        <span className="sr-only">Sign in</span>
+        <UserAddIcon className="h-7 w-7 text-blue-500 group-hover:text-blue-600" />
+      </div>
     </button>
   );
 }

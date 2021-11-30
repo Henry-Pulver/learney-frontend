@@ -26,12 +26,10 @@ export default function Map({
   goals,
   onSetGoalClick,
   setGoalsState,
-  handleEditNodeData,
-  handleEditParentNodeData,
+  setPageLoaded,
 }) {
   const [userVotes, setUserVote] = React.useState({});
   const initialiseUserVotes = (initialVotes) => {
-    console.log(initialVotes);
     for (const [url, voteDirection] of Object.entries(initialVotes)) {
       setUserVote((prevVotes) => ({ ...prevVotes, [url]: voteDirection }));
     }
@@ -80,9 +78,7 @@ export default function Map({
           sessionId,
           showConceptTippy,
           hideConceptTippy,
-          onSetGoalClick,
-          handleEditNodeData,
-          handleEditParentNodeData
+          onSetGoalClick
         );
         // TODO: if goal is set, zoom there instead of to the bottom?
         panByAndZoom(
@@ -92,13 +88,18 @@ export default function Map({
           function () {}
         );
         setupCtoCentre(editMap);
+        setPageLoaded(true);
       }
     })();
   }, [sessionId, userId]);
 
   return (
     <div>
-      <div id="cy" className="z-0" ref={cytoscapeRef} />
+      <div
+        id="cy"
+        className="absolute z-0 bg-black w-full h-full"
+        ref={cytoscapeRef}
+      />
       <ConceptTippy
         visible={conceptTippyShown}
         node={nodeSelected}

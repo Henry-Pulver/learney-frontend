@@ -3,8 +3,6 @@ import PropTypes from "prop-types";
 import { UserProvider } from "@auth0/nextjs-auth0";
 import "tailwindcss/tailwind.css";
 import "../styles/global.css";
-import "../styles/tooltip.css";
-import "../styles/intro.css";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/scale.css";
 import "tippy.js/themes/light.css";
