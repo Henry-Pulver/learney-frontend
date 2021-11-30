@@ -126,7 +126,7 @@ export default function MapPage({
   const [nextConcept, setNextConcept] = useState(null);
   useEffect(() => {
     if (pageLoaded) setNextConcept(getNextNodeToLearn());
-  }, [learned, goals]);
+  }, [pageLoaded, learned, goals]);
 
   return (
     <div>
