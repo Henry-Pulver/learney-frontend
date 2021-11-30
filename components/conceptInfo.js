@@ -141,7 +141,9 @@ function ConceptInfo({
       <div
         className="absolute cursor-pointer m-1 sm:m-2 top-0 right-0"
         onClick={
-          node ? buttonPressFunction(hideTippy, "close-concept") : () => {}
+          node
+            ? buttonPressFunction(hideTippy, "Top Right Close Concept X")
+            : () => {}
         }
       >
         <span className="sr-only">Close</span>
@@ -176,7 +178,7 @@ function ConceptInfo({
             <MakeSuggestionButton
               buttonPressFunction={buttonPressFunction}
               userEmail={userEmail}
-              buttonName={"content-suggestion"}
+              buttonName={"Suggest Content"}
               text={"Suggest Content!"}
             />
           )}
@@ -260,7 +262,7 @@ function ConceptLinkPreview({
             onClick={
               userVotes[url]
                 ? () => onVote(node, url, null) // true  ->  null
-                : userVotes[url] === null
+                : userVotes[url] === null || userVotes[url] === undefined
                 ? () => onVote(node, url, true) // null  ->  true
                 : () => onVote(node, url, null) // false ->  null
             }

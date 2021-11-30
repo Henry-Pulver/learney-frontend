@@ -8,7 +8,7 @@ export default function IntroButton({ setIntroShown, buttonPressFunction }) {
       <IconButtonTippy content="How to use Learney">
         <button
           className="mobile-icon-button lg:gray-icon-btn"
-          onClick={buttonPressFunction(() => setIntroShown(true), "open-intro")}
+          onClick={buttonPressFunction(() => setIntroShown(true), "Open Intro To Learney")}
         >
           <div className="block lg:hidden px-2 sm:px-4 text-black">
             How to use Learney
@@ -30,11 +30,11 @@ export function IntroSection({
 }) {
   const prevSlide = buttonPressFunction(
     () => setIntroSlide(introSlideNumber - 1),
-    "prev-intro"
+    "Intro Previous Slide"
   );
   const nextSlide = buttonPressFunction(
     () => setIntroSlide(introSlideNumber + 1),
-    "next-intro"
+    "Intro Next Slide"
   );
 
   return (
