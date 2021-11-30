@@ -39,11 +39,9 @@ export default function Editor({
   backendUrl,
   userId,
   mapUUID,
-  sessionId,
-  setGoalsState,
-  setLearnedState,
+  pageLoaded,
 }) {
-  const [editType, setEditType] = React.useState("cursor");
+  const [editType, setEditType] = React.useState(null);
   const addNode = function (e) {
     // [1.0] Create the next node ID
     let nextNodeID = 0;
@@ -115,7 +113,9 @@ export default function Editor({
     setShowEditData("concept");
   };
   const deleteModeClick = function (e) {
-    if (e.target.data().id !== undefined) {
+    if (e.target.isEdge()) {
+      e.target.remove();
+    } else if (e.target.data().id !== undefined) {
       setDeleteNodeData((prevState) => {
         return { ...prevState, ...e.target.data() };
       });
@@ -176,6 +176,10 @@ export default function Editor({
       }
     }
   }, [editType]);
+
+  useEffect(() => {
+    if (pageLoaded) setEditType("cursor");
+  }, [pageLoaded]);
 
   const [showEditData, setShowEditData] = React.useState(null);
   const [deleteNodeData, setDeleteNodeData] = React.useState({

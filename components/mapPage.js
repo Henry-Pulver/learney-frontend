@@ -190,9 +190,7 @@ export default function MapPage({
           backendUrl={backendUrl}
           userId={userId}
           mapUUID={mapUUID}
-          sessionId={sessionId}
-          setGoalsState={setGoalsState}
-          setLearnedState={setLearnedState}
+          pageLoaded={pageLoaded}
         />
       )}
     </div>
