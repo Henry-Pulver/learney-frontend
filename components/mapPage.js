@@ -10,11 +10,7 @@ import {
   initialiseMixpanelTracking,
 } from "../lib/trackingScripts";
 import { useUser } from "@auth0/nextjs-auth0";
-import {
-  buttonPress,
-  isAnonymousUser,
-  logPageView,
-} from "../lib/utils";
+import { buttonPress, isAnonymousUser, logPageView } from "../lib/utils";
 import MapHeader from "./mapHeader";
 import Map from "./map";
 import {
@@ -124,7 +120,7 @@ export default function MapPage({
   const [nextConcept, setNextConcept] = useState(null);
   useEffect(() => {
     if (!editMap && pageLoaded) setNextConcept(getNextNodeToLearn());
-  }, [learned, goals]);
+  }, [pageLoaded, learned, goals]);
 
   return (
     <div>
