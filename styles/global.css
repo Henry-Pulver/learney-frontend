@@ -10,7 +10,7 @@
     @apply btn-with-text cursor-default bg-gray-300 focus:ring-transparent;
   }
   .btn-activated {
-    @apply btn-with-text cursor-pointer shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-75;
+    @apply btn-with-text cursor-pointer transition duration-300 ease-in-out shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-opacity-75;
   }
   .btn-blue {
     @apply btn-activated bg-blue-600 hover:bg-blue-700 focus:ring-blue-500;
@@ -26,14 +26,14 @@
     @apply btn-activated bg-gray-400 hover:bg-gray-500 focus:ring-gray-300;
   }
   .btn-3 {
-    @apply mx-4 my-2 cursor-pointer inline-flex items-center text-base font-medium rounded-lg text-gray-500 hover:text-black border border-transparent;
+    @apply mx-4 my-2 cursor-pointer inline-flex items-center transition duration-300 ease-in-out text-base font-medium rounded-lg text-gray-500 hover:text-black border border-transparent;
   }
 
   .white-icon-btn {
     @apply flex-shrink-0 bg-white shadow-sm hover:shadow-md w-auto rounded-full focus:outline-none;
   }
   .gray-icon-btn {
-    @apply white-icon-btn ml-1 lg:ml-6 p-1 text-gray-400 hover:text-gray-500;
+    @apply white-icon-btn ml-1 lg:ml-6 p-1 transition duration-300 ease-in-out text-gray-400 hover:text-gray-500;
   }
   .mobile-icon-button {
     @apply flex flex-row justify-between items-center w-full max-w-3xl mx-auto rounded-md py-2 px-3 text-base font-medium text-gray-500;
