@@ -109,7 +109,6 @@ export default function Editor({
 
     // [4.0] Update UI
     setEditNodeData(newNode.data);
-    setEditType("cursor");
     setShowEditData("concept");
   };
   const deleteModeClick = function (e) {
