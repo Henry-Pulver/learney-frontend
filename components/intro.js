@@ -8,7 +8,10 @@ export default function IntroButton({ setIntroShown, buttonPressFunction }) {
       <IconButtonTippy content="How to use Learney">
         <button
           className="mobile-icon-button lg:gray-icon-btn"
-          onClick={buttonPressFunction(() => setIntroShown(true), "Open Intro To Learney")}
+          onClick={buttonPressFunction(
+            () => setIntroShown(true),
+            "Open Intro To Learney"
+          )}
         >
           <div className="block lg:hidden px-2 sm:px-4 text-black">
             How to use Learney
