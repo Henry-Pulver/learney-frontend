@@ -19,7 +19,7 @@ function LogOut({ buttonPressFunction }) {
       className="btn-blue"
       onClick={buttonPressFunction(function () {
         location.href = "/api/auth/logout";
-      }, "log-out")}
+      }, "Log Out")}
     >
       Logout
     </button>
@@ -32,7 +32,7 @@ export function LogOutIconButton({ user, buttonPressFunction }) {
       className="gray-icon-btn"
       onClick={buttonPressFunction(function () {
         location.href = "/api/auth/logout";
-      }, "log-out")}
+      }, "Log Out")}
     >
       <span className="sr-only">Log out</span>
       <LogoutIcon className="w-7 h-7" />
@@ -46,7 +46,7 @@ export function LogInIconButton({ buttonPressFunction }) {
       className="mobile-icon-button group"
       onClick={buttonPressFunction(() => {
         location.href = "/api/auth/login";
-      }, "log-in")}
+      }, "Log In")}
     >
       <div className="block lg:hidden px-2 sm:px-4 font-bold text-black">
         Sign in

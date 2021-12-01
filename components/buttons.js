@@ -84,7 +84,7 @@ export function IconButtonTippy(props) {
 
 export function FeedBackButton({ buttonPressFunction }) {
   return (
-    <IconButtonTippy content="We'd love to hear your suggestions! <3">
+    <IconButtonTippy content="We'd love to hear your feedback! <3">
       <button
         className="mobile-icon-button lg:gray-icon-btn"
         onClick={buttonPressFunction(
@@ -93,7 +93,7 @@ export function FeedBackButton({ buttonPressFunction }) {
               "https://docs.google.com/forms/d/e/1FAIpQLSeWyrpKy0r4LbQuuHt5FIL9PYU7KFfLSxFnnuBDs3-zaofW7A/viewform",
               "_blank"
             ),
-          "feedback-button"
+          "Give Feedback"
         )}
       >
         <div className="block lg:hidden px-2 sm:px-4 text-black">
@@ -119,7 +119,7 @@ export function SlackButton({ buttonPressFunction }) {
             "https://join.slack.com/t/learneyalphatesters/shared_invite/zt-tf37n610-x8rIwDk6eeVctTVZqQkp7Q",
             "_blank"
           );
-        }, "slack-button")}
+        }, "Join Slack")}
       >
         <div className="block lg:hidden px-2 sm:px-4 text-black">
           Say Hi in our Slack!
@@ -144,7 +144,7 @@ export function MakeSuggestionIconButton({ buttonPressFunction, userEmail }) {
       <button
         onClick={buttonPressFunction(
           goToFormFunction("concept", userEmail),
-          "make-suggestion"
+          "Make Suggestion"
         )}
         className="mobile-icon-button lg:gray-icon-btn"
       >
@@ -190,9 +190,8 @@ export function SaveMapButton({
       className="btn-blue ml-4"
       onClick={buttonPressFunction(
         () => saveMap(userId, backendUrl, mapUUID),
-        "save-layout"
+        "Editor - Save Layout"
       )}
-      id={"save-layout"}
     >
       Save Map
     </button>
@@ -255,7 +254,7 @@ export function ResetProgressIconButton({
       );
       unhighlightNodes(cy.nodes());
     },
-    "reset-progress",
+    "Reset Progress",
     backendUrl,
     userId
   );
@@ -286,7 +285,7 @@ export function ResetPanButton({ buttonPressFunction }) {
       <button
         onClick={buttonPressFunction(function () {
           fitCytoTo({ eles: window.cy.nodes(), padding: 50 });
-        }, "reset-pan")}
+        }, "Centre Map")}
         className="gray-icon-btn"
       >
         <span className="sr-only">Centre map</span>
@@ -315,7 +314,7 @@ export function GetNextConceptButton({ nextConcept, buttonPressFunction }) {
           nextConcept
             ? buttonPressFunction(() => {
                 nextConcept.emit("tap");
-              }, "reset-pan")
+              }, "Go to next concept")
             : () => {}
         }
         className={classNames(
@@ -387,7 +386,7 @@ export function MapSettingsIconButton({ buttonPressFunction, userId }) {
                   <button
                     onClick={buttonPressFunction(
                       () => resetLayout(userId),
-                      "reset-layout"
+                      "Editor - Reset Layout"
                     )}
                     className={classNames(
                       active ? "bg-gray-100" : "",
@@ -403,7 +402,7 @@ export function MapSettingsIconButton({ buttonPressFunction, userId }) {
                   <button
                     onClick={buttonPressFunction(
                       autoGenerateLayout,
-                      "run-dagre"
+                      "Editor - Auto-Generate Layout"
                     )}
                     className={classNames(
                       active ? "bg-gray-100" : "",
