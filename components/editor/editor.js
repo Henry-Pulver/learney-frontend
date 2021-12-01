@@ -24,7 +24,7 @@ const topicColours = [
   "#610061",
 ];
 const emptyNodeData = {
-  id: Infinity,
+  id: "",
   name: "",
   lectures: "",
   description: "",
@@ -109,16 +109,17 @@ export default function Editor({
 
     // [4.0] Update UI
     setEditNodeData(newNode.data);
-    setEditType("cursor");
     setShowEditData("concept");
   };
   const deleteModeClick = function (e) {
-    if (e.target.isEdge()) {
-      e.target.remove();
-    } else if (e.target.data().id !== undefined) {
-      setDeleteNodeData((prevState) => {
-        return { ...prevState, ...e.target.data() };
-      });
+    if (e.target.data().id !== undefined) {
+      if (e.target.isEdge()) {
+        e.target.remove();
+      } else if (e.target.isNode()) {
+        setDeleteNodeData((prevState) => {
+          return { ...prevState, ...e.target.data() };
+        });
+      }
     }
   };
   const removeElement = function (elementId) {
@@ -313,13 +314,11 @@ export default function Editor({
         )
       )}
       <AreYouSureModal
-        modalShown={!!deleteNodeData.name}
+        modalShown={!!deleteNodeData.id}
         setModalClosed={() => setDeleteNodeData(() => emptyNodeData)}
         titleText={`Delete ${deleteNodeData.nodetype} ${deleteNodeData.name}?`}
         descriptionText={
-          deleteNodeData.name
-            ? getAreYouSureDescriptionText(deleteNodeData)
-            : ""
+          deleteNodeData.id ? getAreYouSureDescriptionText(deleteNodeData) : ""
         }
         actionButtonText={`Delete ${deleteNodeData.nodetype}`}
         actionButtonFunction={() => removeElement(deleteNodeData.id)}
