@@ -215,7 +215,7 @@ export async function saveMap(userId, backendUrl, mapUUID) {
       map_data: mapJson,
     }),
   });
-  handleFetchResponses(response);
+  handleFetchResponses(response, backendUrl);
 }
 
 function resetLayout(userId) {
