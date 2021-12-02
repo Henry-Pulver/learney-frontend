@@ -13,6 +13,7 @@ import {
   EditConceptDataSidebar,
   EditTopicDataSidebar,
 } from "./editConceptDataSidebar";
+import { updateMinZoom } from "../../lib/graph";
 
 let eh; // Edge handles variable
 const topicColours = [
@@ -110,6 +111,7 @@ export default function Editor({
     // [4.0] Update UI
     setEditNodeData(newNode.data);
     setShowEditData("concept");
+    updateMinZoom();
   };
   const deleteModeClick = function (e) {
     if (e.target.data().id !== undefined) {
@@ -127,6 +129,7 @@ export default function Editor({
     const parentNode = element.parent();
     element.remove();
     if (parentNode.isChildless()) parentNode.remove();
+    updateMinZoom();
   };
   const handleEditNodeData = function (e) {
     setEditNodeData(e.target.data());
