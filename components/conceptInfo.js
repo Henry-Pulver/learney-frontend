@@ -315,7 +315,7 @@ const fetchLinkPreview = async ({ node, url, backendUrl, mapUUID }) => {
       headers: cacheHeaders,
     }
   );
-  let responseJson = await handleFetchResponses(response);
+  let responseJson = await handleFetchResponses(response, backendUrl);
   if (response.status !== 200 && responseJson.status !== 201)
     responseJson = { title: "", description: "", image_url: "" };
   if (responseJson.title === "") responseJson.title = node.data().name;
@@ -334,5 +334,5 @@ const fetchTotalVotes = async ({ backendUrl, mapUUID }) => {
     }
   );
   if (!response.ok) throw new Error(response.status.toString());
-  return handleFetchResponses(response);
+  return handleFetchResponses(response, backendUrl);
 };
