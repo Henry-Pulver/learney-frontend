@@ -202,16 +202,13 @@ export default function Editor({
     const oldParent = window.cy.getElementById(newNodeData.id).data("parent");
     if (oldParent !== newNodeData.parent) {
       // [3.1] If the new parent doesn't exist, create new parent node
-      if (
-        window.cy.getElementById(newNodeData.parent.replace(/ /g, "_")) !==
-        undefined
-      ) {
+      if (window.cy.getElementById(newNodeData.parent) !== undefined) {
         const newParentNode = {
           group: "nodes",
           data: {
             colour:
               topicColours[Math.floor(Math.random() * topicColours.length)],
-            id: newNodeData.parent.replace(/ /g, "_"),
+            id: newNodeData.parent,
             name: newNodeData.parent,
             nodetype: "field",
           },
@@ -226,7 +223,7 @@ export default function Editor({
       // [3.2] Move node to new parent
       window.cy
         .getElementById(newNodeData.id)
-        .move({ parent: newNodeData.parent.replace(/ /g, "_") });
+        .move({ parent: newNodeData.parent });
 
       // [3.3] Remove empty parent nodes
       window.cy.nodes('[nodetype = "field"]').forEach((node) => {
@@ -252,9 +249,18 @@ export default function Editor({
     setEditParentNodeData(e.target.data());
     setShowEditData("topic");
   };
-  const saveEditParentNodeData = function () {
-    const newParentNodeData = { ...editParentNodeData };
-    window.cy.getElementById(newParentNodeData.id).data(newParentNodeData);
+  const saveEditParentNodeData = (newEditParentNodeData) => {
+    const prevId = newEditParentNodeData.id;
+    const newId = newEditParentNodeData.name;
+    if (newId !== prevId) {
+      newEditParentNodeData.id = newId;
+      setEditParentNodeData(newEditParentNodeData);
+      window.cy.add([{ group: "nodes", data: newEditParentNodeData }]);
+      window.cy.filter(`[parent = "${prevId}"]`).move({ parent: newId });
+      window.cy.getElementById(prevId).remove();
+    } else {
+      window.cy.getElementById(prevId).data(newEditParentNodeData);
+    }
     setShowEditData(null);
   };
   return (
