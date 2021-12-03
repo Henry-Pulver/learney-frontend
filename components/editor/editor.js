@@ -202,16 +202,13 @@ export default function Editor({
     const oldParent = window.cy.getElementById(newNodeData.id).data("parent");
     if (oldParent !== newNodeData.parent) {
       // [3.1] If the new parent doesn't exist, create new parent node
-      if (
-        window.cy.getElementById(newNodeData.parent.replace(/ /g, "_")) !==
-        undefined
-      ) {
+      if (window.cy.getElementById(newNodeData.parent) !== undefined) {
         const newParentNode = {
           group: "nodes",
           data: {
             colour:
               topicColours[Math.floor(Math.random() * topicColours.length)],
-            id: newNodeData.parent.replace(/ /g, "_"),
+            id: newNodeData.parent,
             name: newNodeData.parent,
             nodetype: "field",
           },
@@ -226,7 +223,7 @@ export default function Editor({
       // [3.2] Move node to new parent
       window.cy
         .getElementById(newNodeData.id)
-        .move({ parent: newNodeData.parent.replace(/ /g, "_") });
+        .move({ parent: newNodeData.parent });
 
       // [3.3] Remove empty parent nodes
       window.cy.nodes('[nodetype = "field"]').forEach((node) => {
