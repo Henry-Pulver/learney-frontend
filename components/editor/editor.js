@@ -249,9 +249,18 @@ export default function Editor({
     setEditParentNodeData(e.target.data());
     setShowEditData("topic");
   };
-  const saveEditParentNodeData = function () {
-    const newParentNodeData = { ...editParentNodeData };
-    window.cy.getElementById(newParentNodeData.id).data(newParentNodeData);
+  const saveEditParentNodeData = (newEditParentNodeData) => {
+    const prevId = newEditParentNodeData.id;
+    const newId = newEditParentNodeData.name;
+    if (newId !== prevId) {
+      newEditParentNodeData.id = newId;
+      setEditParentNodeData(newEditParentNodeData);
+      window.cy.add([{ group: "nodes", data: newEditParentNodeData }]);
+      window.cy.filter(`[parent = "${prevId}"]`).move({ parent: newId });
+      window.cy.getElementById(prevId).remove();
+    } else {
+      window.cy.getElementById(prevId).data(newEditParentNodeData);
+    }
     setShowEditData(null);
   };
   return (

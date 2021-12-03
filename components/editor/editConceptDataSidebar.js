@@ -135,7 +135,7 @@ export function EditTopicDataSidebar({
           </span>
           <span
             className="btn-green px-6 mt-3 mr-6"
-            onClick={saveEditParentNodeData}
+            onClick={() => saveEditParentNodeData(editParentNodeData)}
           >
             Save
           </span>
