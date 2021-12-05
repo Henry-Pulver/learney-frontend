@@ -200,10 +200,10 @@ export function SaveMapButton({
 
 export async function saveMap(userId, backendUrl, mapUUID) {
   let mapJson = { nodes: [], edges: [] };
-  cy.edges().forEach(function (edge) {
+  window.cy.edges().forEach(function (edge) {
     mapJson.edges.push({ data: edge.data() });
   });
-  cy.nodes().forEach(function (node) {
+  window.cy.nodes().forEach(function (node) {
     mapJson.nodes.push({ data: node.data(), position: node.position() });
   });
   const response = await fetch(`${backendUrl}/api/v0/knowledge_maps`, {
@@ -219,15 +219,15 @@ export async function saveMap(userId, backendUrl, mapUUID) {
 }
 
 function resetLayout(userId) {
-  cy.remove(cy.elements());
-  cy.add(JSON.parse(JSON.stringify(originalMapJSON)));
-  cy.layout(presetLayout).run();
-  unhighlightNodes(cy.nodes());
+  window.cy.remove(window.cy.elements());
+  window.cy.add(JSON.parse(JSON.stringify(originalMapJSON)));
+  window.cy.layout(presetLayout).run();
+  unhighlightNodes(window.cy.nodes());
   initialiseGraphState(userId);
 }
 
 function autoGenerateLayout() {
-  cy.layout(dagreLayout).run();
+  window.cy.layout(dagreLayout).run();
   dagreOnSubjects();
 }
 
@@ -252,7 +252,7 @@ export function ResetProgressIconButton({
         setGoalsState,
         setLearnedState
       );
-      unhighlightNodes(cy.nodes());
+      unhighlightNodes(window.cy.nodes());
     },
     "Reset Progress",
     backendUrl,

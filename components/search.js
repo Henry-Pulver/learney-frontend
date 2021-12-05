@@ -12,7 +12,7 @@
 //     value={ value }
 //     data={ searchOptions }
 //     onSelect={function (event) {
-//       cy.getElementById(event.params.data.id).emit("tap");
+//       window.cy.getElementById(event.params.data.id).emit("tap");
 //       clearValue();
 //     }}
 //     options={
