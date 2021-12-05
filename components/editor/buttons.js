@@ -9,11 +9,36 @@ import {
 import { classNames } from "../../lib/reactUtils";
 import Tippy from "@tippyjs/react";
 import { IconButtonTippy } from "../buttons";
-import { dagreLayout, dagreOnSubjects } from "../../lib/graph";
+
+const dagreLayout = {
+  name: "dagre",
+  rankDir: "BT",
+  nodeSep: 100,
+  rankSep: 300,
+};
 
 function autoGenerateLayout() {
-  window.cy.layout(dagreLayout).run();
-  dagreOnSubjects();
+  let actions = [
+    {
+      name: "layout",
+      param: { options: dagreLayout, eles: window.cy.elements() },
+    },
+  ];
+  /** Run Dagre algorithm on each subject individually **/
+  let subjects = [];
+  window.cy
+    .nodes('[nodetype= "field"]')
+    .forEach((field) => subjects.push(field.name));
+
+  subjects.forEach(function (subject) {
+    let subject_subgraph = window.cy.filter(`node[subject = "${subject}"]`);
+    subject_subgraph.merge(subject_subgraph.connectedEdges());
+    actions.push({
+      name: "layout",
+      param: { options: dagreLayout, eles: subject_subgraph },
+    });
+  });
+  window.ur.do("batch", actions);
 }
 
 export function MapSettingsIconButton({ buttonPressFunction }) {
