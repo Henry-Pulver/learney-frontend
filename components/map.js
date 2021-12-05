@@ -82,8 +82,8 @@ export default function Map({
         );
         // TODO: if goal is set, zoom there instead of to the bottom?
         panByAndZoom(
-          -cy.width() / 6,
-          (-cy.height() * 4) / 9,
+          -window.cy.width() / 6,
+          (-window.cy.height() * 4) / 9,
           1.5,
           function () {}
         );
