@@ -83,7 +83,7 @@ export function MapSettingsIconButton({ buttonPressFunction }) {
                       "block px-4 py-2 w-48 text-sm text-left text-gray-700"
                     )}
                   >
-                    Reset Layout
+                    Undo all
                   </button>
                 )}
               </Menu.Item>
