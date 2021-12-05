@@ -1,9 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import Tippy from "@tippyjs/react";
-import {
-  resetProgress,
-} from "../lib/learningAndPlanning";
+import { resetProgress } from "../lib/learningAndPlanning";
 import { handleFetchResponses } from "../lib/utils";
 import { goToFormFunction } from "../lib/suggestions";
 import { jsonHeaders } from "../lib/headers";
@@ -340,7 +338,7 @@ export function GetNextConceptButton({ nextConcept, buttonPressFunction }) {
   );
 }
 
-export function MapSettingsIconButton({ buttonPressFunction, userId }) {
+export function MapSettingsIconButton({ buttonPressFunction }) {
   return (
     <Menu as="div" className="ml-3 relative">
       {({ open }) => (
