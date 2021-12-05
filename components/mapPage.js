@@ -123,6 +123,8 @@ export default function MapPage({
     })();
   }, [isLoading]);
 
+  const [editType, setEditType] = React.useState(null);
+
   const [nextConcept, setNextConcept] = useState(null);
   useEffect(() => {
     if (!editMap && pageLoaded) setNextConcept(getNextNodeToLearn());
@@ -161,6 +163,7 @@ export default function MapPage({
         onSetGoalClick={onSetGoalClick}
         setGoalsState={setGoalsState}
         setPageLoaded={setPageLoaded}
+        editType={editType}
       />
       <div
         className={`flex flex-row items-end absolute bottom-0 right-0 mx-8 my-4 disableTouchActions`}
@@ -191,6 +194,8 @@ export default function MapPage({
           userId={userId}
           mapUUID={mapUUID}
           pageLoaded={pageLoaded}
+          editType={editType}
+          setEditType={setEditType}
         />
       )}
     </div>

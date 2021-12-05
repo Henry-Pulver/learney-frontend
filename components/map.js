@@ -9,6 +9,7 @@ import {
 } from "../lib/learningAndPlanning";
 import { initCy, panByAndZoom } from "../lib/graph";
 import { setupCtoCentre } from "../lib/buttons";
+import { classNames } from "../lib/reactUtils";
 
 export default function Map({
   backendUrl,
@@ -27,6 +28,7 @@ export default function Map({
   onSetGoalClick,
   setGoalsState,
   setPageLoaded,
+  editType,
 }) {
   const [userVotes, setUserVote] = React.useState({});
   const initialiseUserVotes = (initialVotes) => {
@@ -82,8 +84,8 @@ export default function Map({
         );
         // TODO: if goal is set, zoom there instead of to the bottom?
         panByAndZoom(
-          -cy.width() / 6,
-          (-cy.height() * 4) / 9,
+          -window.cy.width() / 6,
+          (-window.cy.height() * 4) / 9,
           1.5,
           function () {}
         );
@@ -97,7 +99,13 @@ export default function Map({
     <div>
       <div
         id="cy"
-        className="absolute z-0 bg-black w-full h-full"
+        className={classNames(
+          editType === "cursor" && "cursor-default",
+          editType === "addNode" && "cursor-copy",
+          editType === "addEdges" && "cursor-crosshair",
+          editType === "delete" && "cursor-pointer",
+          "absolute z-0 bg-black w-full h-full"
+        )}
         ref={cytoscapeRef}
       />
       <ConceptTippy
