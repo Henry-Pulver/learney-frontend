@@ -12,10 +12,10 @@ import IntroButton, { IntroSection } from "./intro";
 import {
   FeedBackButton,
   MakeSuggestionIconButton,
-  MapSettingsIconButton,
   SaveMapButton,
   SlackButton,
 } from "./buttons";
+import { MapSettingsIconButton } from "./editor/buttons";
 import Modal from "./modal";
 
 export function EditNavbar({
