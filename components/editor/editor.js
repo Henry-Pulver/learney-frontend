@@ -1,13 +1,11 @@
 import React, { useEffect } from "react";
+import { saveMap } from "../buttons";
 import {
   AddEdgesButton,
   AddNodeButton,
   CursorButton,
   DeleteElementButton,
-  ResetPanButton,
-  ResetProgressIconButton,
-  saveMap,
-} from "../buttons";
+} from "./buttons";
 import { AreYouSureModal, getAreYouSureDescriptionText } from "../modal";
 import {
   EditConceptDataSidebar,
@@ -41,8 +39,23 @@ export default function Editor({
   userId,
   mapUUID,
   pageLoaded,
+  editType,
+  setEditType,
 }) {
-  const [editType, setEditType] = React.useState(null);
+  function addNodeClick(nodesToAdd) {
+    const added = window.cy.add(nodesToAdd);
+    setEditNodeData(nodesToAdd[0].data);
+    updateMinZoom();
+    setShowEditData("concept");
+    return added;
+  }
+  function undoAddNodeClick(eles) {
+    let removed = eles.remove();
+    updateMinZoom();
+    setShowEditData(null);
+    setEditNodeData({ ...emptyNodeData });
+    return removed;
+  }
   const addNode = function (e) {
     // [1.0] Create the next node ID
     let nextNodeID = 0;
@@ -104,19 +117,14 @@ export default function Editor({
     };
 
     // [3.0] Add the new nodes
-    if (newParentNodeData !== undefined)
-      window.cy.add([newParentNodeData, newNode]);
-    else window.cy.add([newNode]);
-
-    // [4.0] Update UI
-    setEditNodeData(newNode.data);
-    setShowEditData("concept");
-    updateMinZoom();
+    let nodesToAdd = [newNode];
+    if (newParentNodeData !== undefined) nodesToAdd.push(newParentNodeData);
+    window.ur.do("addNode", nodesToAdd);
   };
   const deleteModeClick = function (e) {
     if (e.target.data().id !== undefined) {
       if (e.target.isEdge()) {
-        e.target.remove();
+        window.ur.do("remove", e.target);
       } else if (e.target.isNode()) {
         setDeleteNodeData((prevState) => {
           return { ...prevState, ...e.target.data() };
@@ -127,8 +135,11 @@ export default function Editor({
   const removeElement = function (elementId) {
     const element = window.cy.nodes(`[id = "${elementId}"]`);
     const parentNode = element.parent();
-    element.remove();
-    if (parentNode.isChildless()) parentNode.remove();
+    let actions = [{ name: "remove", param: element }];
+    // if this is the last child node, delete the parent
+    if (parentNode.children().size() === 1)
+      actions.push({ name: "remove", param: parentNode });
+    window.ur.do("batch", actions);
     updateMinZoom();
   };
   const handleEditNodeData = function (e) {
@@ -145,6 +156,14 @@ export default function Editor({
 
       // [3.0] Add new event listeners
       switch (editType) {
+        case "cursor":
+          window.cy.on("tap", 'node[nodetype = "concept"]', handleEditNodeData);
+          window.cy.on(
+            "tap",
+            'node[nodetype = "field"]',
+            handleEditParentNodeData
+          );
+          break;
         case "addNode":
           window.cy.on("tap", addNode);
           break;
@@ -153,7 +172,9 @@ export default function Editor({
             canConnect: function (sourceNode, targetNode) {
               // whether an edge can be created between source and target
               return (
-                !sourceNode.same(targetNode) && // No loops
+                !sourceNode.same(targetNode) && // No loops to itself
+                !sourceNode.outgoers().contains(targetNode) && // No repeated edges
+                !sourceNode.predecessors().contains(targetNode) && // No loops directions
                 !sourceNode.isParent() && // No links from parent nodes
                 !targetNode.isParent() // No links to parent nodes
               );
@@ -163,14 +184,7 @@ export default function Editor({
           });
 
           eh.enableDrawMode();
-          break;
-        case "cursor":
-          window.cy.on("tap", 'node[nodetype = "concept"]', handleEditNodeData);
-          window.cy.on(
-            "tap",
-            'node[nodetype = "field"]',
-            handleEditParentNodeData
-          );
+          // TODO: Add on("tap", ... ) to allow tap-based edge adding
           break;
         case "delete":
           window.cy.on("tap", deleteModeClick);
@@ -182,7 +196,22 @@ export default function Editor({
   }, [editType]);
 
   useEffect(() => {
-    if (pageLoaded) setEditType("cursor");
+    if (pageLoaded) {
+      setEditType("cursor");
+      window.ur.action("addNode", addNodeClick, undoAddNodeClick);
+      window.cy.on("ehcomplete", (event, sourceNode, targetNode, addedEles) => {
+        window.cy.remove(addedEles[0]); // remove auto-added edge
+        // Add undo-able edge
+        window.ur.do("add", {
+          group: "edges",
+          data: {
+            id: addedEles[0].id(),
+            source: sourceNode.id(),
+            target: targetNode.id(),
+          },
+        });
+      });
+    }
   }, [pageLoaded]);
 
   const [showEditData, setShowEditData] = React.useState(null);
@@ -217,7 +246,7 @@ export default function Editor({
             y: window.cy.getElementById(newNodeData.id).y,
           },
         };
-        window.cy.add([newParentNode]);
+        window.ur.do("add", [newParentNode]);
       }
 
       // [3.2] Move node to new parent
@@ -243,24 +272,45 @@ export default function Editor({
     colour: "",
     id: "",
     name: "",
-    nodetype: "",
+    nodetype: "field",
   });
   const handleEditParentNodeData = function (e) {
     setEditParentNodeData(e.target.data());
     setShowEditData("topic");
   };
-  const saveEditParentNodeData = (newEditParentNodeData) => {
-    const prevId = newEditParentNodeData.id;
-    const newId = newEditParentNodeData.name;
+  const saveEditParentNodeData = (newParentNodeData) => {
+    const prevId = newParentNodeData.id;
+    const newId = newParentNodeData.name;
     if (newId !== prevId) {
-      newEditParentNodeData.id = newId;
-      setEditParentNodeData(newEditParentNodeData);
-      window.cy.add([{ group: "nodes", data: newEditParentNodeData }]);
+      newParentNodeData.id = newId;
+      // TODO: Undo-ing this doesn't work - try changing the topic name and then
+      //  undo-ing. Figure this out & then delete lines before 'else' below!
+      // window.ur.do("batch", [
+      //   { name: "add", param: { group: "nodes", data: newParentNodeData } },
+      //   // {
+      //   //   name: "move",
+      //   //   param: {
+      //   //     location: { parent: newId },
+      //   //     eles: window.cy.filter(`[parent = "${prevId}"]`),
+      //   //   },
+      //   // },
+      //   {
+      //     name: "changeParent",
+      //     param: {
+      //       parentData: newParentNodeData,
+      //       // parentData: { id: newId },
+      //       nodes: window.cy.filter(`[parent = "${prevId}"]`),
+      //     },
+      //   },
+      //   // { name: "remove", param: window.cy.getElementById(prevId) },
+      // ]);
+      window.cy.add([{ group: "nodes", data: newParentNodeData }]);
       window.cy.filter(`[parent = "${prevId}"]`).move({ parent: newId });
       window.cy.getElementById(prevId).remove();
     } else {
-      window.cy.getElementById(prevId).data(newEditParentNodeData);
+      window.cy.getElementById(prevId).data(newParentNodeData);
     }
+    setEditParentNodeData(newParentNodeData);
     setShowEditData(null);
   };
   return (
