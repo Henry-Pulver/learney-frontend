@@ -2,7 +2,6 @@ import React, { Fragment, useEffect, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import Tippy from "@tippyjs/react";
 import {
-  initialiseGraphState,
   resetProgress,
 } from "../lib/learningAndPlanning";
 import { handleFetchResponses } from "../lib/utils";
@@ -13,8 +12,6 @@ import {
   dagreLayout,
   unhighlightNodes,
   dagreOnSubjects,
-  originalMapJSON,
-  presetLayout,
 } from "../lib/graph";
 import {
   ChatIcon,
@@ -218,14 +215,6 @@ export async function saveMap(userId, backendUrl, mapUUID) {
   handleFetchResponses(response, backendUrl);
 }
 
-function resetLayout(userId) {
-  window.cy.remove(window.cy.elements());
-  window.cy.add(JSON.parse(JSON.stringify(originalMapJSON)));
-  window.cy.layout(presetLayout).run();
-  unhighlightNodes(window.cy.nodes());
-  initialiseGraphState(userId);
-}
-
 function autoGenerateLayout() {
   window.cy.layout(dagreLayout).run();
   dagreOnSubjects();
@@ -385,7 +374,7 @@ export function MapSettingsIconButton({ buttonPressFunction, userId }) {
                 {({ active }) => (
                   <button
                     onClick={buttonPressFunction(
-                      () => resetLayout(userId),
+                      () => window.ur.undoAll(),
                       "Editor - Reset Layout"
                     )}
                     className={classNames(
