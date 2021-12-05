@@ -32,7 +32,6 @@ export function EditNavbar({
         <MapSettingsIconButton
           key="MapSettingsButton"
           buttonPressFunction={buttonPressFunction}
-          userId={userId}
         />,
         <MakeSuggestionIconButton
           key="MakeSuggestionButton"
