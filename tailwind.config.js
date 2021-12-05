@@ -4,8 +4,10 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
-      scale: {
-        40: ".4",
+      cursor: {
+        cell: "cell",
+        copy: "copy",
+        crosshair: "crosshair",
       },
       maxHeight: {
         40: "40%",
