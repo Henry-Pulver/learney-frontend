@@ -39,6 +39,8 @@ export default function Editor({
   userId,
   mapUUID,
   pageLoaded,
+  editType,
+  setEditType,
 }) {
   function addNodeClick(nodesToAdd) {
     const added = window.cy.add(nodesToAdd);
@@ -54,7 +56,6 @@ export default function Editor({
     setEditNodeData({ ...emptyNodeData });
     return removed;
   }
-  const [editType, setEditType] = React.useState(null);
   const addNode = function (e) {
     // [1.0] Create the next node ID
     let nextNodeID = 0;
@@ -155,6 +156,14 @@ export default function Editor({
 
       // [3.0] Add new event listeners
       switch (editType) {
+        case "cursor":
+          window.cy.on("tap", 'node[nodetype = "concept"]', handleEditNodeData);
+          window.cy.on(
+            "tap",
+            'node[nodetype = "field"]',
+            handleEditParentNodeData
+          );
+          break;
         case "addNode":
           window.cy.on("tap", addNode);
           break;
@@ -176,14 +185,6 @@ export default function Editor({
 
           eh.enableDrawMode();
           // TODO: Add on("tap", ... ) to allow tap-based edge adding
-          break;
-        case "cursor":
-          window.cy.on("tap", 'node[nodetype = "concept"]', handleEditNodeData);
-          window.cy.on(
-            "tap",
-            'node[nodetype = "field"]',
-            handleEditParentNodeData
-          );
           break;
         case "delete":
           window.cy.on("tap", deleteModeClick);
