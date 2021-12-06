@@ -18,7 +18,7 @@ function LogOut({ buttonPressFunction }) {
     <button
       className="btn-blue"
       onClick={buttonPressFunction(function () {
-        location.href = "/api/auth/logout";
+        location.href = `${location.protocol}//${location.hostname}/api/auth/logout`;
       }, "Log Out")}
     >
       Logout
@@ -31,7 +31,7 @@ export function LogOutIconButton({ user, buttonPressFunction }) {
     <button
       className="gray-icon-btn"
       onClick={buttonPressFunction(function () {
-        location.href = "/api/auth/logout";
+        location.href = `${location.protocol}//${location.hostname}/api/auth/logout`;
       }, "Log Out")}
     >
       <span className="sr-only">Log out</span>
@@ -45,7 +45,7 @@ export function LogInIconButton({ buttonPressFunction }) {
     <button
       className="mobile-icon-button group"
       onClick={buttonPressFunction(() => {
-        location.href = "/api/auth/login";
+        location.href = `${location.protocol}//${location.hostname}/api/auth/login`;
       }, "Log In")}
     >
       <div className="block lg:hidden px-2 sm:px-4 font-bold text-black">
