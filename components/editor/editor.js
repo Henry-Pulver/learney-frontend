@@ -42,20 +42,6 @@ export default function Editor({
   editType,
   setEditType,
 }) {
-  function addNodeClick(nodesToAdd) {
-    const added = window.cy.add(nodesToAdd);
-    setEditNodeData(nodesToAdd[0].data);
-    updateMinZoom();
-    setShowEditData("concept");
-    return added;
-  }
-  function undoAddNodeClick(eles) {
-    let removed = eles.remove();
-    updateMinZoom();
-    setShowEditData(null);
-    setEditNodeData({ ...emptyNodeData });
-    return removed;
-  }
   const addNode = function (e) {
     // [1.0] Create the next node ID
     let nextNodeID = 0;
@@ -195,26 +181,8 @@ export default function Editor({
     }
   }, [editType]);
 
-  useEffect(() => {
-    if (pageLoaded) {
-      setEditType("cursor");
-      window.ur.action("addNode", addNodeClick, undoAddNodeClick);
-      window.cy.on("ehcomplete", (event, sourceNode, targetNode, addedEles) => {
-        window.cy.remove(addedEles[0]); // remove auto-added edge
-        // Add undo-able edge
-        window.ur.do("add", {
-          group: "edges",
-          data: {
-            id: addedEles[0].id(),
-            source: sourceNode.id(),
-            target: targetNode.id(),
-          },
-        });
-      });
-    }
-  }, [pageLoaded]);
-
   const [showEditData, setShowEditData] = React.useState(null);
+
   const [deleteNodeData, setDeleteNodeData] = React.useState({
     ...emptyNodeData,
   });
@@ -267,13 +235,13 @@ export default function Editor({
     saveMap(userId, backendUrl, mapUUID);
     setShowEditData(null);
   };
-
   const [editParentNodeData, setEditParentNodeData] = React.useState({
     colour: "",
     id: "",
     name: "",
     nodetype: "field",
   });
+
   const handleEditParentNodeData = function (e) {
     setEditParentNodeData(e.target.data());
     setShowEditData("topic");
@@ -313,6 +281,44 @@ export default function Editor({
     setEditParentNodeData(newParentNodeData);
     setShowEditData(null);
   };
+
+  function addNodeClick(nodesToAdd) {
+    /** nodesToAdd is either an object or a cytoscape collection of elements (when redo-ing!) **/
+    const added = window.cy.add(nodesToAdd);
+    if (typeof nodesToAdd[0].data === "object") {
+      setEditNodeData(nodesToAdd[0].data);
+    } else {
+      setEditNodeData(nodesToAdd.filter('[nodetype = "concept"]').data());
+    }
+    updateMinZoom();
+    setShowEditData("concept");
+    return added;
+  }
+  function undoAddNodeClick(eles) {
+    let removed = eles.remove();
+    setEditNodeData({ ...emptyNodeData });
+    updateMinZoom();
+    setShowEditData(null);
+    return removed;
+  }
+  useEffect(() => {
+    if (pageLoaded) {
+      setEditType("cursor");
+      window.ur.action("addNode", addNodeClick, undoAddNodeClick);
+      window.cy.on("ehcomplete", (event, sourceNode, targetNode, addedEles) => {
+        window.cy.remove(addedEles[0]); // remove auto-added edge
+        // Add undo-able edge
+        window.ur.do("add", {
+          group: "edges",
+          data: {
+            id: addedEles[0].id(),
+            source: sourceNode.id(),
+            target: targetNode.id(),
+          },
+        });
+      });
+    }
+  }, [pageLoaded]);
   return (
     <>
       <div
@@ -374,7 +380,11 @@ export default function Editor({
       )}
       <AreYouSureModal
         modalShown={!!deleteNodeData.id}
-        setModalClosed={() => setDeleteNodeData(() => emptyNodeData)}
+        setModalClosed={() =>
+          setDeleteNodeData(() => {
+            return { ...emptyNodeData };
+          })
+        }
         titleText={`Delete ${deleteNodeData.nodetype} ${deleteNodeData.name}?`}
         descriptionText={
           deleteNodeData.id ? getAreYouSureDescriptionText(deleteNodeData) : ""
