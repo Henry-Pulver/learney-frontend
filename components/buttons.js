@@ -140,7 +140,6 @@ function getCurrentQueryParams(pageLoaded) {
 }
 
 export function ShareCurrentPosition({ pageLoaded, buttonPressFunction }) {
-  const router = useRouter();
   const [currentQueryParams, setCurrentQueryParams] = useState({
     x: null,
     y: null,
@@ -149,22 +148,16 @@ export function ShareCurrentPosition({ pageLoaded, buttonPressFunction }) {
   const [copiedQueryParams, setCopiedQueryParams] = useState(null);
   useEffect(() => {
     if (pageLoaded) {
-      window.cy.on("scrollzoom pinchzoom tapend", (e) => {
+      window.cy.on("zoom pan", (e) => {
         setCurrentQueryParams(getCurrentQueryParams(pageLoaded));
       });
     }
   }, [pageLoaded]);
 
   return (
-    <Tippy
-      theme={"light"}
-      placement="bottom"
-      delay={[150, 0]}
-      animation="scale"
-      maxWidth={"12em"}
-      disabled={isEqual(copiedQueryParams, currentQueryParams)}
+    <IconButtonTippy
       content={"Copy link to this map view"}
-      className={"invisible lg:visible text-center"}
+      disabled={isEqual(copiedQueryParams, currentQueryParams)}
     >
       <Tippy
         theme={"dark"}
@@ -180,9 +173,11 @@ export function ShareCurrentPosition({ pageLoaded, buttonPressFunction }) {
             isEqual(copiedQueryParams, currentQueryParams)
               ? () => {}
               : buttonPressFunction(() => {
-                  setURLQuery(router, currentQueryParams);
-                  navigator.clipboard.writeText(location.href);
-                  setCopiedQueryParams({ ...currentQueryParams });
+                  navigator.clipboard.writeText(
+                    `${location.origin}/?` +
+                      new URLSearchParams(getCurrentQueryParams(pageLoaded))
+                  );
+                  setCopiedQueryParams(getCurrentQueryParams(pageLoaded));
                 }, "Get Shareable Link")
           }
           className={classNames(
@@ -191,13 +186,15 @@ export function ShareCurrentPosition({ pageLoaded, buttonPressFunction }) {
           )}
         >
           <div className="block lg:hidden px-2 sm:px-4 text-black">
-            Copy link to this map view
+            {isEqual(copiedQueryParams, currentQueryParams)
+              ? "Link copied!"
+              : "Copy link to this map view"}
           </div>
           <span className="sr-only">Copy link to map view</span>
           <ShareIcon className="h-7 w-7" />
         </button>
       </Tippy>
-    </Tippy>
+    </IconButtonTippy>
   );
 }
 
