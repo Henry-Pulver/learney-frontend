@@ -11,6 +11,7 @@ import {
 import { handleAnimation, initCy, bindRouters } from "../lib/graph";
 import { setupCtoCentre } from "../lib/buttons";
 import { classNames } from "../lib/reactUtils";
+import { setURLQuery } from "../lib/utils";
 
 export default function Map({
   backendUrl,
@@ -118,6 +119,7 @@ export default function Map({
             easing: "ease-in-out",
           });
         }
+        setURLQuery(router, {});
         setupCtoCentre(editMap);
         setPageLoaded(true);
       }
