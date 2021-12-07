@@ -181,8 +181,9 @@ export function ShareCurrentPosition({ pageLoaded, buttonPressFunction }) {
                 }, "Get Shareable Link")
           }
           className={classNames(
-            isEqual(copiedQueryParams, currentQueryParams) && "cursor-default",
-            "mobile-icon-button lg:gray-icon-btn"
+            "mobile-icon-button lg:gray-icon-btn",
+            isEqual(copiedQueryParams, currentQueryParams) &&
+              "cursor-default lg:hover:text-gray-400 lg:hover:shadow-sm"
           )}
         >
           <div className="block lg:hidden px-2 sm:px-4 text-black">
