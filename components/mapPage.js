@@ -143,7 +143,11 @@ export default function MapPage({
             mapUUID={mapUUID}
           />
         ) : (
-          <LearnNavbar user={user} buttonPressFunction={buttonPressFunction} />
+          <LearnNavbar
+            user={user}
+            pageLoaded={pageLoaded}
+            buttonPressFunction={buttonPressFunction}
+          />
         ))}
 
       <Map
