@@ -14,6 +14,7 @@ import {
   FeedBackButton,
   MakeSuggestionIconButton,
   SaveMapButton,
+  ShareCurrentPosition,
   SlackButton,
 } from "./buttons";
 import { MapSettingsIconButton } from "./editor/buttons";
@@ -58,7 +59,7 @@ export function EditNavbar({
   );
 }
 
-export function LearnNavbar({ user, buttonPressFunction }) {
+export function LearnNavbar({ user, pageLoaded, buttonPressFunction }) {
   const [introShown, setIntroShown] = useState(user === undefined);
 
   // Here so the slide number is remembered between closing & opening the modal
@@ -94,6 +95,11 @@ export function LearnNavbar({ user, buttonPressFunction }) {
           />,
         ]}
         rightSideButtons={[
+          <ShareCurrentPosition
+            key="ShareMapViewButton"
+            pageLoaded={pageLoaded}
+            buttonPressFunction={buttonPressFunction}
+          />,
           <FeedBackButton
             key="FeedbackButton"
             buttonPressFunction={buttonPressFunction}
@@ -142,7 +148,7 @@ export default function Navbar({
       >
         {({ open }) => (
           <>
-            <div className="max-w-full lg:max-w-95 mx-auto px-2 sm:px-4 lg:px-8">
+            <div className="max-w-full lg:max-w-full mx-auto px-2 sm:px-4 lg:px-8">
               <div className="relative flex justify-between lg:gap-8">
                 <div className="flex md:absolute md:left-0 md:inset-y-0 lg:static xl:col-span-2">
                   <div className="group flex-shrink-0 flex items-center">
