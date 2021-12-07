@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Tippy from "@tippyjs/react";
 import { resetProgress } from "../lib/learningAndPlanning";
-import { handleFetchResponses } from "../lib/utils";
+import { handleFetchResponses, setURLQuery } from "../lib/utils";
 import { goToFormFunction } from "../lib/suggestions";
 import { jsonHeaders } from "../lib/headers";
 import { fitCytoTo, unhighlightNodes } from "../lib/graph";
@@ -12,8 +12,11 @@ import {
   ThumbUpIcon,
   TrashIcon,
 } from "@heroicons/react/outline";
+import { ShareIcon } from "@heroicons/react/outline";
 import { AreYouSureModal } from "./modal";
 import { classNames } from "../lib/reactUtils";
+import { useRouter } from "next/router";
+import isEqual from "lodash.isequal";
 
 export function IconToggleButtonWithCheckbox({
   checked,
@@ -121,6 +124,80 @@ export function SlackButton({ buttonPressFunction }) {
         </svg>
       </button>
     </IconButtonTippy>
+  );
+}
+
+function getCurrentQueryParams(pageLoaded) {
+  if (pageLoaded) {
+    return {
+      x: window.cy.pan().x,
+      y: window.cy.pan().y,
+      zoom: window.cy.zoom(),
+    };
+  } else {
+    return { x: null, y: null, zoom: null };
+  }
+}
+
+export function ShareCurrentPosition({ pageLoaded, buttonPressFunction }) {
+  const router = useRouter();
+  const [currentQueryParams, setCurrentQueryParams] = useState({
+    x: null,
+    y: null,
+    zoom: null,
+  });
+  const [copiedQueryParams, setCopiedQueryParams] = useState(null);
+  useEffect(() => {
+    if (pageLoaded) {
+      window.cy.on("scrollzoom pinchzoom tapend", (e) => {
+        setCurrentQueryParams(getCurrentQueryParams(pageLoaded));
+      });
+    }
+  }, [pageLoaded]);
+
+  return (
+    <Tippy
+      theme={"light"}
+      placement="bottom"
+      delay={[150, 0]}
+      animation="scale"
+      maxWidth={"12em"}
+      disabled={isEqual(copiedQueryParams, currentQueryParams)}
+      content={"Copy link to this map view"}
+      className={"invisible lg:visible text-center"}
+    >
+      <Tippy
+        theme={"dark"}
+        placement="bottom"
+        animation="scale"
+        maxWidth={"12em"}
+        visible={isEqual(copiedQueryParams, currentQueryParams)}
+        content={"Link copied!"}
+        className={"invisible lg:visible text-center"}
+      >
+        <button
+          onClick={
+            isEqual(copiedQueryParams, currentQueryParams)
+              ? () => {}
+              : buttonPressFunction(() => {
+                  setURLQuery(router, currentQueryParams);
+                  navigator.clipboard.writeText(location.href);
+                  setCopiedQueryParams({ ...currentQueryParams });
+                }, "Get Shareable Link")
+          }
+          className={classNames(
+            isEqual(copiedQueryParams, currentQueryParams) && "cursor-default",
+            "mobile-icon-button lg:gray-icon-btn"
+          )}
+        >
+          <div className="block lg:hidden px-2 sm:px-4 text-black">
+            Copy link to this map view
+          </div>
+          <span className="sr-only">Copy link to map view</span>
+          <ShareIcon className="h-7 w-7" />
+        </button>
+      </Tippy>
+    </Tippy>
   );
 }
 
