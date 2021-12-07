@@ -101,8 +101,8 @@ export default function Map({
             window.cy.getElementById(query.concept).emit("tap");
           } else {
             handleAnimation({
-              pan: { x: query.x, y: query.y },
-              zoom: query.zoom,
+              pan: { x: Number(router.query.x), y: Number(router.query.y) },
+              zoom: Number(router.query.zoom),
               duration: 1200,
               easing: "ease-in-out",
             });
@@ -125,7 +125,7 @@ export default function Map({
   }, [sessionId, userId]);
 
   return (
-    <div>
+    <>
       <div
         id="cy"
         className={classNames(
@@ -156,6 +156,6 @@ export default function Map({
         userVotes={userVotes}
         onVote={onVote}
       />
-    </div>
+    </>
   );
 }
