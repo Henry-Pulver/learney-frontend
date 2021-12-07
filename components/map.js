@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { useRouter } from "next/router";
 import { ConceptTippy } from "./conceptInfo";
 import { getDataFromStorage, saveVote } from "../lib/tooltips";
 import {
@@ -7,7 +8,7 @@ import {
   goalNodes,
   learnedNodes,
 } from "../lib/learningAndPlanning";
-import { initCy, panByAndZoom } from "../lib/graph";
+import { handleAnimation, initCy, bindRouters } from "../lib/graph";
 import { setupCtoCentre } from "../lib/buttons";
 import { classNames } from "../lib/reactUtils";
 
@@ -30,6 +31,7 @@ export default function Map({
   setPageLoaded,
   editType,
 }) {
+  const router = useRouter();
   const [userVotes, setUserVote] = React.useState({});
   const initialiseUserVotes = (initialVotes) => {
     for (const [url, voteDirection] of Object.entries(initialVotes)) {
@@ -70,25 +72,52 @@ export default function Map({
 
         const styleResponse = await fetch(`/knowledge_graph.cycss`);
         const styleText = await styleResponse.text();
-        await initCy(
-          mapJson,
-          styleText,
+        await initCy(mapJson, styleText, backendUrl, userId, mapUUID, editMap);
+        bindRouters(
           backendUrl,
           userId,
           mapUUID,
-          editMap,
           sessionId,
           showConceptTippy,
           hideConceptTippy,
-          onSetGoalClick
+          onSetGoalClick,
+          editMap,
+          router
         );
+
         // TODO: if goal is set, zoom there instead of to the bottom?
-        panByAndZoom(
-          -window.cy.width() / 6,
-          (-window.cy.height() * 4) / 9,
-          1.5,
-          function () {}
-        );
+        if (router.query.topic || router.query.x) {
+          const query = router.query;
+          if (query.topic) {
+            handleAnimation({
+              fit: {
+                eles: window.cy.filter(`[id = "${query.topic}"]`),
+                padding: 50,
+              },
+              duration: 1200,
+              easing: "ease-in-out",
+            });
+          } else if (query.concept) {
+            window.cy.getElementById(query.concept).emit("tap");
+          } else {
+            handleAnimation({
+              pan: { x: query.x, y: query.y },
+              zoom: query.zoom,
+              duration: 1200,
+              easing: "ease-in-out",
+            });
+          }
+        } else {
+          handleAnimation({
+            panBy: {
+              x: -window.cy.width() / 6,
+              y: (-window.cy.height() * 4) / 9,
+            },
+            zoom: 1.5 * window.cy.zoom(),
+            duration: 1200,
+            easing: "ease-in-out",
+          });
+        }
         setupCtoCentre(editMap);
         setPageLoaded(true);
       }
