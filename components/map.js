@@ -87,7 +87,7 @@ export default function Map({
         );
 
         // TODO: if goal is set, zoom there instead of to the bottom?
-        if (router.query.topic || router.query.x) {
+        if (router.query.topic || router.query.concept || router.query.x) {
           const query = router.query;
           if (query.topic) {
             handleAnimation({
