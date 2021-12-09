@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Tippy from "@tippyjs/react";
 import { resetProgress } from "../lib/learningAndPlanning";
-import { handleFetchResponses } from "../lib/utils";
+import { handleFetchResponses, setURLQuery } from "../lib/utils";
 import { goToFormFunction } from "../lib/suggestions";
 import { jsonHeaders } from "../lib/headers";
 import { fitCytoTo, unhighlightNodes } from "../lib/graph";
@@ -12,8 +12,11 @@ import {
   ThumbUpIcon,
   TrashIcon,
 } from "@heroicons/react/outline";
+import { ShareIcon } from "@heroicons/react/outline";
 import { AreYouSureModal } from "./modal";
 import { classNames } from "../lib/reactUtils";
+import { useRouter } from "next/router";
+import isEqual from "lodash.isequal";
 
 export function IconToggleButtonWithCheckbox({
   checked,
@@ -120,6 +123,78 @@ export function SlackButton({ buttonPressFunction }) {
           <path d="M3.362 10.11c0 .926-.756 1.681-1.681 1.681S0 11.036 0 10.111C0 9.186.756 8.43 1.68 8.43h1.682v1.68zm.846 0c0-.924.756-1.68 1.681-1.68s1.681.756 1.681 1.68v4.21c0 .924-.756 1.68-1.68 1.68a1.685 1.685 0 0 1-1.682-1.68v-4.21zM5.89 3.362c-.926 0-1.682-.756-1.682-1.681S4.964 0 5.89 0s1.68.756 1.68 1.68v1.682H5.89zm0 .846c.924 0 1.68.756 1.68 1.681S6.814 7.57 5.89 7.57H1.68C.757 7.57 0 6.814 0 5.89c0-.926.756-1.682 1.68-1.682h4.21zm6.749 1.682c0-.926.755-1.682 1.68-1.682.925 0 1.681.756 1.681 1.681s-.756 1.681-1.68 1.681h-1.681V5.89zm-.848 0c0 .924-.755 1.68-1.68 1.68A1.685 1.685 0 0 1 8.43 5.89V1.68C8.43.757 9.186 0 10.11 0c.926 0 1.681.756 1.681 1.68v4.21zm-1.681 6.748c.926 0 1.682.756 1.682 1.681S11.036 16 10.11 16s-1.681-.756-1.681-1.68v-1.682h1.68zm0-.847c-.924 0-1.68-.755-1.68-1.68 0-.925.756-1.681 1.68-1.681h4.21c.924 0 1.68.756 1.68 1.68 0 .926-.756 1.681-1.68 1.681h-4.21z" />
         </svg>
       </button>
+    </IconButtonTippy>
+  );
+}
+
+function getCurrentQueryParams(pageLoaded) {
+  if (pageLoaded) {
+    return {
+      x: window.cy.pan().x,
+      y: window.cy.pan().y,
+      zoom: window.cy.zoom(),
+    };
+  } else {
+    return { x: null, y: null, zoom: null };
+  }
+}
+
+export function ShareCurrentPosition({ pageLoaded, buttonPressFunction }) {
+  const [currentQueryParams, setCurrentQueryParams] = useState({
+    x: null,
+    y: null,
+    zoom: null,
+  });
+  const [copiedQueryParams, setCopiedQueryParams] = useState(null);
+  useEffect(() => {
+    if (pageLoaded) {
+      window.cy.on("zoom pan", (e) => {
+        setCurrentQueryParams(getCurrentQueryParams(pageLoaded));
+      });
+    }
+  }, [pageLoaded]);
+
+  return (
+    <IconButtonTippy
+      content={"Copy link to this map view"}
+      disabled={isEqual(copiedQueryParams, currentQueryParams)}
+    >
+      <Tippy
+        theme={"dark"}
+        placement="bottom"
+        animation="scale"
+        maxWidth={"12em"}
+        visible={isEqual(copiedQueryParams, currentQueryParams)}
+        content={"Link copied!"}
+        className={"invisible lg:visible text-center"}
+      >
+        <button
+          onClick={
+            isEqual(copiedQueryParams, currentQueryParams)
+              ? () => {}
+              : buttonPressFunction(() => {
+                  navigator.clipboard.writeText(
+                    `${location.origin}/?` +
+                      new URLSearchParams(getCurrentQueryParams(pageLoaded))
+                  );
+                  setCopiedQueryParams(getCurrentQueryParams(pageLoaded));
+                }, "Get Shareable Link")
+          }
+          className={classNames(
+            "mobile-icon-button lg:gray-icon-btn",
+            isEqual(copiedQueryParams, currentQueryParams) &&
+              "cursor-default lg:hover:text-gray-400 lg:hover:shadow-sm"
+          )}
+        >
+          <div className="block lg:hidden px-2 sm:px-4 text-black">
+            {isEqual(copiedQueryParams, currentQueryParams)
+              ? "Link copied!"
+              : "Copy link to this map view"}
+          </div>
+          <span className="sr-only">Copy link to map view</span>
+          <ShareIcon className="h-7 w-7" />
+        </button>
+      </Tippy>
     </IconButtonTippy>
   );
 }
