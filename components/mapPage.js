@@ -46,7 +46,7 @@ export default function MapPage({
   } else {
     ReactGA.initialize("UA-197170313-1", { debug: true });
   }
-
+ 
   const { user, isLoading } = useUser();
   const [userId, setUserId] = React.useState(undefined);
   const [userEmail, setUserEmail] = React.useState("");
@@ -129,7 +129,7 @@ export default function MapPage({
   useEffect(() => {
     if (!editMap && pageLoaded) setNextConcept(getNextNodeToLearn());
   }, [pageLoaded, learned, goals]);
-
+ 
   return (
     <div>
       <MapHeader editMode={editMap} mapUrlExtension={mapUrlExtension} />
@@ -141,12 +141,14 @@ export default function MapPage({
             buttonPressFunction={buttonPressFunction}
             backendUrl={backendUrl}
             mapUUID={mapUUID}
+            mapJson={mapJson}
           />
         ) : (
           <LearnNavbar
             user={user}
             pageLoaded={pageLoaded}
             buttonPressFunction={buttonPressFunction}
+            mapJson={mapJson}
           />
         ))}
 
