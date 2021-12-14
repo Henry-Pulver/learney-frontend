@@ -1,13 +1,8 @@
-import React, { Fragment, useRef, useState, useEffect } from "react";
-import { Menu, Popover, Transition } from "@headlessui/react";
+import React, { useRef, useState, useEffect } from "react";
+import { Popover } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { classNames } from "../lib/reactUtils";
-import {
-  LogInIconButton,
-  LogOutIconButton,
-  ProfileButton,
-  ProfileSelectedDiv,
-} from "./profile";
+import { LogInIconButton, LogOutIconButton, ProfileButton } from "./profile";
 import IntroButton, { IntroSection } from "./intro";
 import {
   FeedBackButton,
@@ -18,7 +13,7 @@ import {
 } from "./buttons";
 import { MapSettingsIconButton } from "./editor/buttons";
 import Modal from "./modal";
-import { SearchBox } from "./SearchBox";
+import { ConceptSearchBox } from "./ConceptSearchBox";
 
 export function EditNavbar({
   user,
@@ -61,7 +56,12 @@ export function EditNavbar({
   );
 }
 
-export function LearnNavbar({ user, pageLoaded, buttonPressFunction, mapJson }) {
+export function LearnNavbar({
+  user,
+  pageLoaded,
+  buttonPressFunction,
+  mapJson,
+}) {
   const [introShown, setIntroShown] = useState(user === undefined);
 
   // Here so the slide number is remembered between closing & opening the modal
@@ -173,7 +173,12 @@ export default function Navbar({
                     <div key={idx}>{button}</div>
                   ))}
                 </div>
-                <SearchBox mapJson={mapJson} />
+                <ConceptSearchBox
+                  mapJson={mapJson}
+                  onSelect={(item) =>
+                    window.cy.getElementById(item.id).emit("tap")
+                  }
+                />
                 <div className="flex items-center md:absolute md:right-0 md:inset-y-0 lg:hidden">
                   {/* Mobile menu button */}
                   <Popover.Button className="-mx-1 rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
