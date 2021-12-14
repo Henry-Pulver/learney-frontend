@@ -1,4 +1,6 @@
 import React from "react";
+import Image from "next/image";
+import wentWrongImage from "/public/images/SomethingWentWrong.webp";
 
 export class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -19,15 +21,8 @@ export class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-          }}
-        >
-          <img src="/images/SomethingWentWrong.webp" />
+        <div className="flex justify-center items-center h-screen">
+          <Image src={wentWrongImage} alt={"Error page"} />
         </div>
       );
     }
