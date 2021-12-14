@@ -28,7 +28,6 @@ import {
 import { EditNavbar, LearnNavbar } from "./navbar";
 import Editor from "./editor/editor";
 import { getNextNodeToLearn } from "../lib/questions";
-// import SearchBar, {getSearchOptions} from "./search";
 
 export default function MapPage({
   backendUrl,
@@ -38,9 +37,6 @@ export default function MapPage({
   mapJson,
   mapUUID,
 }) {
-  // SEARCH OPTIONS
-  // const [searchOptions, setSearchOptions] = React.useState([]);
-  // const updateSearchOptions = (elements) => setSearchOptions(getSearchOptions(elements));
   if (backendUrl === "https://api.learney.me") {
     ReactGA.initialize("UA-197170313-2");
   } else {
@@ -141,12 +137,14 @@ export default function MapPage({
             buttonPressFunction={buttonPressFunction}
             backendUrl={backendUrl}
             mapUUID={mapUUID}
+            mapJson={mapJson}
           />
         ) : (
           <LearnNavbar
             user={user}
             pageLoaded={pageLoaded}
             buttonPressFunction={buttonPressFunction}
+            mapJson={mapJson}
           />
         ))}
 

@@ -1,14 +1,8 @@
-import React, { Fragment, useRef, useState, useEffect } from "react";
-import { Menu, Popover, Transition } from "@headlessui/react";
-import { SearchIcon } from "@heroicons/react/solid";
+import React, { useRef, useState, useEffect } from "react";
+import { Popover } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { classNames } from "../lib/reactUtils";
-import {
-  LogInIconButton,
-  LogOutIconButton,
-  ProfileButton,
-  ProfileSelectedDiv,
-} from "./profile";
+import { LogInIconButton, LogOutIconButton, ProfileButton } from "./profile";
 import IntroButton, { IntroSection } from "./intro";
 import {
   FeedBackButton,
@@ -19,6 +13,7 @@ import {
 } from "./buttons";
 import { MapSettingsIconButton } from "./editor/buttons";
 import Modal from "./modal";
+import { ConceptSearchBox } from "./ConceptSearchBox";
 
 export function EditNavbar({
   user,
@@ -26,6 +21,7 @@ export function EditNavbar({
   buttonPressFunction,
   backendUrl,
   mapUUID,
+  mapJson,
 }) {
   return (
     <Navbar
@@ -55,11 +51,17 @@ export function EditNavbar({
         />,
       ]}
       buttonPressFunction={buttonPressFunction}
+      mapJson={mapJson}
     />
   );
 }
 
-export function LearnNavbar({ user, pageLoaded, buttonPressFunction }) {
+export function LearnNavbar({
+  user,
+  pageLoaded,
+  buttonPressFunction,
+  mapJson,
+}) {
   const [introShown, setIntroShown] = useState(user === undefined);
 
   // Here so the slide number is remembered between closing & opening the modal
@@ -110,6 +112,7 @@ export function LearnNavbar({ user, pageLoaded, buttonPressFunction }) {
           />,
         ]}
         buttonPressFunction={buttonPressFunction}
+        mapJson={mapJson}
       />
       <Modal
         open={introShown}
@@ -133,6 +136,7 @@ export default function Navbar({
   leftSideButtons,
   rightSideButtons,
   buttonPressFunction,
+  mapJson,
 }) {
   return (
     <>
@@ -149,7 +153,7 @@ export default function Navbar({
         {({ open }) => (
           <>
             <div className="max-w-full lg:max-w-full mx-auto px-2 sm:px-4 lg:px-8">
-              <div className="relative flex justify-between lg:gap-8">
+              <div className="relative flex justify-evenly lg:gap-8">
                 <div className="flex md:absolute md:left-0 md:inset-y-0 lg:static xl:col-span-2">
                   <div className="group flex-shrink-0 flex items-center">
                     <img
@@ -169,32 +173,12 @@ export default function Navbar({
                     <div key={idx}>{button}</div>
                   ))}
                 </div>
-                <div className="min-w-0 flex-1 lg:px-0 xl:col-span-6">
-                  {/*SEARCH*/}
-                  <div className="flex items-center px-2 md:px-6 py-4 md:max-w-xl md:mx-auto lg:max-w-none lg:mx-0 xl:px-0">
-                    <div className="w-full">
-                      <label htmlFor="search" className="sr-only">
-                        Search
-                      </label>
-                      <div className="relative">
-                        <div className="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
-                          <SearchIcon
-                            className="h-5 w-5 text-gray-400"
-                            aria-hidden="true"
-                          />
-                        </div>
-                        <label id="concept-search-bar-label">
-                          <select
-                            id={"concept-search-bar"}
-                            className="flex-shrink-1 cursor-text block pt-0 w-full h-full bg-white border border-gray-300 rounded-md pb-2 pl-10 pr-3 text-sm placeholder-gray-500 focus:outline-none focus:text-gray-900 focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            name="concept"
-                            tabIndex="0"
-                          />
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <ConceptSearchBox
+                  mapJson={mapJson}
+                  onSelect={(item) =>
+                    window.cy.getElementById(item.id).emit("tap")
+                  }
+                />
                 <div className="flex items-center md:absolute md:right-0 md:inset-y-0 lg:hidden">
                   {/* Mobile menu button */}
                   <Popover.Button className="-mx-1 rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
