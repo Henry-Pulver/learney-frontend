@@ -138,6 +138,7 @@ export default function MapPage({
             backendUrl={backendUrl}
             mapUUID={mapUUID}
             mapJson={mapJson}
+            pageLoaded={pageLoaded}
           />
         ) : (
           <LearnNavbar
