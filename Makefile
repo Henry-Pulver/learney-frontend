@@ -1,11 +1,14 @@
-staging:
+pretty:
 	npx prettier -w .
+
+build:
 	npm run lint
 	docker build . -t learney-frontend
+
+staging:
+	npm run lint
 	eb deploy Staging-Learneyfrontend-env
 
 prod:
-	npx prettier -w .
 	npm run lint
-	docker build . -t learney-frontend
 	eb deploy Learneyfrontend-env
