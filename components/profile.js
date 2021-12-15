@@ -57,7 +57,7 @@ function ProfileSelectedDiv({ userdata, buttonPressFunction }) {
 function LogOut({ buttonPressFunction }) {
   return (
     <button
-      className="btn-blue"
+      className="btn-blue btn-sm"
       onClick={buttonPressFunction(function () {
         location.href = `${location.protocol}//${location.hostname}/api/auth/logout`;
       }, "Log Out")}
