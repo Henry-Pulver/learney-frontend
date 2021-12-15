@@ -4,10 +4,10 @@ import { Popover, Transition } from "@headlessui/react";
 
 export function ProfileButton({ user, buttonPressFunction }) {
   return (
-    <Popover as="div" className="flex-shrink-0 relative ml-5">
+    <Popover as="div" className="shrink-0 relative ml-5">
       <div id="profileImageButton">
         {user !== undefined ? (
-          <Popover.Button className="bg-transparent p-0.5 transition duration-200 ease-in-out rounded-full flex-shrink-0 focus:outline-none focus:ring-2 hover:bg-white hover:ring-offset-0 focus:ring-offset-0 focus:ring-blue-500 hover:ring-blue-500 hover:ring-2 hover:ring-opacity-75">
+          <Popover.Button className="bg-transparent p-0.5 transition duration-200 ease-in-out rounded-full shrink-0 focus:outline-none focus:ring-2 hover:bg-white hover:ring-offset-0 focus:ring-offset-0 focus:ring-blue-500 hover:ring-blue-500 hover:ring-2 hover:ring-opacity-75">
             <span className="sr-only">Open user menu</span>
             <img
               className="h-8 w-8 rounded-full"

@@ -3,7 +3,12 @@ import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { getSearchArray } from "../lib/getSearchArray";
 import { classNames } from "../lib/reactUtils";
 
-export const ConceptSearchBox = ({ mapJson, onSelect, className = "" }) => {
+export const ConceptSearchBox = ({
+  mapJson,
+  onSelect,
+  className = "",
+  pageLoaded,
+}) => {
   /** Component responsible for rendering the search bar. **/
   let originalMapJSON = JSON.parse(mapJson);
   let autocompleteData = getSearchArray(originalMapJSON);
@@ -17,7 +22,9 @@ export const ConceptSearchBox = ({ mapJson, onSelect, className = "" }) => {
 
   const formatResult = (conceptName) => {
     /** Format result as HTML **/
-    const itemConcept = window.cy.filter(`[name = "${conceptName}"]`);
+    const itemConcept = window.cy
+      .filter(`[nodetype = "concept"]`)
+      .filter(`[name = "${conceptName}"]`);
     return (
       <p
         dangerouslySetInnerHTML={{
@@ -39,7 +46,7 @@ export const ConceptSearchBox = ({ mapJson, onSelect, className = "" }) => {
         onSelect={onSelect}
         onFocus={handleOnFocus}
         autoFocus
-        formatResult={formatResult}
+        formatResult={pageLoaded ? formatResult : () => {}}
         // TODO: Have animated placeholder-writing using examples on the map
         placeholder={"e.g. Machine Learning"}
       />
