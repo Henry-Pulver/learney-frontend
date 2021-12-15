@@ -22,6 +22,7 @@ export function EditNavbar({
   backendUrl,
   mapUUID,
   mapJson,
+  pageLoaded,
 }) {
   return (
     <Navbar
@@ -52,6 +53,7 @@ export function EditNavbar({
       ]}
       buttonPressFunction={buttonPressFunction}
       mapJson={mapJson}
+      pageLoaded={pageLoaded}
     />
   );
 }
@@ -113,6 +115,7 @@ export function LearnNavbar({
         ]}
         buttonPressFunction={buttonPressFunction}
         mapJson={mapJson}
+        pageLoaded={pageLoaded}
       />
       <Modal
         open={introShown}
@@ -137,6 +140,7 @@ export default function Navbar({
   rightSideButtons,
   buttonPressFunction,
   mapJson,
+  pageLoaded,
 }) {
   return (
     <>
@@ -155,7 +159,7 @@ export default function Navbar({
             <div className="max-w-full lg:max-w-full mx-auto px-2 sm:px-4 lg:px-8">
               <div className="relative flex justify-evenly lg:gap-8">
                 <div className="flex md:absolute md:left-0 md:inset-y-0 lg:static xl:col-span-2">
-                  <div className="group flex-shrink-0 flex items-center">
+                  <div className="group shrink-0 flex items-center">
                     <img
                       className="h-10 w-auto block group-hover:hidden"
                       src="/images/learney_logo_256x256.png"
@@ -174,10 +178,12 @@ export default function Navbar({
                   ))}
                 </div>
                 <ConceptSearchBox
+                  className="shrink"
                   mapJson={mapJson}
                   onSelect={(item) =>
                     window.cy.getElementById(item.id).emit("tap")
                   }
+                  pageLoaded={pageLoaded}
                 />
                 <div className="flex items-center md:absolute md:right-0 md:inset-y-0 lg:hidden">
                   {/* Mobile menu button */}
@@ -208,7 +214,7 @@ export default function Navbar({
                 {user !== undefined ? (
                   <div className="flex flex-row justify-between items-center max-w-3xl mx-auto px-4 sm:px-6">
                     <div className="flex flex-row">
-                      <div className="flex-shrink-0">
+                      <div className="shrink-0">
                         <img
                           className="h-10 w-10 rounded-full"
                           src={user.picture}
