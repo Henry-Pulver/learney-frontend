@@ -10,7 +10,7 @@ export default function OriginalMap({ mapJson, mapUUID, backendUrl }) {
       mapUrlExtension={"maps/original_map"}
       allowSuggestions={true}
       editMap={false}
-      mapJson={mapJson}
+      mapJsonString={mapJson}
     />
   );
 }
