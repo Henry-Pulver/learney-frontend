@@ -62,7 +62,7 @@ export default function ExploreLearnIntroPage({
         <div className="relative bg-white max-w-2xl min-w-full md:min-w-0 min-h-full md:min-h-0 rounded-none md:rounded-xl shadow relative md:mt-20 xl:mt-28 dark:bg-gray-700">
           {/* EXPLORE BUTTON */}
           <div className="absolute left-0 top-0 flex p-1 md:p-2 flex-col align-middle text-gray-500">
-            <div className="flex flex-col text-center justify-center text-base align-middle md:text-lg pr-2">
+            <div className="flex flex-col text-center text-base align-middle pr-2">
               Or just
             </div>
             <button
