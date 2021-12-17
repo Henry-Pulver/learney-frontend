@@ -61,7 +61,7 @@ export default function ExploreLearnIntroPage({
         {/* Modal content */}
         <div className="relative bg-white max-w-2xl min-w-full md:min-w-0 min-h-full md:min-h-0 rounded-none md:rounded-xl shadow relative md:mt-20 xl:mt-28 dark:bg-gray-700">
           {/* EXPLORE BUTTON */}
-          <div className="absolute left-0 top-0 flex p-1 md:p-2 flex-col lg:flex-row align-middle text-gray-500">
+          <div className="absolute left-0 top-0 flex p-1 md:p-2 flex-col align-middle text-gray-500">
             <div className="flex flex-col text-center justify-center text-base align-middle md:text-lg pr-2">
               Or just
             </div>
@@ -89,13 +89,13 @@ export default function ExploreLearnIntroPage({
           <div className="flex flex-col">
             <div className="flex flex-col items-center">
               <img
-                className="mt-4 md:mt-8 lg:mt-10 xl:mt-14 h-10 md:h-14 xl:h-16 w-auto"
+                className="mt-4 md:mt-8 xl:mt-12 h-10 md:h-14 xl:h-16 w-auto"
                 src={"/images/learney_logo_256x256.png"}
                 alt="Learney"
               />
               <p
                 className={classNames(
-                  "text-base sm:text-lg md:text-xl xl:text-2xl text-gray-500 mt-16",
+                  "text-base sm:text-lg md:text-xl xl:text-2xl text-gray-500 mt-12",
                   newUser && "invisible"
                 )}
               >
@@ -110,13 +110,13 @@ export default function ExploreLearnIntroPage({
                   learnClicked === false &&
                     Object.keys(goalsSet).length === 0 &&
                     "ring-2 ring-offset-2 ring-red-400 rounded-full",
-                  "w-5/6 max-w-2xl z-10"
+                  "w-5/6 max-w-2xl z-10 mt-8"
                 )}
               >
                 <ConceptSearchBox
                   mapJson={mapJson}
                   onSelect={(item) => addGoalSet(item.id)}
-                  classes="animate-none z-10 mt-8"
+                  classes="animate-none z-10"
                   searchStyling={
                     learnClicked === false && Object.keys(goalsSet).length === 0
                       ? {
@@ -183,7 +183,7 @@ function GoalsList({ mapJson, goals, removeGoal, classes }) {
   return (
     <span
       className={classNames(
-        "relative block w-10/12 overflow-auto max-h-80 max-w-xl mt-4 lg:mt-6 xl:mt-10 mb-28 mx-12 sm:mx-60 border-2 xl:border-4 border-gray-200 border-dashed rounded-xl p-2 md:p-6 text-center focus:outline-none",
+        "relative block w-10/12 overflow-auto h-40 max-w-xl mt-4 mb-28 mx-12 sm:mx-60 border-2 xl:border-4 border-gray-200 border-dashed rounded-xl p-2 md:p-6 text-center focus:outline-none",
         classes
       )}
     >
