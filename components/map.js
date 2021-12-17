@@ -9,10 +9,9 @@ import {
   learnedNodes,
 } from "../lib/learningAndPlanning/variables";
 import { initialiseGraphState } from "../lib/learningAndPlanning/learningAndPlanning";
-import { handleAnimation, initCy, bindRouters } from "../lib/graph";
+import { initCy, bindRouters } from "../lib/graph";
 import { setupCtoCentre } from "../lib/buttons";
 import { classNames } from "../lib/reactUtils";
-import { setURLQuery } from "../lib/utils";
 
 export default function Map({
   backendUrl,
@@ -90,40 +89,6 @@ export default function Map({
           setHoverNode
         );
 
-        // TODO: if goal is set, zoom there instead of to the bottom?
-        if (router.query.topic || router.query.concept || router.query.x) {
-          const query = router.query;
-          if (query.topic) {
-            handleAnimation({
-              fit: {
-                eles: window.cy.filter(`[id = "${query.topic}"]`),
-                padding: 50,
-              },
-              duration: 1200,
-              easing: "ease-in-out",
-            });
-          } else if (query.concept) {
-            window.cy.getElementById(query.concept).emit("tap");
-          } else {
-            handleAnimation({
-              pan: { x: Number(router.query.x), y: Number(router.query.y) },
-              zoom: Number(router.query.zoom),
-              duration: 1200,
-              easing: "ease-in-out",
-            });
-          }
-        } else {
-          handleAnimation({
-            panBy: {
-              x: -window.cy.width() / 6,
-              y: (-window.cy.height() * 4) / 9,
-            },
-            zoom: 1.5 * window.cy.zoom(),
-            duration: 1200,
-            easing: "ease-in-out",
-          });
-        }
-        setURLQuery(router, {});
         setupCtoCentre(editMap);
         setPageLoaded(true);
       }
@@ -140,7 +105,7 @@ export default function Map({
           editMap && editType === "addEdges" && "cursor-crosshair",
           editMap && editType === "delete" && "cursor-pointer",
           !editMap && hoverNode && "cursor-pointer",
-          "absolute z-0 bg-gray-900 w-full h-full"
+          "absolute z-0 bg-gray-900 w-full h-[calc(100%-60px)]"
         )}
         ref={cytoscapeRef}
       />
