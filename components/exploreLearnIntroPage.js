@@ -125,7 +125,7 @@ export default function ExploreLearnIntroPage({
                         }
                       : { border: "1px solid #4b5563" }
                   }
-                  maxResults={6}
+                  maxResults={5}
                 />
               </div>
               <p
