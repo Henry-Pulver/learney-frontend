@@ -15,6 +15,7 @@ import {
   isAnonymousUser,
   logPageView,
   setURLQuery,
+  URLQuerySet,
 } from "../lib/utils";
 import MapHeader from "./mapHeader";
 import Map from "./map";
@@ -154,16 +155,20 @@ export default function MapPage({
     if (
       !editMap &&
       ((sessionId && Object.keys(goals).length === 0) || isNewUser) &&
-      !(query.topic || query.concept || query.x)
+      !URLQuerySet(query)
     )
       setExploreLearn(true);
   }, [goals, pageLoaded]);
 
   // Introduction animations when the map is shown
   useEffect(() => {
-    if (!!sessionId && pageLoaded && !showExploreLearn) {
-      const query = router.query;
-      if (query.topic || query.concept || query.x) {
+    const query = router.query;
+    if (
+      pageLoaded &&
+      !showExploreLearn &&
+      (URLQuerySet(query) || Object.keys(goals).length > 0)
+    ) {
+      if (URLQuerySet(query)) {
         if (query.topic) {
           handleAnimation({
             fit: {
