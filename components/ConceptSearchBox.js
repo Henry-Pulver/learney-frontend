@@ -1,17 +1,18 @@
 import React from "react";
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
-import { getSearchArray } from "../lib/getSearchArray";
 import { classNames } from "../lib/reactUtils";
+import { getSearchArray, getSearchTopicDataLookup } from "../lib/search";
 
 export const ConceptSearchBox = ({
   mapJson,
   onSelect,
-  className = "",
-  pageLoaded,
+  classes = "",
+  searchStyling = {},
 }) => {
   /** Component responsible for rendering the search bar. **/
-  let originalMapJSON = JSON.parse(mapJson);
-  let autocompleteData = getSearchArray(originalMapJSON);
+  let autocompleteData = getSearchArray(mapJson);
+  const [topicDataLookup, conceptDataLookup] =
+    getSearchTopicDataLookup(mapJson);
 
   const handleOnSearch = (string, results) => {
     // onSearch will have as the first callback parameter
@@ -22,22 +23,21 @@ export const ConceptSearchBox = ({
 
   const formatResult = (conceptName) => {
     /** Format result as HTML **/
-    const itemConcept = window.cy
-      .filter(`[nodetype = "concept"]`)
-      .filter(`[name = "${conceptName}"]`);
+    const itemConceptData = conceptDataLookup[conceptName];
+    const topicData = topicDataLookup[itemConceptData.parent];
+    const conceptNameStr = `<p class="text-xs sm:text-lg">${conceptName}</p>`;
+    const topicTagStr = `<p class="absolute right-1 text-gray-300 px-2.5 py-0.5 hidden sm:block text-base rounded-lg" style="background-color: ${topicData.colour};"> ${itemConceptData.parent} </p>`;
     return (
       <p
         dangerouslySetInnerHTML={{
-          __html: `<div class="flex justify-between align-middle"> <p class="text-xs sm:text-lg">${conceptName}</p> <p class="absolute right-0 text-gray-300 px-2.5 py-0.5 hidden sm:block text-base rounded-lg" style="background-color: ${
-            itemConcept.parent().data().colour
-          };"> ${itemConcept.data().parent} </p></div>`,
+          __html: `<div class="flex justify-between align-middle"> ${conceptNameStr} ${topicTagStr} </div>`,
         }}
       />
     );
   };
 
   return (
-    <div className={classNames(className, "w-5/6 z-10 px-3 py-2")}>
+    <div className={classNames(classes, "z-10")}>
       <ReactSearchAutocomplete
         items={autocompleteData}
         fuseOptions={{ keys: ["name", "parent", "description"] }}
@@ -46,9 +46,10 @@ export const ConceptSearchBox = ({
         onSelect={onSelect}
         onFocus={handleOnFocus}
         autoFocus
-        formatResult={pageLoaded ? formatResult : () => {}}
+        formatResult={formatResult}
         // TODO: Have animated placeholder-writing using examples on the map
         placeholder={"e.g. Machine Learning"}
+        styling={searchStyling}
       />
     </div>
   );
