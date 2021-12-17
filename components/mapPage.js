@@ -48,6 +48,11 @@ export default function MapPage({
   const mapJson = JSON.parse(mapJsonString);
   const router = useRouter();
 
+  let mapName;
+  if (mapUrlExtension === "original_map")
+    mapName = "Maths for Machine Learning";
+  else mapName = mapUrlExtension;
+
   const { user, isLoading } = useUser();
   // TODO: Move all these into a redux/MST store
   const [userId, setUserId] = React.useState(undefined);
@@ -240,7 +245,7 @@ export default function MapPage({
         <ExploreLearnIntroPage
           hideExploreLearn={() => setExploreLearn(false)}
           newUser={isNewUser && !user}
-          mapName={"StatQuest's Map"}
+          mapName={mapName}
           mapJson={mapJson}
           setGoal={onSetGoalClick}
           pageLoaded={pageLoaded}

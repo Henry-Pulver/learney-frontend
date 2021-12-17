@@ -77,7 +77,7 @@ export default function ExploreLearnIntroPage({
                 We noticed you hadn&apos;t set a goal.
               </p>
               <h3 className="text-2xl lg:text-3xl text-gray-700 mt-6 md:mt-12 mb-8 text-center">
-                From <b>{mapName}</b>, I want to learn...
+                From the <b>{mapName}</b> map, I want to learn...
               </h3>
               {/* Search box wrapper to add red outline when  */}
               <div
