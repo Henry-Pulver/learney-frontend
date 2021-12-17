@@ -45,15 +45,15 @@ export default function MapPage({
   } else {
     ReactGA.initialize("UA-197170313-1", { debug: true });
   }
+  const { user, isLoading } = useUser();
   const mapJson = JSON.parse(mapJsonString);
   const router = useRouter();
 
   let mapName;
-  if (mapUrlExtension === "original_map")
+  if (mapUrlExtension === "maps/original_map")
     mapName = "Maths for Machine Learning";
-  else mapName = mapUrlExtension;
+  else mapName = mapUrlExtension.slice(5); // Cut off "maps/" from the start
 
-  const { user, isLoading } = useUser();
   // TODO: Move all these into a redux/MST store
   const [userId, setUserId] = React.useState(undefined);
   const [userEmail, setUserEmail] = React.useState("");
