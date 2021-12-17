@@ -59,71 +59,9 @@ export default function ExploreLearnIntroPage({
         {/* Grey out the map in the background */}
         <div className="bg-black opacity-40 w-screen h-screen absolute left-0 top-0" />
         {/* Modal content */}
-        <div className="bg-white max-w-2xl shadow h-screen relative dark:bg-gray-700">
-          {/* Modal footer */}
-          <div className="flex flex-col">
-            <div className="flex flex-col items-center">
-              <img
-                className="mt-4 md:mt-8 lg:mt-10 xl:mt-14 h-14 md:h-20 xl:h-28 w-auto"
-                src={"/images/learney_logo_256x256.png"}
-                alt="Learney"
-              />
-              <p
-                className={classNames(
-                  "text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-500 mt-10 md:mt-24",
-                  newUser && "invisible"
-                )}
-              >
-                We noticed you hadn&apos;t set a goal.
-              </p>
-              <h3 className="text-2xl lg:text-3xl text-gray-700 mt-6 md:mt-12 mb-8 text-center">
-                From the <b>{mapName}</b> map, I want to learn...
-              </h3>
-              {/* Search box wrapper to add red outline when  */}
-              <div
-                className={classNames(
-                  learnClicked === false &&
-                    Object.keys(goalsSet).length === 0 &&
-                    "ring-2 ring-offset-2 ring-red-400 rounded-full",
-                  "w-5/6 max-w-2xl z-10"
-                )}
-              >
-                <ConceptSearchBox
-                  mapJson={mapJson}
-                  onSelect={(item) => addGoalSet(item.id)}
-                  classes="animate-none z-10"
-                  searchStyling={
-                    learnClicked === false && Object.keys(goalsSet).length === 0
-                      ? {
-                          backgroundColor: "#fef2f2",
-                          border: "1px solid #4b5563",
-                        }
-                      : { border: "1px solid #4b5563" }
-                  }
-                />
-              </div>
-              <p
-                className={classNames(
-                  learnClicked === false && Object.keys(goalsSet).length === 0
-                    ? "visible"
-                    : "invisible",
-                  "text-red-500 text-lg font-bold mt-4"
-                )}
-              >
-                Set what you want to learn
-              </p>
-              <GoalsList
-                mapJson={mapJson}
-                goals={goalsSet}
-                removeGoal={removeGoalSet}
-              />
-            </div>
-          </div>
-        </div>
-        {/* FOOTER BAR */}
-        <div className="fixed bottom-0 z-50 bg-white w-full flex justify-between md:place-content-center space-x-2 items-center p-6 border-t border-gray-200 rounded-b dark:border-gray-600">
+        <div className="relative bg-white max-w-2xl min-w-full md:min-w-0 min-h-full md:min-h-0 rounded-none md:rounded-xl shadow relative md:mt-20 xl:mt-28 dark:bg-gray-700">
           {/* EXPLORE BUTTON */}
-          <div className="flex flex-col align-middle md:flex-row text-gray-500 md:absolute md:left-0 md:ml-4">
+          <div className="absolute left-0 top-0 flex p-1 md:p-2 flex-col lg:flex-row align-middle text-gray-500">
             <div className="flex flex-col text-center justify-center text-base align-middle md:text-lg pr-2">
               Or just
             </div>
@@ -147,30 +85,94 @@ export default function ExploreLearnIntroPage({
               )}
             </button>
           </div>
-          {/* LEARN BUTTON */}
-          <button
-            className={classNames(
-              learnClicked === false &&
-                Object.keys(goalsSet).length === 0 &&
-                "ring-2 ring-offset-2 ring-red-400 focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
-              "btn-blue btn-lg md:btn-xl"
-            )}
-            onClick={
-              !learnClicked
-                ? buttonPressFunction(
-                    () => onLearnClick(goalsSet, pageLoaded, userId, sessionId),
-                    "Intro Page Learn"
-                  )
-                : buttonPressFunction(() => {},
-                  "Intro Page Learn (Deactivated)")
-            }
-          >
-            {learnClicked ? (
-              <LoadingSpinner classes="w-8 h-8 mx-3.5" />
-            ) : (
-              "Learn"
-            )}
-          </button>
+          {/* Modal body */}
+          <div className="flex flex-col">
+            <div className="flex flex-col items-center">
+              <img
+                className="mt-4 md:mt-8 lg:mt-10 xl:mt-14 h-10 md:h-14 xl:h-16 w-auto"
+                src={"/images/learney_logo_256x256.png"}
+                alt="Learney"
+              />
+              <p
+                className={classNames(
+                  "text-base sm:text-lg md:text-xl xl:text-2xl text-gray-500 mt-16",
+                  newUser && "invisible"
+                )}
+              >
+                We noticed you hadn&apos;t set a goal.
+              </p>
+              <h3 className="text-xl md:text-3xl max-w-xxs sm:max-w-xl text-gray-700 mt-12 text-center">
+                From the <b>{mapName}</b> map, I want to learn...
+              </h3>
+              {/* Search box wrapper to add red outline when  */}
+              <div
+                className={classNames(
+                  learnClicked === false &&
+                    Object.keys(goalsSet).length === 0 &&
+                    "ring-2 ring-offset-2 ring-red-400 rounded-full",
+                  "w-5/6 max-w-2xl z-10"
+                )}
+              >
+                <ConceptSearchBox
+                  mapJson={mapJson}
+                  onSelect={(item) => addGoalSet(item.id)}
+                  classes="animate-none z-10 mt-8"
+                  searchStyling={
+                    learnClicked === false && Object.keys(goalsSet).length === 0
+                      ? {
+                          backgroundColor: "#fef2f2",
+                          border: "1px solid #4b5563",
+                        }
+                      : { border: "1px solid #4b5563" }
+                  }
+                  maxResults={6}
+                />
+              </div>
+              <p
+                className={classNames(
+                  learnClicked === false && Object.keys(goalsSet).length === 0
+                    ? "visible"
+                    : "invisible",
+                  "text-red-500 text-lg font-bold mt-4"
+                )}
+              >
+                Set what you want to learn
+              </p>
+              <GoalsList
+                mapJson={mapJson}
+                goals={goalsSet}
+                removeGoal={removeGoalSet}
+              />
+            </div>
+          </div>
+          {/* FOOTER BAR */}
+          <div className="absolute bottom-0 z-50 bg-white flex w-full place-content-center space-x-2 items-center p-3 border-t border-gray-200 rounded-none md:rounded-xl dark:border-gray-600">
+            {/* LEARN BUTTON */}
+            <button
+              className={classNames(
+                learnClicked === false &&
+                  Object.keys(goalsSet).length === 0 &&
+                  "ring-2 ring-offset-2 ring-red-400 focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                "btn-blue btn-lg md:btn-xl"
+              )}
+              onClick={
+                !learnClicked
+                  ? buttonPressFunction(
+                      () =>
+                        onLearnClick(goalsSet, pageLoaded, userId, sessionId),
+                      "Intro Page Learn"
+                    )
+                  : buttonPressFunction(() => {},
+                    "Intro Page Learn (Deactivated)")
+              }
+            >
+              {learnClicked ? (
+                <LoadingSpinner classes="w-8 h-8 mx-3.5" />
+              ) : (
+                "Learn"
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -181,7 +183,7 @@ function GoalsList({ mapJson, goals, removeGoal, classes }) {
   return (
     <span
       className={classNames(
-        "relative block w-10/12 overflow-auto max-h-80 max-w-xl mt-8 md:mt-12 mx-12 sm:mx-60 border-2 xl:border-4 border-gray-200 border-dashed rounded-xl p-2 md:p-6 text-center focus:outline-none",
+        "relative block w-10/12 overflow-auto max-h-80 max-w-xl mt-4 lg:mt-6 xl:mt-10 mb-28 mx-12 sm:mx-60 border-2 xl:border-4 border-gray-200 border-dashed rounded-xl p-2 md:p-6 text-center focus:outline-none",
         classes
       )}
     >

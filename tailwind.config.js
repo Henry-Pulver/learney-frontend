@@ -23,6 +23,7 @@ module.exports = {
         95: "95%",
       },
       minWidth: {
+        xxs: "16rem",
         60: "60%",
       },
       width: {

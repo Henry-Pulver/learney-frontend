@@ -8,6 +8,7 @@ export const ConceptSearchBox = ({
   onSelect,
   classes = "",
   searchStyling = {},
+  maxResults = 10,
 }) => {
   /** Component responsible for rendering the search bar. **/
   let autocompleteData = getSearchArray(mapJson);
@@ -44,6 +45,7 @@ export const ConceptSearchBox = ({
         onSearch={handleOnSearch}
         onHover={handleOnHover}
         onSelect={onSelect}
+        maxResults={maxResults}
         onFocus={handleOnFocus}
         autoFocus
         formatResult={formatResult}
