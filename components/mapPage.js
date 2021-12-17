@@ -161,9 +161,9 @@ export default function MapPage({
 
   // Introduction animations when the map is shown
   useEffect(() => {
-    if (pageLoaded && !showExploreLearn) {
-      if (router.query.topic || router.query.concept || router.query.x) {
-        const query = router.query;
+    if (!!sessionId && pageLoaded && !showExploreLearn) {
+      const query = router.query;
+      if (query.topic || query.concept || query.x) {
         if (query.topic) {
           handleAnimation({
             fit: {
