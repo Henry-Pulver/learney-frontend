@@ -158,7 +158,7 @@ export default function MapPage({
       !URLQuerySet(query)
     )
       setExploreLearn(true);
-  }, [goals, pageLoaded]);
+  }, [isNewUser, goals, pageLoaded]);
 
   // Introduction animations when the map is shown
   useEffect(() => {
