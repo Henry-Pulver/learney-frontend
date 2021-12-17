@@ -7,7 +7,7 @@ export function ProfileButton({ user, buttonPressFunction }) {
     <Popover as="div" className="flex-none relative">
       <div id="profileImageButton">
         {user !== undefined ? (
-          <Popover.Button className="bg-transparent transition duration-200 ease-in-out rounded-full focus:outline-none focus:ring-2 hover:bg-white hover:ring-offset-2 focus:ring-offset-0 focus:ring-blue-500 hover:ring-blue-500 hover:ring-2 hover:ring-opacity-75">
+          <Popover.Button className="bg-transparent transition duration-200 ease-in-out rounded-full focus:outline-none focus:ring-2 hover:bg-white hover:ring-offset-2 focus:ring-offset-2 focus:ring-blue-500 hover:ring-blue-500 hover:ring-2 hover:ring-opacity-75">
             <span className="sr-only">Open user menu</span>
             <img
               className="h-8 w-8 rounded-full"
