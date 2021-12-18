@@ -61,9 +61,10 @@ export default function ExploreLearnIntroPage({
         {/* Modal content */}
         <div className="relative bg-white max-w-2xl min-w-full md:min-w-0 min-h-full md:min-h-0 rounded-none md:rounded-xl shadow relative md:mt-20 xl:mt-28 dark:bg-gray-700">
           {/* EXPLORE BUTTON */}
-          <div className="absolute left-0 top-0 flex p-1 md:p-2 flex-col align-middle text-gray-500">
-            <div className="flex flex-col text-center text-base align-middle pr-2">
-              Or just
+          <div className="absolute left-0 top-0 flex p-1 md:p-2 flex-row sm:flex-col text-gray-500">
+            <div className="flex flex-row justify-center text-sm">
+              <div className="pr-1 align-middle">Or</div>
+              <p className="hidden md:flex pr-2">just</p>
             </div>
             <button
               className="btn-3 btn-sm md:btn-lg"
@@ -81,7 +82,7 @@ export default function ExploreLearnIntroPage({
               {learnClicked ? (
                 <LoadingSpinner classes="w-6 h-6 my-0.5 mx-5" />
               ) : (
-                "Explore"
+                "Explore Map"
               )}
             </button>
           </div>
@@ -95,13 +96,13 @@ export default function ExploreLearnIntroPage({
               />
               <p
                 className={classNames(
-                  "text-base sm:text-lg md:text-xl xl:text-2xl text-gray-500 mt-12",
+                  "text-sm sm:text-lg md:text-xl xl:text-2xl text-gray-500 mt-4 sm:mt-12",
                   newUser && "invisible"
                 )}
               >
                 We noticed you hadn&apos;t set a goal.
               </p>
-              <h3 className="text-xl md:text-3xl max-w-xxs sm:max-w-xl text-gray-700 mt-12 text-center">
+              <h3 className="text-lg md:text-3xl max-w-xxs sm:max-w-xl text-gray-700 mt-6 sm:mt-12 text-center">
                 From the <b>{mapName}</b> map, I want to learn...
               </h3>
               {/* Search box wrapper to add red outline when  */}
@@ -110,7 +111,7 @@ export default function ExploreLearnIntroPage({
                   learnClicked === false &&
                     Object.keys(goalsSet).length === 0 &&
                     "ring-2 ring-offset-2 ring-red-400 rounded-full",
-                  "w-5/6 max-w-2xl z-10 mt-8"
+                  "w-5/6 max-w-2xl z-10 mt-6 sm:mt-8"
                 )}
               >
                 <ConceptSearchBox
@@ -183,7 +184,7 @@ function GoalsList({ mapJson, goals, removeGoal, classes }) {
   return (
     <span
       className={classNames(
-        "relative block w-10/12 overflow-auto h-40 max-w-xl mt-4 mb-28 mx-12 sm:mx-60 border-2 xl:border-4 border-gray-200 border-dashed rounded-xl p-2 md:p-6 text-center focus:outline-none",
+        "relative block w-10/12 overflow-auto h-28 sm:h-40 max-w-xl mt-4 mb-28 mx-12 sm:mx-60 border-2 xl:border-4 border-gray-200 border-dashed rounded-xl p-2 md:p-6 text-center focus:outline-none",
         classes
       )}
     >
