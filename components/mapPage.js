@@ -51,9 +51,9 @@ export default function MapPage({
   const router = useRouter();
 
   let mapName;
-  if (mapUrlExtension === "maps/original_map")
+  if (mapUrlExtension === "original_map")
     mapName = "Maths for Machine Learning";
-  else mapName = mapUrlExtension.slice(5); // Cut off "maps/" from the start
+  else mapName = mapUrlExtension; // Cut off "maps/" from the start
 
   // TODO: Move all these into a redux/MST store
   const [userId, setUserId] = React.useState(undefined);
