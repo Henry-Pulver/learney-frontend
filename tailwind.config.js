@@ -19,11 +19,11 @@ module.exports = {
         30: "7.5rem",
       },
       maxWidth: {
+        xxs: "16rem",
         90: "90%",
         95: "95%",
       },
       minWidth: {
-        xxs: "16rem",
         60: "60%",
       },
       width: {
