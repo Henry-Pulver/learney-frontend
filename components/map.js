@@ -60,18 +60,23 @@ export default function Map({
   useEffect(() => {
     (async function () {
       if (sessionId && userId) {
+        let initLearnedNodes, initGoalNodes, initVotes;
         if (!editMap) {
-          let [initLearnedNodes, initGoalNodes, initVotes] =
+          [initLearnedNodes, initGoalNodes, initVotes] =
             await getDataFromStorage(backendUrl, userId, mapUUID);
           if (typeof initVotes === "string")
             initialiseUserVotes(JSON.parse(initVotes));
           else initialiseUserVotes(initVotes);
-
-          setGoalNodesGlobal(initGoalNodes);
-          setGoalsState(goalNodes);
-          setLearnedNodesGlobal(initLearnedNodes);
-          setLearnedState(learnedNodes);
+        } else {
+          initLearnedNodes = {};
+          initGoalNodes = {};
         }
+
+        setGoalNodesGlobal(initGoalNodes);
+        setGoalsState(goalNodes);
+        setLearnedNodesGlobal(initLearnedNodes);
+        setLearnedState(learnedNodes);
+
         const styleResponse = await fetch(`/knowledge_graph.cycss`);
         const styleText = await styleResponse.text();
         await initCy(mapJson, styleText, backendUrl, userId, mapUUID, editMap);
