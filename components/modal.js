@@ -1,7 +1,7 @@
 import React, { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationIcon, XIcon } from "@heroicons/react/outline";
-import { getValidURLs } from "../lib/utils";
+import {classNames} from "../lib/reactUtils";
 
 export default function Modal(props) {
   return (
@@ -12,7 +12,7 @@ export default function Modal(props) {
         initialFocus={props.initialFocus}
         onClose={props.setClosed}
       >
-        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div className={classNames(props.modalClassName, "flex items-end justify-center min-h-screen pt-4 px-2 pb-20 text-center sm:block sm:p-0")}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -41,7 +41,13 @@ export default function Modal(props) {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="inline-block text-center align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+            <div
+              className={classNames(
+                props.contentClassName,
+                "inline-block text-center align-bottom sm:align-middle bg-white rounded-lg p-4 sm:p-6 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full"
+              )}
+            >
+              {props.children}
               {/* Close X in top right */}
               <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
                 <button
@@ -53,7 +59,6 @@ export default function Modal(props) {
                   <XIcon className="h-6 w-6" aria-hidden="true" />
                 </button>
               </div>
-              {props.children}
             </div>
           </Transition.Child>
         </div>
@@ -76,6 +81,8 @@ export function AreYouSureModal({
       open={modalShown}
       setClosed={setModalClosed}
       initialFocus={actionButtonRef}
+      contentClassName=""
+      modalClassName=""
     >
       <div className="sm:flex sm:items-start">
         <div className="mx-auto shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
