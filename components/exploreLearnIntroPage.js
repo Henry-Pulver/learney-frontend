@@ -57,52 +57,57 @@ export default function ExploreLearnIntroPage({
     <div className="overflow-x-hidden overflow-y-auto fixed inset-0 z-40 justify-center items-center">
       <div className="flex justify-center relative w-full h-full md:h-auto">
         {/* Grey out the map in the background */}
-        <div className="bg-black opacity-40 w-screen h-screen absolute left-0 top-0" />
+        <button
+          className="cursor-default bg-black opacity-30 w-screen h-screen absolute left-0 top-0"
+          onClick={
+            !learnClicked
+              ? buttonPressFunction(
+                  () => onExploreClick(goalsSet, pageLoaded, userId, sessionId),
+                  "Explore Learn Intro Page Outside Modal"
+                )
+              : buttonPressFunction(() => {},
+                "Explore Learn Intro Page Outside Modal")
+          }
+        />
         {/* Modal content */}
         <div className="relative bg-white max-w-2xl min-w-full md:min-w-0 min-h-full md:min-h-0 rounded-none md:rounded-xl shadow relative md:mt-20 xl:mt-28 dark:bg-gray-700">
-          {/* EXPLORE BUTTON */}
-          <div className="absolute left-0 top-0 flex p-1 md:p-2 flex-row sm:flex-col text-gray-500">
-            <div className="flex flex-row justify-center text-sm">
-              <div className="pr-1 align-middle">Or</div>
-              <p className="hidden md:flex pr-2">just</p>
-            </div>
+          {/* Close X in top right */}
+          <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
             <button
-              className="btn-3 btn-sm md:btn-lg"
+              type="button"
+              className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               onClick={
                 !learnClicked
                   ? buttonPressFunction(
                       () =>
                         onExploreClick(goalsSet, pageLoaded, userId, sessionId),
-                      "Intro Page Explore"
+                      "Explore Learn Intro Page Close X Button"
                     )
                   : buttonPressFunction(() => {},
-                    "Intro Page Explore (Deactivated)")
+                    "Explore Learn Intro Page Close X Button")
               }
             >
-              {learnClicked ? (
-                <LoadingSpinner classes="w-6 h-6 my-0.5 mx-5" />
-              ) : (
-                "Explore Map"
-              )}
+              <span className="sr-only">Close</span>
+              <XIcon className="h-6 w-6" aria-hidden="true" />
             </button>
           </div>
           {/* Modal body */}
           <div className="flex flex-col">
             <div className="flex flex-col items-center">
               <img
-                className="mt-4 md:mt-8 xl:mt-12 h-10 md:h-14 xl:h-16 w-auto"
+                className="absolute sm:relative left-0 top-0 m-1 sm:mt-4 md:mt-8 xl:mt-12 h-8 sm:h-10 md:h-14 xl:h-16 w-auto"
                 src={"/images/learney_logo_256x256.png"}
                 alt="Learney"
               />
               <p
                 className={classNames(
-                  "text-sm sm:text-lg md:text-xl xl:text-2xl text-gray-500 mt-4 sm:mt-12",
+                  "hidden sm:block text-sm sm:text-lg md:text-xl xl:text-2xl text-gray-500 mt-4 sm:mt-12",
                   newUser && "invisible"
                 )}
               >
                 We noticed you hadn&apos;t set a goal.
               </p>
-              <h3 className="text-lg md:text-3xl max-w-xxs sm:max-w-xl text-gray-700 mt-6 sm:mt-12 text-center">
+              <h3 className="text-base md:text-3xl max-w-xxs sm:max-w-xl text-gray-700 mt-4 sm:mt-12 text-center">
                 From the <b>{mapName}</b> map, I want to learn...
               </h3>
               {/* Search box wrapper to add red outline when  */}
@@ -111,12 +116,15 @@ export default function ExploreLearnIntroPage({
                   learnClicked === false &&
                     Object.keys(goalsSet).length === 0 &&
                     "ring-2 ring-offset-2 ring-red-400 rounded-full",
-                  "w-5/6 max-w-2xl z-10 mt-6 sm:mt-8"
+                  "w-5/6 max-w-2xl z-10 mt-4 sm:mt-8"
                 )}
               >
                 <ConceptSearchBox
                   mapJson={mapJson}
-                  onSelect={(item) => addGoalSet(item.id)}
+                  onSelect={buttonPressFunction(
+                    (item) => addGoalSet(item.id),
+                    "Learn Explore Intro Page Goal Selected"
+                  )}
                   classes="animate-none z-10"
                   searchStyling={
                     learnClicked === false && Object.keys(goalsSet).length === 0
@@ -143,11 +151,43 @@ export default function ExploreLearnIntroPage({
                 mapJson={mapJson}
                 goals={goalsSet}
                 removeGoal={removeGoalSet}
+                buttonPressFunction={buttonPressFunction}
               />
             </div>
           </div>
           {/* FOOTER BAR */}
-          <div className="absolute bottom-0 z-50 bg-white flex w-full place-content-center space-x-2 items-center p-3 border-t border-gray-200 rounded-none md:rounded-xl dark:border-gray-600">
+          <div className="absolute bottom-0 z-50 bg-white flex w-full justify-between sm:justify-center place-content-center space-x-2 items-center p-2 sm:p-4 border-t border-gray-200 rounded-none md:rounded-b-xl dark:border-gray-600">
+            {/* EXPLORE BUTTON */}
+            <div className="relative sm:absolute sm:left-0 flex p-1 md:p-2 flex-row sm:flex-col text-gray-500">
+              <div className="flex flex-row justify-center text-sm">
+                <div className="pr-1 align-middle">Or</div>
+                <p className="hidden md:flex pr-2">just</p>
+              </div>
+              <button
+                className="btn-3 whitespace-pre-wrap sm:whitespace-normal btn-xs md:btn-md"
+                onClick={
+                  !learnClicked
+                    ? buttonPressFunction(
+                        () =>
+                          onExploreClick(
+                            goalsSet,
+                            pageLoaded,
+                            userId,
+                            sessionId
+                          ),
+                        "Intro Page Explore"
+                      )
+                    : buttonPressFunction(() => {},
+                      "Intro Page Explore (Deactivated)")
+                }
+              >
+                {learnClicked ? (
+                  <LoadingSpinner classes="w-6 h-6 my-0.5 mx-5" />
+                ) : (
+                  "Explore \nMap"
+                )}
+              </button>
+            </div>
             {/* LEARN BUTTON */}
             <button
               className={classNames(
@@ -180,7 +220,13 @@ export default function ExploreLearnIntroPage({
   );
 }
 
-function GoalsList({ mapJson, goals, removeGoal, classes }) {
+function GoalsList({
+  mapJson,
+  goals,
+  removeGoal,
+  classes,
+  buttonPressFunction,
+}) {
   return (
     <span
       className={classNames(
@@ -194,6 +240,7 @@ function GoalsList({ mapJson, goals, removeGoal, classes }) {
             <GoalListItem
               goalInfo={goalInfoFromId(goalId, mapJson)}
               removeGoal={removeGoal}
+              buttonPressFunction={buttonPressFunction}
               key={goalId}
             />
           ))}
@@ -210,14 +257,19 @@ function GoalsList({ mapJson, goals, removeGoal, classes }) {
   );
 }
 
-function GoalListItem({ goalInfo, removeGoal }) {
+function GoalListItem({ goalInfo, removeGoal, buttonPressFunction }) {
   return (
     <span
       style={{ backgroundColor: goalInfo.colour }}
       className={`text-sm sm:text-lg text-gray-300 sm:font-semibold px-1.5 sm:pl-3.5 py-0.5 sm:py-1 rounded-lg flex align-middle`}
     >
       {goalInfo.name}
-      <button onClick={() => removeGoal(goalInfo.id)}>
+      <button
+        onClick={buttonPressFunction(
+          () => removeGoal(goalInfo.id),
+          `Explore Learn Intro Page Remove Goal Selected: ${goalInfo.name}`
+        )}
+      >
         <XIcon className="ml-0.5 sm:ml-1 h-5 sm:h-6 w-5 sm:w-6 text-gray-400 hover:text-gray-500" />
       </button>
     </span>
