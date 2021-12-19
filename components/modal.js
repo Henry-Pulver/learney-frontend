@@ -1,7 +1,7 @@
 import React, { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationIcon, XIcon } from "@heroicons/react/outline";
-import {classNames} from "../lib/reactUtils";
+import { classNames } from "../lib/reactUtils";
 
 export default function Modal(props) {
   return (
@@ -12,7 +12,12 @@ export default function Modal(props) {
         initialFocus={props.initialFocus}
         onClose={props.setClosed}
       >
-        <div className={classNames(props.modalClassName, "flex items-end justify-center min-h-screen pt-4 px-2 pb-20 text-center sm:block sm:p-0")}>
+        <div
+          className={classNames(
+            props.modalClassName,
+            "flex items-end justify-center min-h-screen pt-4 px-2 pb-20 text-center sm:block sm:p-0"
+          )}
+        >
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
