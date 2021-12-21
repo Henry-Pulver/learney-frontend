@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Tippy from "@tippyjs/react";
-import { resetProgress } from "../lib/learningAndPlanning/variables";
-import { handleFetchResponses } from "../lib/utils";
+import { resetProgress } from "../lib/learningAndPlanning/learningAndPlanning";
 import { goToFormFunction } from "../lib/suggestions";
-import { jsonHeaders } from "../lib/headers";
 import { fitCytoTo, unhighlightNodes } from "../lib/graph";
 import {
   ChatIcon,
@@ -260,7 +258,7 @@ export function ResetProgressIconButton({
         setGoalsState,
         setLearnedState
       );
-      unhighlightNodes(window.cy.nodes());
+      unhighlightNodes(window.cy.nodes('[nodetype = "concept"]'));
     },
     "Reset Progress",
     backendUrl,
