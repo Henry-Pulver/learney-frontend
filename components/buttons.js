@@ -171,7 +171,7 @@ export function ShareCurrentPosition({ pageLoaded, buttonPressFunction }) {
         <button
           onClick={
             isEqual(copiedQueryParams, currentQueryParams)
-              ? () => {}
+              ? buttonPressFunction(() => {}, "Get Shareable Link (void)")
               : buttonPressFunction(() => {
                   navigator.clipboard.writeText(
                     `${location.origin}/?` +

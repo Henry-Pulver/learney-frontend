@@ -31,6 +31,7 @@ export function EditNavbar({
         <MapSettingsIconButton
           key="MapSettingsButton"
           buttonPressFunction={buttonPressFunction}
+          pageLoaded={pageLoaded}
         />,
         <MakeSuggestionIconButton
           key="MakeSuggestionButton"
@@ -46,6 +47,7 @@ export function EditNavbar({
           backendUrl={backendUrl}
           mapUUID={mapUUID}
           setNotificationInfo={setNotificationInfo}
+          pageLoaded={pageLoaded}
         />,
         <FeedBackButton
           key="FeedbackButton"
