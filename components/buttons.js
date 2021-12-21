@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Tippy from "@tippyjs/react";
-import { resetProgress } from "../lib/learningAndPlanning";
+import { resetProgress } from "../lib/learningAndPlanning/learningAndPlanning";
 import { handleFetchResponses, setURLQuery } from "../lib/utils";
 import { goToFormFunction } from "../lib/suggestions";
 import { jsonHeaders } from "../lib/headers";
