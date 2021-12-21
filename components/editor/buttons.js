@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import {
+  CheckCircleIcon,
   CogIcon,
   MapIcon,
   PlusCircleIcon,
@@ -9,8 +10,9 @@ import {
 import { classNames } from "../../lib/reactUtils";
 import Tippy from "@tippyjs/react";
 import { IconButtonTippy } from "../buttons";
-import {jsonHeaders} from "../../lib/headers";
-import {handleFetchResponses} from "../../lib/utils";
+import { jsonHeaders } from "../../lib/headers";
+import { handleFetchResponses } from "../../lib/utils";
+import isEqual from "lodash.isequal";
 
 const dagreLayout = {
   name: "dagre",
@@ -118,14 +120,52 @@ export function SaveMapButton({
   buttonPressFunction,
   backendUrl,
   mapUUID,
+  setNotificationInfo,
 }) {
   return (
     <button
       className="btn-blue ml-4 whitespace-nowrap"
-      onClick={buttonPressFunction(
-        () => saveMap(userId, backendUrl, mapUUID),
-        "Editor - Save Layout"
-      )}
+      onClick={buttonPressFunction(() => {
+        saveMap(userId, backendUrl, mapUUID);
+        let pathElements = location.href.split("/");
+        pathElements.splice(pathElements.length - 2, 1);
+        const newState = {
+          title: "Saved successfully!",
+          message: (
+            <>
+              You can now see this map live at{" "}
+              <a
+                href={pathElements.join("/")}
+                className="text-semibold text-gray-900 underline underline-offset-4 decoration-blue-300 hover:decoration-blue-400 hover:text-blue-400"
+              >
+                {pathElements.join("/")}
+              </a>
+            </>
+          ),
+          Icon: CheckCircleIcon,
+          colour: "green",
+          show: true,
+        };
+
+        setNotificationInfo((prevState) => ({
+          ...prevState,
+          ...newState,
+        }));
+        setTimeout(
+          () =>
+            setNotificationInfo((prevState) => {
+              if (isEqual(newState, prevState)) {
+                return {
+                  ...prevState,
+                  show: false,
+                };
+              } else {
+                return prevState;
+              }
+            }),
+          5000
+        );
+      }, "Editor - Save Layout")}
     >
       Save Map
     </button>
@@ -151,7 +191,6 @@ export async function saveMap(userId, backendUrl, mapUUID) {
   });
   handleFetchResponses(response, backendUrl);
 }
-
 
 const editToolsButtonClasses =
   "transition duration-200 ease-in-out rounded-md m-1.5 h-14 w-14";
