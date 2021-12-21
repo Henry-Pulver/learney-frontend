@@ -9,6 +9,8 @@ import {
 import { classNames } from "../../lib/reactUtils";
 import Tippy from "@tippyjs/react";
 import { IconButtonTippy } from "../buttons";
+import {jsonHeaders} from "../../lib/headers";
+import {handleFetchResponses} from "../../lib/utils";
 
 const dagreLayout = {
   name: "dagre",
@@ -110,6 +112,46 @@ export function MapSettingsIconButton({ buttonPressFunction }) {
     </Menu>
   );
 }
+
+export function SaveMapButton({
+  userId,
+  buttonPressFunction,
+  backendUrl,
+  mapUUID,
+}) {
+  return (
+    <button
+      className="btn-blue ml-4 whitespace-nowrap"
+      onClick={buttonPressFunction(
+        () => saveMap(userId, backendUrl, mapUUID),
+        "Editor - Save Layout"
+      )}
+    >
+      Save Map
+    </button>
+  );
+}
+
+export async function saveMap(userId, backendUrl, mapUUID) {
+  let mapJson = { nodes: [], edges: [] };
+  window.cy.edges().forEach(function (edge) {
+    mapJson.edges.push({ data: edge.data() });
+  });
+  window.cy.nodes().forEach(function (node) {
+    mapJson.nodes.push({ data: node.data(), position: node.position() });
+  });
+  const response = await fetch(`${backendUrl}/api/v0/knowledge_maps`, {
+    method: "PUT",
+    headers: jsonHeaders,
+    body: JSON.stringify({
+      user_id: userId,
+      map_uuid: mapUUID,
+      map_data: mapJson,
+    }),
+  });
+  handleFetchResponses(response, backendUrl);
+}
+
 
 const editToolsButtonClasses =
   "transition duration-200 ease-in-out rounded-md m-1.5 h-14 w-14";

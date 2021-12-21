@@ -7,11 +7,10 @@ import IntroButton, { IntroSection } from "./intro";
 import {
   FeedBackButton,
   MakeSuggestionIconButton,
-  SaveMapButton,
   ShareCurrentPosition,
   SlackButton,
 } from "./buttons";
-import { MapSettingsIconButton } from "./editor/buttons";
+import { SaveMapButton, MapSettingsIconButton } from "./editor/buttons";
 import Modal from "./modal";
 import { ConceptSearchBox } from "./ConceptSearchBox";
 
