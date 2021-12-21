@@ -7,7 +7,8 @@ import {
   setLearnedNodesGlobal,
   goalNodes,
   learnedNodes,
-} from "../lib/learningAndPlanning";
+} from "../lib/learningAndPlanning/variables";
+import { initialiseGraphState } from "../lib/learningAndPlanning/learningAndPlanning";
 import { handleAnimation, initCy, bindRouters } from "../lib/graph";
 import { setupCtoCentre } from "../lib/buttons";
 import { classNames } from "../lib/reactUtils";
@@ -75,6 +76,7 @@ export default function Map({
         const styleResponse = await fetch(`/knowledge_graph.cycss`);
         const styleText = await styleResponse.text();
         await initCy(mapJson, styleText, backendUrl, userId, mapUUID, editMap);
+        initialiseGraphState(userId); // Set initially learned or goal nodes
         bindRouters(
           backendUrl,
           userId,
