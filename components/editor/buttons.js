@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import {
+  CheckCircleIcon,
   CogIcon,
   MapIcon,
   PlusCircleIcon,
@@ -9,6 +10,9 @@ import {
 import { classNames } from "../../lib/reactUtils";
 import Tippy from "@tippyjs/react";
 import { IconButtonTippy } from "../buttons";
+import { jsonHeaders } from "../../lib/headers";
+import { handleFetchResponses } from "../../lib/utils";
+import isEqual from "lodash.isequal";
 
 const dagreLayout = {
   name: "dagre",
@@ -41,7 +45,7 @@ function autoGenerateLayout() {
   window.ur.do("batch", actions);
 }
 
-export function MapSettingsIconButton({ buttonPressFunction }) {
+export function MapSettingsIconButton({ buttonPressFunction, pageLoaded }) {
   return (
     <Menu as="div" className="ml-3 relative">
       {({ open }) => (
@@ -74,10 +78,15 @@ export function MapSettingsIconButton({ buttonPressFunction }) {
               <Menu.Item>
                 {({ active }) => (
                   <button
-                    onClick={buttonPressFunction(
-                      () => window.ur.undoAll(),
-                      "Editor - Reset Layout"
-                    )}
+                    onClick={
+                      pageLoaded
+                        ? buttonPressFunction(
+                            () => window.ur.undoAll(),
+                            "Editor - Reset Layout"
+                          )
+                        : buttonPressFunction(() => {},
+                          "Editor - Reset Layout (void)")
+                    }
                     className={classNames(
                       active ? "bg-gray-100" : "",
                       "block px-4 py-2 w-48 text-sm text-left text-gray-700"
@@ -90,10 +99,15 @@ export function MapSettingsIconButton({ buttonPressFunction }) {
               <Menu.Item>
                 {({ active }) => (
                   <button
-                    onClick={buttonPressFunction(
-                      autoGenerateLayout,
-                      "Editor - Auto-Generate Layout"
-                    )}
+                    onClick={
+                      pageLoaded
+                        ? buttonPressFunction(
+                            autoGenerateLayout,
+                            "Editor - Auto-Generate Layout"
+                          )
+                        : buttonPressFunction(() => {},
+                          "Editor - Auto-Generate Layout (void)")
+                    }
                     className={classNames(
                       active ? "bg-gray-100" : "",
                       "block px-4 py-2 w-48 text-sm text-left text-gray-700"
@@ -109,6 +123,88 @@ export function MapSettingsIconButton({ buttonPressFunction }) {
       )}
     </Menu>
   );
+}
+
+export function SaveMapButton({
+  userId,
+  buttonPressFunction,
+  backendUrl,
+  mapUUID,
+  setNotificationInfo,
+  pageLoaded,
+}) {
+  return (
+    <button
+      className="btn-blue ml-4 whitespace-nowrap"
+      onClick={
+        pageLoaded
+          ? buttonPressFunction(() => {
+              saveMap(userId, backendUrl, mapUUID);
+              let pathElements = location.href.split("/");
+              pathElements.splice(pathElements.length - 2, 1);
+              const newState = {
+                title: "Saved successfully!",
+                message: (
+                  <>
+                    You can now see this map live at{" "}
+                    <a
+                      href={pathElements.join("/")}
+                      className="text-semibold text-gray-900 underline underline-offset-4 decoration-blue-300 hover:decoration-blue-400 hover:text-blue-400"
+                    >
+                      {pathElements.join("/")}
+                    </a>
+                  </>
+                ),
+                Icon: CheckCircleIcon,
+                colour: "green",
+                show: true,
+              };
+
+              setNotificationInfo((prevState) => ({
+                ...prevState,
+                ...newState,
+              }));
+              setTimeout(
+                () =>
+                  setNotificationInfo((prevState) => {
+                    if (isEqual(newState, prevState)) {
+                      return {
+                        ...prevState,
+                        show: false,
+                      };
+                    } else {
+                      return prevState;
+                    }
+                  }),
+                5000
+              );
+            }, "Editor - Save Layout")
+          : buttonPressFunction(() => {}, "Editor - Save Layout (void)")
+      }
+    >
+      Save Map
+    </button>
+  );
+}
+
+export async function saveMap(userId, backendUrl, mapUUID) {
+  let mapJson = { nodes: [], edges: [] };
+  window.cy.edges().forEach(function (edge) {
+    mapJson.edges.push({ data: edge.data() });
+  });
+  window.cy.nodes().forEach(function (node) {
+    mapJson.nodes.push({ data: node.data(), position: node.position() });
+  });
+  const response = await fetch(`${backendUrl}/api/v0/knowledge_maps`, {
+    method: "PUT",
+    headers: jsonHeaders,
+    body: JSON.stringify({
+      user_id: userId,
+      map_uuid: mapUUID,
+      map_data: mapJson,
+    }),
+  });
+  handleFetchResponses(response, backendUrl);
 }
 
 const editToolsButtonClasses =

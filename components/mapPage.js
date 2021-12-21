@@ -27,6 +27,7 @@ import {
 import { EditNavbar, LearnNavbar } from "./navbar";
 import Editor from "./editor/editor";
 import { getNextNodeToLearn } from "../lib/questions";
+import { Notification } from "./notifications";
 
 export default function MapPage({
   backendUrl,
@@ -125,6 +126,14 @@ export default function MapPage({
     if (!editMap && pageLoaded) setNextConcept(getNextNodeToLearn());
   }, [pageLoaded, learned, goals]);
 
+  const [notificationInfo, setNotificationInfo] = useState({
+    title: "",
+    message: "",
+    Icon: () => <></>,
+    colour: "",
+    show: false,
+  });
+
   return (
     <div>
       <MapHeader editMode={editMap} mapUrlExtension={mapUrlExtension} />
@@ -138,6 +147,7 @@ export default function MapPage({
             mapUUID={mapUUID}
             mapJson={mapJson}
             pageLoaded={pageLoaded}
+            setNotificationInfo={setNotificationInfo}
           />
         ) : (
           <LearnNavbar
@@ -198,8 +208,17 @@ export default function MapPage({
           pageLoaded={pageLoaded}
           editType={editType}
           setEditType={setEditType}
+          mapUrlExtension={mapUrlExtension}
         />
       )}
+      <Notification
+        title={notificationInfo.title}
+        message={notificationInfo.message}
+        colour={notificationInfo.colour}
+        Icon={notificationInfo.Icon}
+        show={notificationInfo.show}
+        setShow={setNotificationInfo}
+      />
     </div>
   );
 }
