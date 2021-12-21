@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
-import { saveMap } from "../buttons";
 import {
   AddEdgesButton,
   AddNodeButton,
   CursorButton,
   DeleteElementButton,
+  saveMap,
 } from "./buttons";
 import { AreYouSureModal, getAreYouSureDescriptionText } from "../modal";
 import {

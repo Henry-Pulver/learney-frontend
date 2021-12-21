@@ -7,11 +7,10 @@ import IntroButton, { IntroSection } from "./intro";
 import {
   FeedBackButton,
   MakeSuggestionIconButton,
-  SaveMapButton,
   ShareCurrentPosition,
   SlackButton,
 } from "./buttons";
-import { MapSettingsIconButton } from "./editor/buttons";
+import { SaveMapButton, MapSettingsIconButton } from "./editor/buttons";
 import Modal from "./modal";
 import { ConceptSearchBox } from "./ConceptSearchBox";
 
@@ -23,6 +22,7 @@ export function EditNavbar({
   mapUUID,
   mapJson,
   pageLoaded,
+  setNotificationInfo,
 }) {
   return (
     <Navbar
@@ -31,6 +31,7 @@ export function EditNavbar({
         <MapSettingsIconButton
           key="MapSettingsButton"
           buttonPressFunction={buttonPressFunction}
+          pageLoaded={pageLoaded}
         />,
         <MakeSuggestionIconButton
           key="MakeSuggestionButton"
@@ -45,6 +46,8 @@ export function EditNavbar({
           buttonPressFunction={buttonPressFunction}
           backendUrl={backendUrl}
           mapUUID={mapUUID}
+          setNotificationInfo={setNotificationInfo}
+          pageLoaded={pageLoaded}
         />,
         <FeedBackButton
           key="FeedbackButton"
