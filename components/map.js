@@ -7,7 +7,8 @@ import {
   setLearnedNodesGlobal,
   goalNodes,
   learnedNodes,
-} from "../lib/learningAndPlanning";
+} from "../lib/learningAndPlanning/variables";
+import { initialiseGraphState } from "../lib/learningAndPlanning/learningAndPlanning";
 import { handleAnimation, initCy, bindRouters } from "../lib/graph";
 import { setupCtoCentre } from "../lib/buttons";
 import { classNames } from "../lib/reactUtils";
@@ -47,6 +48,7 @@ export default function Map({
   const cytoscapeRef = useRef();
   const [nodeSelected, setNodeSelected] = React.useState(null);
   const [conceptTippyShown, setConceptTippyShown] = React.useState(false);
+  const [hoverNode, setHoverNode] = React.useState(false);
 
   const showConceptTippy = function (node) {
     setNodeSelected(node);
@@ -74,6 +76,7 @@ export default function Map({
         const styleResponse = await fetch(`/knowledge_graph.cycss`);
         const styleText = await styleResponse.text();
         await initCy(mapJson, styleText, backendUrl, userId, mapUUID, editMap);
+        initialiseGraphState(userId); // Set initially learned or goal nodes
         bindRouters(
           backendUrl,
           userId,
@@ -83,7 +86,8 @@ export default function Map({
           hideConceptTippy,
           onSetGoalClick,
           editMap,
-          router
+          router,
+          setHoverNode
         );
 
         // TODO: if goal is set, zoom there instead of to the bottom?
@@ -131,11 +135,12 @@ export default function Map({
       <div
         id="cy"
         className={classNames(
-          editType === "cursor" && "cursor-default",
-          editType === "addNode" && "cursor-copy",
-          editType === "addEdges" && "cursor-crosshair",
-          editType === "delete" && "cursor-pointer",
-          "absolute z-0 bg-black w-full h-full"
+          editMap && editType === "cursor" && "cursor-default",
+          editMap && editType === "addNode" && "cursor-copy",
+          editMap && editType === "addEdges" && "cursor-crosshair",
+          editMap && editType === "delete" && "cursor-pointer",
+          !editMap && hoverNode && "cursor-pointer",
+          "absolute z-0 bg-gray-900 w-full h-full"
         )}
         ref={cytoscapeRef}
       />

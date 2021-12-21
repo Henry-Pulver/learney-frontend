@@ -3,20 +3,19 @@ core {
 }
 
 node {
-  color: white;
   content: data(name);
   opacity: 1;
   text-wrap: wrap;
 }
 
 node:child {
-  background-color: #9F9F9E;
-  opacity: 0.6;
+  color: #e2e8f0;
   width: 48px;
   height: 48px;
   min-zoomed-font-size: 1.25em;
   z-index: 10;
   text-max-width: 180;
+  border-opacity: 1;
 }
 
 node:child:selected {
@@ -26,73 +25,35 @@ node:child:selected {
   z-index: 9999;
 }
 
-node:child.goal {
-  background-color: #ff9e00;
-  color: white;
-}
-
-node:child.path {
-  background-color: #1D4ED8;
-  color: white;
-}
-
-node:child.learned {
-  background-color: #059669;
-  color: white;
-}
-
 node:parent {
-  background-color: data(colour);
-  opacity: 0.8;
+  color: white;
   text-valign: center;
   text-halign: center;
   font-size: 8em;
   z-index: 1;
   text-wrap: wrap;
-  text-max-width: 240;
+  text-max-width: 240px;
+  compound-sizing-wrt-labels: exclude;
+  padding: 80px;
+  border-width: 0;
+  min-width: 400px;
+  min-height: 400px;
+  shape: round-rectangle;
 }
 
 edge {
   min-zoomed-font-size: 12;
   font-size: 8;
   color: #fff;
-  line-color: grey;
   width: 10;
   curve-style: haystack;
   mid-target-arrow-shape: triangle;
-  mid-target-arrow-color: lightgrey;
+  arrow-scale: 1.5;
   haystack-radius: 0;
-}
-
-edge.path {
-  line-color: #1D4ED8;
-  mid-target-arrow-color: #93C5FD;
-  opacity: 1;
-}
-
-edge.learned {
-  line-color: #059669;
-  mid-target-arrow-color: #34D399;
-  opacity: 1;
-}
-
-
-edge:selected {
-  opacity: 1;
 }
 
 edge[line_name] {
   content: data(line_name);
-}
-
-edge.not-path {
-  opacity: 0.1;
-  z-index: 0;
-}
-
-edge.path {
-  opacity: 0.666;
-  z-index: 0;
 }
 
 .eh-preview {
