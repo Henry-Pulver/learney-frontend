@@ -15,6 +15,7 @@ node:child {
   min-zoomed-font-size: 1.25em;
   z-index: 10;
   text-max-width: 180;
+  border-opacity: 1;
 }
 
 node:child:selected {
@@ -47,16 +48,8 @@ edge {
   width: 10;
   curve-style: haystack;
   mid-target-arrow-shape: triangle;
-  mid-target-arrow-color: lightgrey;
+  arrow-scale: 1.5;
   haystack-radius: 0;
-}
-
-edge.path {
-  mid-target-arrow-color: #93C5FD;
-}
-
-edge.learned {
-  mid-target-arrow-color: #34D399;
 }
 
 edge[line_name] {
