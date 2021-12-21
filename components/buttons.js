@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Tippy from "@tippyjs/react";
-import { resetProgress } from "../lib/learningAndPlanning";
-import { handleFetchResponses, setURLQuery } from "../lib/utils";
+import { resetProgress } from "../lib/learningAndPlanning/variables";
+import { handleFetchResponses } from "../lib/utils";
 import { goToFormFunction } from "../lib/suggestions";
 import { jsonHeaders } from "../lib/headers";
 import { fitCytoTo, unhighlightNodes } from "../lib/graph";
@@ -15,7 +15,6 @@ import {
 import { ShareIcon } from "@heroicons/react/outline";
 import { AreYouSureModal } from "./modal";
 import { classNames } from "../lib/reactUtils";
-import { useRouter } from "next/router";
 import isEqual from "lodash.isequal";
 
 export function IconToggleButtonWithCheckbox({

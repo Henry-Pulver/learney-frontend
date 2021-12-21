@@ -18,13 +18,12 @@ import {
 } from "../lib/utils";
 import MapHeader from "./mapHeader";
 import Map from "./map";
+import { goalNodes, learnedNodes } from "../lib/learningAndPlanning/variables";
 import {
-  goalNodes,
-  learnedNodes,
   learnedSliderClick,
   setGoalClick,
   initialiseSignInTooltip,
-} from "../lib/learningAndPlanning";
+} from "../lib/learningAndPlanning/learningAndPlanning";
 import { EditNavbar, LearnNavbar } from "./navbar";
 import Editor from "./editor/editor";
 import { getNextNodeToLearn } from "../lib/questions";
