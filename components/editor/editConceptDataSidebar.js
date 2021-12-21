@@ -44,7 +44,7 @@ export function EditConceptDataSidebar({
           setEditNodeData({ ...editNodeData, urls: e.target.value })
         }
       />
-      <EditDataLabel>Relative Size</EditDataLabel>
+      <EditDataLabel>Node Size</EditDataLabel>
       <EditDataInput
         type="number"
         value={editNodeData.relative_importance}
