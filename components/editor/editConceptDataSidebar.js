@@ -8,6 +8,7 @@ export function EditConceptDataSidebar({
   saveEditNodeData,
   deletebuttonClickFunction,
   userId,
+  buttonPressFunction,
 }) {
   return (
     <div className="absolute right-1 top-24 py-4 bg-white rounded-lg max-h-screen-80 w-120 overflow-y-auto">
@@ -58,23 +59,29 @@ export function EditConceptDataSidebar({
       <div className="flex justify-between">
         <span
           className="btn-3 ml-7 mt-3"
-          onClick={() => {
+          onClick={buttonPressFunction(() => {
             deletebuttonClickFunction(editNodeData.id);
             setShowEditData(null);
-          }}
+          }, `Edit Concept Delete Button (Concept=${editNodeData.name})`)}
         >
           Delete
         </span>
         <div>
           <span
             className="btn-2 mt-3 mr-6"
-            onClick={() => setShowEditData(null)}
+            onClick={buttonPressFunction(
+              () => setShowEditData(null),
+              `Edit Concept Cancel Button (Concept: ${editNodeData.name})`
+            )}
           >
             Cancel
           </span>
           <span
             className="btn-green px-6 mt-3 mr-6"
-            onClick={() => saveEditNodeData(userId)}
+            onClick={buttonPressFunction(
+              () => saveEditNodeData(userId),
+              `Edit Concept Save Button (Concept: ${editNodeData.name})`
+            )}
           >
             Save
           </span>
@@ -85,6 +92,7 @@ export function EditConceptDataSidebar({
 }
 
 export function EditTopicDataSidebar({
+  buttonPressFunction,
   editParentNodeData,
   setEditParentNodeData,
   saveEditParentNodeData,
@@ -119,23 +127,29 @@ export function EditTopicDataSidebar({
       <div className="flex justify-between">
         <span
           className="btn-3 ml-7 mt-3"
-          onClick={() => {
+          onClick={buttonPressFunction(() => {
             deletebuttonClickFunction(editParentNodeData.id);
             setShowEditData(null);
-          }}
+          }, `Edit Topic Delete Button (Topic: ${editParentNodeData.name})`)}
         >
           Delete
         </span>
         <div>
           <span
             className="btn-2 mt-3 mr-6"
-            onClick={() => setShowEditData(null)}
+            onClick={buttonPressFunction(
+              () => setShowEditData(null),
+              `Edit Topic Cancel Button (Topic: ${editParentNodeData.name})`
+            )}
           >
             Cancel
           </span>
           <span
             className="btn-green px-6 mt-3 mr-6"
-            onClick={() => saveEditParentNodeData(editParentNodeData)}
+            onClick={buttonPressFunction(
+              () => saveEditParentNodeData(editParentNodeData),
+              `Edit Topic Save Button (Topic: ${editParentNodeData.name})`
+            )}
           >
             Save
           </span>

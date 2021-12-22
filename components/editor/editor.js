@@ -346,6 +346,7 @@ export default function Editor({
       </div>
       {showEditData === "concept" ? (
         <EditConceptDataSidebar
+          buttonPressFunction={buttonPressFunction}
           editNodeData={editNodeData}
           setEditNodeData={setEditNodeData}
           setShowEditData={setShowEditData}
@@ -363,6 +364,7 @@ export default function Editor({
       ) : (
         showEditData === "topic" && (
           <EditTopicDataSidebar
+            buttonPressFunction={buttonPressFunction}
             editParentNodeData={editParentNodeData}
             setEditParentNodeData={setEditParentNodeData}
             saveEditParentNodeData={saveEditParentNodeData}
