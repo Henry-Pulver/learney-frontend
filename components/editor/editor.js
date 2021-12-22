@@ -11,7 +11,11 @@ import {
   EditConceptDataSidebar,
   EditTopicDataSidebar,
 } from "./editConceptDataSidebar";
-import { updateMinZoom } from "../../lib/graph";
+import {
+  resetTopicColour,
+  unhighlightNodes,
+  updateMinZoom,
+} from "../../lib/graph";
 
 let eh; // Edge handles variable
 const topicColours = [
@@ -287,8 +291,18 @@ export default function Editor({
     const added = window.cy.add(nodesToAdd);
     if (typeof nodesToAdd[0].data === "object") {
       setEditNodeData(nodesToAdd[0].data);
+      nodesToAdd.forEach((node) => {
+        if (node.data.nodetype === "concept") {
+          unhighlightNodes(window.cy.getElementById(node.data.id));
+        } else {
+          resetTopicColour(window.cy.getElementById(node.data.id));
+        }
+      });
+      setEditType("cursor");
     } else {
       setEditNodeData(nodesToAdd.filter('[nodetype = "concept"]').data());
+      unhighlightNodes(nodesToAdd.filter('[nodetype = "concept"]'));
+      resetTopicColour(nodesToAdd.filter('[nodetype = "field"]'));
     }
     updateMinZoom();
     setShowEditData("concept");
