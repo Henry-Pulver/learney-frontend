@@ -1,5 +1,6 @@
 import React from "react";
 import { classNames } from "../../lib/reactUtils";
+import { XIcon } from "@heroicons/react/outline";
 
 export function EditConceptDataSidebar({
   editNodeData,
@@ -8,9 +9,24 @@ export function EditConceptDataSidebar({
   saveEditNodeData,
   deletebuttonClickFunction,
   userId,
+  buttonPressFunction,
 }) {
   return (
-    <div className="absolute right-1 top-24 py-4 bg-white rounded-lg max-h-screen-80 w-120 overflow-y-auto">
+    <div className="absolute right-1 top-24 py-6 bg-white rounded-lg max-h-screen-80 w-120 overflow-y-auto">
+      {/* Close X in top right */}
+      <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
+        <button
+          type="button"
+          className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          onClick={buttonPressFunction(
+            () => setShowEditData(null),
+            `Edit Concept Top Right Close X (Concept: ${editNodeData.name})`
+          )}
+        >
+          <span className="sr-only">Close</span>
+          <XIcon className="h-6 w-6" aria-hidden="true" />
+        </button>
+      </div>
       <EditDataLabel>Concept Name</EditDataLabel>
       <EditDataInput
         type="text"
@@ -44,7 +60,7 @@ export function EditConceptDataSidebar({
           setEditNodeData({ ...editNodeData, urls: e.target.value })
         }
       />
-      <EditDataLabel>Relative Size</EditDataLabel>
+      <EditDataLabel>Node Size</EditDataLabel>
       <EditDataInput
         type="number"
         value={editNodeData.relative_importance}
@@ -58,23 +74,29 @@ export function EditConceptDataSidebar({
       <div className="flex justify-between">
         <span
           className="btn-3 ml-7 mt-3"
-          onClick={() => {
+          onClick={buttonPressFunction(() => {
             deletebuttonClickFunction(editNodeData.id);
             setShowEditData(null);
-          }}
+          }, `Edit Concept Delete Button (Concept=${editNodeData.name})`)}
         >
           Delete
         </span>
         <div>
           <span
             className="btn-2 mt-3 mr-6"
-            onClick={() => setShowEditData(null)}
+            onClick={buttonPressFunction(
+              () => setShowEditData(null),
+              `Edit Concept Cancel Button (Concept: ${editNodeData.name})`
+            )}
           >
             Cancel
           </span>
           <span
             className="btn-green px-6 mt-3 mr-6"
-            onClick={() => saveEditNodeData(userId)}
+            onClick={buttonPressFunction(
+              () => saveEditNodeData(userId),
+              `Edit Concept Save Button (Concept: ${editNodeData.name})`
+            )}
           >
             Save
           </span>
@@ -85,6 +107,7 @@ export function EditConceptDataSidebar({
 }
 
 export function EditTopicDataSidebar({
+  buttonPressFunction,
   editParentNodeData,
   setEditParentNodeData,
   saveEditParentNodeData,
@@ -92,7 +115,21 @@ export function EditTopicDataSidebar({
   setShowEditData,
 }) {
   return (
-    <div className="absolute right-1 top-24 py-4 bg-white rounded-lg max-h-screen-80 w-120">
+    <div className="absolute right-1 top-24 py-6 bg-white rounded-lg max-h-screen-80 w-120">
+      {/* Close X in top right */}
+      <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
+        <button
+          type="button"
+          className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          onClick={buttonPressFunction(
+            () => setShowEditData(null),
+            `Edit Concept Top Right Close X (Concept: ${editParentNodeData.name})`
+          )}
+        >
+          <span className="sr-only">Close</span>
+          <XIcon className="h-6 w-6" aria-hidden="true" />
+        </button>
+      </div>
       <EditDataLabel>Topic Name</EditDataLabel>
       <EditDataInput
         classes="text-xl"
@@ -119,23 +156,29 @@ export function EditTopicDataSidebar({
       <div className="flex justify-between">
         <span
           className="btn-3 ml-7 mt-3"
-          onClick={() => {
+          onClick={buttonPressFunction(() => {
             deletebuttonClickFunction(editParentNodeData.id);
             setShowEditData(null);
-          }}
+          }, `Edit Topic Delete Button (Topic: ${editParentNodeData.name})`)}
         >
           Delete
         </span>
         <div>
           <span
             className="btn-2 mt-3 mr-6"
-            onClick={() => setShowEditData(null)}
+            onClick={buttonPressFunction(
+              () => setShowEditData(null),
+              `Edit Topic Cancel Button (Topic: ${editParentNodeData.name})`
+            )}
           >
             Cancel
           </span>
           <span
             className="btn-green px-6 mt-3 mr-6"
-            onClick={() => saveEditParentNodeData(editParentNodeData)}
+            onClick={buttonPressFunction(
+              () => saveEditParentNodeData(editParentNodeData),
+              `Edit Topic Save Button (Topic: ${editParentNodeData.name})`
+            )}
           >
             Save
           </span>
