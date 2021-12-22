@@ -325,10 +325,26 @@ export default function Editor({
         className={`flex flex-row items-end absolute bottom-0 left-0 m-4 disableTouchActions`}
       >
         <div className="block bg-white cursor-pointer rounded-lg m-1 z-20">
-          <CursorButton editType={editType} setEditType={setEditType} />
-          <AddNodeButton editType={editType} setEditType={setEditType} />
-          <AddEdgesButton editType={editType} setEditType={setEditType} />
-          <DeleteElementButton editType={editType} setEditType={setEditType} />
+          <CursorButton
+            editType={editType}
+            setEditType={setEditType}
+            buttonPressFunction={buttonPressFunction}
+          />
+          <AddNodeButton
+            editType={editType}
+            setEditType={setEditType}
+            buttonPressFunction={buttonPressFunction}
+          />
+          <AddEdgesButton
+            editType={editType}
+            setEditType={setEditType}
+            buttonPressFunction={buttonPressFunction}
+          />
+          <DeleteElementButton
+            editType={editType}
+            setEditType={setEditType}
+            buttonPressFunction={buttonPressFunction}
+          />
         </div>
       </div>
       <div
