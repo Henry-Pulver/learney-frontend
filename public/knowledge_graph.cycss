@@ -38,6 +38,7 @@ node:parent {
   border-width: 0;
   min-width: 400px;
   min-height: 400px;
+  min-height-bias-top: 100%;
   shape: round-rectangle;
 }
 
