@@ -210,7 +210,7 @@ export async function saveMap(userId, backendUrl, mapUUID) {
 const editToolsButtonClasses =
   "transition duration-200 ease-in-out rounded-md m-1.5 h-14 w-14";
 
-export function CursorButton({ editType, setEditType }) {
+export function CursorButton({ editType, setEditType, buttonPressFunction }) {
   return (
     <Tippy
       content="Edit nodes"
@@ -224,7 +224,10 @@ export function CursorButton({ editType, setEditType }) {
           "hover:bg-blue-600",
           editToolsButtonClasses
         )}
-        onClick={() => setEditType("cursor")}
+        onClick={buttonPressFunction(
+          () => setEditType("cursor"),
+          "Editor Cursor Tool"
+        )}
       >
         <svg className={"scale-90"} viewBox="0 0 28 28">
           <rect
@@ -241,7 +244,7 @@ export function CursorButton({ editType, setEditType }) {
   );
 }
 
-export function AddNodeButton({ editType, setEditType }) {
+export function AddNodeButton({ editType, setEditType, buttonPressFunction }) {
   return (
     <Tippy
       content="Add concept"
@@ -255,7 +258,10 @@ export function AddNodeButton({ editType, setEditType }) {
           "grid content-center justify-center hover:bg-blue-600",
           editToolsButtonClasses
         )}
-        onClick={() => setEditType("addNode")}
+        onClick={buttonPressFunction(
+          () => setEditType("addNode"),
+          "Editor Add Node Tool"
+        )}
       >
         <PlusCircleIcon className="text-black w-10 h-10" />
       </div>
@@ -263,7 +269,7 @@ export function AddNodeButton({ editType, setEditType }) {
   );
 }
 
-export function AddEdgesButton({ editType, setEditType }) {
+export function AddEdgesButton({ editType, setEditType, buttonPressFunction }) {
   return (
     <Tippy
       content="Add dependency"
@@ -277,7 +283,10 @@ export function AddEdgesButton({ editType, setEditType }) {
           "hover:bg-blue-600",
           editToolsButtonClasses
         )}
-        onClick={() => setEditType("addEdges")}
+        onClick={buttonPressFunction(
+          () => setEditType("addEdges"),
+          "Editor Add Dependency Tool"
+        )}
       >
         <svg className={"scale-50"} viewBox="0 0 347.341 347.341">
           <polygon points="347.341,107.783 347.339,0 239.559,0.002 282.843,43.285 0,326.128 21.213,347.341 304.056,64.498 " />
@@ -287,7 +296,11 @@ export function AddEdgesButton({ editType, setEditType }) {
   );
 }
 
-export function DeleteElementButton({ editType, setEditType }) {
+export function DeleteElementButton({
+  editType,
+  setEditType,
+  buttonPressFunction,
+}) {
   return (
     <Tippy content="Delete" placement={"right"} delay={[500, 0]} theme="light">
       <div
@@ -296,7 +309,10 @@ export function DeleteElementButton({ editType, setEditType }) {
           "grid content-center justify-center hover:bg-red-600",
           editToolsButtonClasses
         )}
-        onClick={() => setEditType("delete")}
+        onClick={buttonPressFunction(
+          () => setEditType("delete"),
+          "Editor Delete Tool"
+        )}
       >
         <TrashIcon className="text-black w-9 h-9" />
       </div>
