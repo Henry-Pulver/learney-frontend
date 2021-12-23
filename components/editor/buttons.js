@@ -200,7 +200,7 @@ export async function saveMap(userId, backendUrl, mapUUID) {
     headers: jsonHeaders,
     body: JSON.stringify({
       user_id: userId,
-      map_uuid: mapUUID,
+      map: mapUUID,
       map_data: mapJson,
     }),
   });
