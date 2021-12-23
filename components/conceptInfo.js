@@ -305,7 +305,7 @@ const fetchLinkPreview = async ({ node, url, backendUrl, mapUUID }) => {
   const response = await fetch(
     `${backendUrl}/api/v0/link_previews?` +
       new URLSearchParams({
-        map_uuid: mapUUID,
+        map: mapUUID,
         concept: node.data().name,
         concept_id: node.data().id,
         url: url,
@@ -327,7 +327,7 @@ const fetchLinkPreview = async ({ node, url, backendUrl, mapUUID }) => {
 const fetchTotalVotes = async ({ backendUrl, mapUUID }) => {
   const response = await fetch(
     `${backendUrl}/api/v0/total_vote_count?` +
-      new URLSearchParams({ map_uuid: mapUUID }),
+      new URLSearchParams({ map: mapUUID }),
     {
       method: "GET",
       headers: cacheHeaders,
