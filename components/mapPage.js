@@ -60,7 +60,7 @@ export default function MapPage({
   const [userEmail, setUserEmail] = React.useState("");
   const [sessionId, setSessionId] = React.useState(null);
   // Whether to show LearnExploreIntroPage on load
-  const [showExploreLearn, setExploreLearn] = useState(false);
+  const [showExploreLearn, setExploreLearn] = useState(null);
   const [isNewUser, setIsNewUser] = useState(false);
   useEffect(() => setIsNewUser(!localStorage.getItem("userId")), []);
 
@@ -149,11 +149,13 @@ export default function MapPage({
   useEffect(() => {
     if (!editMap && pageLoaded) setNextConcept(getNextNodeToLearn());
   }, [pageLoaded, learned, goals]);
+
   useEffect(() => {
     const query = router.query;
     // Don't show explore-learn page if in editor, a goal is set, or they're using a specific url
     if (
       !editMap &&
+      showExploreLearn === null &&
       ((sessionId && Object.keys(goals).length === 0) || isNewUser) &&
       !URLQuerySet(query)
     )
@@ -249,7 +251,7 @@ export default function MapPage({
       {showExploreLearn && (
         <ExploreLearnIntroPage
           hideExploreLearn={() => setExploreLearn(false)}
-          newUser={isNewUser && !user}
+          newUser={isNewUser && user === undefined}
           mapName={mapName}
           mapJson={mapJson}
           setGoal={onSetGoalClick}
