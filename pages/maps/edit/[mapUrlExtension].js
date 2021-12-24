@@ -11,7 +11,7 @@ export default function Map({ mapUUID, mapUrlExtension, mapJson, backendUrl }) {
       mapUrlExtension={mapUrlExtension}
       allowSuggestions={false}
       editMap={true}
-      mapJson={mapJson}
+      mapJsonString={mapJson}
     />
   );
 }

@@ -73,7 +73,7 @@ export function EditConceptDataSidebar({
       />
       <div className="flex justify-between">
         <span
-          className="btn-3 ml-7 mt-3"
+          className="btn-4 btn-sm ml-7 mt-3"
           onClick={buttonPressFunction(() => {
             deletebuttonClickFunction(editNodeData.id);
             setShowEditData(null);
@@ -83,7 +83,7 @@ export function EditConceptDataSidebar({
         </span>
         <div>
           <span
-            className="btn-2 mt-3 mr-6"
+            className="btn-2 btn-sm mt-3 mr-6"
             onClick={buttonPressFunction(
               () => setShowEditData(null),
               `Edit Concept Cancel Button (Concept: ${editNodeData.name})`
@@ -92,7 +92,7 @@ export function EditConceptDataSidebar({
             Cancel
           </span>
           <span
-            className="btn-green px-6 mt-3 mr-6"
+            className="btn-green btn-sm px-6 mt-3 mr-6"
             onClick={buttonPressFunction(
               () => saveEditNodeData(userId),
               `Edit Concept Save Button (Concept: ${editNodeData.name})`
@@ -155,7 +155,7 @@ export function EditTopicDataSidebar({
       />
       <div className="flex justify-between">
         <span
-          className="btn-3 ml-7 mt-3"
+          className="btn-4 btn-sm ml-7 mt-3"
           onClick={buttonPressFunction(() => {
             deletebuttonClickFunction(editParentNodeData.id);
             setShowEditData(null);
@@ -165,7 +165,7 @@ export function EditTopicDataSidebar({
         </span>
         <div>
           <span
-            className="btn-2 mt-3 mr-6"
+            className="btn-2 btn-sm mt-3 mr-6"
             onClick={buttonPressFunction(
               () => setShowEditData(null),
               `Edit Topic Cancel Button (Topic: ${editParentNodeData.name})`
@@ -174,7 +174,7 @@ export function EditTopicDataSidebar({
             Cancel
           </span>
           <span
-            className="btn-green px-6 mt-3 mr-6"
+            className="btn-green btn-sm px-6 mt-3 mr-6"
             onClick={buttonPressFunction(
               () => saveEditParentNodeData(editParentNodeData),
               `Edit Topic Save Button (Topic: ${editParentNodeData.name})`

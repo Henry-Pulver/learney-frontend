@@ -14,7 +14,8 @@ import {
   buttonPress,
   isAnonymousUser,
   logPageView,
-  recordUserId,
+  setURLQuery,
+  URLQuerySet,
 } from "../lib/utils";
 import MapHeader from "./mapHeader";
 import Map from "./map";
@@ -28,13 +29,16 @@ import { EditNavbar, LearnNavbar } from "./navbar";
 import Editor from "./editor/editor";
 import { getNextNodeToLearn } from "../lib/questions";
 import { Notification } from "./notifications";
+import ExploreLearnIntroPage from "./exploreLearnIntroPage";
+import { handleAnimation } from "../lib/graph";
+import { useRouter } from "next/router";
 
 export default function MapPage({
   backendUrl,
   mapUrlExtension,
   allowSuggestions,
   editMap,
-  mapJson,
+  mapJsonString,
   mapUUID,
 }) {
   if (backendUrl === "https://api.learney.me") {
@@ -42,15 +46,27 @@ export default function MapPage({
   } else {
     ReactGA.initialize("UA-197170313-1", { debug: true });
   }
-
   const { user, isLoading } = useUser();
+  const mapJson = JSON.parse(mapJsonString);
+  const router = useRouter();
+
+  let mapName;
+  if (mapUrlExtension === "original_map")
+    mapName = "Maths for Machine Learning";
+  else mapName = mapUrlExtension; // Cut off "maps/" from the start
+
+  // TODO: Move all these into a redux/MST store
   const [userId, setUserId] = React.useState(undefined);
   const [userEmail, setUserEmail] = React.useState("");
   const [sessionId, setSessionId] = React.useState(null);
+  // Whether to show LearnExploreIntroPage on load
+  const [showExploreLearn, setExploreLearn] = useState(null);
+  const [isNewUser, setIsNewUser] = useState(false);
+  useEffect(() => setIsNewUser(!localStorage.getItem("userId")), []);
 
   const [goals, setNewGoalsState] = React.useState({});
   const setGoalsState = function (goalState) {
-    for (const [nodeId, _] of Object.entries(goals)) {
+    for (const nodeId of Object.keys(goals)) {
       if (!(nodeId in goalState)) {
         setNewGoalsState((prevGoals) => ({
           ...prevGoals,
@@ -62,14 +78,14 @@ export default function MapPage({
       setNewGoalsState((prevGoals) => ({ ...prevGoals, [nodeId]: isGoal }));
     }
   };
-  const onSetGoalClick = function (node, userId, sessionId) {
+  const onSetGoalClick = (node, userId, sessionId) => {
     setGoalClick(node, backendUrl, userId, mapUUID, sessionId);
     setGoalsState(goalNodes);
   };
 
   const [learned, setNewLearnedState] = React.useState({});
   const setLearnedState = function (learnedState) {
-    for (const [nodeId, _] of Object.entries(learned)) {
+    for (const nodeId of Object.keys(learned)) {
       if (!(nodeId in learnedState)) {
         setNewLearnedState((prevLearned) => ({
           ...prevLearned,
@@ -97,7 +113,15 @@ export default function MapPage({
   useEffect(() => {
     (async function () {
       if (!isLoading) {
-        let responseJson = await logPageView(user, backendUrl, mapUrlExtension);
+        let responseJson;
+        if (user === undefined) {
+          responseJson = await logPageView(
+            { user_id: localStorage.getItem("userId") },
+            backendUrl,
+            mapUrlExtension
+          );
+        } else
+          responseJson = await logPageView(user, backendUrl, mapUrlExtension);
         setSessionId(responseJson.session_id);
 
         let newUserId;
@@ -106,7 +130,7 @@ export default function MapPage({
           setUserEmail(user.email);
         } else {
           newUserId = responseJson.user_id;
-          recordUserId(newUserId);
+          localStorage.setItem("userId", newUserId);
         }
         setUserId(newUserId);
 
@@ -125,6 +149,70 @@ export default function MapPage({
   useEffect(() => {
     if (!editMap && pageLoaded) setNextConcept(getNextNodeToLearn());
   }, [pageLoaded, learned, goals]);
+
+  useEffect(() => {
+    const query = router.query;
+    // Don't show explore-learn page if in editor, a goal is set, or they're using a specific url
+    if (
+      !editMap &&
+      showExploreLearn === null &&
+      ((sessionId && Object.keys(goals).length === 0) || isNewUser) &&
+      !URLQuerySet(query)
+    )
+      setExploreLearn(true);
+  }, [isNewUser, goals, pageLoaded]);
+
+  // Introduction animations when the map is shown
+  useEffect(() => {
+    const query = router.query;
+    if (
+      pageLoaded &&
+      !showExploreLearn &&
+      (URLQuerySet(query) || Object.keys(goals).length > 0)
+    ) {
+      if (URLQuerySet(query)) {
+        if (query.topic) {
+          handleAnimation({
+            fit: {
+              eles: window.cy.filter(`[id = "${query.topic}"]`),
+              padding: 50,
+            },
+            duration: 1200,
+            easing: "ease-in-out",
+          });
+        } else if (query.concept) {
+          window.cy.getElementById(query.concept).emit("tap");
+        } else {
+          handleAnimation({
+            pan: { x: Number(router.query.x), y: Number(router.query.y) },
+            zoom: Number(router.query.zoom),
+            duration: 1200,
+            easing: "ease-in-out",
+          });
+        }
+      } else if (Object.keys(goals).length > 0) {
+        handleAnimation({
+          fit: {
+            eles: window.cy.nodes(".learned").or(".path"),
+            padding: 50,
+          },
+          duration: 1200,
+          easing: "ease-in-out",
+        });
+      } else {
+        handleAnimation({
+          panBy: {
+            x: -window.cy.width() / 6,
+            y: (-window.cy.height() * 4) / 9,
+          },
+          zoom: 1.5 * window.cy.zoom(),
+          duration: 1200,
+          easing: "ease-in-out",
+        });
+      }
+      setURLQuery(router, {});
+    }
+  }, [pageLoaded, showExploreLearn]);
 
   const [notificationInfo, setNotificationInfo] = useState({
     title: "",
@@ -155,9 +243,24 @@ export default function MapPage({
             pageLoaded={pageLoaded}
             buttonPressFunction={buttonPressFunction}
             mapJson={mapJson}
+            isNewUser={isNewUser}
+            showExploreLearn={showExploreLearn}
           />
         ))}
 
+      {showExploreLearn && (
+        <ExploreLearnIntroPage
+          hideExploreLearn={() => setExploreLearn(false)}
+          newUser={isNewUser && user === undefined}
+          mapName={mapName}
+          mapJson={mapJson}
+          setGoal={onSetGoalClick}
+          pageLoaded={pageLoaded}
+          userId={userId}
+          sessionId={sessionId}
+          buttonPressFunction={buttonPressFunction}
+        />
+      )}
       <Map
         backendUrl={backendUrl}
         userId={userId}
@@ -178,7 +281,7 @@ export default function MapPage({
         editType={editType}
       />
       <div
-        className={`flex flex-row items-end absolute bottom-0 right-0 mx-8 my-4 disableTouchActions`}
+        className={`flex flex-col md:flex-row items-end gap-4 absolute bottom-0 right-0 mx-8 my-4 disableTouchActions`}
       >
         {!editMap && (
           <GetNextConceptButton

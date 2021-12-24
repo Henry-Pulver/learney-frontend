@@ -16,7 +16,7 @@ export default function Map({
       mapUrlExtension={mapUrlExtension}
       allowSuggestions={allowSuggestions}
       editMap={false}
-      mapJson={mapJson}
+      mapJsonString={mapJson}
     />
   );
 }

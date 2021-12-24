@@ -66,8 +66,13 @@ export function LearnNavbar({
   pageLoaded,
   buttonPressFunction,
   mapJson,
+  isNewUser,
+  showExploreLearn,
 }) {
-  const [introShown, setIntroShown] = useState(user === undefined);
+  const [introShown, setIntroShown] = useState(false);
+  useEffect(() => {
+    if (!showExploreLearn) setIntroShown(isNewUser);
+  }, [showExploreLearn, isNewUser]);
 
   // Here so the slide number is remembered between closing & opening the modal
   const [introSlideNumber, setIntroSlide] = useState(0);
@@ -137,7 +142,7 @@ export function LearnNavbar({
   );
 }
 
-export default function Navbar({
+function Navbar({
   user,
   leftSideButtons,
   rightSideButtons,
@@ -152,17 +157,17 @@ export default function Navbar({
         as="header"
         className={({ open }) =>
           classNames(
-            open ? "fixed inset-0 z-40 overflow-y-auto" : "",
+            open && "fixed inset-0 z-40 overflow-y-auto",
             "bg-white shadow-sm lg:static lg:overflow-y-visible"
           )
         }
       >
         {({ open }) => (
           <>
-            <div className="max-w-full lg:max-w-full mx-auto px-2 sm:px-4 lg:px-8">
-              <div className="relative flex justify-evenly lg:gap-8">
-                <div className="flex md:absolute md:left-0 md:inset-y-0 lg:static xl:col-span-2">
-                  <div className="group shrink-0 flex items-center">
+            <div className="max-w-full mx-auto px-2 sm:px-4 lg:px-4">
+              <div className="relative flex justify-evenly lg:gap-x-3">
+                <div className="flex flex-none md:absolute md:left-0 md:inset-y-0 lg:static xl:col-span-2">
+                  <div className="group flex items-center">
                     <img
                       className="h-10 w-auto block group-hover:hidden"
                       src="/images/learney_logo_256x256.png"
@@ -175,19 +180,32 @@ export default function Navbar({
                     />
                   </div>
                 </div>
-                <div className="hidden lg:flex lg:items-center lg:justify-end lg:col-span-4">
+                <div className="hidden lg:flex lg:items-center lg:justify-evenly lg:gap-4">
                   {leftSideButtons.map((button, idx) => (
                     <div key={idx}>{button}</div>
                   ))}
                 </div>
                 <ConceptSearchBox
-                  className="shrink"
+                  classes="shrink w-2/3 z-10 px-3 py-2"
                   mapJson={mapJson}
-                  onSelect={(item) =>
-                    window.cy.getElementById(item.id).emit("tap")
+                  onSelect={
+                    pageLoaded
+                      ? (item) => window.cy.getElementById(item.id).emit("tap")
+                      : (item) => {}
+                    // TODO: When not loaded, add selected item to a queue to be
+                    //  executed when cytoscape has loaded
                   }
-                  pageLoaded={pageLoaded}
                 />
+                <div className="hidden lg:flex lg:items-center lg:justify-evenly lg:gap-4">
+                  {rightSideButtons.map((button, idx) => (
+                    <div key={idx}>{button}</div>
+                  ))}
+                  {/* Profile dropdown */}
+                  <ProfileButton
+                    user={user}
+                    buttonPressFunction={buttonPressFunction}
+                  />
+                </div>
                 <div className="flex items-center md:absolute md:right-0 md:inset-y-0 lg:hidden">
                   {/* Mobile menu button */}
                   <Popover.Button className="-mx-1 rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
@@ -198,16 +216,6 @@ export default function Navbar({
                       <MenuIcon className="block h-6 w-6" aria-hidden="true" />
                     )}
                   </Popover.Button>
-                </div>
-                <div className="hidden lg:flex lg:items-center lg:justify-end xl:col-span-4">
-                  {rightSideButtons.map((button, idx) => (
-                    <div key={idx}>{button}</div>
-                  ))}
-                  {/* Profile dropdown */}
-                  <ProfileButton
-                    user={user}
-                    buttonPressFunction={buttonPressFunction}
-                  />
                 </div>
               </div>
             </div>
