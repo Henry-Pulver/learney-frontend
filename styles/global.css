@@ -3,8 +3,24 @@
 @tailwind utilities;
 
 @layer components {
+  .btn-xs {
+    @apply py-1.5 px-3 text-xs;
+  }
+  .btn-sm {
+    @apply py-2 px-4 text-sm;
+  }
+  .btn-md {
+    @apply py-3 px-5 text-base;
+  }
+  .btn-lg {
+    @apply py-3 px-6 text-lg;
+  }
+  .btn-xl {
+    @apply py-3 px-12 text-2xl;
+  }
+
   .btn-with-text {
-    @apply py-2 px-4 inline-flex items-center border border-transparent text-white text-sm font-medium rounded-lg;
+    @apply inline-flex items-center border border-transparent text-white font-medium rounded-lg;
   }
   .btn-deactivated {
     @apply btn-with-text cursor-default bg-gray-300 focus:ring-transparent;
@@ -26,14 +42,17 @@
     @apply btn-activated bg-gray-400 hover:bg-gray-500 focus:ring-gray-300;
   }
   .btn-3 {
-    @apply mx-4 my-2 cursor-pointer inline-flex items-center transition duration-300 ease-in-out text-base font-medium rounded-lg text-gray-500 hover:text-black border border-transparent;
+    @apply btn-activated text-gray-600 bg-gray-100 border-gray-300 hover:bg-gray-200 focus:ring-gray-300;
+  }
+  .btn-4 {
+    @apply mx-4 my-2 cursor-pointer inline-flex items-center transition duration-300 ease-in-out text-sm font-medium rounded-lg text-gray-500 hover:text-black border border-transparent;
   }
 
   .white-icon-btn {
     @apply flex-shrink-0 bg-white shadow-sm hover:shadow-md w-auto rounded-full focus:outline-none;
   }
   .gray-icon-btn {
-    @apply white-icon-btn ml-1 lg:ml-6 p-1 transition duration-300 ease-in-out text-gray-400 hover:text-gray-500;
+    @apply white-icon-btn p-1 transition duration-300 ease-in-out text-gray-400 hover:text-gray-500;
   }
   .mobile-icon-button {
     @apply flex flex-row justify-between items-center w-full max-w-3xl mx-auto rounded-md py-2 px-3 text-base font-medium text-gray-500;

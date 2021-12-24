@@ -1,6 +1,7 @@
 import React from "react";
 import { InformationCircleIcon } from "@heroicons/react/outline";
 import { IconButtonTippy } from "./buttons";
+import { classNames } from "../lib/reactUtils";
 
 export default function IntroButton({ setIntroShown, buttonPressFunction }) {
   return (
@@ -125,7 +126,10 @@ function SlideDiv({
     <div className="pt-4 pb-2 m-auto inline-flex">
       <button
         onClick={firstSlide ? () => {} : prevSlide}
-        className={firstSlide ? "btn-deactivated" : "btn-blue"}
+        className={classNames(
+          firstSlide ? "btn-deactivated" : "btn-blue",
+          "btn-sm"
+        )}
       >
         <svg
           className="w-5 h-5 mr-2"
@@ -147,7 +151,10 @@ function SlideDiv({
       <button
         onClick={lastSlide ? () => {} : nextSlide}
         ref={initialFocus}
-        className={lastSlide ? "btn-deactivated" : "btn-blue"}
+        className={classNames(
+          lastSlide ? "btn-deactivated" : "btn-blue",
+          "btn-sm"
+        )}
       >
         Next
         <svg

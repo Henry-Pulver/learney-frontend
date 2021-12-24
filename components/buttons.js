@@ -31,7 +31,7 @@ export function IconToggleButtonWithCheckbox({
         onClick={onCheck}
         className={classNames(
           colour === "blue" ? "btn-blue" : "btn-green",
-          "inline-flex items-center"
+          "btn-sm inline-flex items-center"
         )}
       >
         <Icon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
