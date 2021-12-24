@@ -43,6 +43,7 @@ export const ConceptSearchBox = ({
         items={autocompleteData}
         fuseOptions={{ keys: ["name", "parent", "description"] }}
         onSearch={handleOnSearch}
+        inputDebounce={0}
         onHover={handleOnHover}
         onSelect={onSelect}
         maxResults={maxResults}
