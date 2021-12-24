@@ -99,14 +99,6 @@ export default function ExploreLearnIntroPage({
                 src={"/images/learney_logo_256x256.png"}
                 alt="Learney"
               />
-              <p
-                className={classNames(
-                  "hidden sm:block text-sm sm:text-lg md:text-xl xl:text-2xl text-gray-500 mt-4 sm:mt-12",
-                  newUser && "invisible"
-                )}
-              >
-                We noticed you hadn&apos;t set a goal.
-              </p>
               <h3 className="text-base md:text-3xl max-w-xxs sm:max-w-xl text-gray-700 mt-4 sm:mt-12 text-center">
                 From the <b>{mapName}</b> map, I want to learn...
               </h3>
