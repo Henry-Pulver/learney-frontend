@@ -207,16 +207,32 @@ export async function saveMap(userId, backendUrl, mapUUID) {
   handleFetchResponses(response, backendUrl);
 }
 
+function EditorModeTippy(props) {
+  return (
+    <Tippy
+      content={props.content}
+      placement={"right"}
+      delay={[500, 0]}
+      theme="light"
+      maxWidth="200px"
+      allowHTML={true}
+    >
+      {props.children}
+    </Tippy>
+  );
+}
+
 const editToolsButtonClasses =
   "transition duration-200 ease-in-out rounded-md m-1.5 h-14 w-14";
 
 export function CursorButton({ editType, setEditType, buttonPressFunction }) {
   return (
-    <Tippy
-      content="Edit nodes"
-      placement={"right"}
-      delay={[500, 0]}
-      theme="light"
+    <EditorModeTippy
+      content={
+        <div className="flex">
+          Edit nodes <p className="hotkey-label-text">c</p>
+        </div>
+      }
     >
       <div
         className={classNames(
@@ -240,17 +256,18 @@ export function CursorButton({ editType, setEditType, buttonPressFunction }) {
           <polygon points="9.2,7.3 9.2,18.5 12.2,15.6 12.6,15.5 17.4,15.5 " />
         </svg>
       </div>
-    </Tippy>
+    </EditorModeTippy>
   );
 }
 
 export function AddNodeButton({ editType, setEditType, buttonPressFunction }) {
   return (
-    <Tippy
-      content="Add concept"
-      placement={"right"}
-      delay={[500, 0]}
-      theme="light"
+    <EditorModeTippy
+      content={
+        <div className="flex">
+          Add concept <p className="hotkey-label-text">a</p>
+        </div>
+      }
     >
       <div
         className={classNames(
@@ -265,17 +282,18 @@ export function AddNodeButton({ editType, setEditType, buttonPressFunction }) {
       >
         <PlusCircleIcon className="text-black w-10 h-10" />
       </div>
-    </Tippy>
+    </EditorModeTippy>
   );
 }
 
 export function AddEdgesButton({ editType, setEditType, buttonPressFunction }) {
   return (
-    <Tippy
-      content="Add dependency"
-      placement={"right"}
-      delay={[500, 0]}
-      theme="light"
+    <EditorModeTippy
+      content={
+        <div className="flex">
+          Add dependency <p className="hotkey-label-text">e</p>
+        </div>
+      }
     >
       <div
         className={classNames(
@@ -292,7 +310,7 @@ export function AddEdgesButton({ editType, setEditType, buttonPressFunction }) {
           <polygon points="347.341,107.783 347.339,0 239.559,0.002 282.843,43.285 0,326.128 21.213,347.341 304.056,64.498 " />
         </svg>
       </div>
-    </Tippy>
+    </EditorModeTippy>
   );
 }
 
@@ -302,7 +320,13 @@ export function DeleteElementButton({
   buttonPressFunction,
 }) {
   return (
-    <Tippy content="Delete" placement={"right"} delay={[500, 0]} theme="light">
+    <EditorModeTippy
+      content={
+        <div className="flex">
+          Delete <p className="hotkey-label-text">d</p>
+        </div>
+      }
+    >
       <div
         className={classNames(
           editType === "delete" ? "bg-red-500" : "",
@@ -316,6 +340,6 @@ export function DeleteElementButton({
       >
         <TrashIcon className="text-black w-9 h-9" />
       </div>
-    </Tippy>
+    </EditorModeTippy>
   );
 }

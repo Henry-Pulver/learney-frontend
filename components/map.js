@@ -10,7 +10,7 @@ import {
 } from "../lib/learningAndPlanning/variables";
 import { initialiseGraphState } from "../lib/learningAndPlanning/learningAndPlanning";
 import { initCy, bindRouters } from "../lib/graph";
-import { setupCtoCentre } from "../lib/buttons";
+import { setupCtoCentre } from "../lib/hotkeys";
 import { classNames } from "../lib/reactUtils";
 
 export default function Map({
@@ -94,7 +94,7 @@ export default function Map({
           setHoverNode
         );
 
-        setupCtoCentre(editMap);
+        setupCtoCentre();
         setPageLoaded(true);
       }
     })();
