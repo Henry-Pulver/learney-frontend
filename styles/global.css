@@ -60,6 +60,9 @@
   .btn-grow {
     @apply hover:transform hover:scale-105 ease-in-out duration-200;
   }
+  .hotkey-label-text {
+    @apply text-gray-100 bg-gray-700 rounded text-center font-mono px-1 ml-1 pt-0.5;
+  }
 }
 
 .disableTouchActions {
