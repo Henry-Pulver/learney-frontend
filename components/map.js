@@ -94,7 +94,7 @@ export default function Map({
           setHoverNode
         );
 
-        setupCtoCentre(editMap);
+        setupCtoCentre();
         setPageLoaded(true);
       }
     })();
