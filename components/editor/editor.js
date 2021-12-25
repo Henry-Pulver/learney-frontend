@@ -16,6 +16,7 @@ import {
   unhighlightNodes,
   updateMinZoom,
 } from "../../lib/graph";
+import { setupEditorHotkeys } from "../../lib/hotkeys";
 
 let eh; // Edge handles variable
 const topicColours = [
@@ -318,6 +319,7 @@ export default function Editor({
   useEffect(() => {
     if (pageLoaded) {
       setEditType("cursor");
+      setupEditorHotkeys(setEditType);
       window.ur.action("addNode", addNodeClick, undoAddNodeClick);
       window.cy.on("ehcomplete", (event, sourceNode, targetNode, addedEles) => {
         window.cy.remove(addedEles[0]); // remove auto-added edge
