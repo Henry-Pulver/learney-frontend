@@ -68,6 +68,12 @@ export function LearnNavbar({
   mapJson,
   isNewUser,
   showExploreLearn,
+}: {user: UserProfile,
+  pageLoaded: bool,
+  buttonPressFunction: ,
+  mapJson: ,
+  isNewUser: ,
+  showExploreLearn: ,
 }) {
   const [introShown, setIntroShown] = useState(false);
   useEffect(() => {

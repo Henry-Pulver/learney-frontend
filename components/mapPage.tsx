@@ -32,6 +32,7 @@ import { Notification } from "./notifications";
 import ExploreLearnIntroPage from "./exploreLearnIntroPage";
 import { handleAnimation } from "../lib/graph";
 import { useRouter } from "next/router";
+import {NotificationData} from "./editor/types";
 
 export default function MapPage({
   backendUrl,
@@ -214,7 +215,10 @@ export default function MapPage({
     }
   }, [pageLoaded, showExploreLearn]);
 
-  const [notificationInfo, setNotificationInfo] = useState({
+  const [notificationInfo, setNotificationInfo] =
+    useState <
+    NotificationData >
+    {
     title: "",
     message: "",
     Icon: () => <></>,
@@ -224,7 +228,7 @@ export default function MapPage({
 
   return (
     <div>
-      <MapHeader editMode={editMap} mapUrlExtension={mapUrlExtension} />
+      <MapHeader editMap={editMap} mapUrlExtension={mapUrlExtension} />
       {!isLoading &&
         (editMap ? (
           <EditNavbar
@@ -251,7 +255,6 @@ export default function MapPage({
       {showExploreLearn && (
         <ExploreLearnIntroPage
           hideExploreLearn={() => setExploreLearn(false)}
-          newUser={isNewUser && user === undefined}
           mapName={mapName}
           mapJson={mapJson}
           setGoal={onSetGoalClick}
