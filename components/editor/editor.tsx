@@ -46,6 +46,14 @@ export default function Editor({
   pageLoaded,
   editType,
   setEditType,
+} : {
+  buttonPressFunction: ButtonPressFunction,
+  backendUrl: string,
+  userId: string,
+  mapUUID: string,
+  pageLoaded: boolean,
+  editType: string,
+  setEditType: Function,
 }) {
   const addNode = function (e) {
     // [1.0] Create the next node ID
