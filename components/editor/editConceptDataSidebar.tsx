@@ -1,6 +1,8 @@
 import React from "react";
 import { classNames } from "../../lib/reactUtils";
 import { XIcon } from "@heroicons/react/outline";
+import {NodeData} from "./types";
+import {ButtonPressFunction} from "../../lib/types";
 
 export function EditConceptDataSidebar({
   editNodeData,
@@ -10,6 +12,14 @@ export function EditConceptDataSidebar({
   deletebuttonClickFunction,
   userId,
   buttonPressFunction,
+} : {
+  editNodeData: NodeData,
+  setEditNodeData: (NodeData) => void,
+  setShowEditData: (boolean) => void,
+  saveEditNodeData: (NodeData) => void,
+  deletebuttonClickFunction: (number) => void,
+  userId: string,
+  buttonPressFunction: ButtonPressFunction,
 }) {
   return (
     <div className="absolute right-1 top-24 py-6 bg-white rounded-lg max-h-screen-80 w-120 overflow-y-auto">
@@ -45,7 +55,7 @@ export function EditConceptDataSidebar({
       />
       <EditDataLabel>Topic Name</EditDataLabel>
       <EditDataInput
-        className="text-black"
+        classes="text-black"
         type="text"
         value={editNodeData.parent}
         onChange={(e) =>
@@ -55,7 +65,7 @@ export function EditConceptDataSidebar({
       <EditDataLabel>Resource URLs (separate with a comma)</EditDataLabel>
       <EditDataInput
         type="text"
-        value={editNodeData.urls}
+        value={typeof editNodeData.urls === "string" ? editNodeData.urls : editNodeData.urls.join(",")}
         onChange={(e) =>
           setEditNodeData({ ...editNodeData, urls: e.target.value })
         }
@@ -63,7 +73,7 @@ export function EditConceptDataSidebar({
       <EditDataLabel>Node Size</EditDataLabel>
       <EditDataInput
         type="number"
-        value={editNodeData.relative_importance}
+        value={editNodeData.relative_importance.toString()}
         onChange={(e) =>
           setEditNodeData({
             ...editNodeData,
@@ -206,7 +216,7 @@ function EditDataTextArea({ value, editValue }) {
   );
 }
 
-function EditDataInput({ type, classes, value, onChange }) {
+function EditDataInput({ type, classes, value, onChange } : {type: string, classes?: string, value: string, onChange: (event) => void}) {
   return (
     <input
       className={classNames(

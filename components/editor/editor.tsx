@@ -17,8 +17,22 @@ import {
   updateMinZoom,
 } from "../../lib/graph";
 import { setupEditorHotkeys } from "../../lib/hotkeys";
+import {ButtonPressFunction} from "../../lib/types";
+import {NodeData, ParentNodeData, ShowEditData} from "./types";
+import cytoscape, {
+  ElementDefinition,
+  EventHandler,
+  EventObject,
+  NodeCollection,
+  NodeDataDefinition,
+  NodeSingular
+} from "cytoscape";
 
-let eh; // Edge handles variable
+declare global {
+    interface Window { ur: any; }
+}
+
+let eh: any; // Edge handles variable
 const topicColours = [
   "#001d4d",
   "#006161",
@@ -27,10 +41,9 @@ const topicColours = [
   "#210042",
   "#610061",
 ];
-const emptyNodeData = {
+const emptyNodeData: NodeData = {
   id: "",
   name: "",
-  lectures: "",
   description: "",
   urls: "",
   nodetype: "concept",
@@ -53,7 +66,7 @@ export default function Editor({
   mapUUID: string,
   pageLoaded: boolean,
   editType: string,
-  setEditType: Function,
+  setEditType: (EditType) => void,
 }) {
   const addNode = function (e) {
     // [1.0] Create the next node ID
@@ -62,8 +75,8 @@ export default function Editor({
       .nodes('[nodetype = "concept"]') // Get concept nodes only
       .forEach((node) => {
         // Find the largest concept ID number
-        if (Number(node.data().id) > nextNodeID)
-          nextNodeID = Number(node.data().id);
+        if (Number(node.id()) > nextNodeID)
+          nextNodeID = Number(node.id());
       });
     // The next node ID is the largest previous node ID number + 1
     nextNodeID += 1;
@@ -75,9 +88,9 @@ export default function Editor({
     if ("nodetype" in nodeClicked.data()) {
       // Clicked on a node or parent node!
       if (nodeClicked.data().nodetype === "field") {
-        parentNodeId = nodeClicked.data().id;
+        parentNodeId = nodeClicked.id();
       } else {
-        parentNodeId = nodeClicked.parent().data().id;
+        parentNodeId = nodeClicked.parent().id();
       }
     } else {
       // Clicked in empty space - create new parent node!
@@ -102,7 +115,6 @@ export default function Editor({
       data: {
         id: `${nextNodeID}`,
         name: "",
-        lectures: "",
         description: "",
         urls: [],
         nodetype: "concept",
@@ -121,7 +133,7 @@ export default function Editor({
     window.ur.do("addNode", nodesToAdd);
   };
   const deleteModeClick = function (e) {
-    if (e.target.data().id !== undefined) {
+    if (e.target.id() !== undefined) {
       if (e.target.isEdge()) {
         window.ur.do("remove", e.target);
       } else if (e.target.isNode()) {
@@ -131,10 +143,10 @@ export default function Editor({
       }
     }
   };
-  const removeElement = function (elementId) {
-    const element = window.cy.nodes(`[id = "${elementId}"]`);
+  const removeElement = function (elementId: string): void {
+    const element = window.cy.getElementById(elementId);
     const parentNode = element.parent();
-    let actions = [{ name: "remove", param: element }];
+    let actions: Array<{name: "remove", param: NodeCollection}> = [{ name: "remove", param: element }];
     // if this is the last child node, delete the parent
     if (parentNode.children().size() === 1)
       actions.push({ name: "remove", param: parentNode });
@@ -194,13 +206,13 @@ export default function Editor({
     }
   }, [editType]);
 
-  const [showEditData, setShowEditData] = React.useState(null);
+  const [showEditData, setShowEditData] = React.useState<ShowEditData>(null);
 
-  const [deleteNodeData, setDeleteNodeData] = React.useState({
+  const [deleteNodeData, setDeleteNodeData] = React.useState<NodeData>({
     ...emptyNodeData,
   });
-  const [editNodeData, setEditNodeData] = React.useState({ ...emptyNodeData });
-  const saveEditNodeData = function (userId) {
+  const [editNodeData, setEditNodeData] = React.useState<NodeData>({ ...emptyNodeData });
+  const saveEditNodeData = function (userId: number): void {
     // [1.0] Copy Previous Data
     let newNodeData = { ...editNodeData };
 
@@ -223,8 +235,8 @@ export default function Editor({
             nodetype: "field",
           },
           renderedPosition: {
-            x: window.cy.getElementById(newNodeData.id).x,
-            y: window.cy.getElementById(newNodeData.id).y,
+            x: window.cy.getElementById(newNodeData.id).position().x,
+            y: window.cy.getElementById(newNodeData.id).position().y,
           },
         };
         window.ur.do("add", [newParentNode]);
@@ -248,18 +260,18 @@ export default function Editor({
     saveMap(userId, backendUrl, mapUUID);
     setShowEditData(null);
   };
-  const [editParentNodeData, setEditParentNodeData] = React.useState({
+  const [editParentNodeData, setEditParentNodeData] = React.useState<ParentNodeData>({
     colour: "",
     id: "",
     name: "",
     nodetype: "field",
   });
 
-  const handleEditParentNodeData = function (e) {
+  const handleEditParentNodeData = function (e: {target: NodeSingular}): void {
     setEditParentNodeData(e.target.data());
     setShowEditData("topic");
   };
-  const saveEditParentNodeData = (newParentNodeData) => {
+  const saveEditParentNodeData = (newParentNodeData: ParentNodeData) => {
     const prevId = newParentNodeData.id;
     const newId = newParentNodeData.name;
     if (newId !== prevId) {
@@ -295,10 +307,11 @@ export default function Editor({
     setShowEditData(null);
   };
 
-  function addNodeClick(nodesToAdd) {
+  function addNodeClick(nodesToAdd: NodeCollection | Array<ElementDefinition>) {
     /** nodesToAdd is either an object or a cytoscape collection of elements (when redo-ing!) **/
     const added = window.cy.add(nodesToAdd);
     if (typeof nodesToAdd[0].data === "object") {
+      // @ts-ignore
       setEditNodeData(nodesToAdd[0].data);
       nodesToAdd.forEach((node) => {
         if (node.data.nodetype === "concept") {
@@ -309,8 +322,12 @@ export default function Editor({
       });
       setEditType("cursor");
     } else {
-      setEditNodeData(nodesToAdd.filter('[nodetype = "concept"]').data());
+      // @ts-ignore
+      let concept: NodeSingular = nodesToAdd.filter('[nodetype = "concept"]');
+      setEditNodeData(concept.data());
+      // @ts-ignore
       unhighlightNodes(nodesToAdd.filter('[nodetype = "concept"]'));
+      // @ts-ignore
       resetTopicColour(nodesToAdd.filter('[nodetype = "field"]'));
     }
     updateMinZoom();
@@ -329,7 +346,8 @@ export default function Editor({
       setEditType("cursor");
       setupEditorHotkeys(setEditType);
       window.ur.action("addNode", addNodeClick, undoAddNodeClick);
-      window.cy.on("ehcomplete", (event, sourceNode, targetNode, addedEles) => {
+      window.cy.on("ehcomplete", (event, extraParams) => {
+        const [sourceNode, targetNode, addedEles] = extraParams;
         window.cy.remove(addedEles[0]); // remove auto-added edge
         // Add undo-able edge
         window.ur.do("add", {
@@ -395,7 +413,7 @@ export default function Editor({
             setDeleteNodeData((prevState) => {
               return {
                 ...prevState,
-                ...window.cy.nodes(`[id = "${nodeId}"]`).data(),
+                ...window.cy.getElementById(nodeId).data(),
               };
             })
           }
@@ -412,7 +430,7 @@ export default function Editor({
               setDeleteNodeData((prevState) => {
                 return {
                   ...prevState,
-                  ...window.cy.nodes(`[id = "${nodeId}"]`).data(),
+                  ...window.cy.getElementById(nodeId).data(),
                 };
               })
             }

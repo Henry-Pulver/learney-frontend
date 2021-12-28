@@ -13,6 +13,8 @@ import { IconButtonTippy } from "../buttons";
 import { jsonHeaders } from "../../lib/headers";
 import { handleFetchResponses } from "../../lib/utils";
 import isEqual from "lodash.isequal";
+import { ButtonPressFunction } from "../../lib/types";
+import { NotificationData } from "./types";
 
 const dagreLayout = {
   name: "dagre",
@@ -21,7 +23,7 @@ const dagreLayout = {
   rankSep: 300,
 };
 
-function autoGenerateLayout() {
+function autoGenerateLayout(): void {
   let actions = [
     {
       name: "layout",
@@ -29,12 +31,13 @@ function autoGenerateLayout() {
     },
   ];
   /** Run Dagre algorithm on each subject individually **/
-  let subjects = [];
+  let subjects: Array<string> = [];
   window.cy
-    .nodes('[nodetype= "field"]')
-    .forEach((field) => subjects.push(field.name));
+      .nodes('[nodetype= "field"]')
+      // @ts-ignore
+      .forEach((topic) => subjects.push(topic.data().name));
 
-  subjects.forEach(function (subject) {
+  subjects.forEach((subject) => {
     let subject_subgraph = window.cy.filter(`node[subject = "${subject}"]`);
     subject_subgraph.merge(subject_subgraph.connectedEdges());
     actions.push({
@@ -45,7 +48,13 @@ function autoGenerateLayout() {
   window.ur.do("batch", actions);
 }
 
-export function MapSettingsIconButton({ buttonPressFunction, pageLoaded }) {
+export function MapSettingsIconButton({
+  buttonPressFunction,
+  pageLoaded,
+}: {
+  buttonPressFunction: ButtonPressFunction;
+  pageLoaded: boolean;
+}) {
   return (
     <Menu as="div" className="ml-3 relative">
       {({ open }) => (
@@ -132,6 +141,13 @@ export function SaveMapButton({
   mapUUID,
   setNotificationInfo,
   pageLoaded,
+}: {
+  userId: string;
+  buttonPressFunction: ButtonPressFunction;
+  backendUrl: string;
+  mapUUID: string;
+  setNotificationInfo: (NotificationData) => void;
+  pageLoaded: boolean;
 }) {
   return (
     <button
