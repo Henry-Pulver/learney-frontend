@@ -1,16 +1,18 @@
 import { headers, jsonHeaders } from "./headers";
+import { UserState } from "./types";
+import {ParsedUrlQuery} from "querystring";
 
-export function isAnonymousUser(userId) {
+export function isAnonymousUser(userId: string): boolean {
   return userId.startsWith("anonymous-user|");
 }
 
-function isValidURL(str) {
+function isValidURL(str: string): boolean {
   let a = document.createElement("a");
   a.href = str;
   return a.host && a.host !== window.location.host;
 }
 
-export function getValidURLs(urls) {
+export function getValidURLs(urls: Array<string>): Array<string> {
   let url_array = [];
 
   function validateURL(url) {
@@ -28,7 +30,7 @@ export function getValidURLs(urls) {
   return url_array;
 }
 
-function getAPIEndpoint(backendUrl, name) {
+function getAPIEndpoint(backendUrl: string, name: string): string {
   let extension;
   if (name === "learnedNodes") {
     extension = "learned";
@@ -40,7 +42,7 @@ function getAPIEndpoint(backendUrl, name) {
   return `${backendUrl}/api/v0/${extension}`;
 }
 
-function getGetResponseData(name, json) {
+function getGetResponseData(name: string, json): object {
   let payload;
   if (name === "learnedNodes") {
     payload = json.learned_concepts;
@@ -52,7 +54,13 @@ function getGetResponseData(name, json) {
   return payload;
 }
 
-function getPostRequestData(name, objectToStore, userId, mapUUID, sessionId) {
+function getPostRequestData(
+  name: string,
+  objectToStore,
+  userId: string,
+  mapUUID: string,
+  sessionId: string
+): object {
   let payload = { user_id: userId, map: mapUUID, session_id: sessionId };
   if (name === "learnedNodes") {
     payload["learned_concepts"] = objectToStore;
@@ -64,7 +72,12 @@ function getPostRequestData(name, objectToStore, userId, mapUUID, sessionId) {
   return payload;
 }
 
-export async function initialiseFromStorage(backendUrl, name, userId, mapUUID) {
+export async function initialiseFromStorage(
+  backendUrl: string,
+  name: string,
+  userId: string,
+  mapUUID: string
+): Promise<object> {
   console.log(`Initialising ${name} from storage!`);
   let apiEndpoint = getAPIEndpoint(backendUrl, name);
 
@@ -87,13 +100,13 @@ export async function initialiseFromStorage(backendUrl, name, userId, mapUUID) {
 }
 
 export async function saveToDB(
-  name,
-  object,
-  backendUrl,
-  userId,
-  mapUUID,
-  sessionId
-) {
+  name: string,
+  object: object,
+  backendUrl: string,
+  userId: string,
+  mapUUID: string,
+  sessionId: string
+): Promise<void> {
   if (name !== "votes") {
     const response = await fetch(getAPIEndpoint(backendUrl, name), {
       method: "POST",
@@ -121,7 +134,11 @@ export async function saveToDB(
   }
 }
 
-export async function logPageView(user, backendUrl, mapUrlExtension) {
+export async function logPageView(
+  user: UserState,
+  backendUrl: string,
+  mapUrlExtension: string
+): Promise<object> {
   let requestBody = {
     page_extension: mapUrlExtension,
   };
@@ -138,13 +155,13 @@ export async function logPageView(user, backendUrl, mapUrlExtension) {
 }
 
 export async function logContentClick(
-  url,
-  concept_id,
-  backendUrl,
-  userId,
-  mapUUID,
-  sessionId
-) {
+  url: string,
+  concept_id: number,
+  backendUrl: string,
+  userId: string,
+  mapUUID: string,
+  sessionId: string
+): Promise<void> {
   const response = await fetch(`${backendUrl}/api/v0/link_click`, {
     method: "POST",
     headers: jsonHeaders,
@@ -159,7 +176,12 @@ export async function logContentClick(
   handleFetchResponses(response, backendUrl);
 }
 
-export function buttonPress(runFirst, buttonName, backendUrl, userId) {
+export function buttonPress(
+  runFirst: (...args: any) => void,
+  buttonName: string,
+  backendUrl: string,
+  userId: string
+): () => void {
   if (typeof backendUrl !== "string" || backendUrl === "")
     console.error(
       `ButtonPress() backendUrl=${backendUrl} undefined at ${buttonName} press!`
@@ -179,7 +201,10 @@ export function buttonPress(runFirst, buttonName, backendUrl, userId) {
   };
 }
 
-export async function handleFetchResponses(response, backendUrl) {
+export async function handleFetchResponses(
+  response: Response,
+  backendUrl: string
+): Promise<object> {
   let responseJson = await response.json();
   if (response.status === 200 || response.status === 201) {
     if (backendUrl === "https://api.learney.me")
@@ -198,7 +223,7 @@ export async function handleFetchResponses(response, backendUrl) {
   return responseJson;
 }
 
-export function setURLQuery(router, queryParams) {
+export function setURLQuery(router, queryParams: object): void {
   delete router.query.x;
   delete router.query.y;
   delete router.query.zoom;
@@ -215,10 +240,10 @@ export function setURLQuery(router, queryParams) {
 }
 
 export function getOpacityEquivalentColour(
-  foregroundColour,
-  backgroundColour,
-  foregroundOpacity
-) {
+  foregroundColour: string,
+  backgroundColour: string,
+  foregroundOpacity: number
+): string {
   let fRGB, bRGB;
   if (foregroundColour.startsWith("rgb")) {
     fRGB = parseRGBString(foregroundColour);
@@ -242,11 +267,11 @@ export function getOpacityEquivalentColour(
   return `rgb(${r}, ${g}, ${b})`;
 }
 
-function hexToRGB(hex) {
+function hexToRGB(hex: string): Array<string> {
   // Convert hex to RGB first
-  let r = 0,
-    g = 0,
-    b = 0;
+  let r = "",
+    g = "",
+    b = "";
   if (hex.length === 4) {
     r = "0x" + hex[1] + hex[1];
     g = "0x" + hex[2] + hex[2];
@@ -259,7 +284,7 @@ function hexToRGB(hex) {
   return [r, g, b];
 }
 
-function parseRGBString(rgbString) {
+function parseRGBString(rgbString: string): Array<number> {
   const rgb = rgbString
     .substring(4, rgbString.length - 1)
     .replace(/ /g, "")
@@ -267,6 +292,27 @@ function parseRGBString(rgbString) {
   return [Number(rgb[0]), Number(rgb[1]), Number(rgb[2])];
 }
 
-export function URLQuerySet(query) {
-  return query.topic || query.concept || query.x;
+export function URLQuerySet(query: ParsedUrlQuery): boolean {
+  const queriesSet: boolean = !!query.topic || !!query.concept || !!query.x || !!query.y || !!query.zoom;
+
+  // Either a topic, a concept or a position & zoom should be set. Not 2 or more
+  const onePositionSet = query.x || query.y || query.zoom;
+  if ((query.topic && query.concept) || (query.topic && onePositionSet) || (query.concept && onePositionSet))
+    new Error(`Invalid query - more than one query parameter set: ${query}`);
+
+  // If only one set, check it's set validly
+  if (query.topic && typeof query.topic !== "string") new Error(`${query.topic} is an invalid query!`);
+  if (query.concept && typeof query.concept !== "string") new Error(`${query.concept} is an invalid query!`);
+  const allPositionSet = query.x && query.y && query.zoom;
+  if (onePositionSet && !allPositionSet) new Error(`${query.topic} is an invalid query!`);
+  const positions = typeof query.x !== "number" && typeof query.y !== "number" && typeof query.zoom !== "number";
+  return queriesSet;
+}
+
+type ParsedQuery = {topic?: string, concept?: string, x?: string, y?: string, zoom?: string};
+
+export function parseQuery(query: ParsedUrlQuery): ParsedQuery {
+  if (query.topic && typeof query.topic === "string") return {topic: query.topic};
+  if (query.concept && typeof query.concept === "string") return {concept: query.concept};
+  if (query.x && typeof query.x === "string" && typeof query.y === "string" && typeof query.zoom === "string") return {x: query.x, y: query.y, zoom: query.zoom};
 }
