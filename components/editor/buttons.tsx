@@ -33,9 +33,9 @@ function autoGenerateLayout(): void {
   /** Run Dagre algorithm on each subject individually **/
   let subjects: Array<string> = [];
   window.cy
-      .nodes('[nodetype= "field"]')
-      // @ts-ignore
-      .forEach((topic) => subjects.push(topic.data().name));
+    .nodes('[nodetype= "field"]')
+    // @ts-ignore
+    .forEach((topic) => subjects.push(topic.data().name));
 
   subjects.forEach((subject) => {
     let subject_subgraph = window.cy.filter(`node[subject = "${subject}"]`);

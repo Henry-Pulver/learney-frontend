@@ -5,7 +5,7 @@ import { AcademicCapIcon, XIcon } from "@heroicons/react/outline";
 import { getBadgeColour } from "../lib/goalBadges";
 import { LoadingSpinner } from "./animations";
 import { ButtonPressFunction } from "../lib/types";
-import {ElementsDefinition} from "cytoscape";
+import { ElementsDefinition } from "cytoscape";
 
 export default function ExploreLearnIntroPage({
   hideExploreLearn,

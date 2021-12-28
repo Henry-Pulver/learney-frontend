@@ -132,7 +132,11 @@ export function SlackButton({ buttonPressFunction }) {
   );
 }
 
-function getCurrentQueryParams(pageLoaded: boolean): {x: number | null, y: number | null, zoom: number | null} {
+function getCurrentQueryParams(pageLoaded: boolean): {
+  x: number | null;
+  y: number | null;
+  zoom: number | null;
+} {
   if (pageLoaded) {
     return {
       x: window.cy.pan().x,
@@ -179,7 +183,7 @@ export function ShareCurrentPosition({ pageLoaded, buttonPressFunction }) {
               ? buttonPressFunction(() => {}, "Get Shareable Link (void)")
               : buttonPressFunction(() => {
                   navigator.clipboard.writeText(
-                  `${location.origin}/?` +
+                    `${location.origin}/?` +
                       // @ts-ignore
                       new URLSearchParams(getCurrentQueryParams(pageLoaded))
                   );

@@ -17,19 +17,21 @@ import {
   updateMinZoom,
 } from "../../lib/graph";
 import { setupEditorHotkeys } from "../../lib/hotkeys";
-import {ButtonPressFunction} from "../../lib/types";
-import {NodeData, ParentNodeData, ShowEditData} from "./types";
+import { ButtonPressFunction } from "../../lib/types";
+import { NodeData, ParentNodeData, ShowEditData } from "./types";
 import cytoscape, {
   ElementDefinition,
   EventHandler,
   EventObject,
   NodeCollection,
   NodeDataDefinition,
-  NodeSingular
+  NodeSingular,
 } from "cytoscape";
 
 declare global {
-    interface Window { ur: any; }
+  interface Window {
+    ur: any;
+  }
 }
 
 let eh: any; // Edge handles variable
@@ -59,14 +61,14 @@ export default function Editor({
   pageLoaded,
   editType,
   setEditType,
-} : {
-  buttonPressFunction: ButtonPressFunction,
-  backendUrl: string,
-  userId: string,
-  mapUUID: string,
-  pageLoaded: boolean,
-  editType: string,
-  setEditType: (EditType) => void,
+}: {
+  buttonPressFunction: ButtonPressFunction;
+  backendUrl: string;
+  userId: string;
+  mapUUID: string;
+  pageLoaded: boolean;
+  editType: string;
+  setEditType: (EditType) => void;
 }) {
   const addNode = function (e) {
     // [1.0] Create the next node ID
@@ -75,8 +77,7 @@ export default function Editor({
       .nodes('[nodetype = "concept"]') // Get concept nodes only
       .forEach((node) => {
         // Find the largest concept ID number
-        if (Number(node.id()) > nextNodeID)
-          nextNodeID = Number(node.id());
+        if (Number(node.id()) > nextNodeID) nextNodeID = Number(node.id());
       });
     // The next node ID is the largest previous node ID number + 1
     nextNodeID += 1;
@@ -146,7 +147,9 @@ export default function Editor({
   const removeElement = function (elementId: string): void {
     const element = window.cy.getElementById(elementId);
     const parentNode = element.parent();
-    let actions: Array<{name: "remove", param: NodeCollection}> = [{ name: "remove", param: element }];
+    let actions: Array<{ name: "remove"; param: NodeCollection }> = [
+      { name: "remove", param: element },
+    ];
     // if this is the last child node, delete the parent
     if (parentNode.children().size() === 1)
       actions.push({ name: "remove", param: parentNode });
@@ -211,7 +214,9 @@ export default function Editor({
   const [deleteNodeData, setDeleteNodeData] = React.useState<NodeData>({
     ...emptyNodeData,
   });
-  const [editNodeData, setEditNodeData] = React.useState<NodeData>({ ...emptyNodeData });
+  const [editNodeData, setEditNodeData] = React.useState<NodeData>({
+    ...emptyNodeData,
+  });
   const saveEditNodeData = function (userId: number): void {
     // [1.0] Copy Previous Data
     let newNodeData = { ...editNodeData };
@@ -260,14 +265,17 @@ export default function Editor({
     saveMap(userId, backendUrl, mapUUID);
     setShowEditData(null);
   };
-  const [editParentNodeData, setEditParentNodeData] = React.useState<ParentNodeData>({
-    colour: "",
-    id: "",
-    name: "",
-    nodetype: "field",
-  });
+  const [editParentNodeData, setEditParentNodeData] =
+    React.useState<ParentNodeData>({
+      colour: "",
+      id: "",
+      name: "",
+      nodetype: "field",
+    });
 
-  const handleEditParentNodeData = function (e: {target: NodeSingular}): void {
+  const handleEditParentNodeData = function (e: {
+    target: NodeSingular;
+  }): void {
     setEditParentNodeData(e.target.data());
     setShowEditData("topic");
   };

@@ -1,6 +1,6 @@
 import { headers, jsonHeaders } from "./headers";
 import { UserState } from "./types";
-import {ParsedUrlQuery} from "querystring";
+import { ParsedUrlQuery } from "querystring";
 
 export function isAnonymousUser(userId: string): boolean {
   return userId.startsWith("anonymous-user|");
@@ -293,26 +293,51 @@ function parseRGBString(rgbString: string): Array<number> {
 }
 
 export function URLQuerySet(query: ParsedUrlQuery): boolean {
-  const queriesSet: boolean = !!query.topic || !!query.concept || !!query.x || !!query.y || !!query.zoom;
+  const queriesSet: boolean =
+    !!query.topic || !!query.concept || !!query.x || !!query.y || !!query.zoom;
 
   // Either a topic, a concept or a position & zoom should be set. Not 2 or more
   const onePositionSet = query.x || query.y || query.zoom;
-  if ((query.topic && query.concept) || (query.topic && onePositionSet) || (query.concept && onePositionSet))
+  if (
+    (query.topic && query.concept) ||
+    (query.topic && onePositionSet) ||
+    (query.concept && onePositionSet)
+  )
     new Error(`Invalid query - more than one query parameter set: ${query}`);
 
   // If only one set, check it's set validly
-  if (query.topic && typeof query.topic !== "string") new Error(`${query.topic} is an invalid query!`);
-  if (query.concept && typeof query.concept !== "string") new Error(`${query.concept} is an invalid query!`);
+  if (query.topic && typeof query.topic !== "string")
+    new Error(`${query.topic} is an invalid query!`);
+  if (query.concept && typeof query.concept !== "string")
+    new Error(`${query.concept} is an invalid query!`);
   const allPositionSet = query.x && query.y && query.zoom;
-  if (onePositionSet && !allPositionSet) new Error(`${query.topic} is an invalid query!`);
-  const positions = typeof query.x !== "number" && typeof query.y !== "number" && typeof query.zoom !== "number";
+  if (onePositionSet && !allPositionSet)
+    new Error(`${query.topic} is an invalid query!`);
+  const positions =
+    typeof query.x !== "number" &&
+    typeof query.y !== "number" &&
+    typeof query.zoom !== "number";
   return queriesSet;
 }
 
-type ParsedQuery = {topic?: string, concept?: string, x?: string, y?: string, zoom?: string};
+type ParsedQuery = {
+  topic?: string;
+  concept?: string;
+  x?: string;
+  y?: string;
+  zoom?: string;
+};
 
 export function parseQuery(query: ParsedUrlQuery): ParsedQuery {
-  if (query.topic && typeof query.topic === "string") return {topic: query.topic};
-  if (query.concept && typeof query.concept === "string") return {concept: query.concept};
-  if (query.x && typeof query.x === "string" && typeof query.y === "string" && typeof query.zoom === "string") return {x: query.x, y: query.y, zoom: query.zoom};
+  if (query.topic && typeof query.topic === "string")
+    return { topic: query.topic };
+  if (query.concept && typeof query.concept === "string")
+    return { concept: query.concept };
+  if (
+    query.x &&
+    typeof query.x === "string" &&
+    typeof query.y === "string" &&
+    typeof query.zoom === "string"
+  )
+    return { x: query.x, y: query.y, zoom: query.zoom };
 }
