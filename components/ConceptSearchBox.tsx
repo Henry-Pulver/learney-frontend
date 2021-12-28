@@ -2,6 +2,7 @@ import React from "react";
 import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { classNames } from "../lib/reactUtils";
 import { getSearchArray, getSearchTopicDataLookup } from "../lib/search";
+import { ElementsDefinition } from "cytoscape";
 
 export const ConceptSearchBox = ({
   mapJson,
@@ -9,6 +10,12 @@ export const ConceptSearchBox = ({
   classes = "",
   searchStyling = {},
   maxResults = 10,
+}: {
+  mapJson: ElementsDefinition;
+  onSelect: (item: any) => void;
+  classes?: string;
+  searchStyling?: object;
+  maxResults?: number;
 }) => {
   /** Component responsible for rendering the search bar. **/
   let autocompleteData = getSearchArray(mapJson);

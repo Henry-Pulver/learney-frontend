@@ -13,6 +13,8 @@ import {
 import { SaveMapButton, MapSettingsIconButton } from "./editor/buttons";
 import Modal from "./modal";
 import { ConceptSearchBox } from "./ConceptSearchBox";
+import { ButtonPressFunction, UserState } from "../lib/types";
+import {ElementsDefinition} from "cytoscape";
 
 export function EditNavbar({
   user,
@@ -23,6 +25,15 @@ export function EditNavbar({
   mapJson,
   pageLoaded,
   setNotificationInfo,
+}: {
+  user: UserState;
+  userId: string;
+  buttonPressFunction: ButtonPressFunction;
+  backendUrl: string;
+  mapUUID: string;
+  mapJson: ElementsDefinition;
+  pageLoaded: boolean;
+  setNotificationInfo: (NotificationData) => void;
 }) {
   return (
     <Navbar
@@ -68,27 +79,30 @@ export function LearnNavbar({
   mapJson,
   isNewUser,
   showExploreLearn,
-}: {user: UserProfile,
-  pageLoaded: bool,
-  buttonPressFunction: ,
-  mapJson: ,
-  isNewUser: ,
-  showExploreLearn: ,
+}: {
+  user: UserState;
+  pageLoaded: boolean;
+  buttonPressFunction: ButtonPressFunction;
+  mapJson: ElementsDefinition;
+  isNewUser: boolean;
+  showExploreLearn: boolean;
 }) {
-  const [introShown, setIntroShown] = useState(false);
+  const [introShown, setIntroShown] = useState<boolean>(false);
   useEffect(() => {
     if (!showExploreLearn) setIntroShown(isNewUser);
   }, [showExploreLearn, isNewUser]);
 
   // Here so the slide number is remembered between closing & opening the modal
-  const [introSlideNumber, setIntroSlide] = useState(0);
+  const [introSlideNumber, setIntroSlide] = useState<number>(0);
 
-  const [introSlidesJson, setIntroSlidesJson] = useState(null);
+  const [introSlidesJson, setIntroSlidesJson] = useState<Array<object> | null>(
+    null
+  );
   // TODO: replace below with useAsync() so it's in line with the rest of the codebase
   useEffect(() => {
     (async function () {
       const response = await fetch("/introSlides.json");
-      const slides = await response.json();
+      const slides: Array<object> = await response.json();
       setIntroSlidesJson(slides);
     })();
   }, []);
@@ -155,6 +169,13 @@ function Navbar({
   buttonPressFunction,
   mapJson,
   pageLoaded,
+}: {
+  user: UserState;
+  leftSideButtons: Array<JSX.Element>;
+  rightSideButtons: Array<JSX.Element>;
+  buttonPressFunction: ButtonPressFunction;
+  mapJson: ElementsDefinition;
+  pageLoaded: boolean;
 }) {
   return (
     <>

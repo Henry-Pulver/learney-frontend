@@ -14,6 +14,8 @@ import { ShareIcon } from "@heroicons/react/outline";
 import { AreYouSureModal } from "./modal";
 import { classNames } from "../lib/reactUtils";
 import isEqual from "lodash.isequal";
+import { ButtonPressFunction } from "../lib/types";
+import { NodeSingular } from "cytoscape";
 
 export function IconToggleButtonWithCheckbox({
   checked,
@@ -21,6 +23,12 @@ export function IconToggleButtonWithCheckbox({
   Icon,
   text,
   colour = "blue",
+}: {
+  checked: boolean;
+  onCheck: () => void;
+  Icon: Function;
+  text: string;
+  colour: "blue" | "green" | "red";
 }) {
   useEffect(() => {
     console.log(`${text} is checked: ${checked}`);
@@ -124,7 +132,7 @@ export function SlackButton({ buttonPressFunction }) {
   );
 }
 
-function getCurrentQueryParams(pageLoaded) {
+function getCurrentQueryParams(pageLoaded: boolean): {x: number | null, y: number | null, zoom: number | null} {
   if (pageLoaded) {
     return {
       x: window.cy.pan().x,
@@ -171,7 +179,8 @@ export function ShareCurrentPosition({ pageLoaded, buttonPressFunction }) {
               ? buttonPressFunction(() => {}, "Get Shareable Link (void)")
               : buttonPressFunction(() => {
                   navigator.clipboard.writeText(
-                    `${location.origin}/?` +
+                  `${location.origin}/?` +
+                      // @ts-ignore
                       new URLSearchParams(getCurrentQueryParams(pageLoaded))
                   );
                   setCopiedQueryParams(getCurrentQueryParams(pageLoaded));
@@ -245,25 +254,28 @@ export function ResetProgressIconButton({
   sessionId,
   setGoalsState,
   setLearnedState,
+}: {
+  buttonPressFunction: ButtonPressFunction;
+  backendUrl: string;
+  userId: string;
+  mapUUID: string;
+  sessionId: string;
+  setGoalsState: Function;
+  setLearnedState: Function;
 }) {
   const [areYouSureModalShown, setModalShown] = useState(false);
 
-  const buttonPressed = buttonPressFunction(
-    () => {
-      resetProgress(
-        backendUrl,
-        userId,
-        mapUUID,
-        sessionId,
-        setGoalsState,
-        setLearnedState
-      );
-      unhighlightNodes(window.cy.nodes('[nodetype = "concept"]'));
-    },
-    "Reset Progress",
-    backendUrl,
-    userId
-  );
+  const buttonPressed = buttonPressFunction(() => {
+    resetProgress(
+      backendUrl,
+      userId,
+      mapUUID,
+      sessionId,
+      setGoalsState,
+      setLearnedState
+    );
+    unhighlightNodes(window.cy.nodes('[nodetype = "concept"]'));
+  }, "Reset Progress");
 
   return (
     <>
@@ -301,7 +313,13 @@ export function ResetPanButton({ buttonPressFunction }) {
   );
 }
 
-export function GetNextConceptButton({ nextConcept, buttonPressFunction }) {
+export function GetNextConceptButton({
+  nextConcept,
+  buttonPressFunction,
+}: {
+  nextConcept?: NodeSingular;
+  buttonPressFunction: ButtonPressFunction;
+}) {
   return (
     <IconButtonTippy
       content={

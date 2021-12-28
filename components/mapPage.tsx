@@ -30,9 +30,11 @@ import Editor from "./editor/editor";
 import { getNextNodeToLearn } from "../lib/questions";
 import { Notification } from "./notifications";
 import ExploreLearnIntroPage from "./exploreLearnIntroPage";
-import { handleAnimation } from "../lib/graph";
+import { handleIntroAnimation} from "../lib/graph";
 import { useRouter } from "next/router";
-import {NotificationData} from "./editor/types";
+import { NotificationData } from "./editor/types";
+import {UserState} from "../lib/types";
+import {NodeSingular} from "cytoscape";
 
 export default function MapPage({
   backendUrl,
@@ -41,6 +43,13 @@ export default function MapPage({
   editMap,
   mapJsonString,
   mapUUID,
+} : {
+  backendUrl: string,
+  mapUrlExtension: string,
+  allowSuggestions: boolean,
+  editMap: boolean,
+  mapJsonString: string,
+  mapUUID: string,
 }) {
   if (backendUrl === "https://api.learney.me") {
     ReactGA.initialize("UA-197170313-2");
@@ -57,16 +66,16 @@ export default function MapPage({
   else mapName = mapUrlExtension; // Cut off "maps/" from the start
 
   // TODO: Move all these into a redux/MST store
-  const [userId, setUserId] = React.useState(undefined);
-  const [userEmail, setUserEmail] = React.useState("");
-  const [sessionId, setSessionId] = React.useState(null);
+  const [userId, setUserId] = React.useState<string | undefined>(undefined);
+  const [userEmail, setUserEmail] = React.useState<string>("");
+  const [sessionId, setSessionId] = React.useState<string | null>(null);
   // Whether to show LearnExploreIntroPage on load
-  const [showExploreLearn, setExploreLearn] = useState(null);
-  const [isNewUser, setIsNewUser] = useState(false);
+  const [showExploreLearn, setExploreLearn] = useState<boolean | null>(null);
+  const [isNewUser, setIsNewUser] = useState<boolean>(false);
   useEffect(() => setIsNewUser(!localStorage.getItem("userId")), []);
 
-  const [goals, setNewGoalsState] = React.useState({});
-  const setGoalsState = function (goalState) {
+  const [goals, setNewGoalsState] = React.useState<object>({});
+  const setGoalsState = (goalState: object) => {
     for (const nodeId of Object.keys(goals)) {
       if (!(nodeId in goalState)) {
         setNewGoalsState((prevGoals) => ({
@@ -79,7 +88,7 @@ export default function MapPage({
       setNewGoalsState((prevGoals) => ({ ...prevGoals, [nodeId]: isGoal }));
     }
   };
-  const onSetGoalClick = (node, userId, sessionId) => {
+  const onSetGoalClick = (node: NodeSingular, userId: string, sessionId: string): void => {
     setGoalClick(node, backendUrl, userId, mapUUID, sessionId);
     setGoalsState(goalNodes);
   };
@@ -101,12 +110,12 @@ export default function MapPage({
       }));
     }
   };
-  const onLearnedClick = function (node, userId, sessionId) {
+  const onLearnedClick = (node, userId, sessionId) => {
     learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
     setLearnedState(learnedNodes);
   };
 
-  const buttonPressFunction = function (runFirst, buttonName) {
+  const buttonPressFunction = (runFirst, buttonName) => {
     return buttonPress(runFirst, buttonName, backendUrl, userId);
   };
 
@@ -171,54 +180,12 @@ export default function MapPage({
       !showExploreLearn &&
       (URLQuerySet(query) || Object.keys(goals).length > 0)
     ) {
-      if (URLQuerySet(query)) {
-        if (query.topic) {
-          handleAnimation({
-            fit: {
-              eles: window.cy.filter(`[id = "${query.topic}"]`),
-              padding: 50,
-            },
-            duration: 1200,
-            easing: "ease-in-out",
-          });
-        } else if (query.concept) {
-          window.cy.getElementById(query.concept).emit("tap");
-        } else {
-          handleAnimation({
-            pan: { x: Number(router.query.x), y: Number(router.query.y) },
-            zoom: Number(router.query.zoom),
-            duration: 1200,
-            easing: "ease-in-out",
-          });
-        }
-      } else if (Object.keys(goals).length > 0) {
-        handleAnimation({
-          fit: {
-            eles: window.cy.nodes(".learned").or(".path"),
-            padding: 50,
-          },
-          duration: 1200,
-          easing: "ease-in-out",
-        });
-      } else {
-        handleAnimation({
-          panBy: {
-            x: -window.cy.width() / 6,
-            y: (-window.cy.height() * 4) / 9,
-          },
-          zoom: 1.5 * window.cy.zoom(),
-          duration: 1200,
-          easing: "ease-in-out",
-        });
-      }
+      handleIntroAnimation(query, goals);
       setURLQuery(router, {});
     }
   }, [pageLoaded, showExploreLearn]);
 
-  const [notificationInfo, setNotificationInfo] =
-    useState <
-    NotificationData >
-    {
+  const [notificationInfo, setNotificationInfo] = useState<NotificationData>({
     title: "",
     message: "",
     Icon: () => <></>,
@@ -314,7 +281,6 @@ export default function MapPage({
           pageLoaded={pageLoaded}
           editType={editType}
           setEditType={setEditType}
-          mapUrlExtension={mapUrlExtension}
         />
       )}
       <Notification

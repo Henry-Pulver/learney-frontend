@@ -12,6 +12,8 @@ import { initialiseGraphState } from "../lib/learningAndPlanning/learningAndPlan
 import { initCy, bindRouters } from "../lib/graph";
 import { setupCtoCentre } from "../lib/hotkeys";
 import { classNames } from "../lib/reactUtils";
+import { ButtonPressFunction } from "../lib/types";
+import { EditType } from "./editor/types";
 
 export default function Map({
   backendUrl,
@@ -31,6 +33,24 @@ export default function Map({
   setGoalsState,
   setPageLoaded,
   editType,
+}: {
+  backendUrl: string;
+  userId: string;
+  userEmail: string;
+  allowSuggestions: boolean;
+  editMap: boolean;
+  mapJson: object;
+  mapUUID: string;
+  sessionId: string;
+  buttonPressFunction: ButtonPressFunction;
+  learned: object;
+  onLearnedClick: Function;
+  setLearnedState: Function;
+  goals: object;
+  onSetGoalClick: Function;
+  setGoalsState: Function;
+  setPageLoaded: (boolean) => void;
+  editType: EditType;
 }) {
   const router = useRouter();
   const [userVotes, setUserVote] = React.useState({});
