@@ -2,6 +2,7 @@ import React from "react";
 import { InformationCircleIcon } from "@heroicons/react/outline";
 import { IconButtonTippy } from "./buttons";
 import { classNames } from "../lib/reactUtils";
+import { ButtonPressFunction } from "../lib/types";
 
 export default function IntroButton({ setIntroShown, buttonPressFunction }) {
   return (
@@ -31,6 +32,12 @@ export function IntroSection({
   introSlides,
   buttonPressFunction,
   initialFocus,
+}: {
+  introSlideNumber: number;
+  setIntroSlide: (number) => void;
+  introSlides: Array<any> | null;
+  buttonPressFunction: ButtonPressFunction;
+  initialFocus?: React.MutableRefObject<any>;
 }) {
   const prevSlide = buttonPressFunction(
     () => setIntroSlide(introSlideNumber - 1),
