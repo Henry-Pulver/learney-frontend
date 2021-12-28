@@ -14,7 +14,7 @@ import { SaveMapButton, MapSettingsIconButton } from "./editor/buttons";
 import Modal from "./modal";
 import { ConceptSearchBox } from "./ConceptSearchBox";
 import { ButtonPressFunction, UserState } from "../lib/types";
-import {ElementsDefinition} from "cytoscape";
+import { ElementsDefinition } from "cytoscape";
 
 export function EditNavbar({
   user,

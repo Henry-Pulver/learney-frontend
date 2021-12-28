@@ -8,8 +8,13 @@ import popper from "cytoscape-popper";
 import dagre from "cytoscape-dagre";
 import edgehandles from "cytoscape-edgehandles";
 import undoRedo from "cytoscape-undo-redo";
-import {getOpacityEquivalentColour, parseQuery, setURLQuery, URLQuerySet} from "./utils";
-import {ParsedUrlQuery} from "querystring";
+import {
+  getOpacityEquivalentColour,
+  parseQuery,
+  setURLQuery,
+  URLQuerySet,
+} from "./utils";
+import { ParsedUrlQuery } from "querystring";
 
 declare global {
   interface Window {
@@ -113,7 +118,10 @@ export function fitCytoTo(fitParams, onComplete = function () {}) {
   }
 }
 
-export function handleIntroAnimation(query: ParsedUrlQuery, goals: object): void {
+export function handleIntroAnimation(
+  query: ParsedUrlQuery,
+  goals: object
+): void {
   let animationParams = {};
   if (URLQuerySet(query)) {
     const parsedQuery = parseQuery(query);
@@ -149,7 +157,11 @@ export function handleIntroAnimation(query: ParsedUrlQuery, goals: object): void
     };
   }
   if (animationParams) {
-    animationParams = {...animationParams, duration: 1200, easing: "ease-in-out"};
+    animationParams = {
+      ...animationParams,
+      duration: 1200,
+      easing: "ease-in-out",
+    };
     handleAnimation(animationParams);
   }
 }
@@ -163,9 +175,7 @@ function handleAnimation(animationParams, onComplete = () => {}) {
       window.cy.panBy({ x: panBy.x, y: panBy.y / 2 });
     }
     if (animationParams.relativeZoom !== undefined) {
-      window.cy.zoom(
-        window.cy.zoom() * animationParams.relativeZoom
-      );
+      window.cy.zoom(window.cy.zoom() * animationParams.relativeZoom);
     } else if (animationParams.zoom !== undefined) {
       window.cy.zoom(animationParams.zoom);
     }
@@ -473,9 +483,7 @@ export function bindRouters(
           showConceptTippy(concept);
           let previousSelectedNodeID = selectedNodeID;
           selectedNodeID = concept.id();
-          unhighlightNodes(
-            window.cy.getElementById(previousSelectedNodeID)
-          );
+          unhighlightNodes(window.cy.getElementById(previousSelectedNodeID));
           highlightNodes(concept, true);
           setIsAnimated(false);
           setURLQuery(router, { concept: concept.id() });

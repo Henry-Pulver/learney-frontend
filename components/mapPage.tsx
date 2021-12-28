@@ -30,11 +30,11 @@ import Editor from "./editor/editor";
 import { getNextNodeToLearn } from "../lib/questions";
 import { Notification } from "./notifications";
 import ExploreLearnIntroPage from "./exploreLearnIntroPage";
-import { handleIntroAnimation} from "../lib/graph";
+import { handleIntroAnimation } from "../lib/graph";
 import { useRouter } from "next/router";
 import { NotificationData } from "./editor/types";
-import {UserState} from "../lib/types";
-import {NodeSingular} from "cytoscape";
+import { UserState } from "../lib/types";
+import { NodeSingular } from "cytoscape";
 
 export default function MapPage({
   backendUrl,
@@ -43,13 +43,13 @@ export default function MapPage({
   editMap,
   mapJsonString,
   mapUUID,
-} : {
-  backendUrl: string,
-  mapUrlExtension: string,
-  allowSuggestions: boolean,
-  editMap: boolean,
-  mapJsonString: string,
-  mapUUID: string,
+}: {
+  backendUrl: string;
+  mapUrlExtension: string;
+  allowSuggestions: boolean;
+  editMap: boolean;
+  mapJsonString: string;
+  mapUUID: string;
 }) {
   if (backendUrl === "https://api.learney.me") {
     ReactGA.initialize("UA-197170313-2");
@@ -88,7 +88,11 @@ export default function MapPage({
       setNewGoalsState((prevGoals) => ({ ...prevGoals, [nodeId]: isGoal }));
     }
   };
-  const onSetGoalClick = (node: NodeSingular, userId: string, sessionId: string): void => {
+  const onSetGoalClick = (
+    node: NodeSingular,
+    userId: string,
+    sessionId: string
+  ): void => {
     setGoalClick(node, backendUrl, userId, mapUUID, sessionId);
     setGoalsState(goalNodes);
   };
