@@ -6,6 +6,7 @@ import { getBadgeColour } from "../lib/goalBadges";
 import { LoadingSpinner } from "./animations";
 import { ButtonPressFunction } from "../lib/types";
 import { ElementsDefinition } from "cytoscape";
+import {XCloseButton} from "./utils";
 
 export default function ExploreLearnIntroPage({
   hideExploreLearn,
@@ -81,26 +82,14 @@ export default function ExploreLearnIntroPage({
         />
         {/* Modal content */}
         <div className="relative bg-white max-w-2xl min-w-full md:min-w-0 min-h-full md:min-h-0 rounded-none md:rounded-xl shadow relative md:mt-20 xl:mt-28 dark:bg-gray-700">
-          {/* Close X in top right */}
-          <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
-            <button
-              type="button"
-              className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              onClick={
-                !learnClicked
+          <XCloseButton onClick={!learnClicked
                   ? buttonPressFunction(
                       () =>
                         onExploreClick(goalsSet, pageLoaded, userId, sessionId),
                       "Explore Learn Intro Page Close X Button"
                     )
                   : buttonPressFunction(() => {},
-                    "Explore Learn Intro Page Close X Button")
-              }
-            >
-              <span className="sr-only">Close</span>
-              <XIcon className="h-6 w-6" aria-hidden="true" />
-            </button>
-          </div>
+                    "Explore Learn Intro Page Close X Button")} />
           {/* Modal body */}
           <div className="flex flex-col">
             <div className="flex flex-col items-center">

@@ -1,7 +1,8 @@
 import React, { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationIcon, XIcon } from "@heroicons/react/outline";
+import { ExclamationIcon } from "@heroicons/react/outline";
 import { classNames } from "../lib/reactUtils";
+import {XCloseButton} from "./utils";
 
 export default function Modal(props: {
   open: boolean;
@@ -60,17 +61,7 @@ export default function Modal(props: {
               )}
             >
               {props.children}
-              {/* Close X in top right */}
-              <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
-                <button
-                  type="button"
-                  className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  onClick={props.setClosed}
-                >
-                  <span className="sr-only">Close</span>
-                  <XIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-              </div>
+              <XCloseButton onClick={props.setClosed} />
             </div>
           </Transition.Child>
         </div>
