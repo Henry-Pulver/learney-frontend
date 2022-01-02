@@ -90,25 +90,3 @@ html {
 .select2-dropdown {
   color: black;
 }
-
-/* Community voting arrows */
-.vote-arrow {
-  width: 30px;
-  height: 30px;
-}
-
-.triangle {
-  width: 0;
-  height: 0;
-  border-width: 15px;
-}
-
-.triangle.up {
-  border-top: 0 solid transparent;
-  border-bottom-width: 30px;
-}
-
-.triangle.down {
-  border-bottom: 0 solid transparent;
-  border-top-width: 30px;
-}
