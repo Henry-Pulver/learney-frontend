@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer components {
+  /* BUTTONS */
   .btn-xs {
     @apply py-1.5 px-3 text-xs;
   }
@@ -39,7 +40,7 @@
   }
 
   .btn-2 {
-    @apply btn-activated bg-gray-400 hover:bg-gray-500 focus:ring-gray-300;
+    @apply btn-activated bg-gray-500 hover:bg-gray-600 focus:ring-gray-300;
   }
   .btn-3 {
     @apply btn-activated text-gray-600 bg-gray-100 border-gray-300 hover:bg-gray-200 focus:ring-gray-300;
@@ -60,8 +61,14 @@
   .btn-grow {
     @apply hover:transform hover:scale-105 ease-in-out duration-200;
   }
+
+  /* TEXT */
   .hotkey-label-text {
     @apply text-gray-100 bg-gray-700 rounded text-center font-mono px-1 ml-1 pt-0.5;
+  }
+
+  .h-excl-toolbar {
+    @apply h-[calc(100vh-62px)] sm:h-[calc(100vh-60px)];
   }
 }
 
