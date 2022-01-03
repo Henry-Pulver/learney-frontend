@@ -1,7 +1,7 @@
 import React from "react";
 import { classNames } from "../lib/reactUtils";
 
-export function LoadingSpinner({ classes }) {
+export function LoadingSpinner({ classes }: { classes: string }) {
   return (
     <svg
       className={classNames("animate-spin", classes)}

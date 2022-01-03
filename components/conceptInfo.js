@@ -152,7 +152,7 @@ function ConceptInfo({
       <div className="justify-around border-t border-solid border-gray-600 px-2 py-4 grid items-center grid-flow-col">
         <div>
           <IconToggleButtonWithCheckbox
-            checked={learnedNodes[node.data().id]}
+            checked={!!learnedNodes[node.id()]}
             onCheck={() => onLearnedClick(node, userId, sessionId)}
             Icon={CheckCircleIcon}
             text={"I Know This!"}
@@ -161,7 +161,7 @@ function ConceptInfo({
         </div>
         <div>
           <IconToggleButtonWithCheckbox
-            checked={goalNodes[node.data().id]}
+            checked={!!goalNodes[node.id()]}
             onCheck={() => onSetGoalClick(node, userId, sessionId)}
             Icon={FlagIcon}
             text={"Set Goal"}
@@ -218,7 +218,7 @@ function ConceptLinkPreview({
         onClick={() =>
           logContentClick(
             url,
-            node.data().id,
+            node.id(),
             backendUrl,
             userId,
             mapUUID,
@@ -307,7 +307,7 @@ const fetchLinkPreview = async ({ node, url, backendUrl, mapUUID }) => {
       new URLSearchParams({
         map: mapUUID,
         concept: node.data().name,
-        concept_id: node.data().id,
+        concept_id: node.id(),
         url: url,
       }),
     {

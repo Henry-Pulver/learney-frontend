@@ -3,7 +3,14 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationIcon, XIcon } from "@heroicons/react/outline";
 import { classNames } from "../lib/reactUtils";
 
-export default function Modal(props) {
+export default function Modal(props: {
+  open: boolean;
+  initialFocus?: React.MutableRefObject<any>;
+  setClosed: () => void;
+  modalClassName?: string;
+  children: React.ReactNode;
+  contentClassName?: string;
+}) {
   return (
     <Transition.Root show={props.open} as={Fragment}>
       <Dialog

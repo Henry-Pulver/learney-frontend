@@ -1,8 +1,9 @@
 import { fitCytoTo, updateMinZoom } from "./graph";
+import { EditType } from "../components/editor/types";
 
 let cKeyPressed = false;
 
-export function setupCtoCentre() {
+export function setupCtoCentre(): void {
   document.onkeydown = function (e) {
     if (!["TEXTAREA", "INPUT"].includes(document.activeElement.tagName)) {
       if (e.code === "KeyC" && !cKeyPressed) {
@@ -15,7 +16,9 @@ export function setupCtoCentre() {
   };
 }
 
-export function setupEditorHotkeys(setEditMode) {
+export function setupEditorHotkeys(
+  setEditType: (editType: EditType) => void
+): void {
   document.onkeydown = function (e) {
     if (!["TEXTAREA", "INPUT"].includes(document.activeElement.tagName)) {
       if (e.ctrlKey || e.metaKey) {
@@ -26,10 +29,10 @@ export function setupEditorHotkeys(setEditMode) {
         const selecteds = window.cy.$(":selected");
         if (selecteds.length > 0) window.ur.do("remove", selecteds);
       } else {
-        if (e.code === "KeyC") setEditMode("cursor");
-        else if (e.code === "KeyA") setEditMode("addNode");
-        else if (e.code === "KeyE") setEditMode("addEdges");
-        else if (e.code === "KeyD") setEditMode("delete");
+        if (e.code === "KeyC") setEditType("cursor");
+        else if (e.code === "KeyA") setEditType("addNode");
+        else if (e.code === "KeyE") setEditType("addEdges");
+        else if (e.code === "KeyD") setEditType("delete");
       }
     }
   };
