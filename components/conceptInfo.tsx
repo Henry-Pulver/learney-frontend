@@ -85,7 +85,7 @@ export function ConceptInfo({
             />
           </div>
         )}
-        <ol className="shrink grow list-none pl-0 m-0 overflow-auto mb-20 md:mb-0 sm:px-2 w-full">
+        <ol className="shrink grow list-none pl-0 m-0 overflow-auto mb-20 md:mb-0 pb-2 sm:pb-20 sm:px-2 w-full">
           {node &&
             appendToArray(
               getAndSortLinkPreviewURLs(node, allVotes).map((url) => (
@@ -103,7 +103,8 @@ export function ConceptInfo({
                 />
               )),
               allowSuggestions && (
-                <div className="pb-2 sm:pb-20">
+                // <div> necessary as otherwise the button grows to the width of the list element
+                <div>
                   <MakeSuggestionButton
                     buttonPressFunction={buttonPressFunction}
                     userEmail={userEmail}
