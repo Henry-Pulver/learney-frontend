@@ -1,4 +1,4 @@
-import { headers, jsonHeaders } from "./headers";
+import { cacheHeaders, headers, jsonHeaders } from "./headers";
 import { UserState } from "./types";
 import { ParsedUrlQuery } from "querystring";
 
@@ -175,6 +175,31 @@ export async function logContentClick(
   });
   handleFetchResponses(response, backendUrl);
 }
+
+export const fetchTotalVotes = async ({
+  backendUrl,
+  mapUUID,
+  editMap,
+}: {
+  backendUrl: string;
+  mapUUID: string;
+  editMap: boolean;
+}): Promise<object> => {
+  if (editMap) {
+    const response = await fetch(
+      `${backendUrl}/api/v0/total_vote_count?` +
+        new URLSearchParams({ map: mapUUID }),
+      {
+        method: "GET",
+        headers: cacheHeaders,
+      }
+    );
+    if (!response.ok) throw new Error(response.status.toString());
+    return handleFetchResponses(response, backendUrl);
+  } else {
+    return {};
+  }
+};
 
 export function buttonPress(
   runFirst: (...args: any) => void,
