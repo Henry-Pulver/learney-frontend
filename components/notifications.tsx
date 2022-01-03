@@ -1,17 +1,8 @@
 import React, { Fragment } from "react";
-import PropTypes from "prop-types";
 import { Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import { classNames } from "../lib/reactUtils";
-
-// Notification.propTypes = {
-//   show: PropTypes.bool.isRequired,
-//   setShow: PropTypes.func.isRequired,
-//   title: PropTypes.string.isRequired,
-//   message: PropTypes.string | PropTypes.element,
-//   Icon: PropTypes.elementType,
-//   colour: PropTypes.string.isRequired,
-// };
+import { XCloseButton } from "./utils";
 
 export function Notification({
   show,
@@ -47,7 +38,7 @@ export function Notification({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
+            <div className="relative max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
               <div className="p-4">
                 <div className="flex items-start">
                   <div className="flex-shrink-0">
@@ -65,20 +56,14 @@ export function Notification({
                       <p className="mt-1 text-sm text-gray-500">{message}</p>
                     )}
                   </div>
-                  <div className="ml-4 flex-shrink-0 flex">
-                    <button
-                      className="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      onClick={() =>
-                        setShow((prevState) => ({
-                          ...prevState,
-                          show: false,
-                        }))
-                      }
-                    >
-                      <span className="sr-only">Close Notification</span>
-                      <XIcon className="h-5 w-5" aria-hidden="true" />
-                    </button>
-                  </div>
+                  <XCloseButton
+                    onClick={() =>
+                      setShow((prevState) => ({
+                        ...prevState,
+                        show: false,
+                      }))
+                    }
+                  />
                 </div>
               </div>
             </div>

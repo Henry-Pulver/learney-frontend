@@ -9,6 +9,9 @@ module.exports = {
         copy: "copy",
         crosshair: "crosshair",
       },
+      fontSize: {
+        xxs: ".625rem",
+      },
       maxHeight: {
         40: "40%",
         70: "70%",
@@ -17,6 +20,11 @@ module.exports = {
       },
       minHeight: {
         30: "7.5rem",
+        "1/5": "20%",
+        "3/5": "60%",
+      },
+      height: {
+        15: "3.75rem",
       },
       maxWidth: {
         xxs: "16rem",
@@ -30,8 +38,8 @@ module.exports = {
         "70vw": "70vw",
         108: "27rem",
         120: "30rem",
+        152: "38rem",
         200: "50rem",
-        "screen-sm": "640px",
       },
       borderWidth: {
         14: "14px",
