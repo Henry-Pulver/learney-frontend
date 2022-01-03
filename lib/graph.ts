@@ -502,12 +502,12 @@ export function bindRouters(
 
     // Right click concepts sets goal
     window.cy.on("cxttap", 'node[nodetype = "concept"]', (e) => {
-      onSetGoalClick(e.target, userId, sessionId);
+      onSetGoalClick(e.target as NodeSingular, userId, sessionId);
     });
   }
 
   window.cy.on("tap", 'node[nodetype = "field"]', (e) => {
-    let topic = e.target;
+    let topic = e.target as NodeSingular;
     if (!isAnimated) {
       setIsAnimated(true);
       fitCytoTo({ eles: topic, padding: 25 }, () => {
@@ -518,7 +518,7 @@ export function bindRouters(
   });
 
   window.cy.on("tap", "edge", (e) => {
-    let edge = e.target;
+    let edge = e.target as EdgeSingular;
     if (!isAnimated) {
       setIsAnimated(true);
       fitCytoTo({ eles: edge.connectedNodes(), padding: 50 }, () =>
