@@ -242,9 +242,7 @@ export function MakeSuggestionButton({
         goToFormFunction("concept", userEmail),
         buttonName
       )}
-      className={
-        "btn-sm btn-2 my-2 mx-4"
-      }
+      className={"btn-sm btn-2 my-2 mx-4"}
     >
       {text}
     </button>
