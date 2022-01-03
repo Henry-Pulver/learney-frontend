@@ -24,10 +24,12 @@ export function EditConceptDataSidebar({
   return (
     <div className="absolute right-1 top-24 py-6 bg-white rounded-lg max-h-screen-80 w-120 overflow-y-auto">
       {/* Close X in top right */}
-      <XCloseButton onClick={buttonPressFunction(
-            () => setShowEditData(null),
-            `Edit Concept Top Right Close X (Concept: ${editNodeData.name})`
-          )} />
+      <XCloseButton
+        onClick={buttonPressFunction(
+          () => setShowEditData(null),
+          `Edit Concept Top Right Close X (Concept: ${editNodeData.name})`
+        )}
+      />
       <EditDataLabel>Concept Name</EditDataLabel>
       <EditDataInput
         type="text"
@@ -122,10 +124,12 @@ export function EditTopicDataSidebar({
   return (
     <div className="absolute right-1 top-24 py-6 bg-white rounded-lg max-h-screen-80 w-120">
       {/* X IN THE TOP RIGHT */}
-      <XCloseButton onClick={buttonPressFunction(
-            () => setShowEditData(null),
-            `Edit Concept Top Right Close X (Concept: ${editParentNodeData.name})`
-          )} />
+      <XCloseButton
+        onClick={buttonPressFunction(
+          () => setShowEditData(null),
+          `Edit Concept Top Right Close X (Concept: ${editParentNodeData.name})`
+        )}
+      />
       <EditDataLabel>Topic Name</EditDataLabel>
       <EditDataInput
         classes="text-xl"

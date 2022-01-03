@@ -151,7 +151,7 @@ export function SaveMapButton({
 }) {
   return (
     <button
-      className="btn-blue ml-4 whitespace-nowrap"
+      className="btn-blue btn-md ml-4 whitespace-nowrap"
       onClick={
         pageLoaded
           ? buttonPressFunction(() => {
