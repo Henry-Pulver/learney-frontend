@@ -4,10 +4,11 @@ import { ConceptSearchBox } from "./ConceptSearchBox";
 import { AcademicCapIcon, XIcon } from "@heroicons/react/outline";
 import { getBadgeColour } from "../lib/goalBadges";
 import { LoadingSpinner } from "./animations";
+import { ButtonPressFunction } from "../lib/types";
+import { ElementsDefinition } from "cytoscape";
 
 export default function ExploreLearnIntroPage({
   hideExploreLearn,
-  newUser,
   mapName,
   mapJson,
   setGoal,
@@ -15,6 +16,15 @@ export default function ExploreLearnIntroPage({
   userId,
   sessionId,
   buttonPressFunction,
+}: {
+  hideExploreLearn: Function;
+  mapName: string;
+  mapJson: ElementsDefinition;
+  setGoal: Function;
+  pageLoaded: boolean;
+  userId: string;
+  sessionId: string;
+  buttonPressFunction: ButtonPressFunction;
 }) {
   const [goalsSet, setGoalsSet] = useState({});
   const addGoalSet = (goalId) => setGoalsSet({ ...goalsSet, [goalId]: true });
@@ -218,6 +228,12 @@ function GoalsList({
   removeGoal,
   classes,
   buttonPressFunction,
+}: {
+  mapJson: object;
+  goals: object;
+  removeGoal: Function;
+  classes?: string;
+  buttonPressFunction: ButtonPressFunction;
 }) {
   return (
     <span

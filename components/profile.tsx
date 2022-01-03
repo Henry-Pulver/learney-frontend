@@ -1,8 +1,16 @@
 import React, { Fragment } from "react";
 import { LogoutIcon, UserAddIcon } from "@heroicons/react/outline";
 import { Popover, Transition } from "@headlessui/react";
+import { UserProfile } from "@auth0/nextjs-auth0";
+import { ButtonPressFunction } from "../lib/types";
 
-export function ProfileButton({ user, buttonPressFunction }) {
+export function ProfileButton({
+  user,
+  buttonPressFunction,
+}: {
+  user: UserProfile | undefined;
+  buttonPressFunction: ButtonPressFunction;
+}) {
   return (
     <Popover as="div" className="flex-none relative">
       <div id="profileImageButton">
@@ -33,7 +41,7 @@ export function ProfileButton({ user, buttonPressFunction }) {
           className="origin-top-right absolute z-10 right-0 mt-2 w-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-1 focus:outline-none"
         >
           <ProfileSelectedDiv
-            userdata={user}
+            user={user}
             buttonPressFunction={buttonPressFunction}
           />
         </Popover.Panel>
@@ -42,13 +50,19 @@ export function ProfileButton({ user, buttonPressFunction }) {
   );
 }
 
-function ProfileSelectedDiv({ userdata, buttonPressFunction }) {
+function ProfileSelectedDiv({
+  user,
+  buttonPressFunction,
+}: {
+  user: UserProfile | undefined;
+  buttonPressFunction: ButtonPressFunction;
+}) {
   return (
     <div className="text-center bg-white p-4 rounded-md m-2 sm:max-w-8xl">
       <h2 className="my-2 text-black font-bold text-xl">
-        Welcome, {userdata.name}!
+        Welcome, {user.name}!
       </h2>
-      <h5 className="my-2 text-gray-500 font-normal">{userdata.email}</h5>
+      <h5 className="my-2 text-gray-500 font-normal">{user.email}</h5>
       <LogOut buttonPressFunction={buttonPressFunction} />
     </div>
   );
@@ -67,7 +81,7 @@ function LogOut({ buttonPressFunction }) {
   );
 }
 
-export function LogOutIconButton({ user, buttonPressFunction }) {
+export function LogOutIconButton({ buttonPressFunction }) {
   return (
     <button
       className="gray-icon-btn"

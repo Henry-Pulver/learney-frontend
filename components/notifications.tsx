@@ -4,16 +4,30 @@ import { Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import { classNames } from "../lib/reactUtils";
 
-Notification.propTypes = {
-  show: PropTypes.bool.isRequired,
-  setShow: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired,
-  message: PropTypes.string | PropTypes.element,
-  Icon: PropTypes.elementType,
-  colour: PropTypes.string.isRequired,
-};
+// Notification.propTypes = {
+//   show: PropTypes.bool.isRequired,
+//   setShow: PropTypes.func.isRequired,
+//   title: PropTypes.string.isRequired,
+//   message: PropTypes.string | PropTypes.element,
+//   Icon: PropTypes.elementType,
+//   colour: PropTypes.string.isRequired,
+// };
 
-export function Notification({ show, setShow, title, message, Icon, colour }) {
+export function Notification({
+  show,
+  setShow,
+  title,
+  message,
+  Icon,
+  colour,
+}: {
+  show: boolean;
+  setShow: (boolean) => void;
+  title: string;
+  message;
+  Icon;
+  colour: string;
+}) {
   return (
     <>
       {/* Global notification live region, render this permanently at the end of the document */}

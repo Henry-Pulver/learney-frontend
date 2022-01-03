@@ -3,12 +3,24 @@ import {
   pathNodes,
   learnedNodes,
 } from "./learningAndPlanning/variables";
-import cytoscape from "cytoscape";
+import cytoscape, { EdgeSingular } from "cytoscape";
 import popper from "cytoscape-popper";
 import dagre from "cytoscape-dagre";
 import edgehandles from "cytoscape-edgehandles";
 import undoRedo from "cytoscape-undo-redo";
-import { getOpacityEquivalentColour, setURLQuery } from "./utils";
+import {
+  getOpacityEquivalentColour,
+  parseQuery,
+  setURLQuery,
+  URLQuerySet,
+} from "./utils";
+import { ParsedUrlQuery } from "querystring";
+
+declare global {
+  interface Window {
+    cy: cytoscape.Core;
+  }
+}
 
 export function isMobile() {
   return screen.width < 768;
@@ -43,7 +55,7 @@ const cyColours = {
 };
 const nodeBaseSize = 48;
 
-let selectedNodeID = Infinity;
+let selectedNodeID: string = "";
 
 export function initCy(
   mapJson,
@@ -60,6 +72,10 @@ export function initCy(
     cytoscape.use(undoRedo);
   } else cytoscape.use(popper);
 
+  let wheelSensitivity: number;
+  if (!isMobile()) wheelSensitivity = 0.25;
+  else wheelSensitivity = 1;
+
   // Initialise cytoscape
   window.cy = cytoscape({
     elements: mapJson,
@@ -67,22 +83,21 @@ export function initCy(
     layout: { name: "preset" },
     style: styleText,
     maxZoom: 1.5,
+    wheelSensitivity: wheelSensitivity,
   });
 
   if (isMobile()) {
     // Performance enhancements
     let concepts = window.cy.nodes('[nodetype = "concept"]');
     concepts.style("min-zoomed-font-size", "2.5em");
-  } else {
-    window.cy.wheelSensitivity = 0.25;
   }
   // set initial viewport state
   updateMinZoom(editMap);
 
   if (editMap) {
-    window.ur = window.cy.undoRedo();
+    window.ur = (window.cy as any).undoRedo();
   } else {
-    window.cy.elements().panify();
+    (window.cy.elements() as any).panify();
   }
 
   resetTopicColour(window.cy.nodes().parents());
@@ -103,7 +118,55 @@ export function fitCytoTo(fitParams, onComplete = function () {}) {
   }
 }
 
-export function handleAnimation(animationParams, onComplete = () => {}) {
+export function handleIntroAnimation(
+  query: ParsedUrlQuery,
+  goals: object
+): void {
+  let animationParams = {};
+  if (URLQuerySet(query)) {
+    const parsedQuery = parseQuery(query);
+    if (parsedQuery.topic) {
+      animationParams = {
+        fit: {
+          eles: window.cy.getElementById(parsedQuery.topic),
+          padding: 50,
+        },
+      };
+    } else if (parsedQuery.concept) {
+      window.cy.getElementById(parsedQuery.concept).emit("tap");
+    } else {
+      animationParams = {
+        pan: { x: Number(parsedQuery.x), y: Number(parsedQuery.y) },
+        zoom: Number(parsedQuery.zoom),
+      };
+    }
+  } else if (Object.keys(goals).length > 0) {
+    animationParams = {
+      fit: {
+        eles: window.cy.nodes(".learned").or(".path"),
+        padding: 50,
+      },
+    };
+  } else {
+    animationParams = {
+      panBy: {
+        x: -window.cy.width() / 6,
+        y: (-window.cy.height() * 4) / 9,
+      },
+      zoom: 1.5 * window.cy.zoom(),
+    };
+  }
+  if (animationParams) {
+    animationParams = {
+      ...animationParams,
+      duration: 1200,
+      easing: "ease-in-out",
+    };
+    handleAnimation(animationParams);
+  }
+}
+
+function handleAnimation(animationParams, onComplete = () => {}) {
   if (isMobile()) {
     if (animationParams.pan !== undefined) {
       window.cy.pan(animationParams.pan);
@@ -129,7 +192,7 @@ export function handleAnimation(animationParams, onComplete = () => {}) {
 }
 
 export function updateMinZoom(editMap = true) {
-  const boundingBox = window.cy.elements().boundingBox(); // bounding box of all elements
+  const boundingBox = window.cy.elements().boundingBox({}); // bounding box of all elements
   let multFactor;
   if (editMap) multFactor = 1.8;
   else multFactor = 1;
@@ -144,7 +207,7 @@ export function updateMinZoom(editMap = true) {
 
 function resizeNodes(nodes, newSize) {
   nodes.forEach(function (node) {
-    if (node.data().id !== selectedNodeID) {
+    if (node.id() !== selectedNodeID) {
       let nodeSize;
       if (newSize === "big") {
         nodeSize = 1.5 * node.data().relative_importance * nodeBaseSize;
@@ -166,7 +229,7 @@ function setGraphBrightness(nodes, brightnessLevel) {
 
 export function setNodeBrightness(nodes, brightnessLevel = 0) {
   nodes.forEach(function (node) {
-    let nId = node.data().id;
+    let nId = node.id();
     const parentColour = node.parent().style("background-color");
     node.removeStyle("background-color");
     if (nId in learnedNodes && learnedNodes[nId]) {
@@ -197,10 +260,13 @@ export function setNodeBrightness(nodes, brightnessLevel = 0) {
   });
 }
 
-export function setEdgeBrightness(edges, brightnessLevel) {
+export function setEdgeBrightness(
+  edges: Array<EdgeSingular>,
+  brightnessLevel: Number = 0
+) {
   edges.forEach(function (edge) {
-    let sId = edge.source().data().id;
-    let tId = edge.target().data().id;
+    let sId = edge.source().id();
+    let tId = edge.target().id();
 
     edge.style("opacity", 1);
     if (
@@ -221,10 +287,11 @@ export function setEdgeBrightness(edges, brightnessLevel) {
       switch (brightnessLevel) {
         case 0: {
           let parentColour;
+          let sourceParent = edge.source().parent()[0],
+            targetParent = edge.target().parent()[0];
           if (
             edge.target().data().name !== undefined &&
-            edge.source().parent().data().id ===
-              edge.target().parent().data().id
+            sourceParent.id() === targetParent.id()
           ) {
             parentColour = edge.source().parent().style("background-color");
             edge.style(
@@ -317,13 +384,13 @@ export function bindRouters(
   // Removes tooltip when clicking elsewhere/panning/zooming
   window.cy.on("tap pan zoom", function (e) {
     if (e.target === window.cy) {
-      if (selectedNodeID !== Infinity)
+      if (selectedNodeID)
         hideConceptTippy(
           window.cy.getElementById(selectedNodeID),
           userId,
           sessionId
         );
-      selectedNodeID = Infinity;
+      selectedNodeID = "";
       setURLQuery(router, {});
     }
   });
@@ -406,7 +473,7 @@ export function bindRouters(
       let concept = e.target;
       if (!isAnimated) {
         setIsAnimated(true);
-        if (selectedNodeID !== Infinity)
+        if (selectedNodeID)
           hideConceptTippy(
             window.cy.getElementById(selectedNodeID),
             userId,
@@ -415,11 +482,11 @@ export function bindRouters(
         fitCytoTo({ eles: concept.neighborhood(), padding: 50 }, () => {
           showConceptTippy(concept);
           let previousSelectedNodeID = selectedNodeID;
-          selectedNodeID = concept.data().id;
+          selectedNodeID = concept.id();
           unhighlightNodes(window.cy.getElementById(previousSelectedNodeID));
           highlightNodes(concept, true);
           setIsAnimated(false);
-          setURLQuery(router, { concept: concept.data().id });
+          setURLQuery(router, { concept: concept.id() });
         });
       }
     });
@@ -436,7 +503,7 @@ export function bindRouters(
       setIsAnimated(true);
       fitCytoTo({ eles: topic, padding: 25 }, () => {
         setIsAnimated(false);
-        setURLQuery(router, { topic: topic.data().id });
+        setURLQuery(router, { topic: topic.id() });
       });
     }
   });

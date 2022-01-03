@@ -1,4 +1,6 @@
-export function getSearchArray(elements) {
+import { ElementsDefinition } from "cytoscape";
+
+export function getSearchArray(elements: ElementsDefinition): Array<object> {
   let concepts = [];
   elements.nodes.forEach((node) => {
     if (node.data.nodetype === "concept") {
@@ -8,7 +10,9 @@ export function getSearchArray(elements) {
   return concepts;
 }
 
-export function getSearchTopicDataLookup(elements) {
+export function getSearchTopicDataLookup(
+  elements: ElementsDefinition
+): [object, object] {
   let topicNameToData = {};
   let conceptNameToData = {};
   elements.nodes.forEach((node) => {

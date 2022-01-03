@@ -14,7 +14,7 @@ export const goalNodesString = "goalNodes";
 export var signInTooltip = null;
 
 function nodeLearned(node) {
-  learnedNodes[node.data().id] = true;
+  learnedNodes[node.id()] = true;
   node.addClass("learned");
   setNodeBrightness(node);
 }
@@ -39,7 +39,7 @@ export function learnedSliderClick(
   mapUUID,
   sessionId
 ) {
-  let nodeId = node.data().id;
+  let nodeId = node.id();
   // If not learned...
   if (!(nodeId in learnedNodes)) {
     nodeLearned(node);
@@ -75,10 +75,10 @@ function setPath(node) {
   let path = node.predecessors().not(".goal").not(".path");
   path.addClass("path");
   path.nodes().forEach((node) => {
-    pathNodes[node.data().id] = true;
+    pathNodes[node.id()] = true;
   });
   setNodeBrightness(path.nodes());
-  setEdgeBrightness(path.edges());
+  setEdgeBrightness(path.edges(), 1);
 }
 
 function promptSignInTooltip(text) {
@@ -104,7 +104,7 @@ function setGoalIfSignedIn(node, userId) {
 }
 
 function setGoal(node) {
-  goalNodes[node.data().id] = true;
+  goalNodes[node.id()] = true;
   node.addClass("goal");
   node.removeClass("path");
   setNodeBrightness(node);
@@ -112,7 +112,7 @@ function setGoal(node) {
 }
 
 function unsetGoal(node) {
-  delete goalNodes[node.data().id];
+  delete goalNodes[node.id()];
   node.removeClass("goal");
   setNodeBrightness(node, 0);
 
@@ -120,18 +120,18 @@ function unsetGoal(node) {
   let path = node.predecessors().not(".goal");
   path.removeClass("path");
   path.nodes().forEach(function (node) {
-    delete pathNodes[node.data().id];
+    delete pathNodes[node.id()];
   });
   // Ensure all other goals have correct paths
   for (const goalId in goalNodes) {
-    setPath(window.cy.nodes(`[id = "${goalId}"]`));
+    setPath(window.cy.getElementById(goalId));
   }
   setNodeBrightness(path.nodes(), 0);
   setEdgeBrightness(path.edges(), 0);
 }
 
 export function setGoalClick(node, backendUrl, userId, mapUUID, sessionId) {
-  let nodeId = node.data().id;
+  let nodeId = node.id();
 
   // If not already set!
   if (!(nodeId in goalNodes)) {
@@ -146,7 +146,7 @@ export function setGoalClick(node, backendUrl, userId, mapUUID, sessionId) {
 
 export function initialiseGraphState(userId) {
   for (const nodeId in learnedNodes) {
-    let node = window.cy.nodes(`[id = '${nodeId}']`);
+    let node = window.cy.getElementById(nodeId);
     if (node.data() !== undefined) {
       if (learnedNodes[nodeId] === true) {
         nodeLearned(node);
@@ -159,7 +159,7 @@ export function initialiseGraphState(userId) {
     }
   }
   for (const nodeId in goalNodes) {
-    let node = window.cy.nodes("[id = '" + nodeId + "']");
+    let node = window.cy.getElementById(nodeId);
     if (node.data() !== undefined) {
       setGoalIfSignedIn(node, userId);
     } else {

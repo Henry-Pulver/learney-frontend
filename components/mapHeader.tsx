@@ -1,20 +1,25 @@
 import React from "react";
 import Head from "next/head";
 
-export default function MapHeader({ editMode, mapUrlExtension }) {
+export default function MapHeader({
+  editMap,
+  mapUrlExtension,
+}: {
+  editMap: boolean;
+  mapUrlExtension: string;
+}) {
   const isStatQuest = mapUrlExtension.endsWith("StatQuest");
   return (
     <Head>
       <meta charSet="UTF-8" />
       <title>
-        {editMode
+        {editMap
           ? "Learney Editor"
           : isStatQuest
           ? "Learney - StatQuest"
           : "Learney"}
       </title>
       <link rel="icon" href="/favicon_new-32x32.png" />
-      <meta xmlns="http://www.w3.org/1999/xhtml" />
       <meta
         name="title"
         property="og:title"
