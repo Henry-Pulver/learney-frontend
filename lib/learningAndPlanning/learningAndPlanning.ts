@@ -85,7 +85,7 @@ function promptSignInTooltip(text) {
   return Tippy("#profileImageButton", {
     content: text,
     arrow: true,
-    theme: "light",
+    theme: "dark",
     maxWidth: "200px",
     placement: "bottom",
     delay: [0, 3000],
