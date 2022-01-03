@@ -410,7 +410,9 @@ export function bindRouters(
   });
 
   // Updates the min zoom each time you let go of dragging an element
-  window.cy.on("dragfree", () => {if (editMap) updateMinZoom();});
+  window.cy.on("dragfree", () => {
+    if (editMap) updateMinZoom();
+  });
 
   // Mouse over fields
   window.cy.on("mouseover", 'node[nodetype = "field"]', (e) => {

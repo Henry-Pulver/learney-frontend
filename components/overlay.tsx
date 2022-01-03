@@ -1,6 +1,6 @@
-import React, {Fragment} from "react";
-import {Transition} from "@headlessui/react";
-import {XCloseButton} from "./utils";
+import React, { Fragment } from "react";
+import { Transition } from "@headlessui/react";
+import { XCloseButton } from "./utils";
 
 export default function Overlay(props: {
   open: boolean;
@@ -21,9 +21,7 @@ export default function Overlay(props: {
         >
           <div className="relative flex flex-col w-full sm:py-6 bg-white shadow-xl overflow-y-hidden">
             <XCloseButton onClick={props.hide} visibleOnMobile={true} />
-            <div className="mt-4 sm:mt-6 flex-1 sm:px-2">
-              {props.children}
-            </div>
+            <div className="mt-4 sm:mt-6 flex-1 sm:px-2">{props.children}</div>
           </div>
         </Transition.Child>
       </div>

@@ -7,7 +7,7 @@ import {
 } from "../lib/utils";
 import { CheckCircleIcon, FlagIcon } from "@heroicons/react/outline";
 import { IconToggleButtonWithCheckbox, MakeSuggestionButton } from "./buttons";
-import {appendToArray, classNames} from "../lib/reactUtils";
+import { appendToArray, classNames } from "../lib/reactUtils";
 import { LoadingSpinner } from "./animations";
 import { NodeSingular } from "cytoscape";
 import { cacheHeaders } from "../lib/headers";
@@ -67,50 +67,52 @@ export function ConceptInfo({
         <div className="text-left text-black mt-0 mx-auto mb-4 px-4 max-h-1/5">
           {node && node.data().description}
         </div>
-        {node &&
-            <div
-                className="absolute bottom-0 left-0 sm:relative w-full left-0 bottom-0 z-20 bg-white justify-around border-t border-solid border-gray-300 px-2 py-4 grid items-center grid-flow-col">
-              <IconToggleButtonWithCheckbox
-                  checked={!!learnedNodes[node.id()]}
-                  onCheck={() => onLearnedClick(node, userId, sessionId)}
-                  Icon={CheckCircleIcon}
-                  text={"I Know This!"}
-                  colour={"green"}
-              />
-              <IconToggleButtonWithCheckbox
-                  checked={!!goalNodes[node.id()]}
-                  onCheck={() => onSetGoalClick(node, userId, sessionId)}
-                  Icon={FlagIcon}
-                  text={"Set Goal"}
-                  colour={"blue"}
-              />
-            </div>
-        }
-        <ol className="shrink grow list-none pl-0 m-0 overflow-auto mb-20 md:mb-0 sm:px-2 w-full">
-          {node &&
-            appendToArray(getAndSortLinkPreviewURLs(node, allVotes).map((url) => (
-              <ConceptLinkPreview
-                key={url}
-                node={node}
-                url={url}
-                userId={userId}
-                backendUrl={backendUrl}
-                mapUUID={mapUUID}
-                sessionId={sessionId}
-                userVotes={userVotes}
-                allVotes={allVotes}
-                onVote={onVote}
-              />
-            )), allowSuggestions && (
-          <div className="pb-2 sm:pb-20">
-            <MakeSuggestionButton
-              buttonPressFunction={buttonPressFunction}
-              userEmail={userEmail}
-              buttonName={"Suggest Content"}
-              text={"Suggest Content"}
+        {node && (
+          <div className="absolute bottom-0 left-0 sm:relative w-full left-0 bottom-0 z-20 bg-white justify-around border-t border-solid border-gray-300 px-2 py-4 grid items-center grid-flow-col">
+            <IconToggleButtonWithCheckbox
+              checked={!!learnedNodes[node.id()]}
+              onCheck={() => onLearnedClick(node, userId, sessionId)}
+              Icon={CheckCircleIcon}
+              text={"I Know This!"}
+              colour={"green"}
+            />
+            <IconToggleButtonWithCheckbox
+              checked={!!goalNodes[node.id()]}
+              onCheck={() => onSetGoalClick(node, userId, sessionId)}
+              Icon={FlagIcon}
+              text={"Set Goal"}
+              colour={"blue"}
             />
           </div>
-        ))}
+        )}
+        <ol className="shrink grow list-none pl-0 m-0 overflow-auto mb-20 md:mb-0 sm:px-2 w-full">
+          {node &&
+            appendToArray(
+              getAndSortLinkPreviewURLs(node, allVotes).map((url) => (
+                <ConceptLinkPreview
+                  key={url}
+                  node={node}
+                  url={url}
+                  userId={userId}
+                  backendUrl={backendUrl}
+                  mapUUID={mapUUID}
+                  sessionId={sessionId}
+                  userVotes={userVotes}
+                  allVotes={allVotes}
+                  onVote={onVote}
+                />
+              )),
+              allowSuggestions && (
+                <div className="pb-2 sm:pb-20">
+                  <MakeSuggestionButton
+                    buttonPressFunction={buttonPressFunction}
+                    userEmail={userEmail}
+                    buttonName={"Suggest Content"}
+                    text={"Suggest Content"}
+                  />
+                </div>
+              )
+            )}
         </ol>
       </div>
     </Overlay>
@@ -186,10 +188,22 @@ function ConceptLinkPreview({
           <h4 className="text-lg sm:text-xl sm:py-1 overflow-hidden whitespace-nowrap overflow-ellipsis">
             {data ? (data as LinkPreviewData).title : "Loading..."}
           </h4>
-          <p className={classNames(data && (data as LinkPreviewData).description ? "h-15" : "h-10", "-mt-0.5 mb-0.5 text-sm overflow-hidden overflow-ellipsis text-gray-800 sm:max-h-40")}>
+          <p
+            className={classNames(
+              data && (data as LinkPreviewData).description ? "h-15" : "h-10",
+              "-mt-0.5 mb-0.5 text-sm overflow-hidden overflow-ellipsis text-gray-800 sm:max-h-40"
+            )}
+          >
             {data ? (data as LinkPreviewData).description : ""}
           </p>
-          <p className={classNames(data && (data as LinkPreviewData).description && "hidden sm:block", "text-xxs sm:text-sm text-gray-500 whitespace-nowrap overflow-ellipsis overflow-hidden max-w-xs my-0")}>
+          <p
+            className={classNames(
+              data &&
+                (data as LinkPreviewData).description &&
+                "hidden sm:block",
+              "text-xxs sm:text-sm text-gray-500 whitespace-nowrap overflow-ellipsis overflow-hidden max-w-xs my-0"
+            )}
+          >
             {url}
           </p>
         </div>

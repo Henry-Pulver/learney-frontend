@@ -88,7 +88,8 @@ export default function Map({
   const [nodeSelected, setNodeSelected] = React.useState<
     NodeSingular | undefined
   >(undefined);
-  const showConceptPanel: (NodeSingular) => void = (node) => setNodeSelected(node);
+  const showConceptPanel: (NodeSingular) => void = (node) =>
+    setNodeSelected(node);
   const hideConceptPanel: () => void = () => setNodeSelected(undefined);
 
   const [hoverNode, setHoverNode] = React.useState<boolean>(false);
@@ -150,43 +151,50 @@ export default function Map({
 
   return (
     <div className="flex flex-column sm:flex-row w-full h-excl-toolbar">
-      <div className={classNames(nodeSelected !== undefined && "w-0 sm:w-[calc(100vw-30rem)] lg:w-[calc(100vw-38rem)]", "relative h-excl-toolbar w-full")}>
+      <div
+        className={classNames(
+          nodeSelected !== undefined &&
+            "w-0 sm:w-[calc(100vw-30rem)] lg:w-[calc(100vw-38rem)]",
+          "relative h-excl-toolbar w-full"
+        )}
+      >
         <div
-            id="cy"
-            className={classNames(
-                editMap && editType === "cursor" && "cursor-default",
-                editMap && editType === "addNode" && "cursor-copy",
-                editMap && editType === "addEdges" && "cursor-crosshair",
-                editMap && editType === "delete" && "cursor-pointer",
-                !editMap && hoverNode && "cursor-pointer",
-                "z-0 w-full bg-gray-900 h-excl-toolbar",
-                nodeSelected !== undefined && "w-0 sm:w-[calc(100vw-30rem)] lg:w-[calc(100vw-38rem)]"
-            )}
-            ref={cytoscapeRef}
+          id="cy"
+          className={classNames(
+            editMap && editType === "cursor" && "cursor-default",
+            editMap && editType === "addNode" && "cursor-copy",
+            editMap && editType === "addEdges" && "cursor-crosshair",
+            editMap && editType === "delete" && "cursor-pointer",
+            !editMap && hoverNode && "cursor-pointer",
+            "z-0 w-full bg-gray-900 h-excl-toolbar",
+            nodeSelected !== undefined &&
+              "w-0 sm:w-[calc(100vw-30rem)] lg:w-[calc(100vw-38rem)]"
+          )}
+          ref={cytoscapeRef}
         />
         <div
-            className={classNames(
-                !editMap && data && nodeSelected && "hidden sm:flex",
-                "flex flex-col md:flex-row items-end gap-4 absolute bottom-0 right-0 m-4"
-            )}
+          className={classNames(
+            !editMap && data && nodeSelected && "hidden sm:flex",
+            "flex flex-col md:flex-row items-end gap-4 absolute bottom-0 right-0 m-4"
+          )}
         >
           {!editMap && (
-              <GetNextConceptButton
-                  nextConcept={nextConcept}
-                  buttonPressFunction={buttonPressFunction}
-              />
+            <GetNextConceptButton
+              nextConcept={nextConcept}
+              buttonPressFunction={buttonPressFunction}
+            />
           )}
           <ResetPanButton buttonPressFunction={buttonPressFunction} />
           {!editMap && (
-              <ResetProgressIconButton
-                  buttonPressFunction={buttonPressFunction}
-                  backendUrl={backendUrl}
-                  userId={userId}
-                  mapUUID={mapUUID}
-                  sessionId={sessionId}
-                  setGoalsState={setGoalsState}
-                  setLearnedState={setLearnedState}
-              />
+            <ResetProgressIconButton
+              buttonPressFunction={buttonPressFunction}
+              backendUrl={backendUrl}
+              userId={userId}
+              mapUUID={mapUUID}
+              sessionId={sessionId}
+              setGoalsState={setGoalsState}
+              setLearnedState={setLearnedState}
+            />
           )}
         </div>
       </div>
