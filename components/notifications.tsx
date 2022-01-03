@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import { Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import { classNames } from "../lib/reactUtils";
-import {XCloseButton} from "./utils";
+import { XCloseButton } from "./utils";
 
 export function Notification({
   show,
@@ -56,12 +56,14 @@ export function Notification({
                       <p className="mt-1 text-sm text-gray-500">{message}</p>
                     )}
                   </div>
-                  <XCloseButton onClick={() =>
-                        setShow((prevState) => ({
-                          ...prevState,
-                          show: false,
-                        }))
-                      } />
+                  <XCloseButton
+                    onClick={() =>
+                      setShow((prevState) => ({
+                        ...prevState,
+                        show: false,
+                      }))
+                    }
+                  />
                 </div>
               </div>
             </div>

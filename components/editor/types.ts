@@ -1,5 +1,3 @@
-import React from "react";
-
 export type EditType = "cursor" | "addNode" | "addEdges" | "delete";
 export type NodeData = {
   id: string;

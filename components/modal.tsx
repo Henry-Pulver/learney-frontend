@@ -2,7 +2,7 @@ import React, { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/outline";
 import { classNames } from "../lib/reactUtils";
-import {XCloseButton} from "./utils";
+import { XCloseButton } from "./utils";
 
 export default function Modal(props: {
   open: boolean;
