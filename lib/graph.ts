@@ -3,7 +3,13 @@ import {
   pathNodes,
   learnedNodes,
 } from "./learningAndPlanning/variables";
-import cytoscape, { EdgeSingular } from "cytoscape";
+import cytoscape, {
+  EdgeCollection,
+  EdgeSingular,
+  ElementsDefinition,
+  NodeCollection,
+  NodeSingular,
+} from "cytoscape";
 import popper from "cytoscape-popper";
 import dagre from "cytoscape-dagre";
 import edgehandles from "cytoscape-edgehandles";
@@ -15,6 +21,7 @@ import {
   URLQuerySet,
 } from "./utils";
 import { ParsedUrlQuery } from "querystring";
+import { NextRouter } from "next/router";
 
 declare global {
   interface Window {
@@ -58,13 +65,13 @@ const nodeBaseSize = 48;
 let selectedNodeID: string = "";
 
 export function initCy(
-  mapJson,
-  styleText,
-  backendUrl,
-  userId,
-  mapUUID,
-  editMap
-) {
+  mapJson: ElementsDefinition,
+  styleText: any,
+  backendUrl: string,
+  userId: string,
+  mapUUID: string,
+  editMap: boolean
+): void {
   /** Initialise Cytoscape graph.*/
   if (editMap) {
     cytoscape.use(edgehandles);
@@ -104,7 +111,7 @@ export function initCy(
   unhighlightNodes(window.cy.nodes('[nodetype = "concept"]'));
 }
 
-export function fitCytoTo(fitParams, onComplete = function () {}) {
+export function fitCytoTo(fitParams, onComplete: () => void = () => {}): void {
   if (isMobile()) {
     window.cy.fit(fitParams.eles, fitParams.padding);
     onComplete();
@@ -166,7 +173,10 @@ export function handleIntroAnimation(
   }
 }
 
-function handleAnimation(animationParams, onComplete = () => {}) {
+function handleAnimation(
+  animationParams,
+  onComplete: () => void = () => {}
+): void {
   if (isMobile()) {
     if (animationParams.pan !== undefined) {
       window.cy.pan(animationParams.pan);
@@ -205,8 +215,8 @@ export function updateMinZoom(editMap = true) {
   );
 }
 
-function resizeNodes(nodes, newSize) {
-  nodes.forEach(function (node) {
+function resizeNodes(nodes: NodeCollection, newSize: "big" | "small"): void {
+  nodes.forEach((node) => {
     if (node.id() !== selectedNodeID) {
       let nodeSize;
       if (newSize === "big") {
@@ -222,12 +232,18 @@ function resizeNodes(nodes, newSize) {
   });
 }
 
-function setGraphBrightness(nodes, brightnessLevel) {
+function setGraphBrightness(
+  nodes: NodeCollection,
+  brightnessLevel: Number
+): void {
   setNodeBrightness(nodes, brightnessLevel);
   setEdgeBrightness(nodes.connectedEdges(), brightnessLevel);
 }
 
-export function setNodeBrightness(nodes, brightnessLevel = 0) {
+export function setNodeBrightness(
+  nodes: NodeCollection,
+  brightnessLevel: Number = 0
+): void {
   nodes.forEach(function (node) {
     let nId = node.id();
     const parentColour = node.parent().style("background-color");
@@ -261,10 +277,10 @@ export function setNodeBrightness(nodes, brightnessLevel = 0) {
 }
 
 export function setEdgeBrightness(
-  edges: Array<EdgeSingular>,
+  edges: EdgeCollection,
   brightnessLevel: Number = 0
-) {
-  edges.forEach(function (edge) {
+): void {
+  edges.forEach((edge) => {
     let sId = edge.source().id();
     let tId = edge.target().id();
 
@@ -332,8 +348,8 @@ export function setEdgeBrightness(
   });
 }
 
-export function resetTopicColour(topics) {
-  topics.forEach((topic) =>
+export function resetTopicColour(topics: NodeCollection): void {
+  topics.forEach((topic) => {
     topic.style(
       "background-color",
       getOpacityEquivalentColour(
@@ -341,58 +357,56 @@ export function resetTopicColour(topics) {
         cyColours.background,
         fieldOpacity
       )
-    )
-  );
+    );
+  });
 }
 
-function checkEdgeInvisible(edge) {
-  if (edge.source().data().parent !== edge.target().data().parent) {
-    let sx = edge.source().position().x;
-    let sy = edge.source().position().y;
-    let tx = edge.target().position().x;
-    let ty = edge.target().position().y;
+function checkEdgeInvisible(edge: EdgeSingular): boolean {
+  const source = edge.source(),
+    target = edge.target();
+  if (source.data().parent !== target.data().parent) {
+    let sx = source.position("x");
+    let sy = source.position("y");
+    let tx = target.position("x");
+    let ty = target.position("y");
+    // Euclidean distance > 1500 (cytoscape distance!)
     return ((sx - tx) ** 2 + (sy - ty) ** 2) ** (1 / 2) > 1500;
   } else {
     return false;
   }
 }
 
-function highlightNodes(nodes, resize) {
+function highlightNodes(nodes, resize: boolean): void {
   setNodeBrightness(nodes, 3);
   if (resize) {
     resizeNodes(nodes, "big");
   }
 }
 
-export function unhighlightNodes(nodes) {
+export function unhighlightNodes(nodes: NodeCollection): void {
   setGraphBrightness(nodes, 0);
   resizeNodes(nodes, "small");
 }
 
 export function bindRouters(
-  backendUrl,
-  userId,
-  mapUUID,
-  sessionId,
-  showConceptTippy,
-  hideConceptTippy,
-  onSetGoalClick,
-  editMap,
-  router,
-  setHoverNode
-) {
+  backendUrl: string,
+  userId: string,
+  mapUUID: string,
+  sessionId: string,
+  showConceptInfo: (NodeSingular) => void,
+  hideConceptInfo: () => void,
+  onSetGoalClick: (
+    node: NodeSingular,
+    userId: string,
+    sessionId: string
+  ) => void,
+  editMap: boolean,
+  router: NextRouter,
+  setHoverNode: (NodeSingular) => void
+): void {
   // Removes tooltip when clicking elsewhere/panning/zooming
-  window.cy.on("tap pan zoom", function (e) {
-    if (e.target === window.cy) {
-      if (selectedNodeID)
-        hideConceptTippy(
-          window.cy.getElementById(selectedNodeID),
-          userId,
-          sessionId
-        );
-      selectedNodeID = "";
-      setURLQuery(router, {});
-    }
+  window.cy.on("tap pan zoom", (e) => {
+    if (e.target === window.cy) setURLQuery(router, {});
   });
 
   // Updates the min zoom each time you let go of dragging an element
@@ -401,7 +415,7 @@ export function bindRouters(
   });
 
   // Mouse over fields
-  window.cy.on("mouseover", 'node[nodetype = "field"]', function (e) {
+  window.cy.on("mouseover", 'node[nodetype = "field"]', (e) => {
     let field = e.target;
 
     // Set field opacity to 1
@@ -410,7 +424,7 @@ export function bindRouters(
     // Increase opacity of all edges and nodes
     setGraphBrightness(field.children(), 1);
   });
-  window.cy.on("mouseout", 'node[nodetype = "field"]', function (e) {
+  window.cy.on("mouseout", 'node[nodetype = "field"]', (e) => {
     let topic = e.target;
     resetTopicColour(topic);
 
@@ -418,7 +432,7 @@ export function bindRouters(
   });
 
   // Mouse over concept nodes
-  window.cy.on("mouseover", 'node[nodetype = "concept"]', function (e) {
+  window.cy.on("mouseover", 'node[nodetype = "concept"]', (e) => {
     let concept = e.target;
     setHoverNode(true);
 
@@ -433,7 +447,7 @@ export function bindRouters(
     // 3. Make highlighted node opacity=1 and bigger
     highlightNodes(concept, true);
   });
-  window.cy.on("mouseout", 'node[nodetype = "concept"]', function (e) {
+  window.cy.on("mouseout", 'node[nodetype = "concept"]', (e) => {
     let concept = e.target;
     setHoverNode(false);
     resetTopicColour(concept.parent());
@@ -442,7 +456,7 @@ export function bindRouters(
   });
 
   // Mouse over edges
-  window.cy.on("mouseover", "edge", function (e) {
+  window.cy.on("mouseover", "edge", (e) => {
     let edge = e.target;
 
     // Everything for fields, plus:
@@ -458,7 +472,7 @@ export function bindRouters(
     // 2. Make highlighted edge opacity = 1
     setEdgeBrightness(edge, 3);
   });
-  window.cy.on("mouseout", "edge", function (e) {
+  window.cy.on("mouseout", "edge", (e) => {
     let edge = e.target;
     let nodes = edge.connectedNodes();
 
@@ -469,18 +483,13 @@ export function bindRouters(
 
   if (!editMap) {
     // Show tooltip when clicked
-    window.cy.on("tap", 'node[nodetype = "concept"]', function (e) {
+    window.cy.on("tap", 'node[nodetype = "concept"]', (e) => {
       let concept = e.target;
       if (!isAnimated) {
         setIsAnimated(true);
-        if (selectedNodeID)
-          hideConceptTippy(
-            window.cy.getElementById(selectedNodeID),
-            userId,
-            sessionId
-          );
+        if (selectedNodeID) hideConceptInfo();
         fitCytoTo({ eles: concept.neighborhood(), padding: 50 }, () => {
-          showConceptTippy(concept);
+          showConceptInfo(concept);
           let previousSelectedNodeID = selectedNodeID;
           selectedNodeID = concept.id();
           unhighlightNodes(window.cy.getElementById(previousSelectedNodeID));
@@ -492,13 +501,13 @@ export function bindRouters(
     });
 
     // Right click concepts sets goal
-    window.cy.on("cxttap", 'node[nodetype = "concept"]', function (e) {
-      onSetGoalClick(e.target, userId, sessionId);
+    window.cy.on("cxttap", 'node[nodetype = "concept"]', (e) => {
+      onSetGoalClick(e.target as NodeSingular, userId, sessionId);
     });
   }
 
-  window.cy.on("tap", 'node[nodetype = "field"]', function (e) {
-    let topic = e.target;
+  window.cy.on("tap", 'node[nodetype = "field"]', (e) => {
+    let topic = e.target as NodeSingular;
     if (!isAnimated) {
       setIsAnimated(true);
       fitCytoTo({ eles: topic, padding: 25 }, () => {
@@ -508,8 +517,8 @@ export function bindRouters(
     }
   });
 
-  window.cy.on("tap", "edge", function (e) {
-    let edge = e.target;
+  window.cy.on("tap", "edge", (e) => {
+    let edge = e.target as EdgeSingular;
     if (!isAnimated) {
       setIsAnimated(true);
       fitCytoTo({ eles: edge.connectedNodes(), padding: 50 }, () =>

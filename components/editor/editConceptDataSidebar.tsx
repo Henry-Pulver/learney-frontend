@@ -1,8 +1,8 @@
 import React from "react";
 import { classNames } from "../../lib/reactUtils";
-import { XIcon } from "@heroicons/react/outline";
 import { NodeData } from "./types";
 import { ButtonPressFunction } from "../../lib/types";
+import { XCloseButton } from "../utils";
 
 export function EditConceptDataSidebar({
   editNodeData,
@@ -24,19 +24,12 @@ export function EditConceptDataSidebar({
   return (
     <div className="absolute right-1 top-24 py-6 bg-white rounded-lg max-h-screen-80 w-120 overflow-y-auto">
       {/* Close X in top right */}
-      <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
-        <button
-          type="button"
-          className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          onClick={buttonPressFunction(
-            () => setShowEditData(null),
-            `Edit Concept Top Right Close X (Concept: ${editNodeData.name})`
-          )}
-        >
-          <span className="sr-only">Close</span>
-          <XIcon className="h-6 w-6" aria-hidden="true" />
-        </button>
-      </div>
+      <XCloseButton
+        onClick={buttonPressFunction(
+          () => setShowEditData(null),
+          `Edit Concept Top Right Close X (Concept: ${editNodeData.name})`
+        )}
+      />
       <EditDataLabel>Concept Name</EditDataLabel>
       <EditDataInput
         type="text"
@@ -130,20 +123,13 @@ export function EditTopicDataSidebar({
 }) {
   return (
     <div className="absolute right-1 top-24 py-6 bg-white rounded-lg max-h-screen-80 w-120">
-      {/* Close X in top right */}
-      <div className="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
-        <button
-          type="button"
-          className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          onClick={buttonPressFunction(
-            () => setShowEditData(null),
-            `Edit Concept Top Right Close X (Concept: ${editParentNodeData.name})`
-          )}
-        >
-          <span className="sr-only">Close</span>
-          <XIcon className="h-6 w-6" aria-hidden="true" />
-        </button>
-      </div>
+      {/* X IN THE TOP RIGHT */}
+      <XCloseButton
+        onClick={buttonPressFunction(
+          () => setShowEditData(null),
+          `Edit Concept Top Right Close X (Concept: ${editParentNodeData.name})`
+        )}
+      />
       <EditDataLabel>Topic Name</EditDataLabel>
       <EditDataInput
         classes="text-xl"

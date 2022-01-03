@@ -27,13 +27,11 @@ import {
 } from "../lib/learningAndPlanning/learningAndPlanning";
 import { EditNavbar, LearnNavbar } from "./navbar";
 import Editor from "./editor/editor";
-import { getNextNodeToLearn } from "../lib/questions";
 import { Notification } from "./notifications";
 import ExploreLearnIntroPage from "./exploreLearnIntroPage";
 import { handleIntroAnimation } from "../lib/graph";
 import { useRouter } from "next/router";
-import { NotificationData } from "./editor/types";
-import { UserState } from "../lib/types";
+import { EditType, NotificationData } from "./editor/types";
 import { NodeSingular } from "cytoscape";
 
 export default function MapPage({
@@ -98,7 +96,7 @@ export default function MapPage({
   };
 
   const [learned, setNewLearnedState] = React.useState({});
-  const setLearnedState = function (learnedState) {
+  const setLearnedState = (learnedState) => {
     for (const nodeId of Object.keys(learned)) {
       if (!(nodeId in learnedState)) {
         setNewLearnedState((prevLearned) => ({
@@ -125,7 +123,7 @@ export default function MapPage({
 
   const [pageLoaded, setPageLoaded] = React.useState(false);
   useEffect(() => {
-    (async function () {
+    (async () => {
       if (!isLoading) {
         let responseJson;
         if (user === undefined) {
@@ -138,7 +136,7 @@ export default function MapPage({
           responseJson = await logPageView(user, backendUrl, mapUrlExtension);
         setSessionId(responseJson.session_id);
 
-        let newUserId;
+        let newUserId: string;
         if (user !== undefined) {
           newUserId = user.sub;
           setUserEmail(user.email);
@@ -157,12 +155,7 @@ export default function MapPage({
     })();
   }, [isLoading]);
 
-  const [editType, setEditType] = React.useState(null);
-
-  const [nextConcept, setNextConcept] = useState(null);
-  useEffect(() => {
-    if (!editMap && pageLoaded) setNextConcept(getNextNodeToLearn());
-  }, [pageLoaded, learned, goals]);
+  const [editType, setEditType] = React.useState<EditType | null>(null);
 
   useEffect(() => {
     const query = router.query;
@@ -251,31 +244,10 @@ export default function MapPage({
         goals={goals}
         onSetGoalClick={onSetGoalClick}
         setGoalsState={setGoalsState}
+        pageLoaded={pageLoaded}
         setPageLoaded={setPageLoaded}
         editType={editType}
       />
-      <div
-        className={`flex flex-col md:flex-row items-end gap-4 absolute bottom-0 right-0 mx-8 my-4 disableTouchActions`}
-      >
-        {!editMap && (
-          <GetNextConceptButton
-            nextConcept={nextConcept}
-            buttonPressFunction={buttonPressFunction}
-          />
-        )}
-        <ResetPanButton buttonPressFunction={buttonPressFunction} />
-        {!editMap && (
-          <ResetProgressIconButton
-            buttonPressFunction={buttonPressFunction}
-            backendUrl={backendUrl}
-            userId={userId}
-            mapUUID={mapUUID}
-            sessionId={sessionId}
-            setGoalsState={setGoalsState}
-            setLearnedState={setLearnedState}
-          />
-        )}
-      </div>
       {editMap && (
         <Editor
           buttonPressFunction={buttonPressFunction}
