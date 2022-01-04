@@ -15,7 +15,7 @@ import { AreYouSureModal } from "./modal";
 import { classNames } from "../lib/reactUtils";
 import isEqual from "lodash.isequal";
 import { ButtonPressFunction } from "../lib/types";
-import { NodeSingular, SingularElementArgument } from "cytoscape";
+import { SingularElementArgument } from "cytoscape";
 import { TargetFinderIcon } from "./svgs/icons";
 
 export function IconToggleButtonWithCheckbox({
