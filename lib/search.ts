@@ -1,7 +1,7 @@
 import { ElementsDefinition } from "cytoscape";
 
 export function getSearchArray(elements: ElementsDefinition): Array<object> {
-  let concepts = [];
+  const concepts = [];
   elements.nodes.forEach((node) => {
     if (node.data.nodetype === "concept") {
       concepts.push({ ...node.data });
@@ -13,8 +13,8 @@ export function getSearchArray(elements: ElementsDefinition): Array<object> {
 export function getSearchTopicDataLookup(
   elements: ElementsDefinition
 ): [object, object] {
-  let topicNameToData = {};
-  let conceptNameToData = {};
+  const topicNameToData = {};
+  const conceptNameToData = {};
   elements.nodes.forEach((node) => {
     if (node.data.nodetype === "field") {
       topicNameToData[node.data.id] = { ...node.data };

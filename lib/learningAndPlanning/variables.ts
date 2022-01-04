@@ -1,10 +1,3 @@
-import { saveToDB } from "../utils";
-import {
-  goalNodesString,
-  learnedNodesString,
-  learnedSliderClick,
-} from "./learningAndPlanning";
-
 export var learnedNodes;
 export var goalNodes;
 export var pathNodes = {};

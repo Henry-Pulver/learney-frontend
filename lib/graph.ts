@@ -35,8 +35,8 @@ export function isMobile(): boolean {
 
 let isAnimated = false;
 
-export function setIsAnimated(value: boolean): void {
-  isAnimated = value;
+export function setIsAnimated(animated: boolean): void {
+  isAnimated = animated;
 }
 
 const fieldOpacity = 0.7;
@@ -62,7 +62,7 @@ const cyColours = {
 };
 const nodeBaseSize = 48;
 
-let selectedNodeID: string = "";
+let selectedNodeID = "";
 
 export function initCy(
   mapJson: ElementsDefinition,
@@ -95,7 +95,7 @@ export function initCy(
 
   if (isMobile()) {
     // Performance enhancements
-    let concepts = window.cy.nodes('[nodetype = "concept"]');
+    const concepts = window.cy.nodes('[nodetype = "concept"]');
     concepts.style("min-zoomed-font-size", "2.5em");
   }
   // set initial viewport state
@@ -226,7 +226,7 @@ function resizeNodes(nodes: NodeCollection, newSize: "big" | "small"): void {
       }
       node.style("width", nodeSize.toString() + "px");
       node.style("height", nodeSize.toString() + "px");
-      let fontSize = 1.25 * node.data().relative_importance * 24;
+      const fontSize = 1.25 * node.data().relative_importance * 24;
       node.style("font-size", fontSize.toString() + "px");
     }
   });
@@ -234,7 +234,7 @@ function resizeNodes(nodes: NodeCollection, newSize: "big" | "small"): void {
 
 function setGraphBrightness(
   nodes: NodeCollection,
-  brightnessLevel: Number
+  brightnessLevel: number
 ): void {
   setNodeBrightness(nodes, brightnessLevel);
   setEdgeBrightness(nodes.connectedEdges(), brightnessLevel);
@@ -242,10 +242,10 @@ function setGraphBrightness(
 
 export function setNodeBrightness(
   nodes: NodeCollection,
-  brightnessLevel: Number = 0
+  brightnessLevel = 0
 ): void {
   nodes.forEach(function (node) {
-    let nId = node.id();
+    const nId = node.id();
     const parentColour = node.parent().style("background-color");
     node.removeStyle("background-color");
     if (nId in learnedNodes && learnedNodes[nId]) {
@@ -278,11 +278,11 @@ export function setNodeBrightness(
 
 export function setEdgeBrightness(
   edges: EdgeCollection,
-  brightnessLevel: Number = 0
+  brightnessLevel = 0
 ): void {
   edges.forEach((edge) => {
-    let sId = edge.source().id();
-    let tId = edge.target().id();
+    const sId = edge.source().id();
+    const tId = edge.target().id();
 
     edge.style("opacity", 1);
     if (
@@ -303,7 +303,7 @@ export function setEdgeBrightness(
       switch (brightnessLevel) {
         case 0: {
           let parentColour;
-          let sourceParent = edge.source().parent()[0],
+          const sourceParent = edge.source().parent()[0],
             targetParent = edge.target().parent()[0];
           if (
             edge.target().data().name !== undefined &&
@@ -365,10 +365,10 @@ function checkEdgeInvisible(edge: EdgeSingular): boolean {
   const source = edge.source(),
     target = edge.target();
   if (source.data().parent !== target.data().parent) {
-    let sx = source.position("x");
-    let sy = source.position("y");
-    let tx = target.position("x");
-    let ty = target.position("y");
+    const sx = source.position("x");
+    const sy = source.position("y");
+    const tx = target.position("x");
+    const ty = target.position("y");
     // Euclidean distance > 1500 (cytoscape distance!)
     return ((sx - tx) ** 2 + (sy - ty) ** 2) ** (1 / 2) > 1500;
   } else {
@@ -393,7 +393,7 @@ export function bindRouters(
   userId: string,
   mapUUID: string,
   sessionId: string,
-  showConceptInfo: (NodeSingular) => void,
+  showConceptInfo: (nodeSelected: NodeSingular) => void,
   hideConceptInfo: () => void,
   onSetGoalClick: (
     node: NodeSingular,
@@ -402,8 +402,9 @@ export function bindRouters(
   ) => void,
   editMap: boolean,
   router: NextRouter,
-  setHoverNode: (NodeSingular) => void
+  setHoverNode: (hoverNode: boolean) => void
 ): void {
+  /** Binds events to user interactions with the map **/
   // Removes tooltip when clicking elsewhere/panning/zooming
   window.cy.on("tap pan zoom", (e) => {
     if (e.target === window.cy) setURLQuery(router, {});
@@ -416,7 +417,7 @@ export function bindRouters(
 
   // Mouse over fields
   window.cy.on("mouseover", 'node[nodetype = "field"]', (e) => {
-    let field = e.target;
+    const field = e.target;
 
     // Set field opacity to 1
     field.style("background-color", field.data().colour);
@@ -425,7 +426,7 @@ export function bindRouters(
     setGraphBrightness(field.children(), 1);
   });
   window.cy.on("mouseout", 'node[nodetype = "field"]', (e) => {
-    let topic = e.target;
+    const topic = e.target;
     resetTopicColour(topic);
 
     setGraphBrightness(topic.children(), 0);
@@ -433,7 +434,7 @@ export function bindRouters(
 
   // Mouse over concept nodes
   window.cy.on("mouseover", 'node[nodetype = "concept"]', (e) => {
-    let concept = e.target;
+    const concept = e.target;
     setHoverNode(true);
 
     // 1. Everything for fields
@@ -448,7 +449,7 @@ export function bindRouters(
     highlightNodes(concept, true);
   });
   window.cy.on("mouseout", 'node[nodetype = "concept"]', (e) => {
-    let concept = e.target;
+    const concept = e.target;
     setHoverNode(false);
     resetTopicColour(concept.parent());
     setGraphBrightness(concept.parent().children(), 1);
@@ -457,7 +458,7 @@ export function bindRouters(
 
   // Mouse over edges
   window.cy.on("mouseover", "edge", (e) => {
-    let edge = e.target;
+    const edge = e.target;
 
     // Everything for fields, plus:
     edge
@@ -473,8 +474,8 @@ export function bindRouters(
     setEdgeBrightness(edge, 3);
   });
   window.cy.on("mouseout", "edge", (e) => {
-    let edge = e.target;
-    let nodes = edge.connectedNodes();
+    const edge = e.target;
+    const nodes = edge.connectedNodes();
 
     resetTopicColour(edge.connectedNodes().parents());
     setGraphBrightness(edge.connectedNodes().parents().children(), 0);
@@ -484,12 +485,12 @@ export function bindRouters(
   if (!editMap) {
     // Show concept info overlay when clicked
     window.cy.on("tap", 'node[nodetype = "concept"]', (e) => {
-      let concept = e.target;
+      const concept = e.target as NodeSingular;
       if (!isAnimated) {
         setIsAnimated(true);
         showConceptInfo(concept);
         fitCytoTo({ eles: concept.neighborhood(), padding: 50 }, () => {
-          let previousSelectedNodeID = selectedNodeID;
+          const previousSelectedNodeID = selectedNodeID;
           selectedNodeID = concept.id();
           unhighlightNodes(window.cy.getElementById(previousSelectedNodeID));
           highlightNodes(concept, true);
@@ -506,7 +507,7 @@ export function bindRouters(
   }
 
   window.cy.on("tap", 'node[nodetype = "field"]', (e) => {
-    let topic = e.target as NodeSingular;
+    const topic = e.target as NodeSingular;
     if (!isAnimated) {
       setIsAnimated(true);
       fitCytoTo({ eles: topic, padding: 25 }, () => {
@@ -517,7 +518,7 @@ export function bindRouters(
   });
 
   window.cy.on("tap", "edge", (e) => {
-    let edge = e.target as EdgeSingular;
+    const edge = e.target as EdgeSingular;
     if (!isAnimated) {
       setIsAnimated(true);
       fitCytoTo({ eles: edge.connectedNodes(), padding: 50 }, () =>

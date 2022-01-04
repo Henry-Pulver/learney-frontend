@@ -15,6 +15,7 @@ import Modal from "./modal";
 import { ConceptSearchBox } from "./ConceptSearchBox";
 import { ButtonPressFunction, UserState } from "../lib/types";
 import { ElementsDefinition } from "cytoscape";
+import { NotificationData } from "./editor/types";
 
 export function EditNavbar({
   user,
@@ -33,7 +34,7 @@ export function EditNavbar({
   mapUUID: string;
   mapJson: ElementsDefinition;
   pageLoaded: boolean;
-  setNotificationInfo: (NotificationData) => void;
+  setNotificationInfo: (notificationInfo: NotificationData) => void;
 }) {
   return (
     <Navbar
@@ -218,7 +219,7 @@ function Navbar({
                   onSelect={
                     pageLoaded
                       ? (item) => window.cy.getElementById(item.id).emit("tap")
-                      : (item) => {}
+                      : (_) => {}
                     // TODO: When not loaded, add selected item to a queue to be
                     //  executed when cytoscape has loaded
                   }

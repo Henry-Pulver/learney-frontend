@@ -7,13 +7,13 @@ export function isAnonymousUser(userId: string): boolean {
 }
 
 function isValidURL(str: string): boolean {
-  let a = document.createElement("a");
+  const a = document.createElement("a");
   a.href = str;
   return a.host && a.host !== window.location.host;
 }
 
 export function getValidURLs(urls: Array<string>): Array<string> {
-  let url_array = [];
+  const url_array = [];
 
   function validateURL(url) {
     url.replace(" ", "");
@@ -61,7 +61,7 @@ function getPostRequestData(
   mapUUID: string,
   sessionId: string
 ): object {
-  let payload = { user_id: userId, map: mapUUID, session_id: sessionId };
+  const payload = { user_id: userId, map: mapUUID, session_id: sessionId };
   if (name === "learnedNodes") {
     payload["learned_concepts"] = objectToStore;
   } else if (name === "goalNodes") {
@@ -79,7 +79,7 @@ export async function initialiseFromStorage(
   mapUUID: string
 ): Promise<object> {
   console.log(`Initialising ${name} from storage!`);
-  let apiEndpoint = getAPIEndpoint(backendUrl, name);
+  const apiEndpoint = getAPIEndpoint(backendUrl, name);
 
   if (!isAnonymousUser(userId)) {
     // Not stored locally, try DB
@@ -139,7 +139,7 @@ export async function logPageView(
   backendUrl: string,
   mapUrlExtension: string
 ): Promise<object> {
-  let requestBody = {
+  const requestBody = {
     page_extension: mapUrlExtension,
   };
   if (user === undefined)
@@ -185,7 +185,7 @@ export const fetchTotalVotes = async ({
   mapUUID: string;
   editMap: boolean;
 }): Promise<object> => {
-  if (editMap) {
+  if (!editMap) {
     const response = await fetch(
       `${backendUrl}/api/v0/total_vote_count?` +
         new URLSearchParams({ map: mapUUID }),
@@ -206,12 +206,12 @@ export function buttonPress(
   buttonName: string,
   backendUrl: string,
   userId: string
-): () => void {
+): (...args: any) => void {
   if (typeof backendUrl !== "string" || backendUrl === "")
     console.error(
       `ButtonPress() backendUrl=${backendUrl} undefined at ${buttonName} press!`
     );
-  return async function (...args) {
+  return async (...args: any) => {
     runFirst(...args);
     const response = await fetch(`${backendUrl}/api/v0/button_press`, {
       method: "POST",
@@ -230,7 +230,7 @@ export async function handleFetchResponses(
   response: Response,
   backendUrl: string
 ): Promise<object> {
-  let responseJson = await response.json();
+  const responseJson = await response.json();
   if (response.status === 200 || response.status === 201) {
     if (backendUrl === "https://api.learney.me")
       console.log(`Success! Status: ${response.status}`);
@@ -322,11 +322,11 @@ export function URLQuerySet(query: ParsedUrlQuery): boolean {
     !!query.topic || !!query.concept || !!query.x || !!query.y || !!query.zoom;
 
   // Either a topic, a concept or a position & zoom should be set. Not 2 or more
-  const onePositionSet = query.x || query.y || query.zoom;
+  const positionSet = query.x || query.y || query.zoom;
   if (
     (query.topic && query.concept) ||
-    (query.topic && onePositionSet) ||
-    (query.concept && onePositionSet)
+    (query.topic && positionSet) ||
+    (query.concept && positionSet)
   )
     new Error(`Invalid query - more than one query parameter set: ${query}`);
 
@@ -335,13 +335,22 @@ export function URLQuerySet(query: ParsedUrlQuery): boolean {
     new Error(`${query.topic} is an invalid query!`);
   if (query.concept && typeof query.concept !== "string")
     new Error(`${query.concept} is an invalid query!`);
+
   const allPositionSet = query.x && query.y && query.zoom;
-  if (onePositionSet && !allPositionSet)
+  if (positionSet && !allPositionSet)
     new Error(`${query.topic} is an invalid query!`);
-  const positions =
-    typeof query.x !== "number" &&
-    typeof query.y !== "number" &&
-    typeof query.zoom !== "number";
+  else {
+    if (
+      !(
+        typeof query.x !== "number" &&
+        typeof query.y !== "number" &&
+        typeof query.zoom !== "number"
+      )
+    )
+      new Error(
+        `Not all of x, y & zoom parameters are set as numbers! (x: ${query.x}, y: ${query.y}, zoom: ${query.zoom})`
+      );
+  }
   return queriesSet;
 }
 

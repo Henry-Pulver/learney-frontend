@@ -18,7 +18,7 @@ export function getSuggestionURL(
   if (!(suggestionType in suggestionToFormEntry)) {
     console.error(`${suggestionType} is not a valid suggestion type!`);
   }
-  let splitUrl = location.pathname.split("/");
+  const splitUrl = location.pathname.split("/");
   let urlEnding = splitUrl[splitUrl.length - 1];
   if (urlEnding === "") {
     urlEnding = "original_map";
