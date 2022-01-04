@@ -29,13 +29,13 @@ declare global {
   }
 }
 
-export function isMobile() {
+export function isMobile(): boolean {
   return screen.width < 768;
 }
 
 let isAnimated = false;
 
-function setIsAnimated(value) {
+export function setIsAnimated(value: boolean): void {
   isAnimated = value;
 }
 
@@ -482,14 +482,13 @@ export function bindRouters(
   });
 
   if (!editMap) {
-    // Show tooltip when clicked
+    // Show concept info overlay when clicked
     window.cy.on("tap", 'node[nodetype = "concept"]', (e) => {
       let concept = e.target;
       if (!isAnimated) {
         setIsAnimated(true);
-        if (selectedNodeID) hideConceptInfo();
+        showConceptInfo(concept);
         fitCytoTo({ eles: concept.neighborhood(), padding: 50 }, () => {
-          showConceptInfo(concept);
           let previousSelectedNodeID = selectedNodeID;
           selectedNodeID = concept.id();
           unhighlightNodes(window.cy.getElementById(previousSelectedNodeID));
