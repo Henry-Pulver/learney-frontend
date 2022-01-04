@@ -18,7 +18,7 @@ export const ConceptSearchBox = ({
   maxResults?: number;
 }) => {
   /** Component responsible for rendering the search bar. **/
-  let autocompleteData = getSearchArray(mapJson);
+  const autocompleteData = getSearchArray(mapJson);
   const [topicDataLookup, conceptDataLookup] =
     getSearchTopicDataLookup(mapJson);
 

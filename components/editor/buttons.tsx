@@ -14,7 +14,6 @@ import { jsonHeaders } from "../../lib/headers";
 import { handleFetchResponses } from "../../lib/utils";
 import isEqual from "lodash.isequal";
 import { ButtonPressFunction } from "../../lib/types";
-import { NotificationData } from "./types";
 
 const dagreLayout = {
   name: "dagre",
@@ -24,21 +23,21 @@ const dagreLayout = {
 };
 
 function autoGenerateLayout(): void {
-  let actions = [
+  const actions = [
     {
       name: "layout",
       param: { options: dagreLayout, eles: window.cy.elements() },
     },
   ];
   /** Run Dagre algorithm on each subject individually **/
-  let subjects: Array<string> = [];
+  const subjects: Array<string> = [];
   window.cy
     .nodes('[nodetype= "field"]')
     // @ts-ignore
     .forEach((topic) => subjects.push(topic.data().name));
 
   subjects.forEach((subject) => {
-    let subject_subgraph = window.cy.filter(`node[subject = "${subject}"]`);
+    const subject_subgraph = window.cy.filter(`node[subject = "${subject}"]`);
     subject_subgraph.merge(subject_subgraph.connectedEdges());
     actions.push({
       name: "layout",
@@ -156,7 +155,7 @@ export function SaveMapButton({
         pageLoaded
           ? buttonPressFunction(() => {
               saveMap(userId, backendUrl, mapUUID);
-              let pathElements = location.href.split("/");
+              const pathElements = location.href.split("/");
               pathElements.splice(pathElements.length - 2, 1);
               const newState = {
                 title: "Saved successfully!",
@@ -204,7 +203,7 @@ export function SaveMapButton({
 }
 
 export async function saveMap(userId, backendUrl, mapUUID) {
-  let mapJson = { nodes: [], edges: [] };
+  const mapJson = { nodes: [], edges: [] };
   window.cy.edges().forEach(function (edge) {
     mapJson.edges.push({ data: edge.data() });
   });
@@ -246,7 +245,7 @@ export function CursorButton({ editType, setEditType, buttonPressFunction }) {
     <EditorModeTippy
       content={
         <div className="flex">
-          Edit nodes <p className="hotkey-label-text">c</p>
+          Edit nodes <p className="hotkey-label-text">C</p>
         </div>
       }
     >
@@ -281,7 +280,7 @@ export function AddNodeButton({ editType, setEditType, buttonPressFunction }) {
     <EditorModeTippy
       content={
         <div className="flex">
-          Add concept <p className="hotkey-label-text">a</p>
+          Add concept <p className="hotkey-label-text">A</p>
         </div>
       }
     >
@@ -307,7 +306,7 @@ export function AddEdgesButton({ editType, setEditType, buttonPressFunction }) {
     <EditorModeTippy
       content={
         <div className="flex">
-          Add dependency <p className="hotkey-label-text">e</p>
+          Add dependency <p className="hotkey-label-text">E</p>
         </div>
       }
     >
@@ -339,7 +338,7 @@ export function DeleteElementButton({
     <EditorModeTippy
       content={
         <div className="flex">
-          Delete <p className="hotkey-label-text">d</p>
+          Delete <p className="hotkey-label-text">D</p>
         </div>
       }
     >
