@@ -4,7 +4,11 @@ import { ConceptSearchBox } from "./ConceptSearchBox";
 import { AcademicCapIcon, XIcon } from "@heroicons/react/outline";
 import { LoadingSpinner } from "./animations";
 import { ButtonPressFunction } from "../lib/types";
-import { ElementsDefinition } from "cytoscape";
+import {
+  ElementsDefinition,
+  NodeDataDefinition,
+  NodeSingular,
+} from "cytoscape";
 import { XCloseButton } from "./utils";
 
 export default function ExploreLearnIntroPage({
@@ -17,29 +21,35 @@ export default function ExploreLearnIntroPage({
   sessionId,
   buttonPressFunction,
 }: {
-  hideExploreLearn: Function;
+  hideExploreLearn: () => void;
   mapName: string;
   mapJson: ElementsDefinition;
-  setGoal: Function;
+  setGoal: (goal: NodeSingular, userId: string, sessionId: string) => void;
   pageLoaded: boolean;
   userId: string;
   sessionId: string;
   buttonPressFunction: ButtonPressFunction;
 }) {
-  const [goalsSet, setGoalsSet] = useState({});
-  const addGoalSet = (goalId) => setGoalsSet({ ...goalsSet, [goalId]: true });
-  const removeGoalSet = (goalId) => {
-    let goals = { ...goalsSet };
+  const [goalsSet, setGoalsSet] = useState<object>({});
+  const addGoalSet = (goalId: string) =>
+    setGoalsSet({ ...goalsSet, [goalId]: true });
+  const removeGoalSet = (goalId: string) => {
+    const goals = { ...goalsSet };
     delete goals[goalId];
     setGoalsSet(goals);
   };
-  function setGoalsOnMap(goals, userID, sessionID) {
+  function setGoalsOnMap(goals: object, userID: string, sessionID: string) {
     Object.keys(goals).forEach((goalId) =>
       setGoal(window.cy.getElementById(goalId), userID, sessionID)
     );
   }
-  const [learnClicked, setLearnClicked] = useState(null);
-  const onLearnClick = (goals, isPageLoaded, userID, sessionID) => {
+  const [learnClicked, setLearnClicked] = useState<boolean | null>(null);
+  const onLearnClick = (
+    goals: object,
+    isPageLoaded: boolean,
+    userID: string,
+    sessionID: string
+  ) => {
     const goalsHaveBeenSet = Object.keys(goals).length !== 0;
     setLearnClicked(goalsHaveBeenSet);
     if (isPageLoaded && goalsHaveBeenSet) {
@@ -53,7 +63,12 @@ export default function ExploreLearnIntroPage({
       hideExploreLearn();
     }
   }, [pageLoaded]);
-  const onExploreClick = (goals, isPageLoaded, userID, sessionID) => {
+  const onExploreClick = (
+    goals: object,
+    isPageLoaded: boolean,
+    userID: string,
+    sessionID: string
+  ) => {
     /** If goals have been selected, set them! **/
     const goalsHaveBeenSet = Object.keys(goals).length !== 0;
     setLearnClicked(goalsHaveBeenSet);
@@ -221,9 +236,9 @@ function GoalsList({
   classes,
   buttonPressFunction,
 }: {
-  mapJson: object;
+  mapJson: ElementsDefinition;
   goals: object;
-  removeGoal: Function;
+  removeGoal: (goalId: string) => void;
   classes?: string;
   buttonPressFunction: ButtonPressFunction;
 }) {
@@ -257,7 +272,15 @@ function GoalsList({
   );
 }
 
-function GoalListItem({ goalInfo, removeGoal, buttonPressFunction }) {
+function GoalListItem({
+  goalInfo,
+  removeGoal,
+  buttonPressFunction,
+}: {
+  goalInfo: NodeDataDefinition;
+  removeGoal: (goalId: string) => void;
+  buttonPressFunction: ButtonPressFunction;
+}) {
   return (
     <span
       style={{ backgroundColor: goalInfo.colour }}
@@ -276,7 +299,7 @@ function GoalListItem({ goalInfo, removeGoal, buttonPressFunction }) {
   );
 }
 
-function getBadgeColour(parentId, mapJson) {
+function getBadgeColour(parentId: string, mapJson: ElementsDefinition): string {
   let badgeColour = null;
   mapJson.nodes.forEach((node) => {
     if (node.data.nodetype === "field" && node.data.id === parentId) {
@@ -288,7 +311,10 @@ function getBadgeColour(parentId, mapJson) {
   return badgeColour;
 }
 
-function goalInfoFromId(goalId, mapJson) {
+function goalInfoFromId(
+  goalId: string,
+  mapJson: ElementsDefinition
+): NodeDataDefinition {
   let nodeData = null;
   mapJson.nodes.forEach((node) => {
     if (node.data.id === goalId) {

@@ -17,6 +17,7 @@ import isEqual from "lodash.isequal";
 import { ButtonPressFunction } from "../lib/types";
 import { SingularElementArgument } from "cytoscape";
 import { TargetFinderIcon } from "./svgs/icons";
+import { SetGoalState, SetLearnedState } from "./types";
 
 export function IconToggleButtonWithCheckbox({
   checked,
@@ -27,7 +28,7 @@ export function IconToggleButtonWithCheckbox({
 }: {
   checked: boolean;
   onCheck: () => void;
-  Icon: Function;
+  Icon;
   text: string;
   colour: "blue" | "green" | "red";
 }) {
@@ -263,8 +264,8 @@ export function ResetProgressIconButton({
   userId: string;
   mapUUID: string;
   sessionId: string;
-  setGoalsState: Function;
-  setLearnedState: Function;
+  setGoalsState: SetGoalState;
+  setLearnedState: SetLearnedState;
 }) {
   const [areYouSureModalShown, setModalShown] = useState(false);
 

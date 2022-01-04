@@ -20,7 +20,6 @@ import {
   ElementsDefinition,
   NodeSingular,
   SingularElementArgument,
-  Stylesheet,
 } from "cytoscape";
 import {
   GetNextConceptButton,
@@ -28,6 +27,7 @@ import {
   ResetProgressIconButton,
 } from "./buttons";
 import { getNextNodeToLearn } from "../lib/questions";
+import { OnGoalLearnedClick, SetGoalState, SetLearnedState } from "./types";
 
 export default function Map({
   backendUrl,
@@ -59,15 +59,11 @@ export default function Map({
   sessionId: string;
   buttonPressFunction: ButtonPressFunction;
   learned: object;
-  onLearnedClick: Function;
-  setLearnedState: Function;
+  onLearnedClick: OnGoalLearnedClick;
+  setLearnedState: SetLearnedState;
   goals: object;
-  onSetGoalClick: (
-    node: NodeSingular,
-    userId: string,
-    sessionId: string
-  ) => void;
-  setGoalsState: Function;
+  onSetGoalClick: OnGoalLearnedClick;
+  setGoalsState: SetGoalState;
   pageLoaded: boolean;
   setPageLoaded: (boolean) => void;
   editType: EditType;
@@ -88,7 +84,7 @@ export default function Map({
   const [nodeSelected, setNodeSelected] = React.useState<
     NodeSingular | undefined
   >(undefined);
-  const showConceptPanel: (NodeSingular) => void = (node) =>
+  const showConceptPanel: (nodeSelected: NodeSingular) => void = (node) =>
     setNodeSelected(node);
   const hideConceptPanel: () => void = () => setNodeSelected(undefined);
 

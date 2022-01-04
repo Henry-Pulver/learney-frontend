@@ -5,13 +5,19 @@
     "es6": true,
     "node": true
   },
+  "globals": {
+    "JSX": true
+  },
   "plugins": ["react", "react-hooks"],
   "extends": [
     "next/core-web-vitals",
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2018
@@ -27,8 +33,15 @@
     "react-hooks/exhaustive-deps": "warn",
     // TODO: Remove below rules once repo passes
     "no-undef": "warn",
-    "no-unused-vars": "warn",
+    "no-var": "off",
+    "no-unused-vars": "off", // Typescript has the same check
     "react/jsx-key": "warn",
-    "react/prop-types": "off" // We use Typescript instead
+    "react/prop-types": "off", // We use Typescript instead
+    "@typescript-eslint/ban-types": "warn",
+    "@typescript-eslint/ban-ts-comment": "warn",
+    "@typescript-eslint/no-empty-function": [
+      "error",
+      { "allow": ["arrowFunctions"] }
+    ]
   }
 }

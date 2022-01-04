@@ -3,8 +3,8 @@ import { NodeSingular, SingularElementArgument } from "cytoscape";
 export function getNextNodeToLearn(
   newlyLearnedNode: NodeSingular = null
 ): SingularElementArgument | undefined {
-  let learned = window.cy.nodes(".learned");
-  let goals = window.cy.nodes(".goal").not(learned);
+  const learned = window.cy.nodes(".learned");
+  const goals = window.cy.nodes(".goal").not(learned);
 
   if (window.cy.nodes(".goal").or(".path").not(".learned").size() === 0) {
     return undefined;
@@ -25,7 +25,9 @@ export function getNextNodeToLearn(
           .predecessors("node")
           .toArray()
           .every((predecessor) =>
-            (predecessor.classes() as any).includes("learned")
+            (predecessor.classes() as unknown as Array<string>).includes(
+              "learned"
+            )
           )
       ) {
         possibleNextSteps = possibleNextSteps.or(node);

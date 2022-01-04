@@ -1,2 +1,4 @@
 node_modules
 .next
+*.config.js
+*.config.wizardcopy.js
