@@ -12,6 +12,10 @@ import { LoadingSpinner } from "./animations";
 import { NodeSingular } from "cytoscape";
 import { cacheHeaders } from "../lib/headers";
 import Overlay from "./overlay";
+import { ButtonPressFunction } from "../lib/types";
+import { OnGoalLearnedClick } from "./types";
+
+type OnVote = (node: NodeSingular, url: string, up: boolean | null) => void;
 
 export function ConceptInfo({
   visible,
@@ -42,12 +46,12 @@ export function ConceptInfo({
   hideConceptInfo: () => void;
   learnedNodes: object;
   goalNodes: object;
-  onLearnedClick: Function;
-  onSetGoalClick: Function;
+  onLearnedClick: OnGoalLearnedClick;
+  onSetGoalClick: OnGoalLearnedClick;
   allowSuggestions: boolean;
-  buttonPressFunction: Function;
+  buttonPressFunction: ButtonPressFunction;
   userVotes: object;
-  onVote: Function;
+  onVote: OnVote;
   allVotes: object;
 }) {
   if (node === undefined) return <></>;
@@ -146,7 +150,7 @@ function ConceptLinkPreview({
   sessionId: string;
   userVotes: object;
   allVotes: object;
-  onVote: Function;
+  onVote: OnVote;
 }) {
   const { data } = useAsync({
     promiseFn: fetchLinkPreview,

@@ -1,9 +1,4 @@
 import ReactGA from "react-ga";
-import {
-  GetNextConceptButton,
-  ResetPanButton,
-  ResetProgressIconButton,
-} from "./buttons";
 import React, { useEffect, useState } from "react";
 import {
   setupTracking,
@@ -96,7 +91,7 @@ export default function MapPage({
   };
 
   const [learned, setNewLearnedState] = React.useState({});
-  const setLearnedState = (learnedState) => {
+  const setLearnedState = (learnedState: object): void => {
     for (const nodeId of Object.keys(learned)) {
       if (!(nodeId in learnedState)) {
         setNewLearnedState((prevLearned) => ({

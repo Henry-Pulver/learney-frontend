@@ -1,8 +1,8 @@
 import React, { Fragment } from "react";
 import { Transition } from "@headlessui/react";
-import { XIcon } from "@heroicons/react/solid";
 import { classNames } from "../lib/reactUtils";
 import { XCloseButton } from "./utils";
+import { NotificationData } from "./editor/types";
 
 export function Notification({
   show,
@@ -13,7 +13,11 @@ export function Notification({
   colour,
 }: {
   show: boolean;
-  setShow: (boolean) => void;
+  setShow: (
+    getNotificationInfo: (
+      notificationInfo: NotificationData
+    ) => NotificationData
+  ) => void;
   title: string;
   message;
   Icon;

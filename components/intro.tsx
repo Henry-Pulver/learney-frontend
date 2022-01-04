@@ -34,7 +34,7 @@ export function IntroSection({
   initialFocus,
 }: {
   introSlideNumber: number;
-  setIntroSlide: (number) => void;
+  setIntroSlide: (introSlideNumber: number) => void;
   introSlides: Array<any> | null;
   buttonPressFunction: ButtonPressFunction;
   initialFocus?: React.MutableRefObject<any>;
@@ -84,12 +84,12 @@ export function IntroSection({
 function IntroTextSection({ introSlides, introSlideNumber }) {
   let slideInfo;
   if (introSlides) slideInfo = introSlides[introSlideNumber];
-  let elementArray = [];
+  const elementArray = [];
 
   // Generate text
   if (slideInfo) {
     for (let i = 0; i < slideInfo.text.length; i++) {
-      let textItem = slideInfo.text[i];
+      const textItem = slideInfo.text[i];
       if (typeof textItem === "string") {
         if (textItem === "br") {
           elementArray.push(<br key={elementArray.length} />);
@@ -126,8 +126,8 @@ function SlideDiv({
   numSlides,
   initialFocus,
 }) {
-  let firstSlide = introSlideNumber === 0;
-  let lastSlide = introSlideNumber === numSlides - 1;
+  const firstSlide = introSlideNumber === 0;
+  const lastSlide = introSlideNumber === numSlides - 1;
 
   return (
     <div className="pt-4 pb-2 m-auto inline-flex">

@@ -19,14 +19,7 @@ import {
 import { setupEditorHotkeys } from "../../lib/hotkeys";
 import { ButtonPressFunction } from "../../lib/types";
 import { NodeData, ParentNodeData, ShowEditData } from "./types";
-import cytoscape, {
-  ElementDefinition,
-  EventHandler,
-  EventObject,
-  NodeCollection,
-  NodeDataDefinition,
-  NodeSingular,
-} from "cytoscape";
+import { ElementDefinition, NodeCollection, NodeSingular } from "cytoscape";
 
 declare global {
   interface Window {
@@ -81,7 +74,7 @@ export default function Editor({
       });
     // The next node ID is the largest previous node ID number + 1
     nextNodeID += 1;
-    let nodeClicked = e.target;
+    const nodeClicked = e.target;
 
     // [2.0] Get parent node if one was clicked!
     let parentNodeId;
@@ -129,7 +122,7 @@ export default function Editor({
     };
 
     // [3.0] Add the new nodes
-    let nodesToAdd = [newNode];
+    const nodesToAdd = [newNode];
     if (newParentNodeData !== undefined) nodesToAdd.push(newParentNodeData);
     window.ur.do("addNode", nodesToAdd);
   };
@@ -147,7 +140,7 @@ export default function Editor({
   const removeElement = function (elementId: string): void {
     const element = window.cy.getElementById(elementId);
     const parentNode = element.parent();
-    let actions: Array<{ name: "remove"; param: NodeCollection }> = [
+    const actions: Array<{ name: "remove"; param: NodeCollection }> = [
       { name: "remove", param: element },
     ];
     // if this is the last child node, delete the parent
@@ -219,7 +212,7 @@ export default function Editor({
   });
   const saveEditNodeData = function (userId: number): void {
     // [1.0] Copy Previous Data
-    let newNodeData = { ...editNodeData };
+    const newNodeData = { ...editNodeData };
 
     // [2.0] Convert url string to array
     if (typeof newNodeData.urls === "string")
@@ -331,7 +324,7 @@ export default function Editor({
       setEditType("cursor");
     } else {
       // @ts-ignore
-      let concept: NodeSingular = nodesToAdd.filter('[nodetype = "concept"]');
+      const concept: NodeSingular = nodesToAdd.filter('[nodetype = "concept"]');
       setEditNodeData(concept.data());
       // @ts-ignore
       unhighlightNodes(nodesToAdd.filter('[nodetype = "concept"]'));
@@ -343,7 +336,7 @@ export default function Editor({
     return added;
   }
   function undoAddNodeClick(eles) {
-    let removed = eles.remove();
+    const removed = eles.remove();
     setEditNodeData({ ...emptyNodeData });
     updateMinZoom();
     setShowEditData(null);
