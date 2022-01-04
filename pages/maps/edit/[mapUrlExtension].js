@@ -33,8 +33,10 @@ export const getServerSideProps = withPageAuthRequired({
     // TODO: Currently we redirect, change to showing custom 'blocked' page & link to map
     if (
       // Henry can edit every map
-      ![mapInfoJson.author_user_id.toLowerCase(), "henrypulver13@gmail.com"].includes(session.user.email.toLowerCase())
-
+      ![
+        mapInfoJson.author_user_id.toLowerCase(),
+        "henrypulver13@gmail.com",
+      ].includes(session.user.email.toLowerCase())
     ) {
       return {
         redirect: { destination: `/maps/${ctx.params.mapUrlExtension}` },
