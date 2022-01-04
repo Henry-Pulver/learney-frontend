@@ -29,6 +29,6 @@
     "no-undef": "warn",
     "no-unused-vars": "warn",
     "react/jsx-key": "warn",
-    "react/prop-types": "warn"
+    "react/prop-types": "off" // We use Typescript instead
   }
 }
