@@ -245,7 +245,7 @@ export function CursorButton({ editType, setEditType, buttonPressFunction }) {
     <EditorModeTippy
       content={
         <div className="flex">
-          Edit nodes <p className="hotkey-label-text">c</p>
+          Edit nodes <p className="hotkey-label-text">C</p>
         </div>
       }
     >
@@ -280,7 +280,7 @@ export function AddNodeButton({ editType, setEditType, buttonPressFunction }) {
     <EditorModeTippy
       content={
         <div className="flex">
-          Add concept <p className="hotkey-label-text">a</p>
+          Add concept <p className="hotkey-label-text">A</p>
         </div>
       }
     >
@@ -306,7 +306,7 @@ export function AddEdgesButton({ editType, setEditType, buttonPressFunction }) {
     <EditorModeTippy
       content={
         <div className="flex">
-          Add dependency <p className="hotkey-label-text">e</p>
+          Add dependency <p className="hotkey-label-text">E</p>
         </div>
       }
     >
@@ -338,7 +338,7 @@ export function DeleteElementButton({
     <EditorModeTippy
       content={
         <div className="flex">
-          Delete <p className="hotkey-label-text">d</p>
+          Delete <p className="hotkey-label-text">D</p>
         </div>
       }
     >
