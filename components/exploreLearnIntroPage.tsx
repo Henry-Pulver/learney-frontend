@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { classNames } from "../lib/reactUtils";
 import { ConceptSearchBox } from "./ConceptSearchBox";
 import { AcademicCapIcon, XIcon } from "@heroicons/react/outline";
-import { getBadgeColour } from "../lib/goalBadges";
 import { LoadingSpinner } from "./animations";
 import { ButtonPressFunction } from "../lib/types";
 import { ElementsDefinition } from "cytoscape";
@@ -275,6 +274,18 @@ function GoalListItem({ goalInfo, removeGoal, buttonPressFunction }) {
       </button>
     </span>
   );
+}
+
+function getBadgeColour(parentId, mapJson) {
+  let badgeColour = null;
+  mapJson.nodes.forEach((node) => {
+    if (node.data.nodetype === "field" && node.data.id === parentId) {
+      badgeColour = node.data.colour;
+    }
+  });
+  if (badgeColour === null)
+    throw new Error(`Topic with ID=${parentId} isn't in the map!`);
+  return badgeColour;
 }
 
 function goalInfoFromId(goalId, mapJson) {
