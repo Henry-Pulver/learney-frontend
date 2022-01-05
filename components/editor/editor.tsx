@@ -20,12 +20,12 @@ import { setupEditorHotkeys } from "../../lib/hotkeys";
 import { ButtonPressFunction } from "../../lib/types";
 import { EditType, NodeData, ParentNodeData, ShowEditData } from "./types";
 import {
-  EdgeCollection,
   EdgeSingular,
   ElementDefinition,
   NodeCollection,
   NodeSingular,
 } from "cytoscape";
+import isEqual from "lodash.isequal";
 
 declare global {
   interface Window {
@@ -133,13 +133,15 @@ export default function Editor({
     window.ur.do("addNode", nodesToAdd);
   };
   const deleteModeClick = function (e) {
-    if (e.target.id() !== undefined) {
-      if (e.target.isEdge()) {
-        window.ur.do("remove", e.target);
-      } else if (e.target.isNode()) {
-        setDeleteNodeData((prevState) => {
-          return { ...prevState, ...e.target.data() };
-        });
+    if (!isEqual(e.target.data(), {})) {
+      if (e.target.id() !== undefined) {
+        if (e.target.isEdge()) {
+          window.ur.do("remove", e.target);
+        } else if (e.target.isNode()) {
+          setDeleteNodeData((prevState) => {
+            return { ...prevState, ...e.target.data() };
+          });
+        }
       }
     }
   };
