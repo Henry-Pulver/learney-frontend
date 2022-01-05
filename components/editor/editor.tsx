@@ -18,8 +18,14 @@ import {
 } from "../../lib/graph";
 import { setupEditorHotkeys } from "../../lib/hotkeys";
 import { ButtonPressFunction } from "../../lib/types";
-import { NodeData, ParentNodeData, ShowEditData } from "./types";
-import { ElementDefinition, NodeCollection, NodeSingular } from "cytoscape";
+import { EditType, NodeData, ParentNodeData, ShowEditData } from "./types";
+import {
+  EdgeCollection,
+  EdgeSingular,
+  ElementDefinition,
+  NodeCollection,
+  NodeSingular,
+} from "cytoscape";
 
 declare global {
   interface Window {
@@ -61,7 +67,7 @@ export default function Editor({
   mapUUID: string;
   pageLoaded: boolean;
   editType: string;
-  setEditType: (EditType) => void;
+  setEditType: (editType: EditType) => void;
 }) {
   const addNode = function (e) {
     // [1.0] Create the next node ID
@@ -176,7 +182,7 @@ export default function Editor({
           break;
         case "addEdges":
           eh = window.cy.edgehandles({
-            canConnect: function (sourceNode, targetNode) {
+            canConnect: (sourceNode, targetNode) => {
               // whether an edge can be created between source and target
               return (
                 !sourceNode.same(targetNode) && // No loops to itself
@@ -347,14 +353,16 @@ export default function Editor({
       setEditType("cursor");
       setupEditorHotkeys(setEditType);
       window.ur.action("addNode", addNodeClick, undoAddNodeClick);
-      window.cy.on("ehcomplete", (event, extraParams) => {
-        const [sourceNode, targetNode, addedEles] = extraParams;
-        window.cy.remove(addedEles[0]); // remove auto-added edge
+      window.cy.on("ehcomplete", (event, ...extraParams: any[]) => {
+        const sourceNode: NodeSingular = extraParams[0];
+        const targetNode: NodeSingular = extraParams[1];
+        const addedEdge: EdgeSingular = extraParams[2][0];
+        window.cy.remove(addedEdge); // remove auto-added edge
         // Add undo-able edge
         window.ur.do("add", {
           group: "edges",
           data: {
-            id: addedEles[0].id(),
+            id: addedEdge.id(),
             source: sourceNode.id(),
             target: targetNode.id(),
           },
