@@ -33,14 +33,19 @@ export const ConceptSearchBox = ({
     /** Format result as HTML **/
     const itemConceptData = conceptDataLookup[conceptName];
     const topicData = topicDataLookup[itemConceptData.parent];
-    const conceptNameStr = `<p class="text-xs sm:text-lg">${conceptName}</p>`;
-    const topicTagStr = `<p class="absolute right-1 text-gray-300 px-2.5 py-0.5 hidden sm:block text-base rounded-lg" style="background-color: ${topicData.colour};"> ${itemConceptData.parent} </p>`;
+
     return (
-      <p
-        dangerouslySetInnerHTML={{
-          __html: `<div class="flex justify-between align-middle"> ${conceptNameStr} ${topicTagStr} </div>`,
-        }}
-      />
+      <p>
+        <div className="flex justify-between align-middle">
+          <p className="text-xs sm:text-lg">{conceptName}</p>
+          <p
+            className="absolute right-1 text-gray-300 px-2.5 py-0.5 hidden sm:block text-base rounded-lg"
+            style={{ backgroundColor: `${topicData.colour}` }}
+          >
+            {itemConceptData.parent}
+          </p>
+        </div>
+      </p>
     );
   };
 
