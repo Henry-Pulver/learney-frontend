@@ -4,8 +4,10 @@ export function classNames(...classes: Array<string>): string {
 
 export function appendToArray<ItemType>(
   array: Array<ItemType>,
-  extraElement: ItemType
+  ...extraElements: ItemType[]
 ): Array<ItemType> {
-  if (extraElement) array.push(extraElement);
+  extraElements.forEach((extraElement) => {
+    if (extraElement) array.push(extraElement);
+  });
   return array;
 }

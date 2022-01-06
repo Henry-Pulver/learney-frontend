@@ -106,6 +106,11 @@ export function ConceptInfo({
                   onVote={onVote}
                 />
               )),
+              getAndSortLinkPreviewURLs(node, allVotes).length === 0 && (
+                <div className="border-t border-solid border-gray-200 pt-4 text-lg text-gray-800">
+                  No suggested content for {node.data().name}.
+                </div>
+              ),
               allowSuggestions && (
                 // <div> necessary as otherwise the button grows to the width of the list element
                 <div>
@@ -270,10 +275,10 @@ function getAndSortLinkPreviewURLs(
   let urls;
   if (node !== undefined && node.data().urls !== undefined)
     urls = getValidURLs(node.data().urls);
-  else urls = [];
+  else return [];
 
   if (allVotes) {
-    urls.sort((urlA, urlB) => {
+    urls.sort((urlA: string, urlB: string) => {
       let bNumVotes;
       if (allVotes[urlB] === undefined) bNumVotes = 0;
       else bNumVotes = allVotes[urlB];
