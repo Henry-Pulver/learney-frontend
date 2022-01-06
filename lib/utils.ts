@@ -144,7 +144,10 @@ export async function logPageView(
   };
   if (user === undefined)
     requestBody["user_id"] = localStorage.getItem("userId");
-  else requestBody["user_id"] = user.sub;
+  else {
+    requestBody["user_id"] = user.sub;
+    requestBody["user_data"] = user;
+  }
 
   const response = await fetch(`${backendUrl}/api/v0/page_visit`, {
     method: "POST",
