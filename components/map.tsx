@@ -195,7 +195,7 @@ export default function Map({
         </div>
       </div>
       {/*RIGHT SIDE PANEL*/}
-      {!editMap && data && (
+      {!editMap && (
         <ConceptInfo
           visible={nodeSelected !== undefined}
           node={nodeSelected}
