@@ -28,6 +28,7 @@ import { handleIntroAnimation } from "../lib/graph";
 import { useRouter } from "next/router";
 import { EditType, NotificationData } from "./editor/types";
 import { NodeSingular } from "cytoscape";
+import mixpanel from "mixpanel-browser";
 
 export default function MapPage({
   backendUrl,
@@ -143,7 +144,7 @@ export default function MapPage({
 
         setupTracking();
         ReactGA.pageview(window.location.pathname);
-        initialiseMixpanelTracking(newUserId);
+        initialiseMixpanelTracking(newUserId, user);
 
         if (isAnonymousUser(newUserId)) initialiseSignInTooltip();
       }
