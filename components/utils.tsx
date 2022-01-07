@@ -15,7 +15,7 @@ export function XCloseButton({
     <div
       className={classNames(
         !visibleOnMobile && "hidden sm:block",
-        "absolute top-1 sm:top-4 right-1 sm:right-4 z-50"
+        "absolute top-1 sm:top-4 right-1 sm:right-4 z-10"
       )}
     >
       <button

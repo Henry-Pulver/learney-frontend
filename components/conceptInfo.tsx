@@ -72,7 +72,7 @@ export function ConceptInfo({
           {node && node.data().description}
         </div>
         {node && (
-          <div className="absolute bottom-0 left-0 sm:relative w-full left-0 bottom-0 z-20 bg-white justify-around border-t border-solid border-gray-300 px-2 py-4 grid items-center grid-flow-col">
+          <div className="absolute bottom-0 left-0 sm:relative w-full left-0 bottom-0 z-10 bg-white justify-around border-t border-solid border-gray-300 px-2 py-4 grid items-center grid-flow-col">
             <IconToggleButtonWithCheckbox
               checked={!!learnedNodes[node.id()]}
               onCheck={() => onLearnedClick(node, userId, sessionId)}
@@ -166,7 +166,7 @@ function ConceptLinkPreview({
   });
 
   return (
-    <li className="text-gray-900 relative z-10">
+    <li className="text-gray-900 relative">
       <a
         href={url}
         className="hover:bg-gray-100 hover:shadow-lg h-24 rounded-sm overflow-hidden flex text-left m-0.5"
