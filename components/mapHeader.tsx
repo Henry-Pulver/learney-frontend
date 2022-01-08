@@ -43,7 +43,7 @@ export default function MapHeader({
       <meta
         name="description"
         property="og:description"
-        content="The online learning platform designed to help you efficiently take your own path."
+        content="The online learning platform designed to get you the fastest path to what you want to learn."
       />
       <meta
         name="viewport"
