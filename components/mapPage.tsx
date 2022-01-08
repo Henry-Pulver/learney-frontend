@@ -28,7 +28,6 @@ import { handleIntroAnimation } from "../lib/graph";
 import { useRouter } from "next/router";
 import { EditType, NotificationData } from "./editor/types";
 import { NodeSingular } from "cytoscape";
-import mixpanel from "mixpanel-browser";
 
 export default function MapPage({
   backendUrl,
