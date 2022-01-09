@@ -5,23 +5,15 @@ import { XCloseButton } from "./utils";
 import { NotificationData } from "./editor/types";
 
 export function Notification({
-  show,
-  setShow,
-  title,
-  message,
-  Icon,
-  colour,
+  info,
+  setNotificationInfo,
 }: {
-  show: boolean;
-  setShow: (
+  info: NotificationData;
+  setNotificationInfo: (
     getNotificationInfo: (
       notificationInfo: NotificationData
     ) => NotificationData
   ) => void;
-  title: string;
-  message;
-  Icon;
-  colour: string;
 }) {
   return (
     <>
@@ -33,7 +25,7 @@ export function Notification({
         <div className="w-full flex flex-col items-center space-y-4 sm:items-end">
           {/* Notification panel, dynamically insert this into the live region when it needs to be displayed */}
           <Transition
-            show={show}
+            show={info.show}
             as={Fragment}
             enter="transform ease-in-out duration-300 transition"
             enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
@@ -42,27 +34,38 @@ export function Notification({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="relative max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
+            <div
+              className={classNames(
+                "relative max-w-sm w-full shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden",
+                info.colour === "green" && "bg-green-100",
+                info.colour === "red" && "bg-red-100"
+              )}
+            >
               <div className="p-4">
                 <div className="flex items-start">
                   <div className="flex-shrink-0">
-                    <Icon
+                    <info.Icon
                       className={classNames(
-                        colour === "green" ? "text-green-400" : "text-red-400",
+                        info.colour === "green" && "text-green-400",
+                        info.colour === "red" && "text-red-400",
                         "h-6 w-6"
                       )}
                       aria-hidden="true"
                     />
                   </div>
                   <div className="ml-3 w-0 flex-1 pt-0.5">
-                    <p className="text-sm font-medium text-gray-900">{title}</p>
-                    {message && (
-                      <p className="mt-1 text-sm text-gray-500">{message}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {info.title}
+                    </p>
+                    {info.message && (
+                      <p className="mt-1 text-sm text-gray-500">
+                        {info.message}
+                      </p>
                     )}
                   </div>
                   <XCloseButton
                     onClick={() =>
-                      setShow((prevState) => ({
+                      setNotificationInfo((prevState) => ({
                         ...prevState,
                         show: false,
                       }))

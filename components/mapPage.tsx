@@ -1,10 +1,11 @@
 import ReactGA from "react-ga";
 import React, { useEffect, useState } from "react";
+import isEqual from "lodash.isequal";
+import { useUser } from "@auth0/nextjs-auth0";
 import {
   setupTracking,
   initialiseMixpanelTracking,
 } from "../lib/trackingScripts";
-import { useUser } from "@auth0/nextjs-auth0";
 import {
   buttonPress,
   isAnonymousUser,
@@ -28,6 +29,9 @@ import { handleIntroAnimation } from "../lib/graph";
 import { useRouter } from "next/router";
 import { EditType, NotificationData } from "./editor/types";
 import { NodeSingular } from "cytoscape";
+import { setNotificationProgressInfo } from "./questions/notificationMessages";
+import { XCircleIcon } from "@heroicons/react/outline";
+import { getNextNodeToLearn } from "../lib/questions";
 
 export default function MapPage({
   backendUrl,
@@ -184,6 +188,54 @@ export default function MapPage({
     colour: "",
     show: false,
   });
+  const updateNotificationInfo = (
+    newNotificationInfo: NotificationData
+  ): void => {
+    setNotificationInfo((prevState) => ({
+      ...prevState,
+      ...newNotificationInfo,
+    }));
+    setTimeout(
+      () =>
+        setNotificationInfo((currentState) => {
+          if (isEqual(newNotificationInfo, currentState)) {
+            return {
+              ...currentState,
+              show: false,
+            };
+          } else {
+            return currentState;
+          }
+        }),
+      5000
+    );
+  };
+
+  const onSuccessfulTest = (
+    node: NodeSingular,
+    userId: string,
+    sessionId: string
+  ): void => {
+    learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
+    setLearnedState(learnedNodes);
+    setNotificationProgressInfo(
+      node,
+      getNextNodeToLearn(node),
+      updateNotificationInfo
+    );
+  };
+  const onTestFail = (node: NodeSingular): void => {
+    updateNotificationInfo({
+      title: `Mission Failed - we'll get 'em next time.`,
+      message: `Look at the resources on ${
+        node.data().name
+      } & test again when ready!`,
+      Icon: XCircleIcon,
+      colour: "red",
+      show: true,
+    });
+    node.emit("tap");
+  };
 
   return (
     <div>
@@ -198,7 +250,7 @@ export default function MapPage({
             mapUUID={mapUUID}
             mapJson={mapJson}
             pageLoaded={pageLoaded}
-            setNotificationInfo={setNotificationInfo}
+            updateNotificationInfo={updateNotificationInfo}
           />
         ) : (
           <LearnNavbar
@@ -235,6 +287,8 @@ export default function MapPage({
         buttonPressFunction={buttonPressFunction}
         learned={learned}
         onLearnedClick={onLearnedClick}
+        onTestSuccess={onSuccessfulTest}
+        onTestFail={onTestFail}
         setLearnedState={setLearnedState}
         goals={goals}
         onSetGoalClick={onSetGoalClick}
@@ -255,12 +309,8 @@ export default function MapPage({
         />
       )}
       <Notification
-        title={notificationInfo.title}
-        message={notificationInfo.message}
-        colour={notificationInfo.colour}
-        Icon={notificationInfo.Icon}
-        show={notificationInfo.show}
-        setShow={setNotificationInfo}
+        info={notificationInfo}
+        setNotificationInfo={setNotificationInfo}
       />
     </div>
   );

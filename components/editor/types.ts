@@ -19,6 +19,6 @@ export type NotificationData = {
   title: string;
   message: string;
   Icon: Function;
-  colour: string;
+  colour: "green" | "red" | "";
   show: boolean;
 };

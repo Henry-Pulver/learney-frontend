@@ -1,8 +1,47 @@
-import { NodeSingular, SingularElementArgument } from "cytoscape";
+import { NodeSingular } from "cytoscape";
+import { handleFetchResponses } from "./utils";
+import { jsonHeaders } from "./headers";
+
+export type QuestionResponseFormat = {
+  id: string;
+  question_text: string;
+  answer_text: Array<string>;
+  correct_answer?: string;
+  answers_order_randomised: Array<string>;
+  feedback_text: string;
+};
+
+export type QuestionSet = Array<QuestionResponseFormat>;
+
+export type QuestionResponseJSON = {
+  question_set: QuestionSet;
+  correct_threshold: number;
+};
+
+export function completeTest(
+  answersGiven,
+  node: NodeSingular,
+  learnedNodes: object,
+  goalNodes: object,
+  questionSet,
+  correctThreshold: number,
+  onSuccess: () => void,
+  onFail: () => void
+): void {
+  const correctAnswers = questionSet.map(
+    (question, questionIdx) =>
+      question.correct_answer === answersGiven[questionIdx]
+  );
+  const numberCorrect = correctAnswers.filter(Boolean).length;
+  const thresholdReached = numberCorrect >= correctThreshold;
+
+  if (thresholdReached) onSuccess();
+  else onFail();
+}
 
 export function getNextNodeToLearn(
   newlyLearnedNode: NodeSingular = null
-): SingularElementArgument | undefined {
+): NodeSingular | undefined {
   const learned = window.cy.nodes(".learned");
   const goals = window.cy.nodes(".goal").not(learned);
 
@@ -24,11 +63,7 @@ export function getNextNodeToLearn(
         node
           .predecessors("node")
           .toArray()
-          .every((predecessor) =>
-            (predecessor.classes() as unknown as Array<string>).includes(
-              "learned"
-            )
-          )
+          .every((predecessor) => predecessor.hasClass("learned"))
       ) {
         possibleNextSteps = possibleNextSteps.or(node);
       }
@@ -43,5 +78,50 @@ export function getNextNodeToLearn(
   // randomly pick amongst remaining options
   return possibleNextSteps.toArray()[
     Math.floor(Math.random() * possibleNextSteps.size())
-  ];
+  ] as NodeSingular;
 }
+
+export const fetchQuestionSet = async ({
+  backendUrl,
+  mapUUID,
+  userId,
+  conceptId,
+}: {
+  backendUrl: string;
+  mapUUID: string;
+  userId: string;
+  conceptId: string;
+}): Promise<QuestionResponseJSON> => {
+  console.log("FETCHING QUESTIONS");
+  const response = await fetch(
+    `${backendUrl}/api/v0/questions?` +
+      new URLSearchParams({
+        map_uuid: mapUUID,
+        user_id: userId,
+        concept_id: conceptId,
+      }),
+    {
+      method: "GET",
+      headers: jsonHeaders,
+    }
+  );
+  const responseJson = (await handleFetchResponses(
+    response,
+    backendUrl
+  )) as QuestionResponseJSON;
+  // {
+  //  correct_threshold: 3,
+  //  question_set: [{question_text: "...",
+  //                  answer_text: ["...", "..."],
+  //                  feedback_text: "..."}]
+  // }
+
+  // DOES RANDOM ORDERING OF QUESTIONS
+  responseJson.question_set.forEach((question) => {
+    question.correct_answer = question.answer_text[0];
+    question.answers_order_randomised = question.answer_text.sort(
+      () => 0.5 - Math.random()
+    );
+  });
+  return responseJson;
+};

@@ -378,3 +378,11 @@ export function parseQuery(query: ParsedUrlQuery): ParsedQuery {
   )
     return { x: query.x, y: query.y, zoom: query.zoom };
 }
+
+export function isEven(integer: number): boolean {
+  return integer % 2 === 0;
+}
+
+export function isNumeric(num: number): boolean {
+  return !isNaN(num);
+}
