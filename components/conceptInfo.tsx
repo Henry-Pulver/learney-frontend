@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAsync } from "react-async";
 import {
   getValidURLs,
@@ -14,6 +14,8 @@ import { cacheHeaders } from "../lib/headers";
 import Overlay from "./overlay";
 import { ButtonPressFunction } from "../lib/types";
 import { OnGoalLearnedClick } from "./types";
+import { completeTest, fetchQuestionSet } from "../lib/questions";
+import QuestionModal from "./questions/questionModal";
 
 type OnVote = (node: NodeSingular, url: string, up: boolean | null) => void;
 
@@ -27,6 +29,8 @@ export function ConceptInfo({
   sessionId,
   learnedNodes,
   goalNodes,
+  onTestSuccess,
+  onTestFail,
   onLearnedClick,
   onSetGoalClick,
   allowSuggestions,
@@ -37,7 +41,7 @@ export function ConceptInfo({
   allVotes,
 }: {
   visible: boolean;
-  node: NodeSingular | undefined;
+  node: NodeSingular;
   backendUrl: string;
   userId: string;
   userEmail: string;
@@ -46,6 +50,8 @@ export function ConceptInfo({
   hideConceptInfo: () => void;
   learnedNodes: object;
   goalNodes: object;
+  onTestSuccess;
+  onTestFail;
   onLearnedClick: OnGoalLearnedClick;
   onSetGoalClick: OnGoalLearnedClick;
   allowSuggestions: boolean;
@@ -54,78 +60,129 @@ export function ConceptInfo({
   onVote: OnVote;
   allVotes: object;
 }) {
+  // Question stuff
+  const { data, isPending, reload } = useAsync({
+    promiseFn: fetchQuestionSet,
+    backendUrl: backendUrl,
+    mapUUID: mapUUID,
+    userId: userId,
+    conceptId: node.id(),
+  });
+  useEffect(reload, [node]); // Each time a node is selected, rerun this
+  const [questionModalShown, setQuestionModalShown] =
+    React.useState<boolean>(false);
+
   if (node === undefined) return <></>;
   return (
-    <Overlay
-      open={visible}
-      hide={
-        node
-          ? buttonPressFunction(hideConceptInfo, "Top Right Close Concept X")
-          : () => {}
-      }
-    >
-      <div className="flex flex-col text-center h-excl-toolbar w-full overflow-hidden">
-        <h4 className="text-gray-900 text-2xl font-bold sm:text-4xl mb-2 px-4 text-center">
-          {node && node.data().name}
-        </h4>
-        <div className="text-left text-black mt-0 mx-auto mb-4 px-4 max-h-1/5">
-          {node && node.data().description}
-        </div>
-        {node && (
-          <div className="absolute bottom-0 left-0 sm:relative w-full left-0 bottom-0 z-10 bg-white justify-around border-t border-solid border-gray-300 px-2 py-4 grid items-center grid-flow-col">
-            <IconToggleButtonWithCheckbox
-              checked={!!learnedNodes[node.id()]}
-              onCheck={() => onLearnedClick(node, userId, sessionId)}
-              Icon={CheckCircleIcon}
-              text={"I Know This!"}
-              colour={"green"}
-            />
-            <IconToggleButtonWithCheckbox
-              checked={!!goalNodes[node.id()]}
-              onCheck={() => onSetGoalClick(node, userId, sessionId)}
-              Icon={FlagIcon}
-              text={"Set Goal"}
-              colour={"blue"}
-            />
+    <>
+      {data && data.correct_threshold !== 0 ? (
+        <QuestionModal
+          questionSet={data.question_set}
+          modalShown={questionModalShown}
+          closeModal={() => setQuestionModalShown(false)}
+          onCompletion={(answersGiven) => {
+            completeTest(
+              answersGiven,
+              node,
+              learnedNodes,
+              goalNodes,
+              data.question_set,
+              data.correct_threshold,
+              () => onTestSuccess(node, userId, sessionId),
+              () => {
+                reload();
+                onTestFail(node);
+              }
+            );
+            setQuestionModalShown(false);
+          }}
+          backendUrl={backendUrl}
+          userId={userId}
+          sessionId={sessionId}
+        />
+      ) : (
+        <></>
+      )}
+      <Overlay
+        open={visible}
+        hide={
+          node
+            ? buttonPressFunction(hideConceptInfo, "Top Right Close Concept X")
+            : () => {}
+        }
+      >
+        <div className="flex flex-col text-center h-excl-toolbar w-full overflow-hidden">
+          <h4 className="text-gray-900 text-2xl font-bold sm:text-4xl mb-2 px-4 text-center">
+            {node && node.data().name}
+          </h4>
+          <div className="text-left text-black mt-0 mx-auto mb-4 px-4 max-h-1/5">
+            {node && node.data().description}
           </div>
-        )}
-        <ol className="shrink grow list-none pl-0 m-0 overflow-auto mb-20 md:mb-0 pb-2 sm:pb-20 sm:px-2 w-full">
-          {node &&
-            appendToArray(
-              getAndSortLinkPreviewURLs(node, allVotes).map((url) => (
-                <ConceptLinkPreview
-                  key={url}
-                  node={node}
-                  url={url}
-                  userId={userId}
-                  backendUrl={backendUrl}
-                  mapUUID={mapUUID}
-                  sessionId={sessionId}
-                  userVotes={userVotes}
-                  allVotes={allVotes}
-                  onVote={onVote}
-                />
-              )),
-              getAndSortLinkPreviewURLs(node, allVotes).length === 0 && (
-                <div className="border-t border-solid border-gray-200 pt-4 text-lg text-gray-800">
-                  No suggested content for {node.data().name}.
-                </div>
-              ),
-              allowSuggestions && (
-                // <div> necessary as otherwise the button grows to the width of the list element
-                <div>
-                  <MakeSuggestionButton
-                    buttonPressFunction={buttonPressFunction}
-                    userEmail={userEmail}
-                    buttonName={"Suggest Content"}
-                    text={"Suggest Content"}
+          {node && (
+            <div className="absolute bottom-0 left-0 sm:relative w-full left-0 bottom-0 z-10 bg-white justify-around border-t border-solid border-gray-300 px-2 py-4 grid items-center grid-flow-col">
+              <IconToggleButtonWithCheckbox
+                text={
+                  !learnedNodes[node.id()] && data && data.correct_threshold > 0
+                    ? "Test me!"
+                    : "I know this!"
+                }
+                checked={!!learnedNodes[node.id()]}
+                onCheck={
+                  !learnedNodes[node.id()] && data && data.correct_threshold > 0
+                    ? () => setQuestionModalShown(true)
+                    : () => onLearnedClick(node, userId, sessionId)
+                }
+                Icon={CheckCircleIcon}
+                colour={"green"}
+                loading={isPending}
+              />
+              <IconToggleButtonWithCheckbox
+                text={"Set Goal"}
+                checked={!!goalNodes[node.id()]}
+                onCheck={() => onSetGoalClick(node, userId, sessionId)}
+                Icon={FlagIcon}
+                colour={"blue"}
+              />
+            </div>
+          )}
+          <ol className="shrink grow list-none pl-0 m-0 overflow-auto mb-20 md:mb-0 pb-2 sm:pb-20 sm:px-2 w-full">
+            {node &&
+              appendToArray(
+                getAndSortLinkPreviewURLs(node, allVotes).map((url) => (
+                  <ConceptLinkPreview
+                    key={url}
+                    node={node}
+                    url={url}
+                    userId={userId}
+                    backendUrl={backendUrl}
+                    mapUUID={mapUUID}
+                    sessionId={sessionId}
+                    userVotes={userVotes}
+                    allVotes={allVotes}
+                    onVote={onVote}
                   />
-                </div>
-              )
-            )}
-        </ol>
-      </div>
-    </Overlay>
+                )),
+                getAndSortLinkPreviewURLs(node, allVotes).length === 0 && (
+                  <div className="border-t border-solid border-gray-200 pt-4 text-lg text-gray-800">
+                    No suggested content for {node.data().name}.
+                  </div>
+                ),
+                allowSuggestions && (
+                  // <div> necessary as otherwise the button grows to the width of the list element
+                  <div>
+                    <MakeSuggestionButton
+                      buttonPressFunction={buttonPressFunction}
+                      userEmail={userEmail}
+                      buttonName={"Suggest Content"}
+                      text={"Suggest Content"}
+                    />
+                  </div>
+                )
+              )}
+          </ol>
+        </div>
+      </Overlay>
+    </>
   );
 }
 

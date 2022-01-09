@@ -19,7 +19,6 @@ import { fetchTotalVotes } from "../lib/utils";
 import {
   ElementsDefinition,
   NodeSingular,
-  SingularElementArgument,
 } from "cytoscape";
 import {
   GetNextConceptButton,
@@ -41,6 +40,8 @@ export default function Map({
   buttonPressFunction,
   learned,
   onLearnedClick,
+  onTestSuccess,
+  onTestFail,
   setLearnedState,
   goals,
   onSetGoalClick,
@@ -60,6 +61,8 @@ export default function Map({
   buttonPressFunction: ButtonPressFunction;
   learned: object;
   onLearnedClick: OnGoalLearnedClick;
+  onTestSuccess;
+  onTestFail;
   setLearnedState: SetLearnedState;
   goals: object;
   onSetGoalClick: OnGoalLearnedClick;
@@ -132,7 +135,7 @@ export default function Map({
       }
     })();
   }, [sessionId, userId]);
-  const [nextConcept, setNextConcept] = useState<SingularElementArgument>(null);
+  const [nextConcept, setNextConcept] = useState<NodeSingular>(null);
 
   useEffect(() => {
     if (!editMap && pageLoaded) setNextConcept(getNextNodeToLearn());
@@ -195,9 +198,9 @@ export default function Map({
         </div>
       </div>
       {/*RIGHT SIDE PANEL*/}
-      {!editMap && (
+      {!editMap && nodeSelected && (
         <ConceptInfo
-          visible={nodeSelected !== undefined}
+          visible={true}
           node={nodeSelected}
           backendUrl={backendUrl}
           userId={userId}
@@ -207,6 +210,8 @@ export default function Map({
           hideConceptInfo={hideConceptPanel}
           learnedNodes={learned}
           goalNodes={goals}
+          onTestSuccess={onTestSuccess}
+          onTestFail={onTestFail}
           onLearnedClick={onLearnedClick}
           onSetGoalClick={onSetGoalClick}
           allowSuggestions={allowSuggestions}
