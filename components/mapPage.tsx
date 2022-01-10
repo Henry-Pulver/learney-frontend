@@ -40,6 +40,7 @@ export default function MapPage({
   editMap,
   mapJsonString,
   mapUUID,
+  questionsEnabled,
 }: {
   backendUrl: string;
   mapUrlExtension: string;
@@ -47,6 +48,7 @@ export default function MapPage({
   editMap: boolean;
   mapJsonString: string;
   mapUUID: string;
+  questionsEnabled: boolean;
 }) {
   if (backendUrl === "https://api.learney.me") {
     ReactGA.initialize("UA-197170313-2");
@@ -296,6 +298,7 @@ export default function MapPage({
         pageLoaded={pageLoaded}
         setPageLoaded={setPageLoaded}
         editType={editType}
+        questionsEnabled={questionsEnabled}
       />
       {editMap && (
         <Editor
