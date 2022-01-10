@@ -39,9 +39,10 @@ export function ConceptInfo({
   onVote,
   userVotes,
   allVotes,
+  questionsEnabled,
 }: {
   visible: boolean;
-  node: NodeSingular;
+  node: NodeSingular | undefined;
   backendUrl: string;
   userId: string;
   userEmail: string;
@@ -59,6 +60,7 @@ export function ConceptInfo({
   userVotes: object;
   onVote: OnVote;
   allVotes: object;
+  questionsEnabled: boolean;
 }) {
   // Question stuff
   const { data, isPending, reload } = useAsync({
@@ -67,6 +69,7 @@ export function ConceptInfo({
     mapUUID: mapUUID,
     userId: userId,
     conceptId: node.id(),
+    questionsEnabled: questionsEnabled,
   });
   useEffect(reload, [node]); // Each time a node is selected, rerun this
   const [questionModalShown, setQuestionModalShown] =

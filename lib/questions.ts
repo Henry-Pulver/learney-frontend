@@ -86,12 +86,15 @@ export const fetchQuestionSet = async ({
   mapUUID,
   userId,
   conceptId,
+  questionsEnabled,
 }: {
   backendUrl: string;
   mapUUID: string;
   userId: string;
   conceptId: string;
+  questionsEnabled: boolean;
 }): Promise<QuestionResponseJSON> => {
+  if (!questionsEnabled) return { question_set: [], correct_threshold: 0 };
   console.log("FETCHING QUESTIONS");
   const response = await fetch(
     `${backendUrl}/api/v0/questions?` +

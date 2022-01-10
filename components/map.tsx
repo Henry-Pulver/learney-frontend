@@ -16,10 +16,7 @@ import { ButtonPressFunction } from "../lib/types";
 import { EditType } from "./editor/types";
 import { useAsync } from "react-async";
 import { fetchTotalVotes } from "../lib/utils";
-import {
-  ElementsDefinition,
-  NodeSingular,
-} from "cytoscape";
+import { ElementsDefinition, NodeSingular } from "cytoscape";
 import {
   GetNextConceptButton,
   ResetPanButton,
@@ -49,6 +46,7 @@ export default function Map({
   pageLoaded,
   setPageLoaded,
   editType,
+  questionsEnabled,
 }: {
   backendUrl: string;
   userId: string;
@@ -70,6 +68,7 @@ export default function Map({
   pageLoaded: boolean;
   setPageLoaded: (boolean) => void;
   editType: EditType;
+  questionsEnabled: boolean;
 }) {
   const router = useRouter();
   const [userVotes, setUserVote] = React.useState({});
@@ -219,6 +218,7 @@ export default function Map({
           userVotes={userVotes}
           onVote={onVote}
           allVotes={data}
+          questionsEnabled={questionsEnabled}
         />
       )}
     </div>
