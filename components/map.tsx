@@ -159,7 +159,9 @@ export default function Map({
           "relative h-excl-toolbar w-full"
         )}
       >
-        {!nodeSelected && <MapTitle title={mapTitle} description={mapDescription} />}
+        {!nodeSelected && (
+          <MapTitle title={mapTitle} description={mapDescription} />
+        )}
         <div
           id="cy"
           className={classNames(
