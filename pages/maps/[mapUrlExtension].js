@@ -38,8 +38,8 @@ export async function getServerSideProps({ params }) {
   return {
     props: {
       mapUrlExtension: params.mapUrlExtension,
-      mapTitle: mapInfoJson.map_title,
-      mapDescription: mapInfoJson.map_description,
+      mapTitle: mapInfoJson.title,
+      mapDescription: mapInfoJson.description,
       mapJson: mapInfoJson.map_json,
       mapUUID: mapInfoJson.unique_id,
       allowSuggestions: mapInfoJson.allow_suggestions,
