@@ -2,9 +2,17 @@ import React from "react";
 import MapPage from "../components/mapPage";
 import { cacheHeaders } from "../lib/headers";
 
-export default function OriginalMap({ mapJson, mapUUID, backendUrl }) {
+export default function OriginalMap({
+  mapTitle,
+  mapDescription,
+  mapJson,
+  mapUUID,
+  backendUrl,
+}) {
   return (
     <MapPage
+      mapTitle={mapTitle}
+      mapDescription={mapDescription}
       backendUrl={backendUrl}
       mapUUID={mapUUID}
       mapUrlExtension={"original_map"}
@@ -27,6 +35,8 @@ export async function getServerSideProps() {
   const mapInfoJson = await mapResponse.json();
   return {
     props: {
+      mapTitle: mapInfoJson.name,
+      mapDescription: mapInfoJson.description,
       mapJson: mapInfoJson.map_json,
       mapUUID: mapInfoJson.unique_id,
       backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
