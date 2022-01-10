@@ -8,6 +8,12 @@ export default function Map({
   mapUUID,
   allowSuggestions,
   backendUrl,
+}: {
+  mapUrlExtension: string;
+  mapJson: string;
+  mapUUID: string;
+  allowSuggestions: boolean;
+  backendUrl: string;
 }) {
   return (
     <MapPage
@@ -17,6 +23,7 @@ export default function Map({
       allowSuggestions={allowSuggestions}
       editMap={false}
       mapJsonString={mapJson}
+      questionsEnabled={false}
     />
   );
 }
