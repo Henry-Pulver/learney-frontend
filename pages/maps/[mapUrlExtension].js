@@ -3,6 +3,8 @@ import MapPage from "../../components/mapPage";
 import { cacheHeaders } from "../../lib/headers";
 
 export default function Map({
+  mapTitle,
+  mapDescription,
   mapUrlExtension,
   mapJson,
   mapUUID,
@@ -11,6 +13,8 @@ export default function Map({
 }) {
   return (
     <MapPage
+      mapTitle={mapTitle}
+      mapDescription={mapDescription}
       backendUrl={backendUrl}
       mapUUID={mapUUID}
       mapUrlExtension={mapUrlExtension}
@@ -34,6 +38,8 @@ export async function getServerSideProps({ params }) {
   return {
     props: {
       mapUrlExtension: params.mapUrlExtension,
+      mapTitle: mapInfoJson.title,
+      mapDescription: mapInfoJson.description,
       mapJson: mapInfoJson.map_json,
       mapUUID: mapInfoJson.unique_id,
       allowSuggestions: mapInfoJson.allow_suggestions,
