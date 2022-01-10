@@ -17,7 +17,10 @@ export default function MapTitle({
   if (title.length === 0) return <></>;
   return (
     <div
-      className="absolute z-10 left-8 top-6 bg-white rounded-lg max-w-xl px-4 py-2"
+      className={classNames(
+        "absolute z-10 overflow-y-auto left-0 sm:left-8 top-0 sm:top-6 bg-white sm:rounded-lg border-t border-t-gray-300 max-w-xl px-4 py-2",
+        descriptionExpanded && "h-excl-toolbar sm:h-none"
+      )}
       onClick={
         !descriptionExpanded
           ? buttonPressFunction(
@@ -28,13 +31,15 @@ export default function MapTitle({
       }
     >
       <div className="relative">
-        <div className="text-3xl text-gray-900 font-semibold">{title}</div>
+        <div className="text-2xl sm:text-3xl text-gray-900 font-semibold pr-6 sm:pr-0">
+          {title}
+        </div>
         {description.length > 0 && (
           <div
             className={classNames(
               "text-lg text-gray-700 py-1 whitespace-pre-line",
               !descriptionExpanded &&
-                "overflow-hidden max-h-8 whitespace-nowrap overflow-ellipsis pr-8"
+                "overflow-hidden max-h-0 sm:max-h-8 whitespace-nowrap overflow-ellipsis pr-8"
             )}
           >
             {description}
