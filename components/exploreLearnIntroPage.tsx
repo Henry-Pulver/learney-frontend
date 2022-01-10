@@ -117,7 +117,7 @@ export default function ExploreLearnIntroPage({
                 alt="Learney"
               />
               <h3 className="text-base md:text-3xl max-w-xxs sm:max-w-xl text-gray-700 mt-4 sm:mt-12 text-center">
-                From the <b>{mapName}</b> map, I want to learn...
+                From <b>{mapName}</b>, I want to learn...
               </h3>
               {/* Search box wrapper to add red outline when  */}
               <div
