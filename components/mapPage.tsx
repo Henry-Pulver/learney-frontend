@@ -12,7 +12,7 @@ import {
   setURLQuery,
   URLQuerySet,
 } from "../lib/utils";
-import MapHeader from "./mapHeader";
+import MapHeader from "./headers";
 import Map from "./map";
 import { goalNodes, learnedNodes } from "../lib/learningAndPlanning/variables";
 import {
@@ -30,6 +30,8 @@ import { EditType, NotificationData } from "./editor/types";
 import { NodeSingular } from "cytoscape";
 
 export default function MapPage({
+  mapTitle,
+  mapDescription,
   backendUrl,
   mapUrlExtension,
   allowSuggestions,
@@ -37,6 +39,8 @@ export default function MapPage({
   mapJsonString,
   mapUUID,
 }: {
+  mapTitle: string;
+  mapDescription: string;
   backendUrl: string;
   mapUrlExtension: string;
   allowSuggestions: boolean;
@@ -52,11 +56,6 @@ export default function MapPage({
   const { user, isLoading } = useUser();
   const mapJson = JSON.parse(mapJsonString);
   const router = useRouter();
-
-  let mapName;
-  if (mapUrlExtension === "original_map")
-    mapName = "Maths for Machine Learning";
-  else mapName = mapUrlExtension; // Cut off "maps/" from the start
 
   // TODO: Move all these into a redux/MST store
   const [userId, setUserId] = React.useState<string | undefined>(undefined);
@@ -214,7 +213,7 @@ export default function MapPage({
       {showExploreLearn && (
         <ExploreLearnIntroPage
           hideExploreLearn={() => setExploreLearn(false)}
-          mapName={mapName}
+          mapName={mapTitle ? mapTitle : mapUrlExtension + " map"}
           mapJson={mapJson}
           setGoal={onSetGoalClick}
           pageLoaded={pageLoaded}
@@ -224,6 +223,8 @@ export default function MapPage({
         />
       )}
       <Map
+        mapTitle={mapTitle ? mapTitle : mapUrlExtension}
+        mapDescription={mapDescription}
         backendUrl={backendUrl}
         userId={userId}
         userEmail={userEmail}
