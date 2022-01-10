@@ -28,8 +28,11 @@ import {
 } from "./buttons";
 import { getNextNodeToLearn } from "../lib/questions";
 import { OnGoalLearnedClick, SetGoalState, SetLearnedState } from "./types";
+import MapTitle from "./mapTitle";
 
 export default function Map({
+  mapTitle,
+  mapDescription,
   backendUrl,
   userId,
   userEmail,
@@ -49,6 +52,8 @@ export default function Map({
   setPageLoaded,
   editType,
 }: {
+  mapTitle: string;
+  mapDescription: string;
   backendUrl: string;
   userId: string;
   userEmail: string;
@@ -154,6 +159,7 @@ export default function Map({
           "relative h-excl-toolbar w-full"
         )}
       >
+        {!nodeSelected && <MapTitle title={mapTitle} description={mapDescription} />}
         <div
           id="cy"
           className={classNames(
