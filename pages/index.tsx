@@ -2,7 +2,15 @@ import React from "react";
 import MapPage from "../components/mapPage";
 import { cacheHeaders } from "../lib/headers";
 
-export default function OriginalMap({ mapJson, mapUUID, backendUrl }) {
+export default function OriginalMap({
+  mapJson,
+  mapUUID,
+  backendUrl,
+}: {
+  mapJson: string;
+  mapUUID: string;
+  backendUrl: string;
+}) {
   return (
     <MapPage
       backendUrl={backendUrl}
@@ -11,6 +19,7 @@ export default function OriginalMap({ mapJson, mapUUID, backendUrl }) {
       allowSuggestions={true}
       editMap={false}
       mapJsonString={mapJson}
+      questionsEnabled={false}
     />
   );
 }
