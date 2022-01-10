@@ -44,13 +44,10 @@ export default function MapTitle({
           <div className="absolute right-0 bottom-0">
             <button
               className="gray-icon-btn-no-padding rounded-xl text-gray-500 hover:text-gray-600 z-20"
-              onClick={buttonPressFunction(
-                (e) => {
-                    e.stopPropagation(); // Stops parent div's onClick function from being called!
-                    setDescriptionExpanded((expanded) => !expanded);
-                  },
-                "Map Title Expand/Minimise Button"
-              )}
+              onClick={buttonPressFunction((e) => {
+                e.stopPropagation(); // Stops parent div's onClick function from being called!
+                setDescriptionExpanded((expanded) => !expanded);
+              }, "Map Title Expand/Minimise Button")}
             >
               <span className="sr-only">
                 {descriptionExpanded
