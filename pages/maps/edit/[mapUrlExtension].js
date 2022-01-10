@@ -54,8 +54,8 @@ export const getServerSideProps = withPageAuthRequired({
     return {
       props: {
         mapUrlExtension: ctx.params.mapUrlExtension,
-        mapTitle: mapInfoJson.map_title,
-        mapDescription: mapInfoJson.map_description,
+        mapTitle: mapInfoJson.title,
+        mapDescription: mapInfoJson.description,
         mapJson: mapInfoJson.map_json,
         mapUUID: mapInfoJson.unique_id,
         backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL,

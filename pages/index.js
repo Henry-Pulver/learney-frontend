@@ -35,7 +35,7 @@ export async function getServerSideProps() {
   const mapInfoJson = await mapResponse.json();
   return {
     props: {
-      mapTitle: mapInfoJson.name,
+      mapTitle: mapInfoJson.title,
       mapDescription: mapInfoJson.description,
       mapJson: mapInfoJson.map_json,
       mapUUID: mapInfoJson.unique_id,
