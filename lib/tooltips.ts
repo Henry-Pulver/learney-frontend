@@ -4,6 +4,7 @@ import {
 } from "./learningAndPlanning/learningAndPlanning";
 import { initialiseFromStorage, handleFetchResponses } from "./utils";
 import { jsonHeaders } from "./headers";
+import { NodeSingular } from "cytoscape";
 
 const votesKeyName = "votes";
 
@@ -34,13 +35,13 @@ export async function getDataFromStorage(backendUrl, userId, mapUUID) {
 }
 
 export async function saveVote(
-  url,
-  vote,
-  selectedNode,
-  backendUrl,
-  userId,
-  mapUUID,
-  sessionId
+  url: string,
+  vote: boolean | null,
+  selectedNode: NodeSingular,
+  backendUrl: string,
+  userId: string,
+  mapUUID: string,
+  sessionId: string
 ) {
   const response = await fetch(`${backendUrl}/api/v0/votes`, {
     method: "POST",

@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import {
+  ElementsDefinition,
+  NodeSingular,
+  SingularElementArgument,
+} from "cytoscape";
+import { useAsync } from "react-async";
 import { ConceptInfo } from "./conceptInfo";
 import { getDataFromStorage, saveVote } from "../lib/tooltips";
 import {
@@ -12,23 +18,17 @@ import { initialiseGraphState } from "../lib/learningAndPlanning/learningAndPlan
 import { initCy, bindRouters } from "../lib/graph";
 import { setupCtoCentre } from "../lib/hotkeys";
 import { classNames } from "../lib/reactUtils";
-import { ButtonPressFunction } from "../lib/types";
-import { EditType } from "./editor/types";
-import { useAsync } from "react-async";
 import { fetchTotalVotes } from "../lib/utils";
-import {
-  ElementsDefinition,
-  NodeSingular,
-  SingularElementArgument,
-} from "cytoscape";
+import MapTitle from "./mapTitle";
 import {
   GetNextConceptButton,
   ResetPanButton,
   ResetProgressIconButton,
 } from "./buttons";
 import { getNextNodeToLearn } from "../lib/questions";
+import { ButtonPressFunction } from "../lib/types";
+import { EditType } from "./editor/types";
 import { OnGoalLearnedClick, SetGoalState, SetLearnedState } from "./types";
-import MapTitle from "./mapTitle";
 
 export default function Map({
   mapTitle,
@@ -160,7 +160,11 @@ export default function Map({
         )}
       >
         {!nodeSelected && (
-          <MapTitle title={mapTitle} description={mapDescription} />
+          <MapTitle
+            title={mapTitle}
+            description={mapDescription}
+            buttonPressFunction={buttonPressFunction}
+          />
         )}
         <div
           id="cy"
