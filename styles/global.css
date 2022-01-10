@@ -52,8 +52,11 @@
   .white-icon-btn {
     @apply flex-shrink-0 bg-white shadow-sm hover:shadow-md w-auto rounded-full focus:outline-none;
   }
+  .gray-icon-btn-no-padding {
+    @apply white-icon-btn transition duration-300 ease-in-out text-gray-400 hover:text-gray-500;
+  }
   .gray-icon-btn {
-    @apply white-icon-btn p-1 transition duration-300 ease-in-out text-gray-400 hover:text-gray-500;
+    @apply gray-icon-btn-no-padding p-1;
   }
   .mobile-icon-button {
     @apply flex flex-row justify-between items-center w-full max-w-3xl mx-auto rounded-md py-2 px-3 text-base font-medium text-gray-500;
