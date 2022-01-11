@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useAsync } from "react-async";
 import {
   getValidURLs,
@@ -10,7 +10,7 @@ import { IconToggleButtonWithCheckbox, MakeSuggestionButton } from "./buttons";
 import { appendToArray, classNames } from "../lib/reactUtils";
 import { LoadingSpinner } from "./animations";
 import { NodeSingular } from "cytoscape";
-import { cacheHeaders } from "../lib/headers";
+import { cacheHeaders, jsonHeaders } from "../lib/headers";
 import Overlay from "./overlay";
 import { ButtonPressFunction } from "../lib/types";
 import { OnGoalLearnedClick } from "./types";
@@ -89,6 +89,7 @@ export function ConceptInfo({
             />
           </div>
         )}
+        <p className="ml-2.5 text-gray-500 text-left">Done?</p>
         <ol className="shrink grow list-none pl-0 m-0 overflow-auto mb-20 md:mb-0 pb-2 sm:pb-20 sm:px-2 w-full">
           {node &&
             appendToArray(
@@ -134,6 +135,7 @@ type LinkPreviewData = {
   title: string;
   description: string;
   image_url: string;
+  checked: boolean;
 };
 
 function ConceptLinkPreview({
@@ -157,19 +159,27 @@ function ConceptLinkPreview({
   allVotes: object;
   onVote: OnVote;
 }) {
-  const { data } = useAsync({
+  const { data, isLoading } = useAsync({
     promiseFn: fetchLinkPreview,
     node,
     url,
     backendUrl,
     mapUUID,
+    userId,
   });
+  const [checked, setChecked] = useState(false);
+  useEffect(() => {
+    if (!isLoading) setChecked(data.checked);
+  }, [data, isLoading]);
 
   return (
-    <li className="text-gray-900 relative">
+    <li className="flex flex-row py-auto text-gray-900 relative">
       <a
         href={url}
-        className="hover:bg-gray-100 hover:shadow-lg h-24 rounded-sm overflow-hidden flex text-left m-0.5"
+        className={classNames(
+          "hover:bg-gray-100 bg-white hover:shadow-md h-24 rounded overflow-hidden flex text-left mx-0.5 my-1 w-full",
+          checked && "hover:bg-green-200 bg-green-100"
+        )}
         target="_blank"
         rel="noreferrer"
         onClick={() =>
@@ -183,6 +193,23 @@ function ConceptLinkPreview({
           )
         }
       >
+        <div className="relative h-full flex flex-col justify-center pr-4">
+          {/*<p className="absolute left-0.5 top-3.5 text-sm text-gray-500">Done?</p>*/}
+          <input
+            type="checkbox"
+            checked={checked}
+            onClick={(e) => e.stopPropagation()}
+            onChange={() => {
+              setChecked(!checked);
+              postChecked(node, url, backendUrl, mapUUID, userId);
+            }}
+            className={classNames(
+              checked &&
+                "!ring-green-500 ring-offset-2 focus:!ring-offset-2 ring-2 focus:!ring-2",
+              "focus:ring-0 focus:ring-offset-0 text-green-600 cursor-pointer h-6 w-6 ml-2 border-gray-300 rounded select-none"
+            )}
+          />
+        </div>
         <div className="flex items-center max-h-full w-20 sm:w-32">
           {data ? (
             <img
@@ -194,7 +221,7 @@ function ConceptLinkPreview({
             <LoadingSpinner classes="h-3/5 w-3/5 m-auto" />
           )}
         </div>
-        <div className="w-[calc(100%-8.25rem)] w-[calc(100%-10.75rem)] mr-0 ml-1 no-underline overflow-hidden">
+        <div className="w-[calc(100%-8.25rem)] sm:w-[calc(100%-13.25rem)] grow mr-0 ml-1 no-underline overflow-hidden overflow-ellipsis">
           <h4 className="text-lg sm:text-xl sm:py-1 overflow-hidden whitespace-nowrap overflow-ellipsis">
             {data ? (data as LinkPreviewData).title : "Loading..."}
           </h4>
@@ -217,8 +244,9 @@ function ConceptLinkPreview({
             {url}
           </p>
         </div>
+        <div className="w-10" />
       </a>
-      <div className="absolute right-1 top-0 w-8">
+      <div className="absolute right-1 top-0 w-8 my-1">
         <div className="h-8 w-8">
           <div
             className={classNames(
@@ -296,12 +324,14 @@ const fetchLinkPreview = async ({
   url,
   backendUrl,
   mapUUID,
+  userId,
 }: {
   node: NodeSingular;
   url: string;
   backendUrl: string;
   mapUUID: string;
-}): Promise<object> => {
+  userId: string;
+}): Promise<LinkPreviewData> => {
   const response = await fetch(
     `${backendUrl}/api/v0/link_previews?` +
       new URLSearchParams({
@@ -309,6 +339,7 @@ const fetchLinkPreview = async ({
         concept: node.data().name,
         concept_id: node.id(),
         url: url,
+        user_id: userId,
       }),
     {
       method: "GET",
@@ -320,9 +351,35 @@ const fetchLinkPreview = async ({
     backendUrl
   )) as LinkPreviewData;
   if (response.status !== 200 && responseJson.status !== 201)
-    responseJson = { title: "", description: "", image_url: "", status: 400 };
+    responseJson = {
+      title: "",
+      description: "",
+      image_url: "",
+      status: 400,
+      checked: false,
+    };
   if (responseJson.title === "") responseJson.title = node.data().name;
   if (responseJson.image_url === "")
     responseJson.image_url = "/images/learney_logo_256x256.png";
   return responseJson;
 };
+
+async function postChecked(
+  node: NodeSingular,
+  url: string,
+  backendUrl: string,
+  mapUUID: string,
+  userId: string
+) {
+  const response = await fetch(`${backendUrl}/api/v0/check_off_link`, {
+    method: "POST",
+    headers: jsonHeaders,
+    body: JSON.stringify({
+      map: mapUUID,
+      user_id: userId,
+      concept_id: node.data().id,
+      url: url,
+    }),
+  });
+  handleFetchResponses(response, backendUrl);
+}
