@@ -185,7 +185,7 @@ export function ShareCurrentPosition({ pageLoaded, buttonPressFunction }) {
               ? buttonPressFunction(() => {}, "Get Shareable Link (void)")
               : buttonPressFunction(() => {
                   navigator.clipboard.writeText(
-                    `${location.origin}/?` +
+                    `${location.href}/?` +
                       // @ts-ignore
                       new URLSearchParams(getCurrentQueryParams(pageLoaded))
                   );
