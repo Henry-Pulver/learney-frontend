@@ -89,7 +89,14 @@ export function ConceptInfo({
             />
           </div>
         )}
-        <p className={classNames("ml-2.5 text-gray-500 text-left", getAndSortLinkPreviewURLs(node, allVotes).length === 0 && "hidden")}>Done?</p>
+        <p
+          className={classNames(
+            "ml-2.5 text-gray-500 text-left",
+            getAndSortLinkPreviewURLs(node, allVotes).length === 0 && "hidden"
+          )}
+        >
+          Done?
+        </p>
         <ol className="shrink grow list-none pl-0 m-0 overflow-auto mb-20 md:mb-0 pb-2 sm:pb-20 sm:px-2 w-full">
           {node &&
             appendToArray(
