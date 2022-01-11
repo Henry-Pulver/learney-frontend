@@ -19,7 +19,7 @@ export default function MapTitle({
     <div
       className={classNames(
         "absolute z-10 overflow-y-auto left-0 sm:left-8 top-0 sm:top-6 bg-white sm:rounded-lg border-t border-t-gray-300 max-w-xl px-4 py-2",
-        descriptionExpanded && "h-excl-toolbar sm:h-none"
+        descriptionExpanded && "h-excl-toolbar sm:h-[auto]"
       )}
       onClick={
         !descriptionExpanded
