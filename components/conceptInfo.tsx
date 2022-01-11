@@ -89,7 +89,7 @@ export function ConceptInfo({
             />
           </div>
         )}
-        <p className="ml-2.5 text-gray-500 text-left">Done?</p>
+        <p className={classNames("ml-2.5 text-gray-500 text-left", getAndSortLinkPreviewURLs(node, allVotes).length === 0 && "hidden")}>Done?</p>
         <ol className="shrink grow list-none pl-0 m-0 overflow-auto mb-20 md:mb-0 pb-2 sm:pb-20 sm:px-2 w-full">
           {node &&
             appendToArray(
@@ -194,7 +194,6 @@ function ConceptLinkPreview({
         }
       >
         <div className="relative h-full flex flex-col justify-center pr-4">
-          {/*<p className="absolute left-0.5 top-3.5 text-sm text-gray-500">Done?</p>*/}
           <input
             type="checkbox"
             checked={checked}
