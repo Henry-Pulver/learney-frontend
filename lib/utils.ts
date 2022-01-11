@@ -15,13 +15,12 @@ function isValidURL(str: string): boolean {
 export function getValidURLs(urls: Array<string>): Array<string> {
   const url_array = [];
 
-  function validateURL(url) {
-    url.replace(" ", "");
+  function validateURL(url: string) {
+    url = url.replace(" ", "");
     if (url.length > 0) {
-      url_array.push(url);
       if (!isValidURL(url)) {
         console.error(`The following URL is broken: ${url}`);
-      }
+      } else url_array.push(url);
     }
   }
   // Run validateURL on each url in the string
