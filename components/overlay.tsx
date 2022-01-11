@@ -9,7 +9,7 @@ export default function Overlay(props: {
 }) {
   return (
     <Transition.Root show={props.open} as={Fragment}>
-      <div className="fixed right-0 bottom-0 lg:relative shadow-md w-full sm:w-120 lg:w-152 flex overflow-hidden h-excl-toolbar">
+      <div className="fixed right-0 bottom-0 lg:relative shadow-md w-full sm:w-120 lg:w-168 flex overflow-hidden h-excl-toolbar">
         <Transition.Child
           as={Fragment}
           enter="transform transition ease-in-out duration-400 sm:duration-600"
