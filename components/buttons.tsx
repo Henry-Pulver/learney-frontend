@@ -13,7 +13,6 @@ import {
 import { ShareIcon } from "@heroicons/react/outline";
 import { AreYouSureModal } from "./modal";
 import { classNames } from "../lib/reactUtils";
-import isEqual from "lodash.isequal";
 import { ButtonPressFunction } from "../lib/types";
 import { SingularElementArgument } from "cytoscape";
 import { TargetFinderIcon } from "./svgs/icons";
@@ -32,9 +31,6 @@ export function IconToggleButtonWithCheckbox({
   text: string;
   colour: "blue" | "green" | "red";
 }) {
-  useEffect(() => {
-    console.log(`${text} is checked: ${checked}`);
-  }, [checked]);
   return (
     <span className="relative z-0 inline-flex items-center shadow-sm rounded-md">
       <button
@@ -134,11 +130,20 @@ export function SlackButton({ buttonPressFunction }) {
   );
 }
 
-function getCurrentQueryParams(pageLoaded: boolean): {
-  x: number | null;
-  y: number | null;
-  zoom: number | null;
-} {
+type QueryParams =
+  | {
+      x: number;
+      y: number;
+      zoom: number;
+    }
+  | {
+      x: null;
+      y: null;
+      zoom: null;
+    };
+const emptyQueryParams = { x: null, y: null, zoom: null };
+
+function getCurrentQueryParams(pageLoaded: boolean): QueryParams {
   if (pageLoaded) {
     return {
       x: window.cy.pan().x,
@@ -146,21 +151,23 @@ function getCurrentQueryParams(pageLoaded: boolean): {
       zoom: window.cy.zoom(),
     };
   } else {
-    return { x: null, y: null, zoom: null };
+    return emptyQueryParams;
   }
 }
 
-export function ShareCurrentPosition({ pageLoaded, buttonPressFunction }) {
-  const [currentQueryParams, setCurrentQueryParams] = useState({
-    x: null,
-    y: null,
-    zoom: null,
-  });
-  const [copiedQueryParams, setCopiedQueryParams] = useState(null);
+export function ShareCurrentPosition({
+  pageLoaded,
+  buttonPressFunction,
+}: {
+  pageLoaded: boolean;
+  buttonPressFunction: ButtonPressFunction;
+}) {
+  const [copiedQueryParams, setCopiedQueryParams] =
+    useState<null | QueryParams>(null);
   useEffect(() => {
     if (pageLoaded) {
-      window.cy.on("zoom pan", (e) => {
-        setCurrentQueryParams(getCurrentQueryParams(pageLoaded));
+      window.cy.on("zoom pan", () => {
+        if (copiedQueryParams) setCopiedQueryParams(null);
       });
     }
   }, [pageLoaded]);
@@ -168,25 +175,26 @@ export function ShareCurrentPosition({ pageLoaded, buttonPressFunction }) {
   return (
     <IconButtonTippy
       content={"Copy link to this map view"}
-      disabled={isEqual(copiedQueryParams, currentQueryParams)}
+      disabled={!!copiedQueryParams}
     >
       <Tippy
         theme={"dark"}
         placement="bottom"
         animation="scale"
         maxWidth={"12em"}
-        visible={isEqual(copiedQueryParams, currentQueryParams)}
+        visible={!!copiedQueryParams}
         content={"Link copied!"}
         className={"invisible lg:visible text-center"}
       >
         <button
           onClick={
-            isEqual(copiedQueryParams, currentQueryParams)
+            copiedQueryParams
               ? buttonPressFunction(() => {}, "Get Shareable Link (void)")
               : buttonPressFunction(() => {
                   navigator.clipboard.writeText(
                     `${location.href}/?` +
                       // @ts-ignore
+                      // ts-ignore necessary because .toString() doesn't work as input to URLSearchParams!
                       new URLSearchParams(getCurrentQueryParams(pageLoaded))
                   );
                   setCopiedQueryParams(getCurrentQueryParams(pageLoaded));
@@ -194,14 +202,12 @@ export function ShareCurrentPosition({ pageLoaded, buttonPressFunction }) {
           }
           className={classNames(
             "mobile-icon-button lg:gray-icon-btn",
-            isEqual(copiedQueryParams, currentQueryParams) &&
+            copiedQueryParams &&
               "cursor-default lg:hover:text-gray-400 lg:hover:shadow-sm"
           )}
         >
           <div className="block lg:hidden px-2 sm:px-4 text-black">
-            {isEqual(copiedQueryParams, currentQueryParams)
-              ? "Link copied!"
-              : "Copy link to this map view"}
+            {copiedQueryParams ? "Link copied!" : "Copy link to this map view"}
           </div>
           <span className="sr-only">Copy link to map view</span>
           <ShareIcon className="h-7 w-7" />
