@@ -115,13 +115,13 @@ export function ConceptInfo({
                 />
               )),
               getAndSortLinkPreviewURLs(node, allVotes).length === 0 && (
-                <div className="border-t border-solid border-gray-200 pt-4 text-lg text-gray-800">
+                <div key="No suggested content" className="border-t border-solid border-gray-200 pt-4 text-lg text-gray-800">
                   No suggested content for {node.data().name}.
                 </div>
               ),
               allowSuggestions && (
                 // <div> necessary as otherwise the button grows to the width of the list element
-                <div>
+                <div key="Make suggestion button">
                   <MakeSuggestionButton
                     buttonPressFunction={buttonPressFunction}
                     userEmail={userEmail}
