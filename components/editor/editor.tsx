@@ -22,10 +22,11 @@ import { EditType, NodeData, ParentNodeData, ShowEditData } from "./types";
 import {
   EdgeSingular,
   ElementDefinition,
+  EventObject,
   NodeCollection,
   NodeSingular,
 } from "cytoscape";
-import isEqual from "lodash.isequal";
+import { trackCyEvent } from "../../lib/utils";
 
 declare global {
   interface Window {
@@ -69,7 +70,8 @@ export default function Editor({
   editType: string;
   setEditType: (editType: EditType) => void;
 }) {
-  const addNode = function (e) {
+  const addNode = (e: EventObject): void => {
+    trackCyEvent(e, "Editor Add Node", backendUrl, userId);
     // [1.0] Create the next node ID
     let nextNodeID = 0;
     window.cy
@@ -133,14 +135,16 @@ export default function Editor({
     window.ur.do("addNode", nodesToAdd);
   };
   const deleteModeClick = function (e) {
-    if (!isEqual(e.target.data(), {})) {
+    if (e.target !== window.cy) {
       if (e.target.id() !== undefined) {
         if (e.target.isEdge()) {
           window.ur.do("remove", e.target);
+          trackCyEvent(e, "Editor Delete Edge", backendUrl, userId);
         } else if (e.target.isNode()) {
           setDeleteNodeData((prevState) => {
             return { ...prevState, ...e.target.data() };
           });
+          trackCyEvent(e, "Editor Delete Node", backendUrl, userId);
         }
       }
     }
@@ -157,9 +161,10 @@ export default function Editor({
     window.ur.do("batch", actions);
     updateMinZoom();
   };
-  const handleEditNodeData = function (e) {
+  const handleEditNodeData = (e: EventObject) => {
     setEditNodeData(e.target.data());
     setShowEditData("concept");
+    trackCyEvent(e, "Editor Select Node", backendUrl, userId);
   };
 
   useEffect(() => {
@@ -274,11 +279,10 @@ export default function Editor({
       nodetype: "field",
     });
 
-  const handleEditParentNodeData = function (e: {
-    target: NodeSingular;
-  }): void {
+  const handleEditParentNodeData = function (e: EventObject): void {
     setEditParentNodeData(e.target.data());
     setShowEditData("topic");
+    trackCyEvent(e, "Editor Select Topic", backendUrl, userId);
   };
   const saveEditParentNodeData = (newParentNodeData: ParentNodeData) => {
     const prevId = newParentNodeData.id;
@@ -343,7 +347,7 @@ export default function Editor({
     setShowEditData("concept");
     return added;
   }
-  function undoAddNodeClick(eles) {
+  function undoAddNodeClick(eles: NodeCollection) {
     const removed = eles.remove();
     setEditNodeData({ ...emptyNodeData });
     updateMinZoom();
@@ -359,6 +363,11 @@ export default function Editor({
         const sourceNode: NodeSingular = extraParams[0];
         const targetNode: NodeSingular = extraParams[1];
         const addedEdge: EdgeSingular = extraParams[2][0];
+        trackCyEvent(event, "Editor Add Dependency", backendUrl, userId, {
+          "Source Node": sourceNode.data().name || sourceNode.id(), // ids as alternatives in case name empty
+          "Target Node": targetNode.data().name || targetNode.id(),
+          "Edge ID": addedEdge.id(),
+        });
         window.cy.remove(addedEdge); // remove auto-added edge
         // Add undo-able edge
         window.ur.do("add", {
@@ -461,7 +470,10 @@ export default function Editor({
           deleteNodeData.id ? getAreYouSureDescriptionText(deleteNodeData) : ""
         }
         actionButtonText={`Delete ${deleteNodeData.nodetype}`}
-        actionButtonFunction={() => removeElement(deleteNodeData.id)}
+        actionButtonFunction={buttonPressFunction(
+          () => removeElement(deleteNodeData.id),
+          "Confirm Delete Node"
+        )}
       />
     </>
   );

@@ -1,6 +1,7 @@
 import { cacheHeaders, headers, jsonHeaders } from "./headers";
 import { UserState } from "./types";
 import { ParsedUrlQuery } from "querystring";
+import { EventObject } from "cytoscape";
 
 export function isAnonymousUser(userId: string): boolean {
   return userId.startsWith("anonymous-user|");
@@ -226,6 +227,31 @@ export function buttonPress(
     });
     handleFetchResponses(response, backendUrl);
   };
+}
+export async function trackCyEvent(
+  event: EventObject,
+  eventType: string,
+  backendUrl: string,
+  userId: string,
+  extraParams: object = {}
+) {
+  const eventData = {
+    user_id: userId,
+    "Current URL": location.href,
+    "Event Type": eventType,
+    Position: event.position,
+    ...extraParams,
+  };
+  if (event.target !== window.cy) {
+    // Use id as a backup in case there is no name
+    eventData["Event Target"] = event.target.data().name || event.target.id();
+  }
+  const response = await fetch(`${backendUrl}/api/v0/cytoscape_events`, {
+    method: "POST",
+    headers: jsonHeaders,
+    body: JSON.stringify(eventData),
+  });
+  handleFetchResponses(response, backendUrl);
 }
 
 export async function handleFetchResponses(
