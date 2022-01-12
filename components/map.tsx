@@ -155,7 +155,7 @@ export default function Map({
       <div
         className={classNames(
           nodeSelected !== undefined &&
-            "w-0 sm:w-[calc(100vw-30rem)] lg:w-[calc(100vw-38rem)]",
+            "w-0 sm:w-[calc(100vw-30rem)] lg:w-[calc(100vw-42rem)]",
           "relative h-excl-toolbar w-full"
         )}
       >
@@ -176,7 +176,7 @@ export default function Map({
             !editMap && hoverNode && "cursor-pointer",
             "z-0 w-full bg-gray-900 h-excl-toolbar",
             nodeSelected !== undefined &&
-              "w-0 sm:w-[calc(100vw-30rem)] lg:w-[calc(100vw-38rem)]"
+              "w-0 sm:w-[calc(100vw-30rem)] lg:w-[calc(100vw-42rem)]"
           )}
           ref={cytoscapeRef}
         />
