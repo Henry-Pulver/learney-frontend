@@ -115,7 +115,10 @@ export function ConceptInfo({
                 />
               )),
               getAndSortLinkPreviewURLs(node, allVotes).length === 0 && (
-                <div key="No suggested content" className="border-t border-solid border-gray-200 pt-4 text-lg text-gray-800">
+                <div
+                  key="No suggested content"
+                  className="border-t border-solid border-gray-200 pt-4 text-lg text-gray-800"
+                >
                   No suggested content for {node.data().name}.
                 </div>
               ),
