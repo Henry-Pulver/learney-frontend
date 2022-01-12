@@ -27,7 +27,7 @@ export function EditConceptDataSidebar({
       <XCloseButton
         onClick={buttonPressFunction(
           () => setShowEditData(null),
-          `Edit Concept Top Right Close X (Concept: ${editNodeData.name})`
+          `Edit Concept Top Right Close X (Concept: ${editNodeData.name || editNodeData.id})`
         )}
       />
       <EditDataLabel>Concept Name</EditDataLabel>
@@ -84,7 +84,7 @@ export function EditConceptDataSidebar({
           onClick={buttonPressFunction(() => {
             deletebuttonClickFunction(editNodeData.id);
             setShowEditData(null);
-          }, `Edit Concept Delete Button (Concept=${editNodeData.name})`)}
+          }, `Edit Concept Delete Button (Concept=${editNodeData.name || editNodeData.id})`)}
         >
           Delete
         </span>
@@ -93,7 +93,7 @@ export function EditConceptDataSidebar({
             className="btn-2 btn-sm mt-3 mr-6"
             onClick={buttonPressFunction(
               () => setShowEditData(null),
-              `Edit Concept Cancel Button (Concept: ${editNodeData.name})`
+              `Edit Concept Cancel Button (Concept: ${editNodeData.name || editNodeData.id})`
             )}
           >
             Cancel
@@ -102,7 +102,7 @@ export function EditConceptDataSidebar({
             className="btn-green btn-sm px-6 mt-3 mr-6"
             onClick={buttonPressFunction(
               () => saveEditNodeData(userId),
-              `Edit Concept Save Button (Concept: ${editNodeData.name})`
+              `Edit Concept Save Button (Concept: ${editNodeData.name || editNodeData.id})`
             )}
           >
             Save
@@ -127,7 +127,7 @@ export function EditTopicDataSidebar({
       <XCloseButton
         onClick={buttonPressFunction(
           () => setShowEditData(null),
-          `Edit Concept Top Right Close X (Concept: ${editParentNodeData.name})`
+          `Edit Concept Top Right Close X (Concept: ${editParentNodeData.name || editParentNodeData.id})`
         )}
       />
       <EditDataLabel>Topic Name</EditDataLabel>
@@ -159,7 +159,7 @@ export function EditTopicDataSidebar({
           onClick={buttonPressFunction(() => {
             deletebuttonClickFunction(editParentNodeData.id);
             setShowEditData(null);
-          }, `Edit Topic Delete Button (Topic: ${editParentNodeData.name})`)}
+          }, `Edit Topic Delete Button (Topic: ${editParentNodeData.name || editParentNodeData.id})`)}
         >
           Delete
         </span>
@@ -168,7 +168,7 @@ export function EditTopicDataSidebar({
             className="btn-2 btn-sm mt-3 mr-6"
             onClick={buttonPressFunction(
               () => setShowEditData(null),
-              `Edit Topic Cancel Button (Topic: ${editParentNodeData.name})`
+              `Edit Topic Cancel Button (Topic: ${editParentNodeData.name || editParentNodeData.id})`
             )}
           >
             Cancel
@@ -177,7 +177,7 @@ export function EditTopicDataSidebar({
             className="btn-green btn-sm px-6 mt-3 mr-6"
             onClick={buttonPressFunction(
               () => saveEditParentNodeData(editParentNodeData),
-              `Edit Topic Save Button (Topic: ${editParentNodeData.name})`
+              `Edit Topic Save Button (Topic: ${editParentNodeData.name || editParentNodeData.id})`
             )}
           >
             Save
