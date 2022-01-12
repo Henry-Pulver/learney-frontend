@@ -25,7 +25,7 @@ export function EditNavbar({
   mapUUID,
   mapJson,
   pageLoaded,
-  setNotificationInfo,
+  updateNotificationInfo,
 }: {
   user: UserState;
   userId: string;
@@ -34,7 +34,7 @@ export function EditNavbar({
   mapUUID: string;
   mapJson: ElementsDefinition;
   pageLoaded: boolean;
-  setNotificationInfo: (notificationInfo: NotificationData) => void;
+  updateNotificationInfo: (notificationInfo: NotificationData) => void;
 }) {
   return (
     <Navbar
@@ -58,7 +58,7 @@ export function EditNavbar({
           buttonPressFunction={buttonPressFunction}
           backendUrl={backendUrl}
           mapUUID={mapUUID}
-          setNotificationInfo={setNotificationInfo}
+          updateNotificationInfo={updateNotificationInfo}
           pageLoaded={pageLoaded}
         />,
         <FeedBackButton

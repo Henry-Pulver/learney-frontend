@@ -10,6 +10,13 @@ export default function Map({
   mapUrlExtension,
   mapJson,
   backendUrl,
+}: {
+  mapTitle: string;
+  mapDescription: string;
+  mapJson: string;
+  mapUUID: string;
+  mapUrlExtension: string;
+  backendUrl: string;
 }) {
   return (
     <MapPage
@@ -21,17 +28,21 @@ export default function Map({
       allowSuggestions={false}
       editMap={true}
       mapJsonString={mapJson}
+      questionsEnabled={false}
     />
   );
 }
 
 // TODO: change returnTo URL to "maps/<urlextension>"
+// @ts-ignore
 export const getServerSideProps = withPageAuthRequired({
   returnTo: "",
   async getServerSideProps(ctx) {
     const mapResponse = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v0/knowledge_maps?` +
-        new URLSearchParams({ url_extension: ctx.params.mapUrlExtension }),
+        new URLSearchParams({
+          url_extension: ctx.params.mapUrlExtension as string,
+        }),
       {
         method: "GET",
         headers: cacheHeaders,
@@ -41,10 +52,9 @@ export const getServerSideProps = withPageAuthRequired({
     const mapInfoJson = await mapResponse.json();
     // TODO: Currently we redirect, change to showing custom 'blocked' page & link to map
     if (
-      // Henry can edit every map
       ![
         mapInfoJson.author_user_id.toLowerCase(),
-        "henrypulver13@gmail.com",
+        "henrypulver13@gmail.com", // Henry can edit every map
       ].includes(session.user.email.toLowerCase())
     ) {
       return {
