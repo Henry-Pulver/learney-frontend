@@ -18,6 +18,7 @@ import {
   getOpacityEquivalentColour,
   parseQuery,
   setURLQuery,
+  trackCyEvent,
   URLQuerySet,
 } from "./utils";
 import { ParsedUrlQuery } from "querystring";
@@ -244,9 +245,11 @@ export function setNodeBrightness(
   nodes: NodeCollection,
   brightnessLevel = 0
 ): void {
-  nodes.forEach(function (node) {
+  nodes.forEach((node) => {
     const nId = node.id();
-    const parentColour = node.parent().style("background-color");
+    const parentColour: string | undefined = node
+      .parent()
+      .style("background-color");
     node.removeStyle("background-color");
     if (nId in learnedNodes && learnedNodes[nId]) {
       node.style("background-color", cyColours.learned);
@@ -259,7 +262,11 @@ export function setNodeBrightness(
         case 0:
           node.style(
             "background-color",
-            getOpacityEquivalentColour(cyColours.nodeDark, parentColour, 0.6)
+            getOpacityEquivalentColour(
+              cyColours.nodeDark,
+              parentColour || cyColours.nodeDark,
+              0.6
+            )
           );
           break;
         case 1:
@@ -388,6 +395,8 @@ export function unhighlightNodes(nodes: NodeCollection): void {
   resizeNodes(nodes, "small");
 }
 
+let cytoscapeEventOngoing = false;
+
 export function bindRouters(
   backendUrl: string,
   userId: string,
@@ -406,15 +415,35 @@ export function bindRouters(
 ): void {
   /** Binds events to user interactions with the map **/
   // Removes tooltip when clicking elsewhere/panning/zooming
-  window.cy.on("tap pan zoom", (e) => {
+  window.cy.on("tap dragpan scrollzoom pinchzoom", (e) => {
+    if (!cytoscapeEventOngoing && e.target === window.cy) {
+      cytoscapeEventOngoing = true;
+      trackCyEvent(e, e.type, backendUrl, userId);
+      // There's no zoomend event, so this counts each zoom outside of a 500ms window as a new zoom
+      if (e.type.endsWith("zoom"))
+        setTimeout(() => {
+          cytoscapeEventOngoing = false;
+        }, 500);
+    }
     if (e.target === window.cy) setURLQuery(router, {});
   });
 
-  // Updates the min zoom each time you let go of dragging an element
-  window.cy.on("dragfree", () => {
-    if (editMap) updateMinZoom();
+  // So only 1 tap is tracked per drag or tap
+  window.cy.on("tapend", () => {
+    cytoscapeEventOngoing = false;
   });
 
+  // Updates the min zoom each time you let go of dragging an element
+  if (editMap) {
+    window.cy.on("dragfree", (e) => {
+      updateMinZoom();
+      if (e.target !== window.cy) {
+        if (e.target.isParent())
+          trackCyEvent(e, "Editor Move Topic", backendUrl, userId);
+        else trackCyEvent(e, "Editor Move Concept", backendUrl, userId);
+      }
+    });
+  }
   // Mouse over fields
   window.cy.on("mouseover", 'node[nodetype = "field"]', (e) => {
     const field = e.target;
@@ -485,6 +514,7 @@ export function bindRouters(
   if (!editMap) {
     // Show concept info overlay when clicked
     window.cy.on("tap", 'node[nodetype = "concept"]', (e) => {
+      trackCyEvent(e, "Concept Click", backendUrl, userId);
       const concept = e.target as NodeSingular;
       if (!isAnimated) {
         setIsAnimated(true);
@@ -502,11 +532,13 @@ export function bindRouters(
 
     // Right click concepts sets goal
     window.cy.on("cxttap", 'node[nodetype = "concept"]', (e) => {
+      trackCyEvent(e, "Goal Set (Right Click)", backendUrl, userId);
       onSetGoalClick(e.target as NodeSingular, userId, sessionId);
     });
   }
 
   window.cy.on("tap", 'node[nodetype = "field"]', (e) => {
+    trackCyEvent(e, "Topic Click", backendUrl, userId);
     const topic = e.target as NodeSingular;
     if (!isAnimated) {
       setIsAnimated(true);
@@ -518,6 +550,7 @@ export function bindRouters(
   });
 
   window.cy.on("tap", "edge", (e) => {
+    trackCyEvent(e, "Edge Click", backendUrl, userId);
     const edge = e.target as EdgeSingular;
     if (!isAnimated) {
       setIsAnimated(true);
