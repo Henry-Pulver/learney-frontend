@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useAsync } from "react-async";
 import { CheckCircleIcon, FlagIcon } from "@heroicons/react/outline";
 import { IconToggleButtonWithCheckbox, MakeSuggestionButton } from "./buttons";
@@ -9,9 +9,13 @@ import { ButtonPressFunction } from "../lib/types";
 import { OnGoalLearnedClick } from "./types";
 import { completeTest, fetchQuestionSet } from "../lib/questions";
 import QuestionModal from "./questions/questionModal";
-import {getValidURLs, handleFetchResponses, logContentClick} from "../lib/utils";
-import {LoadingSpinner} from "./animations";
-import {cacheHeaders, jsonHeaders} from "../lib/headers";
+import {
+  getValidURLs,
+  handleFetchResponses,
+  logContentClick,
+} from "../lib/utils";
+import { LoadingSpinner } from "./animations";
+import { cacheHeaders, jsonHeaders } from "../lib/headers";
 
 type OnVote = (node: NodeSingular, url: string, up: boolean | null) => void;
 
@@ -144,33 +148,36 @@ export function ConceptInfo({
               />
             </div>
           )}
-        <p
-          className={classNames(
-            "ml-2.5 text-gray-500 text-left",
-            getAndSortLinkPreviewURLs(node, allVotes).length === 0 && "hidden"
-          )}
-        >
-          Done?
-        </p>
-        <ol className="shrink grow list-none pl-0 m-0 overflow-auto mb-20 md:mb-0 pb-2 sm:pb-20 sm:px-2 w-full">
-          {node &&
-            appendToArray(
-              getAndSortLinkPreviewURLs(node, allVotes).map((url) => (
-                <ConceptLinkPreview
-                  key={url}
-                  node={node}
-                  url={url}
-                  userId={userId}
-                  backendUrl={backendUrl}
-                  mapUUID={mapUUID}
-                  sessionId={sessionId}
-                  userVotes={userVotes}
-                  allVotes={allVotes}
-                  onVote={onVote}
-                />
+          <p
+            className={classNames(
+              "ml-2.5 text-gray-500 text-left",
+              getAndSortLinkPreviewURLs(node, allVotes).length === 0 && "hidden"
+            )}
+          >
+            Done?
+          </p>
+          <ol className="shrink grow list-none pl-0 m-0 overflow-auto mb-20 md:mb-0 pb-2 sm:pb-20 sm:px-2 w-full">
+            {node &&
+              appendToArray(
+                getAndSortLinkPreviewURLs(node, allVotes).map((url) => (
+                  <ConceptLinkPreview
+                    key={url}
+                    node={node}
+                    url={url}
+                    userId={userId}
+                    backendUrl={backendUrl}
+                    mapUUID={mapUUID}
+                    sessionId={sessionId}
+                    userVotes={userVotes}
+                    allVotes={allVotes}
+                    onVote={onVote}
+                  />
                 )),
                 getAndSortLinkPreviewURLs(node, allVotes).length === 0 && (
-                  <div key="No suggested content" className="border-t border-solid border-gray-200 pt-4 text-lg text-gray-800">
+                  <div
+                    key="No suggested content"
+                    className="border-t border-solid border-gray-200 pt-4 text-lg text-gray-800"
+                  >
                     No suggested content for {node.data().name}.
                   </div>
                 ),

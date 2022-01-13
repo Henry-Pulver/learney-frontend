@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import {
-  ElementsDefinition,
-  NodeSingular,
-} from "cytoscape";
+import { ElementsDefinition, NodeSingular } from "cytoscape";
 import { useAsync } from "react-async";
 import { ConceptInfo } from "./conceptInfo";
 import { getDataFromStorage, saveVote } from "../lib/tooltips";
