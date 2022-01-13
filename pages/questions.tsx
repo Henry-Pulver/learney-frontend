@@ -50,6 +50,7 @@ export const getServerSideProps = withPageAuthRequired({
       ![
         // ...mapInfoJson.usersWithAccess.map((user) => user.toLowerCase()),
         "henrypulver13@gmail.com", // Henry can access every map
+        "matthew@learney.me",
       ].includes(session.user.email.toLowerCase())
     ) {
       return {
