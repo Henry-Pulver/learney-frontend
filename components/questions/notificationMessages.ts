@@ -31,7 +31,7 @@ export function getRandomGoalMessage(nextNodeName: string): string {
 
 export function setNotificationProgressInfo(
   node: NodeSingular,
-  nextNodeToLearn: NodeSingular,
+  nextNodeToLearn: NodeSingular | undefined,
   updateNotificationInfo: (newNotificationInfo: NotificationData) => void
 ) {
   if (node.hasClass("goal")) {
