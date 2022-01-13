@@ -2,6 +2,7 @@ import { cacheHeaders, headers, jsonHeaders } from "./headers";
 import { UserState } from "./types";
 import { ParsedUrlQuery } from "querystring";
 import { EventObject } from "cytoscape";
+import {NextRouter} from "next/router";
 
 export function isAnonymousUser(userId: string): boolean {
   return userId.startsWith("anonymous-user|");
@@ -276,20 +277,23 @@ export async function handleFetchResponses(
   return responseJson;
 }
 
-export function setURLQuery(router, queryParams: object): void {
-  delete router.query.x;
-  delete router.query.y;
-  delete router.query.zoom;
-  delete router.query.topic;
-  delete router.query.concept;
-  router.push(
-    {
-      pathname: router.pathname,
-      query: { ...router.query, ...queryParams },
-    },
-    undefined,
-    { shallow: true }
-  );
+export function setURLQuery(router: NextRouter, queryParams: object): void {
+  const q = router.query;
+  if (q.x || q.y || q.zoom || q.topic || q.concept) {
+    delete router.query.x;
+    delete router.query.y;
+    delete router.query.zoom;
+    delete router.query.topic;
+    delete router.query.concept;
+    router.push(
+        {
+          pathname: router.pathname,
+          query: { ...router.query, ...queryParams },
+        },
+        undefined,
+        { shallow: true }
+    );
+  }
 }
 
 export function getOpacityEquivalentColour(
