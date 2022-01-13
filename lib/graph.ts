@@ -141,7 +141,8 @@ export function handleIntroAnimation(
         },
       };
     } else if (parsedQuery.concept) {
-      window.cy.getElementById(parsedQuery.concept).emit("tap");
+      let queryConcept = window.cy.getElementById(parsedQuery.concept);
+      if (queryConcept.size() > 0) queryConcept.emit("tap");
     } else {
       animationParams = {
         pan: { x: Number(parsedQuery.x), y: Number(parsedQuery.y) },
