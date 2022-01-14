@@ -237,6 +237,7 @@ export default function MapPage({
     });
     node.emit("tap");
   };
+  const [showTitle, setShowTitle] = useState<boolean>(true);
 
   return (
     <div>
@@ -252,6 +253,8 @@ export default function MapPage({
             mapJson={mapJson}
             pageLoaded={pageLoaded}
             updateNotificationInfo={updateNotificationInfo}
+            showTitle={showTitle}
+            setShowTitle={setShowTitle}
           />
         ) : (
           <LearnNavbar
@@ -261,6 +264,8 @@ export default function MapPage({
             mapJson={mapJson}
             isNewUser={isNewUser}
             showExploreLearn={showExploreLearn}
+            showTitle={showTitle}
+            setShowTitle={setShowTitle}
           />
         ))}
 
@@ -300,6 +305,7 @@ export default function MapPage({
         setPageLoaded={setPageLoaded}
         editType={editType}
         questionsEnabled={questionsEnabled}
+        showTitle={showTitle}
       />
       {editMap && (
         <Editor
