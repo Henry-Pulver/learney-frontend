@@ -141,7 +141,7 @@ export function handleIntroAnimation(
         },
       };
     } else if (parsedQuery.concept) {
-      let queryConcept = window.cy.getElementById(parsedQuery.concept);
+      const queryConcept = window.cy.getElementById(parsedQuery.concept);
       if (queryConcept.size() > 0) queryConcept.emit("tap");
     } else {
       animationParams = {

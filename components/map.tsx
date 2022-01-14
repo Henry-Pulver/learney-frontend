@@ -50,6 +50,7 @@ export default function Map({
   setPageLoaded,
   editType,
   questionsEnabled,
+  showTitle,
 }: {
   mapTitle: string;
   mapDescription: string;
@@ -74,6 +75,7 @@ export default function Map({
   setPageLoaded: (boolean) => void;
   editType: EditType;
   questionsEnabled: boolean;
+  showTitle: boolean;
 }) {
   const router = useRouter();
   const [userVotes, setUserVote] = React.useState({});
@@ -161,7 +163,7 @@ export default function Map({
           "relative h-excl-toolbar w-full"
         )}
       >
-        {!nodeSelected && (
+        {!nodeSelected && showTitle && (
           <MapTitle
             title={mapTitle}
             description={mapDescription}

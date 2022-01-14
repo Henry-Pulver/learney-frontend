@@ -2,7 +2,7 @@ import { cacheHeaders, headers, jsonHeaders } from "./headers";
 import { UserState } from "./types";
 import { ParsedUrlQuery } from "querystring";
 import { EventObject } from "cytoscape";
-import {NextRouter} from "next/router";
+import { NextRouter } from "next/router";
 
 export function isAnonymousUser(userId: string): boolean {
   return userId.startsWith("anonymous-user|");
@@ -286,12 +286,12 @@ export function setURLQuery(router: NextRouter, queryParams: object): void {
     delete router.query.topic;
     delete router.query.concept;
     router.push(
-        {
-          pathname: router.pathname,
-          query: { ...router.query, ...queryParams },
-        },
-        undefined,
-        { shallow: true }
+      {
+        pathname: router.pathname,
+        query: { ...router.query, ...queryParams },
+      },
+      undefined,
+      { shallow: true }
     );
   }
 }
