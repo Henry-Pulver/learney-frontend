@@ -241,7 +241,12 @@ export default function MapPage({
 
   return (
     <div>
-      <MapHeader editMap={editMap} mapUrlExtension={mapUrlExtension} />
+      <MapHeader
+        editMap={editMap}
+        mapUrlExtension={mapUrlExtension}
+        mapTitle={mapTitle}
+        mapDescription={mapDescription}
+      />
       {!isLoading &&
         (editMap ? (
           <EditNavbar
