@@ -3,6 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationIcon } from "@heroicons/react/outline";
 import { classNames } from "../lib/reactUtils";
 import { XCloseButton } from "./utils";
+import { NodeData } from "./editor/types";
 
 export default function Modal(props: {
   open: boolean;
@@ -70,19 +71,19 @@ export default function Modal(props: {
   );
 }
 
-export function AreYouSureModal({
-  modalShown,
-  setModalClosed,
-  titleText,
-  descriptionText,
-  actionButtonText,
-  actionButtonFunction,
+export function AreYouSureModal(props: {
+  modalShown: boolean;
+  setModalClosed: () => void;
+  titleText: string;
+  descriptionText: Array<string>;
+  actionButtonText: string;
+  actionButtonFunction: () => void;
 }) {
   const actionButtonRef = useRef(null);
   return (
     <Modal
-      open={modalShown}
-      setClosed={setModalClosed}
+      open={props.modalShown}
+      setClosed={props.setModalClosed}
       initialFocus={actionButtonRef}
       contentClassName=""
       modalClassName=""
@@ -100,10 +101,10 @@ export function AreYouSureModal({
             as="h3"
             className="text-lg leading-6 font-medium text-gray-900"
           >
-            {titleText}
+            {props.titleText}
           </Dialog.Title>
           <div className="mt-2">
-            <p className="text-sm text-gray-500"> {descriptionText} </p>
+            <p className="text-sm text-gray-500"> {props.descriptionText} </p>
           </div>
         </div>
       </div>
@@ -112,16 +113,16 @@ export function AreYouSureModal({
           type="button"
           className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
           onClick={() => {
-            actionButtonFunction();
-            setModalClosed(false);
+            props.actionButtonFunction();
+            props.setModalClosed();
           }}
         >
-          {actionButtonText}
+          {props.actionButtonText}
         </button>
         <button
           type="button"
           className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
-          onClick={() => setModalClosed(false)}
+          onClick={() => props.setModalClosed()}
         >
           Cancel
         </button>
@@ -130,7 +131,9 @@ export function AreYouSureModal({
   );
 }
 
-export function getAreYouSureDescriptionText(deleteNodeData) {
+export function getAreYouSureDescriptionText(
+  deleteNodeData: NodeData
+): Array<string> {
   let detailedInfoText;
   if (deleteNodeData.nodetype === "field") {
     const numChildren = window.cy
