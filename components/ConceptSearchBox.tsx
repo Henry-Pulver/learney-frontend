@@ -75,7 +75,10 @@ export const ConceptSearchBox = ({
         autoFocus
         formatResult={formatResult}
         // TODO: Have animated placeholder-writing using examples on the map
-        placeholder={"e.g. Generative Adversarial Networks"}
+        placeholder={`e.g. ${
+          autocompleteData[Math.floor(Math.random() * autocompleteData.length)]
+            .name
+        }`}
         styling={searchStyling}
       />
     </div>
