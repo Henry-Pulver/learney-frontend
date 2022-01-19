@@ -102,6 +102,7 @@ export function ConceptInfo({
           backendUrl={backendUrl}
           userId={userId}
           sessionId={sessionId}
+          buttonPressFunction={buttonPressFunction}
         />
       ) : (
         <></>

@@ -8,6 +8,9 @@ import { NextArrow } from "../svgs/icons";
 import { jsonHeaders } from "../../lib/headers";
 import { AnswersGiven, ProgressDots } from "./progressDots";
 import { QuestionSet } from "../../lib/questions";
+import { ReportQuestionButton } from "./buttons";
+import { ButtonPressFunction } from "../../lib/types";
+import Modal from "../modal";
 
 export default function QuestionModal({
   questionSet,
@@ -17,6 +20,7 @@ export default function QuestionModal({
   backendUrl,
   userId,
   sessionId,
+  buttonPressFunction,
 }: {
   questionSet: QuestionSet;
   modalShown: boolean;
@@ -25,6 +29,7 @@ export default function QuestionModal({
   backendUrl: string;
   userId: string;
   sessionId: string;
+  buttonPressFunction: ButtonPressFunction;
 }) {
   const [answersGiven, setAnswersGiven] = useState<AnswersGiven>(
     questionSet.map(() => undefined)
@@ -63,129 +68,119 @@ export default function QuestionModal({
   const currentStepRef = useRef(null);
 
   return (
-    <Transition.Root show={modalShown} as={Fragment}>
-      <Dialog
-        as="div"
-        className="fixed z-10 inset-0 overflow-y-auto"
-        initialFocus={currentStepRef}
-        onClose={closeModal}
-      >
-        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-          </Transition.Child>
-
-          {/* This element is to trick the browser into centering the modal contents. */}
-          <span
-            className="hidden sm:inline-block sm:align-middle sm:h-screen"
-            aria-hidden="true"
-          >
-            &#8203;
-          </span>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            enterTo="opacity-100 translate-y-0 sm:scale-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          >
-            {/*Model contents*/}
-            {currentQuestionIndex in questionSet && ( // <-- Crushes a rare bug
-              <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-                <div>
-                  <ProgressDots
-                    questionSet={questionSet}
-                    answersGiven={answersGiven}
-                    currentQuestionIndex={currentQuestionIndex}
-                    currentStepRef={currentStepRef}
+    <Modal
+      open={modalShown}
+      initialFocus={currentStepRef}
+      setClosed={closeModal}
+      modalClassName="items-center"
+      contentClassName="w-full max-h-excl-toolbar"
+    >
+      <div>
+        {currentQuestionIndex in questionSet && ( // <-- Crushes a rare bug
+          <>
+            <div>
+              <ProgressDots
+                questionSet={questionSet}
+                answersGiven={answersGiven}
+                currentQuestionIndex={currentQuestionIndex}
+                currentStepRef={currentStepRef}
+              />
+              <div className="mt-3 text-center sm:mt-5">
+                <div className="my-8 mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
+                  <AcademicCapIcon
+                    className="h-6 w-6 text-blue-600"
+                    aria-hidden="true"
                   />
-                  <div className="mt-3 text-center sm:mt-5">
-                    <div className="my-8 mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
-                      <AcademicCapIcon
-                        className="h-6 w-6 text-blue-600"
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <Dialog.Title
-                      as="h3"
-                      className="text-lg leading-6 font-medium text-gray-900"
-                    >
-                      {`Question ${currentQuestionIndex + 1}`}
-                    </Dialog.Title>
-                    <div className="mt-6 text-black">
-                      <QuestionText
-                        text={questionSet[currentQuestionIndex].question_text}
-                      />
-                    </div>
-                    <AnswerOptions
-                      answerArray={
-                        questionSet[currentQuestionIndex]
-                          .answers_order_randomised
-                      }
-                      answerGiven={answersGiven[currentQuestionIndex]}
-                      correctAnswer={
-                        questionSet[currentQuestionIndex].correct_answer
-                      }
-                      onAnswerSelected={onAnswerClick}
-                    />
-                  </div>
                 </div>
-                {/*FEEBACK*/}
-                {answersGiven[currentQuestionIndex] && // Check that the question has been answered
-                  answersGiven[currentQuestionIndex] !==
-                    questionSet[currentQuestionIndex].correct_answer && // Check that the answer is incorrect
-                  questionSet[currentQuestionIndex].feedback_text && ( // Check that there is some feedback
-                    <div className="bg-gray-200 text-black py-2 my-2 rounded-sm text-center">
-                      <h3 className="text-lg pt-2 font-semibold">Feedback</h3>
-                      <QuestionText
-                        text={questionSet[currentQuestionIndex].feedback_text}
-                      />
-                    </div>
-                  )}
-                {/*NEXT QUESTION BUTTON*/}
-                <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                  <button
-                    className={classNames(
-                      answersGiven[currentQuestionIndex] &&
-                        "bg-blue-600 hover:bg-blue-700 cursor-pointer",
-                      !answersGiven[currentQuestionIndex] &&
-                        "bg-gray-300 cursor-default",
-                      "inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
-                    )}
-                    onClick={
-                      answersGiven[currentQuestionIndex] === null
-                        ? () => {}
-                        : currentQuestionIndex !== questionSet.length - 1
-                        ? nextQuestion
-                        : () => onCompletion(answersGiven, questionSet)
-                    }
-                  >
-                    {currentQuestionIndex !== questionSet.length - 1
-                      ? "Next Question"
-                      : "Complete"}
-                    <NextArrow />
-                  </button>
+                <Dialog.Title
+                  as="h3"
+                  className="text-lg leading-6 font-medium text-gray-900"
+                >
+                  {`Question ${currentQuestionIndex + 1}`}
+                </Dialog.Title>
+                <div className="mt-6 mb-4 text-black">
+                  <QuestionText
+                    text={questionSet[currentQuestionIndex].question_text}
+                  />
                 </div>
+                {/*<div className="relative h-8 sm:h-10">*/}
+                {/*  <div className="absolute right-2 sm:right-4">*/}
+                {/*    <ReportQuestionButton*/}
+                {/*      question={questionSet[currentQuestionIndex]}*/}
+                {/*      buttonPressFunction={buttonPressFunction}*/}
+                {/*      backendUrl={backendUrl}*/}
+                {/*      userId={userId}*/}
+                {/*    />*/}
+                {/*  </div>*/}
+                {/*</div>*/}
+                <AnswerOptions
+                  answerArray={
+                    questionSet[currentQuestionIndex].answers_order_randomised
+                  }
+                  answerGiven={answersGiven[currentQuestionIndex]}
+                  correctAnswer={
+                    questionSet[currentQuestionIndex].correct_answer
+                  }
+                  onAnswerSelected={onAnswerClick}
+                />
               </div>
-            )}
-          </Transition.Child>
-        </div>
-      </Dialog>
-    </Transition.Root>
+            </div>
+            {/*FEEBACK*/}
+            {answersGiven[currentQuestionIndex] && // Check that the question has been answered
+              answersGiven[currentQuestionIndex] !==
+                questionSet[currentQuestionIndex].correct_answer && // Check that the answer is incorrect
+              questionSet[currentQuestionIndex].feedback_text && ( // Check that there is some feedback
+                <div className="bg-gray-200 text-black py-2 my-2 rounded-sm text-center">
+                  <h3 className="text-lg pt-2 font-semibold">Feedback</h3>
+                  <QuestionText
+                    text={questionSet[currentQuestionIndex].feedback_text}
+                  />
+                </div>
+              )}
+            {/*NEXT QUESTION BUTTON*/}
+            <div className="mt-5 sm:mt-4 flex justify-between">
+              <ReportQuestionButton
+                question={questionSet[currentQuestionIndex]}
+                buttonPressFunction={buttonPressFunction}
+                backendUrl={backendUrl}
+                userId={userId}
+              />
+              <button
+                className={classNames(
+                  answersGiven[currentQuestionIndex] &&
+                    "bg-blue-600 hover:bg-blue-700 cursor-pointer",
+                  !answersGiven[currentQuestionIndex] &&
+                    "bg-gray-300 cursor-default",
+                  "inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
+                )}
+                onClick={
+                  answersGiven[currentQuestionIndex] === null
+                    ? () => {}
+                    : currentQuestionIndex !== questionSet.length - 1
+                    ? nextQuestion
+                    : () => onCompletion(answersGiven, questionSet)
+                }
+              >
+                {currentQuestionIndex !== questionSet.length - 1
+                  ? "Next Question"
+                  : "Complete"}
+                <NextArrow />
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </Modal>
   );
 }
 
-function QuestionText({ text, className = "" }) {
+function QuestionText({
+  text,
+  className = "",
+}: {
+  text: string;
+  className?: string;
+}) {
   if (isNumeric(text)) text = "$$" + text + "$$";
   const questionTextArray = [];
 
@@ -206,7 +201,7 @@ function QuestionText({ text, className = "" }) {
   return <div className={className}>{questionTextArray}</div>;
 }
 
-function InlineTextAndMath({ text }) {
+function InlineTextAndMath({ text }: { text: string }) {
   const outputArray = [];
   text.split("$$").forEach((textBlock, index) => {
     if (isEven(index)) {
@@ -218,7 +213,7 @@ function InlineTextAndMath({ text }) {
   return <div>{outputArray}</div>;
 }
 
-function PureTextBlock(text) {
+function PureTextBlock(text: string): Array<string> {
   const outputArray = [];
   text.split("\n").forEach((textBlock, index) => {
     if (index !== 0) {
@@ -234,9 +229,14 @@ function AnswerOptions({
   answerGiven,
   correctAnswer,
   onAnswerSelected,
+}: {
+  answerArray: Array<string>;
+  answerGiven: string;
+  correctAnswer: string;
+  onAnswerSelected: (answer: string) => void;
 }) {
   return (
-    <div className="grid grid-cols-2 gap-3 mt-5 sm:mt-6 sm:grid-flow-row-dense">
+    <div className="grid grid-cols-2 gap-3 mt-5 sm:mt-2 sm:grid-flow-row-dense">
       {answerArray.map((answer) => (
         <AnswerOption
           key={answer}
@@ -255,6 +255,11 @@ function AnswerOption({
   answerGiven,
   correctAnswer,
   onAnswerSelected,
+}: {
+  answerText: string;
+  answerGiven: string;
+  correctAnswer: string;
+  onAnswerSelected: (answer: string) => void;
 }) {
   return (
     <span
@@ -281,7 +286,7 @@ function AnswerOption({
         answerGiven === answerText &&
           answerGiven !== correctAnswer &&
           "bg-red-500",
-        "z-0 shadow-sm inline-flex justify-center items-center px-4 py-3 border rounded-md text-sm font-medium text-gray-700 "
+        "z-0 shadow-sm flex justify-around inline-flex justify-center items-center px-4 py-3 border rounded-md text-sm font-medium text-gray-700 "
       )}
       onClick={
         answerGiven === null ? () => onAnswerSelected(answerText) : () => {}
@@ -289,7 +294,9 @@ function AnswerOption({
     >
       {answerGiven === answerText && answerGiven === correctAnswer ? (
         <>
-          <p>🎉</p> <QuestionText text={answerText} /> <p>🎉</p>
+          <p className="text-2xl leading-5">🎉</p>
+          <QuestionText text={answerText} />
+          <p className="text-2xl leading-5">🎉</p>
         </>
       ) : (
         <QuestionText text={answerText} />
