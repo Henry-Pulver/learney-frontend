@@ -42,6 +42,9 @@
   .btn-2 {
     @apply btn-activated bg-gray-500 hover:bg-gray-600 focus:ring-gray-300;
   }
+  .btn-2-yellow {
+    @apply btn-activated text-gray-900 bg-yellow-100 hover:bg-yellow-200 focus:ring-yellow-500;
+  }
   .btn-3 {
     @apply btn-activated text-gray-600 bg-gray-100 border-gray-300 hover:bg-gray-200 focus:ring-gray-300;
   }
@@ -49,11 +52,17 @@
     @apply mx-4 my-2 cursor-pointer inline-flex items-center transition duration-300 ease-in-out text-sm font-medium rounded-lg text-gray-500 hover:text-black border border-transparent;
   }
 
+  .circular-icon-btn {
+    @apply flex-shrink-0 transition duration-300 ease-in-out shadow-sm hover:shadow-md w-auto rounded-full focus:outline-none;
+  }
   .white-icon-btn {
-    @apply flex-shrink-0 bg-white shadow-sm hover:shadow-md w-auto rounded-full focus:outline-none;
+    @apply circular-icon-btn bg-white;
+  }
+  .red-icon-btn {
+    @apply p-1 circular-icon-btn text-red-500 hover:text-red-600 bg-red-50 hover:bg-red-100;
   }
   .gray-icon-btn-no-padding {
-    @apply white-icon-btn transition duration-300 ease-in-out text-gray-400 hover:text-gray-500;
+    @apply white-icon-btn text-gray-400 hover:text-gray-500;
   }
   .gray-icon-btn {
     @apply gray-icon-btn-no-padding p-1;
@@ -72,6 +81,9 @@
 
   .h-excl-toolbar {
     @apply h-[calc(100vh-62px)] sm:h-[calc(100vh-60px)];
+  }
+  .max-h-excl-toolbar {
+    @apply max-h-[calc(100vh-62px)] sm:max-h-[calc(100vh-60px)];
   }
 }
 
