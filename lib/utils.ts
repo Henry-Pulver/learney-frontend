@@ -277,9 +277,15 @@ export async function handleFetchResponses(
   return responseJson;
 }
 
-export function setURLQuery(router: NextRouter, queryParams: object): void {
+export function setURLQuery(router: NextRouter, newParams: ParsedQuery): void {
   const q = router.query;
-  if (q.x || q.y || q.zoom || q.topic || q.concept) {
+  if (
+    q.x !== newParams.x ||
+    q.y !== newParams.y ||
+    q.zoom !== newParams.zoom ||
+    q.topic !== newParams.topic ||
+    q.concept !== newParams.concept
+  ) {
     delete router.query.x;
     delete router.query.y;
     delete router.query.zoom;
@@ -288,7 +294,7 @@ export function setURLQuery(router: NextRouter, queryParams: object): void {
     router.push(
       {
         pathname: router.pathname,
-        query: { ...router.query, ...queryParams },
+        query: { ...router.query, ...newParams },
       },
       undefined,
       { shallow: true }
