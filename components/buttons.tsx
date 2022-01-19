@@ -77,7 +77,7 @@ export function IconToggleButtonWithCheckbox({
 export function IconButtonTippy(props) {
   return (
     <Tippy
-      theme="light"
+      theme={props.theme === undefined ? "light" : props.theme}
       placement={props.placement === undefined ? "bottom" : props.placement}
       delay={[150, 0]}
       animation="scale"
