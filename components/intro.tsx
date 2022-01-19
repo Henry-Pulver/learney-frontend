@@ -3,6 +3,7 @@ import { InformationCircleIcon } from "@heroicons/react/outline";
 import { IconButtonTippy } from "./buttons";
 import { classNames } from "../lib/reactUtils";
 import { ButtonPressFunction } from "../lib/types";
+import { NextArrow, PrevArrow } from "./svgs/icons";
 
 export default function IntroButton({ setIntroShown, buttonPressFunction }) {
   return (
@@ -138,18 +139,7 @@ function SlideDiv({
           "btn-sm"
         )}
       >
-        <svg
-          className="w-5 h-5 mr-2"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fillRule="evenodd"
-            d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z"
-            clipRule="evenodd"
-          />
-        </svg>
+        <PrevArrow />
         Prev
       </button>
       <div className="text-center text-gray-500 px-4 py-2">
@@ -164,18 +154,7 @@ function SlideDiv({
         )}
       >
         Next
-        <svg
-          className="w-5 h-5 ml-2"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fillRule="evenodd"
-            d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-            clipRule="evenodd"
-          />
-        </svg>
+        <NextArrow />
       </button>
     </div>
   );

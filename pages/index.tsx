@@ -8,6 +8,12 @@ export default function OriginalMap({
   mapJson,
   mapUUID,
   backendUrl,
+}: {
+  mapTitle: string;
+  mapDescription: string;
+  mapJson: string;
+  mapUUID: string;
+  backendUrl: string;
 }) {
   return (
     <MapPage
@@ -19,6 +25,7 @@ export default function OriginalMap({
       allowSuggestions={true}
       editMap={false}
       mapJsonString={mapJson}
+      questionsEnabled={false}
     />
   );
 }

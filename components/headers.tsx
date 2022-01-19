@@ -4,9 +4,13 @@ import Head from "next/head";
 export default function MapHeader({
   editMap,
   mapUrlExtension,
+  mapTitle,
+  mapDescription,
 }: {
   editMap: boolean;
   mapUrlExtension: string;
+  mapTitle: string;
+  mapDescription: string;
 }) {
   const isStatQuest = mapUrlExtension.endsWith("StatQuest");
   return (
@@ -23,7 +27,7 @@ export default function MapHeader({
       <meta
         name="title"
         property="og:title"
-        content={isStatQuest ? "Learney - StatQuest" : "Learney"}
+        content={mapTitle ? mapTitle : "Learney Map"}
       />
       <meta
         name="image"
@@ -43,7 +47,11 @@ export default function MapHeader({
       <meta
         name="description"
         property="og:description"
-        content="The online learning platform designed to get you the fastest path to what you want to learn."
+        content={
+          !mapDescription
+            ? "The online learning platform designed to get you the fastest path to what you want to learn."
+            : mapDescription
+        }
       />
       <meta
         name="viewport"

@@ -17,41 +17,58 @@ import { ButtonPressFunction } from "../lib/types";
 import { SingularElementArgument } from "cytoscape";
 import { TargetFinderIcon } from "./svgs/icons";
 import { SetGoalState, SetLearnedState } from "./types";
+import { LoadingSpinner } from "./animations";
 
 export function IconToggleButtonWithCheckbox({
   checked,
   onCheck,
   Icon,
   text,
+  loading = false,
+  disabled = false,
   colour = "blue",
 }: {
   checked: boolean;
   onCheck: () => void;
   Icon;
   text: string;
+  loading?: boolean;
+  disabled?: boolean;
   colour: "blue" | "green" | "red";
 }) {
   return (
-    <span className="relative z-0 inline-flex items-center shadow-sm rounded-md">
+    <span className="relative group z-0 inline-flex items-center shadow-sm rounded-md">
       <button
-        onClick={onCheck}
+        onClick={loading || disabled ? () => {} : onCheck}
         className={classNames(
-          colour === "blue" ? "btn-blue" : "btn-green",
+          disabled || loading ? "cursor-default" : "cursor-pointer",
+          disabled && "btn-deactivated",
+          colour === "blue" && "btn-blue",
+          colour === "green" && "btn-green",
+          colour === "red" && "btn-red",
           "btn-sm inline-flex items-center px-2"
         )}
       >
         <Icon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
         {text}
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={() => {}}
-          className={classNames(
-            checked ? "ring-white ring-2 " : "",
-            colour === "blue" ? "text-blue-600 " : "text-green-600 ",
-            `cursor-pointer h-4 w-4 ml-2 border-gray-300 rounded select-none`
-          )}
-        />
+        {loading ? (
+          <LoadingSpinner classes="ml-2 h-4 w-4 text-white" />
+        ) : (
+          <input
+            type="checkbox"
+            checked={checked}
+            disabled={disabled}
+            onChange={() => {}}
+            className={classNames(
+              checked && "ring-white ring-2",
+              disabled && "text-gray-400 cursor-default",
+              colour === "blue" && "text-blue-600 group-hover:text-blue-500",
+              colour === "green" && "text-green-600 group-hover:text-green-500",
+              colour === "red" && "text-red-600 group-hover:text-red-500",
+              "cursor-pointer h-4 w-4 ml-2 border-gray-300 rounded select-none"
+            )}
+          />
+        )}
       </button>
     </span>
   );
@@ -60,7 +77,7 @@ export function IconToggleButtonWithCheckbox({
 export function IconButtonTippy(props) {
   return (
     <Tippy
-      theme="light"
+      theme={props.theme === undefined ? "light" : props.theme}
       placement={props.placement === undefined ? "bottom" : props.placement}
       delay={[150, 0]}
       animation="scale"

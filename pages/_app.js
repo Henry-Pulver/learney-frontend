@@ -7,6 +7,7 @@ import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/scale.css";
 import "tippy.js/themes/light.css";
 import { ErrorBoundary } from "../ErrorBoundary";
+import "katex/dist/katex.min.css";
 
 export default function App({ Component, pageProps }) {
   return (
