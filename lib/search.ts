@@ -1,7 +1,9 @@
-import { ElementsDefinition } from "cytoscape";
+import { ElementsDefinition, NodeDataDefinition } from "cytoscape";
 
-export function getSearchArray(elements: ElementsDefinition): Array<object> {
-  const concepts = [];
+export function getSearchArray(
+  elements: ElementsDefinition
+): Array<NodeDataDefinition> {
+  const concepts: Array<NodeDataDefinition> = [];
   elements.nodes.forEach((node) => {
     if (node.data.nodetype === "concept") {
       concepts.push({ ...node.data });

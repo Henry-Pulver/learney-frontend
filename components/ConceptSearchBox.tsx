@@ -1,5 +1,5 @@
 import React from "react";
-import { ReactSearchAutocomplete } from "react-search-autocomplete";
+import { ReactSearchAutocomplete } from "./react-search-autocomplete";
 import { classNames } from "../lib/reactUtils";
 import { getSearchArray, getSearchTopicDataLookup } from "../lib/search";
 import { ElementsDefinition } from "cytoscape";
@@ -10,12 +10,16 @@ export const ConceptSearchBox = ({
   classes = "",
   searchStyling = {},
   maxResults = 10,
+  showTitle,
+  setShowTitle,
 }: {
   mapJson: ElementsDefinition;
-  onSelect: (item: any) => void;
+  onSelect: (item: { id: string }) => void;
   classes?: string;
   searchStyling?: object;
   maxResults?: number;
+  showTitle: boolean;
+  setShowTitle: (show: boolean) => void;
 }) => {
   /** Component responsible for rendering the search bar. **/
   const autocompleteData = getSearchArray(mapJson);
@@ -25,6 +29,7 @@ export const ConceptSearchBox = ({
   const handleOnSearch = (string, results) => {
     // onSearch will have as the first callback parameter
     // the string searched and for the second the results.
+    if (showTitle) setShowTitle(false);
   };
   const handleOnHover = (result) => {};
   const handleOnFocus = () => {};
@@ -50,20 +55,30 @@ export const ConceptSearchBox = ({
   };
 
   return (
-    <div className={classNames(classes, "z-10")}>
+    // z-20 so it shows above concept overlay
+    <div className={classNames(classes, "z-20")}>
       <ReactSearchAutocomplete
         items={autocompleteData}
         fuseOptions={{ keys: ["name", "parent", "description"] }}
         onSearch={handleOnSearch}
         inputDebounce={0}
         onHover={handleOnHover}
-        onSelect={onSelect}
+        onSelect={(item) => {
+          onSelect(item);
+          setShowTitle(true);
+        }}
+        onHideResults={() => {
+          if (!showTitle) setShowTitle(true);
+        }}
         maxResults={maxResults}
         onFocus={handleOnFocus}
         autoFocus
         formatResult={formatResult}
         // TODO: Have animated placeholder-writing using examples on the map
-        placeholder={"e.g. Generative Adversarial Networks"}
+        placeholder={`e.g. ${
+          autocompleteData[Math.floor(Math.random() * autocompleteData.length)]
+            .name
+        }`}
         styling={searchStyling}
       />
     </div>

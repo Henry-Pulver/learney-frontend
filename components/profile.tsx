@@ -72,8 +72,10 @@ function LogOut({ buttonPressFunction }) {
   return (
     <button
       className="btn-blue btn-sm"
-      onClick={buttonPressFunction(function () {
-        location.href = `${location.protocol}//${location.hostname}/api/auth/logout`;
+      onClick={buttonPressFunction(() => {
+        let base_url = `${location.protocol}//${location.hostname}`;
+        if (location.port) base_url += `:${location.port}`;
+        location.href = `${base_url}/api/auth/logout`;
       }, "Log Out")}
     >
       Logout
@@ -100,7 +102,9 @@ export function LogInIconButton({ buttonPressFunction }) {
     <button
       className="mobile-icon-button group"
       onClick={buttonPressFunction(() => {
-        location.href = `${location.protocol}//${location.hostname}/api/auth/login`;
+        let base_url = `${location.protocol}//${location.hostname}`;
+        if (location.port) base_url += `:${location.port}`;
+        location.href = `${base_url}/api/auth/login`;
       }, "Log In")}
     >
       <div className="block lg:hidden px-2 sm:px-4 font-bold text-black">

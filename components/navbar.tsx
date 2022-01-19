@@ -25,7 +25,9 @@ export function EditNavbar({
   mapUUID,
   mapJson,
   pageLoaded,
-  setNotificationInfo,
+  updateNotificationInfo,
+  showTitle,
+  setShowTitle,
 }: {
   user: UserState;
   userId: string;
@@ -34,7 +36,9 @@ export function EditNavbar({
   mapUUID: string;
   mapJson: ElementsDefinition;
   pageLoaded: boolean;
-  setNotificationInfo: (notificationInfo: NotificationData) => void;
+  updateNotificationInfo: (notificationInfo: NotificationData) => void;
+  showTitle: boolean;
+  setShowTitle: (show: boolean) => void;
 }) {
   return (
     <Navbar
@@ -58,7 +62,7 @@ export function EditNavbar({
           buttonPressFunction={buttonPressFunction}
           backendUrl={backendUrl}
           mapUUID={mapUUID}
-          setNotificationInfo={setNotificationInfo}
+          updateNotificationInfo={updateNotificationInfo}
           pageLoaded={pageLoaded}
         />,
         <FeedBackButton
@@ -69,6 +73,8 @@ export function EditNavbar({
       buttonPressFunction={buttonPressFunction}
       mapJson={mapJson}
       pageLoaded={pageLoaded}
+      showTitle={showTitle}
+      setShowTitle={setShowTitle}
     />
   );
 }
@@ -80,6 +86,8 @@ export function LearnNavbar({
   mapJson,
   isNewUser,
   showExploreLearn,
+  showTitle,
+  setShowTitle,
 }: {
   user: UserState;
   pageLoaded: boolean;
@@ -87,6 +95,8 @@ export function LearnNavbar({
   mapJson: ElementsDefinition;
   isNewUser: boolean;
   showExploreLearn: boolean;
+  showTitle: boolean;
+  setShowTitle: (show: boolean) => void;
 }) {
   const [introShown, setIntroShown] = useState<boolean>(false);
   useEffect(() => {
@@ -145,6 +155,8 @@ export function LearnNavbar({
         buttonPressFunction={buttonPressFunction}
         mapJson={mapJson}
         pageLoaded={pageLoaded}
+        showTitle={showTitle}
+        setShowTitle={setShowTitle}
       />
       <Modal
         open={introShown}
@@ -170,6 +182,8 @@ function Navbar({
   buttonPressFunction,
   mapJson,
   pageLoaded,
+  showTitle,
+  setShowTitle,
 }: {
   user: UserState;
   leftSideButtons: Array<JSX.Element>;
@@ -177,6 +191,8 @@ function Navbar({
   buttonPressFunction: ButtonPressFunction;
   mapJson: ElementsDefinition;
   pageLoaded: boolean;
+  showTitle: boolean;
+  setShowTitle: (show: boolean) => void;
 }) {
   return (
     <>
@@ -219,10 +235,12 @@ function Navbar({
                   onSelect={
                     pageLoaded
                       ? (item) => window.cy.getElementById(item.id).emit("tap")
-                      : (_) => {}
+                      : () => {}
                     // TODO: When not loaded, add selected item to a queue to be
                     //  executed when cytoscape has loaded
                   }
+                  showTitle={showTitle}
+                  setShowTitle={setShowTitle}
                 />
                 <div className="hidden lg:flex lg:items-center lg:justify-evenly lg:gap-4">
                   {rightSideButtons.map((button, idx) => (

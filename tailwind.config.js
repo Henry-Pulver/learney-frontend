@@ -49,6 +49,7 @@ module.exports = {
       backgroundImage: {
         learney: "linear-gradient(40deg, #ff0080, #008ef2)",
       },
+      // animation: TODO: Add this if I have time!!
     },
   },
   variants: {

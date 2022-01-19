@@ -12,7 +12,6 @@ import Tippy from "@tippyjs/react";
 import { IconButtonTippy } from "../buttons";
 import { jsonHeaders } from "../../lib/headers";
 import { handleFetchResponses } from "../../lib/utils";
-import isEqual from "lodash.isequal";
 import { ButtonPressFunction } from "../../lib/types";
 
 const dagreLayout = {
@@ -138,14 +137,14 @@ export function SaveMapButton({
   buttonPressFunction,
   backendUrl,
   mapUUID,
-  setNotificationInfo,
+  updateNotificationInfo,
   pageLoaded,
 }: {
   userId: string;
   buttonPressFunction: ButtonPressFunction;
   backendUrl: string;
   mapUUID: string;
-  setNotificationInfo: (NotificationData) => void;
+  updateNotificationInfo: (NotificationData) => void;
   pageLoaded: boolean;
 }) {
   return (
@@ -174,25 +173,7 @@ export function SaveMapButton({
                 colour: "green",
                 show: true,
               };
-
-              setNotificationInfo((prevState) => ({
-                ...prevState,
-                ...newState,
-              }));
-              setTimeout(
-                () =>
-                  setNotificationInfo((prevState) => {
-                    if (isEqual(newState, prevState)) {
-                      return {
-                        ...prevState,
-                        show: false,
-                      };
-                    } else {
-                      return prevState;
-                    }
-                  }),
-                5000
-              );
+              updateNotificationInfo(newState);
             }, "Editor - Save Layout")
           : buttonPressFunction(() => {}, "Editor - Save Layout (void)")
       }

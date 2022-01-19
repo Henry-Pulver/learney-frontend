@@ -15,17 +15,14 @@ export const goalNodesString = "goalNodes";
 
 export var signInTooltip = null;
 
-function nodeLearned(node: NodeSingular) {
+function nodeLearned(node: NodeSingular): void {
   learnedNodes[node.id()] = true;
   node.addClass("learned");
   setNodeBrightness(node);
 }
 
 function toggleEdgeLearned(edge: EdgeSingular): void {
-  if (
-    (edge.source().classes() as unknown as Array<string>).includes("learned") &&
-    (edge.target().classes() as unknown as Array<string>).includes("learned")
-  ) {
+  if (edge.source().hasClass("learned") && edge.target().hasClass("learned")) {
     edge.addClass("learned");
     setEdgeBrightness(edge);
   } else {
@@ -152,7 +149,7 @@ export function setGoalClick(
   saveToDB(goalNodesString, goalNodes, backendUrl, userId, mapUUID, sessionId);
 }
 
-export function initialiseGraphState(userId: string) {
+export function initialiseGraphState(userId: string): void {
   for (const nodeId in learnedNodes) {
     const node = window.cy.getElementById(nodeId);
     if (node.data() !== undefined) {

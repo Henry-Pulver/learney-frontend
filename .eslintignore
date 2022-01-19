@@ -2,3 +2,4 @@ node_modules
 .next
 *.config.js
 *.config.wizardcopy.js
+components/react-search-autocomplete
