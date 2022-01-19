@@ -75,7 +75,7 @@ export function AreYouSureModal(props: {
   modalShown: boolean;
   setModalClosed: () => void;
   titleText: string;
-  descriptionText: Array<string>;
+  descriptionText: string | Array<string>;
   actionButtonText: string;
   actionButtonFunction: () => void;
 }) {
