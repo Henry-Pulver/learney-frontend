@@ -32,6 +32,7 @@ import { NodeSingular } from "cytoscape";
 import { setNotificationProgressInfo } from "./questions/notificationMessages";
 import { XCircleIcon } from "@heroicons/react/outline";
 import { getNextNodeToLearn } from "../lib/questions";
+import { ButtonPressFunction } from "../lib/types";
 
 export default function MapPage({
   mapTitle,
@@ -117,9 +118,17 @@ export default function MapPage({
     setLearnedState(learnedNodes);
   };
 
-  const buttonPressFunction = (runFirst, buttonName) => {
-    return buttonPress(runFirst, buttonName, backendUrl, userId);
-  };
+  // This initialisation deactivates all buttons until a userId is set.
+  // The extra function here is because useState calls the first one already.
+  const [buttonPressFunction, setButtonPressFunction] =
+    useState<ButtonPressFunction>(() => () => () => {});
+  useEffect(() => {
+    if (userId !== undefined) {
+      setButtonPressFunction(() => (runFirst, buttonName) => {
+        return buttonPress(runFirst, buttonName, backendUrl, userId);
+      });
+    }
+  }, [userId]);
 
   const [pageLoaded, setPageLoaded] = React.useState(false);
   useEffect(() => {

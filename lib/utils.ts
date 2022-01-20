@@ -212,8 +212,12 @@ export function buttonPress(
   userId: string
 ): (...args: any) => void {
   if (typeof backendUrl !== "string" || backendUrl === "")
-    console.error(
+    throw new Error(
       `ButtonPress() backendUrl=${backendUrl} undefined at ${buttonName} press!`
+    );
+  if (typeof userId !== "string" || userId === "")
+    throw new Error(
+      `userId=${userId} not well defined at ${buttonName} press!`
     );
   return async (...args: any) => {
     runFirst(...args);
