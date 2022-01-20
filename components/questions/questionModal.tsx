@@ -1,16 +1,20 @@
-import React, { Fragment, useEffect, useRef, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import React, { useEffect, useRef, useState } from "react";
+import { Dialog } from "@headlessui/react";
 import { AcademicCapIcon } from "@heroicons/react/outline";
 import { InlineMath, BlockMath } from "react-katex";
 import { handleFetchResponses, isEven, isNumeric } from "../../lib/utils";
 import { classNames } from "../../lib/reactUtils";
 import { NextArrow } from "../svgs/icons";
 import { jsonHeaders } from "../../lib/headers";
-import { AnswersGiven, ProgressDots } from "./progressDots";
+import { AnswersGiven } from "./progressDots";
 import { QuestionSet } from "../../lib/questions";
 import { ReportQuestionButton } from "./buttons";
 import { ButtonPressFunction } from "../../lib/types";
 import Modal from "../modal";
+import ProgressBar, { realPercentageToProgress } from "./progressBars";
+
+// TODO: Tweak this when the representation on the backend is determined.
+type KnowledgeState = { knowledge: number };
 
 export default function QuestionModal({
   questionSet,
@@ -31,9 +35,12 @@ export default function QuestionModal({
   sessionId: string;
   buttonPressFunction: ButtonPressFunction;
 }) {
+  const [knowledgeState, setKnowledgeState] = useState<KnowledgeState>();
   const [answersGiven, setAnswersGiven] = useState<AnswersGiven>(
     questionSet.map(() => undefined)
   );
+  const [progressBarPercentageFilled, setProgressBarPercentageFilled] =
+    useState<number>(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const nextQuestion = () => setCurrentQuestionIndex(currentQuestionIndex + 1);
 
@@ -62,7 +69,20 @@ export default function QuestionModal({
         }),
       }
     );
-    handleFetchResponses(questionResponse, backendUrl);
+    const responseJson = (await handleFetchResponses(
+      questionResponse,
+      backendUrl
+    )) as KnowledgeState;
+    setKnowledgeState(responseJson);
+    setProgressBarPercentageFilled(
+      realPercentageToProgress(
+        questionSet,
+        answersGiven,
+        knowledgeState.knowledge, // TODO: change?
+        knowledgeState.knowledge > 1, // TODO: change
+        progressBarPercentageFilled
+      )
+    );
   };
 
   const currentStepRef = useRef(null);
@@ -79,12 +99,22 @@ export default function QuestionModal({
         {currentQuestionIndex in questionSet && ( // <-- Crushes a rare bug
           <>
             <div>
-              <ProgressDots
-                questionSet={questionSet}
-                answersGiven={answersGiven}
-                currentQuestionIndex={currentQuestionIndex}
-                currentStepRef={currentStepRef}
-              />
+              <div className="flex justify-center">
+                <ProgressBar
+                  percentFilled={Math.max(
+                    Math.min(progressBarPercentageFilled, 100),
+                    0
+                  )}
+                />
+              </div>
+              {/*TODO: Remove? Being kept now in case we want to use progress dots in some way
+                   (perhaps allowing you to jump back to previous questions easily?)*/}
+              {/*<ProgressDots*/}
+              {/*  questionSet={questionSet}*/}
+              {/*  answersGiven={answersGiven}*/}
+              {/*  currentQuestionIndex={currentQuestionIndex}*/}
+              {/*  currentStepRef={currentStepRef}*/}
+              {/*/>*/}
               <div className="mt-3 text-center sm:mt-5">
                 <div className="my-8 mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
                   <AcademicCapIcon
