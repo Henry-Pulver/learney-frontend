@@ -7,7 +7,7 @@ import { NodeSingular } from "cytoscape";
 import Overlay from "./overlay";
 import { ButtonPressFunction } from "../lib/types";
 import { OnGoalLearnedClick } from "./types";
-import { completeTest, fetchQuestionSet } from "../lib/questions";
+import { fetchConceptInfo } from "../lib/questions";
 import QuestionModal from "./questions/questionModal";
 import {
   getValidURLs,
@@ -64,9 +64,8 @@ export function ConceptInfo({
 }) {
   // Question stuff
   const { data, isPending, reload } = useAsync({
-    promiseFn: fetchQuestionSet,
+    promiseFn: fetchConceptInfo,
     backendUrl: backendUrl,
-    mapUUID: mapUUID,
     userId: userId,
     conceptId: node.id(),
     questionsEnabled: questionsEnabled,
@@ -78,35 +77,6 @@ export function ConceptInfo({
   if (node === undefined) return <></>;
   return (
     <>
-      {data && data.correct_threshold !== 0 ? (
-        <QuestionModal
-          questionSet={data.question_set}
-          modalShown={questionModalShown}
-          closeModal={() => setQuestionModalShown(false)}
-          onCompletion={(answersGiven) => {
-            completeTest(
-              answersGiven,
-              node,
-              learnedNodes,
-              goalNodes,
-              data.question_set,
-              data.correct_threshold,
-              () => onTestSuccess(node, userId, sessionId),
-              () => {
-                reload();
-                onTestFail(node);
-              }
-            );
-            setQuestionModalShown(false);
-          }}
-          backendUrl={backendUrl}
-          userId={userId}
-          sessionId={sessionId}
-          buttonPressFunction={buttonPressFunction}
-        />
-      ) : (
-        <></>
-      )}
       <Overlay
         open={visible}
         hide={
@@ -126,13 +96,13 @@ export function ConceptInfo({
             <div className="absolute sm:relative bottom-0 left-0 w-full z-10 bg-white justify-around border-t border-solid border-gray-300 px-2 py-4 grid items-center grid-flow-col">
               <IconToggleButtonWithCheckbox
                 text={
-                  !learnedNodes[node.id()] && data && data.correct_threshold > 0
+                  !learnedNodes[node.id()] && data.max_level
                     ? "Test me!"
                     : "I know this!"
                 }
                 checked={!!learnedNodes[node.id()]}
                 onCheck={
-                  !learnedNodes[node.id()] && data && data.correct_threshold > 0
+                  !learnedNodes[node.id()] && data.max_level
                     ? () => setQuestionModalShown(true)
                     : () => onLearnedClick(node, userId, sessionId)
                 }
@@ -197,6 +167,29 @@ export function ConceptInfo({
           </ol>
         </div>
       </Overlay>
+      {data.max_level && (
+        <QuestionModal
+          modalShown={node && questionModalShown}
+          closeModal={() => setQuestionModalShown(false)}
+          onCompletion={(newKnowledgeLevel) => {
+            const levelsGained = Math.floor(newKnowledgeLevel) - Math.floor(data.level);
+            const conceptCompleted = newKnowledgeLevel >= data.max_level;
+
+            if (conceptCompleted) onTestSuccess(node, userId, sessionId);
+            else if (levelsGained > 0) onTestSuccess(node, userId, sessionId);
+            else {
+              reload();
+              onTestFail(node);
+            }
+            setQuestionModalShown(false);
+          }}
+          conceptId={node ? node.id() : null}
+          backendUrl={backendUrl}
+          userId={userId}
+          sessionId={sessionId}
+          buttonPressFunction={buttonPressFunction}
+        />
+      )}
     </>
   );
 }
