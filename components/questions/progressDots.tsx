@@ -1,9 +1,7 @@
 import React from "react";
 import { classNames } from "../../lib/reactUtils";
 import { CheckIcon, XIcon } from "@heroicons/react/outline";
-import { QuestionSet } from "../../lib/questions";
-
-export type AnswersGiven = Array<string | undefined>;
+import { QuestionArray, AnswersGiven } from "../../lib/questions";
 
 export function ProgressDots({
   questionSet,
@@ -11,7 +9,7 @@ export function ProgressDots({
   currentQuestionIndex,
   currentStepRef,
 }: {
-  questionSet: QuestionSet;
+  questionSet: QuestionArray;
   answersGiven: AnswersGiven;
   currentQuestionIndex: number;
   currentStepRef;

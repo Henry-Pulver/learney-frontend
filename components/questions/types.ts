@@ -1,4 +1,8 @@
-export type ConceptInfo = { level: number; max_level: number };
+export type KnowledgeLevel = { level: number };
+
+export type ConceptInfo = KnowledgeLevel & { max_level: number };
+
+export type AnswerResponse = KnowledgeLevel & {completed: boolean};
 
 export type AnswersGiven = Array<string>;
 
