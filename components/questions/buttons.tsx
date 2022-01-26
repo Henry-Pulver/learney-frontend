@@ -7,7 +7,7 @@ import { classNames } from "../../lib/reactUtils";
 import { ButtonPressFunction } from "../../lib/types";
 import { jsonHeaders } from "../../lib/headers";
 import { handleFetchResponses } from "../../lib/utils";
-import { QuestionResponseFormat } from "../../lib/questions";
+import { Question } from "./types";
 
 const incorrectQuestion = "Question is incorrect";
 const irrelevantQuestion = "Question is irrelevant to concept";
@@ -29,7 +29,7 @@ const emptyProblemData: ProblemData = {
 };
 
 export function ReportQuestionButton(props: {
-  question: QuestionResponseFormat;
+  question: Question;
   userId: string;
   buttonPressFunction: ButtonPressFunction;
   backendUrl: string;
@@ -183,7 +183,7 @@ function ProblemTypeButton(props: {
 }
 
 async function sendQuestionReport(
-  question: QuestionResponseFormat,
+  question: Question,
   userId: string,
   problemData: ProblemData,
   backendUrl: string

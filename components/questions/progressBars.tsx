@@ -1,7 +1,6 @@
 import React from "react";
 import { classNames } from "../../lib/reactUtils";
-import { QuestionSet } from "../../lib/questions";
-import { AnswersGiven } from "./progressDots";
+import { AnswersGiven, QuestionArray } from "./types";
 
 export default function ProgressBar(props: {
   colour?: "green" | "blue" | "orange" | "red";
@@ -25,7 +24,7 @@ export default function ProgressBar(props: {
 }
 
 export function realPercentageToProgress(
-  questionSet: QuestionSet,
+  questionArray: QuestionArray,
   answersGiven: AnswersGiven,
   knowledgeLevel: number, // between 0 and 1
   testSuccessfullyCompleted: boolean,
@@ -33,12 +32,11 @@ export function realPercentageToProgress(
 ): number {
   if (testSuccessfullyCompleted) return 100;
   const correctArray: Array<number> = answersGiven.map((answer, idx) =>
-    Number(answer === questionSet[idx].correct_answer)
+    Number(answer === questionArray[idx].correct_answer)
   );
   let totalProgress = 0;
   if (answersGiven.length > 0 && correctArray.reduce((a, b) => a + b, 0))
     totalProgress += 20;
   totalProgress += 100 * (1 - Math.E ** -(knowledgeLevel * 1.61));
-  console.log(totalProgress);
   return Math.max(totalProgress, previousProgressLevel); // Progress bar only moves in the positive direction
 }

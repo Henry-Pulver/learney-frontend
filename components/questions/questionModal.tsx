@@ -8,12 +8,11 @@ import { NextArrow } from "../svgs/icons";
 import { jsonHeaders } from "../../lib/headers";
 import {
   AnswersGiven,
-  QuestionArray,
   Question,
   QuestionSet,
   emptyQuestionSet,
   QuestionSetResponse,
-  KnowledgeLevel, AnswerResponse,
+  AnswerResponse,
 } from "./types";
 import { ReportQuestionButton } from "./buttons";
 import { ButtonPressFunction } from "../../lib/types";
@@ -44,6 +43,7 @@ export default function QuestionModal({
   const [questionSet, setQuestionSet] = useState<QuestionSet>({
     ...emptyQuestionSet,
   });
+  const [knowledgeLevel, setKnowledgeLevel] = useState<number>(null);
   const [answersGiven, setAnswersGiven] = useState<AnswersGiven>([]);
   const [progressBarPercentageFilled, setProgressBarPercentageFilled] =
     useState<number>(0);
@@ -143,7 +143,8 @@ export default function QuestionModal({
         progressBarPercentageFilled
       )
     );
-    setQuestionSet({...questionSet, completed: responseJson.completed})
+    setQuestionSet({...questionSet, completed: responseJson.completed});
+    setKnowledgeLevel(responseJson.level);
   };
 
   const currentStepRef = useRef(null);
@@ -252,7 +253,7 @@ export default function QuestionModal({
                     ? () => {}
                     : questionSet.completed
                     ? () => setCurrentQidx((prevState) => prevState + 1)
-                    : () => onCompletion(answersGiven, questionSet.questions)
+                    : () => onCompletion(knowledgeLevel)
                 }
               >
                 {!questionSet.completed ? "Next Question" : "Complete"}
