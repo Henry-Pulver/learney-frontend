@@ -1,43 +1,7 @@
 import { NodeSingular } from "cytoscape";
 import { handleFetchResponses } from "./utils";
 import { jsonHeaders } from "./headers";
-
-export type QuestionResponseFormat = {
-  id: string;
-  question_text: string;
-  answer_text: Array<string>;
-  correct_answer?: string;
-  answers_order_randomised: Array<string>;
-  feedback_text: string;
-};
-
-export type QuestionSet = Array<QuestionResponseFormat>;
-
-export type QuestionResponseJSON = {
-  question_set: QuestionSet;
-  correct_threshold: number;
-};
-
-export function completeTest(
-  answersGiven,
-  node: NodeSingular,
-  learnedNodes: object,
-  goalNodes: object,
-  questionSet,
-  correctThreshold: number,
-  onSuccess: () => void,
-  onFail: () => void
-): void {
-  const correctAnswers = questionSet.map(
-    (question, questionIdx) =>
-      question.correct_answer === answersGiven[questionIdx]
-  );
-  const numberCorrect = correctAnswers.filter(Boolean).length;
-  const thresholdReached = numberCorrect >= correctThreshold;
-
-  if (thresholdReached) onSuccess();
-  else onFail();
-}
+import { ConceptInfo } from "../components/questions/types";
 
 export function getNextNodeToLearn(
   newlyLearnedNode: NodeSingular = null
@@ -81,25 +45,21 @@ export function getNextNodeToLearn(
   ] as NodeSingular;
 }
 
-export const fetchQuestionSet = async ({
+export const fetchConceptInfo = async ({
   backendUrl,
-  mapUUID,
   userId,
   conceptId,
   questionsEnabled,
 }: {
   backendUrl: string;
-  mapUUID: string;
   userId: string;
   conceptId: string;
   questionsEnabled: boolean;
-}): Promise<QuestionResponseJSON> => {
-  if (!questionsEnabled) return { question_set: [], correct_threshold: 0 };
-  console.log("FETCHING QUESTIONS");
+}): Promise<ConceptInfo> => {
+  if (!questionsEnabled) return { level: null, max_level: null };
   const response = await fetch(
-    `${backendUrl}/api/v0/questions?` +
+    `${backendUrl}/api/v0/concept_info?` +
       new URLSearchParams({
-        map_uuid: mapUUID,
         user_id: userId,
         concept_id: conceptId,
       }),
@@ -108,23 +68,5 @@ export const fetchQuestionSet = async ({
       headers: jsonHeaders,
     }
   );
-  const responseJson = (await handleFetchResponses(
-    response,
-    backendUrl
-  )) as QuestionResponseJSON;
-  // {
-  //  correct_threshold: 3,
-  //  question_set: [{question_text: "...",
-  //                  answer_text: ["...", "..."],
-  //                  feedback_text: "..."}]
-  // }
-
-  // DOES RANDOM ORDERING OF QUESTIONS
-  responseJson.question_set.forEach((question) => {
-    question.correct_answer = question.answer_text[0];
-    question.answers_order_randomised = question.answer_text.sort(
-      () => 0.5 - Math.random()
-    );
-  });
-  return responseJson;
+  return (await handleFetchResponses(response, backendUrl)) as ConceptInfo;
 };

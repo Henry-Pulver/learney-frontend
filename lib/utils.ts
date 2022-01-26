@@ -233,6 +233,7 @@ export function buttonPress(
     handleFetchResponses(response, backendUrl);
   };
 }
+
 export async function trackCyEvent(
   event: EventObject,
   eventType: string,
