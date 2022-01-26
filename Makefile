@@ -4,6 +4,8 @@ pretty:
 lint:
 	npm run lint
 
+pc: pretty lint
+
 build: lint
 	docker build . -t learney-frontend
 
