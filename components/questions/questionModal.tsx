@@ -6,53 +6,112 @@ import { handleFetchResponses, isEven, isNumeric } from "../../lib/utils";
 import { classNames } from "../../lib/reactUtils";
 import { NextArrow } from "../svgs/icons";
 import { jsonHeaders } from "../../lib/headers";
-import { AnswersGiven } from "./progressDots";
-import { QuestionSet } from "../../lib/questions";
+import {
+  AnswersGiven,
+  QuestionArray,
+  Question,
+  QuestionSet,
+  emptyQuestionSet,
+  QuestionSetResponse,
+  KnowledgeLevel, AnswerResponse,
+} from "./types";
 import { ReportQuestionButton } from "./buttons";
 import { ButtonPressFunction } from "../../lib/types";
 import Modal from "../modal";
 import ProgressBar, { realPercentageToProgress } from "./progressBars";
 
-// TODO: Tweak this when the representation on the backend is determined.
-type KnowledgeState = { knowledge: number };
-
 export default function QuestionModal({
-  questionSet,
   modalShown,
   closeModal,
   onCompletion,
+  conceptId,
   backendUrl,
   userId,
   sessionId,
   buttonPressFunction,
 }: {
-  questionSet: QuestionSet;
   modalShown: boolean;
   closeModal: () => void;
-  onCompletion: (answersGiven: AnswersGiven, questionSet: QuestionSet) => void;
+  onCompletion: (
+    newKnowledgeLevel: number,
+  ) => void;
+  conceptId: string;
   backendUrl: string;
   userId: string;
   sessionId: string;
   buttonPressFunction: ButtonPressFunction;
 }) {
-  const [knowledgeState, setKnowledgeState] = useState<KnowledgeState>();
-  const [answersGiven, setAnswersGiven] = useState<AnswersGiven>(
-    questionSet.map(() => undefined)
-  );
+  const [questionSet, setQuestionSet] = useState<QuestionSet>({
+    ...emptyQuestionSet,
+  });
+  const [answersGiven, setAnswersGiven] = useState<AnswersGiven>([]);
   const [progressBarPercentageFilled, setProgressBarPercentageFilled] =
     useState<number>(0);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
-  const nextQuestion = () => setCurrentQuestionIndex(currentQuestionIndex + 1);
+  const [currentQidx, setCurrentQidx] = useState<number>(0);
+
+  const getNewQuestionSet = async () => {
+    const questionResponse = await fetch(`${backendUrl}/api/v0/question_set`, {
+      method: "GET",
+      headers: jsonHeaders,
+      body: JSON.stringify({
+        user_id: userId,
+        session_id: sessionId,
+        concept_id: conceptId,
+      }),
+    });
+    const responseJson = (await handleFetchResponses(
+      questionResponse,
+      backendUrl
+    )) as QuestionSetResponse;
+
+    if (responseJson.answers_given.length > 0) {
+      // Returning to a question set, some questions may be answered
+      setAnswersGiven([...responseJson.answers_given]);
+      setCurrentQidx(responseJson.questions.length - 1);
+    }
+    delete responseJson.answers_given;
+
+    setQuestionSet(responseJson as QuestionSet);
+  };
 
   useEffect(() => {
-    setCurrentQuestionIndex(0);
-    setAnswersGiven(questionSet.map(() => null));
+    if (modalShown && questionSet.concept_id !== conceptId) getNewQuestionSet();
+  }, [modalShown]);
+
+  const getNextQuestion = async () => {
+    const questionResponse = await fetch(`${backendUrl}/api/v0/questions`, {
+      method: "GET",
+      headers: jsonHeaders,
+      body: JSON.stringify({
+        user_id: userId,
+        session_id: sessionId,
+        concept_id: conceptId,
+        question_set_id: questionSet.id,
+      }),
+    });
+    const responseJson = (await handleFetchResponses(
+      questionResponse,
+      backendUrl
+    )) as Question;
+    setQuestionSet({
+      ...questionSet,
+      questions: [...questionSet.questions, responseJson],
+    });
+  };
+
+  useEffect(() => {
+    if (questionSet.id) getNextQuestion();
+  }, [answersGiven]);
+
+  useEffect(() => {
+    if (questionSet.questions.length === 0) {
+      setAnswersGiven([]);
+      setCurrentQidx(0);
+    }
   }, [questionSet]);
 
   const onAnswerClick = async (answerText: string) => {
-    const answers = [...answersGiven];
-    answers[currentQuestionIndex] = answerText;
-    setAnswersGiven(answers);
+    setAnswersGiven([...answersGiven, answerText]);
     // Tell the backend about the answer given
     const questionResponse = await fetch(
       `${backendUrl}/api/v0/question_response`,
@@ -62,27 +121,29 @@ export default function QuestionModal({
         body: JSON.stringify({
           user_id: userId,
           session_id: sessionId,
-          question: questionSet[currentQuestionIndex].id,
+          question: questionSet.id,
           response: answerText,
           correct:
-            answerText === questionSet[currentQuestionIndex].correct_answer,
+            answerText ===
+            questionSet.questions[questionSet.questions.length - 1]
+              .correct_answer,
         }),
       }
     );
     const responseJson = (await handleFetchResponses(
       questionResponse,
       backendUrl
-    )) as KnowledgeState;
-    setKnowledgeState(responseJson);
+    )) as AnswerResponse;
     setProgressBarPercentageFilled(
       realPercentageToProgress(
-        questionSet,
+        questionSet.questions,
         answersGiven,
-        knowledgeState.knowledge, // TODO: change?
-        knowledgeState.knowledge > 1, // TODO: change
+        responseJson.level,
+        responseJson.completed,
         progressBarPercentageFilled
       )
     );
+    setQuestionSet({...questionSet, completed: responseJson.completed})
   };
 
   const currentStepRef = useRef(null);
@@ -96,7 +157,7 @@ export default function QuestionModal({
       contentClassName="w-full max-h-excl-toolbar"
     >
       <div>
-        {currentQuestionIndex in questionSet && ( // <-- Crushes a rare bug
+        {questionSet.id && ( // <-- Crushes a rare bug
           <>
             <div>
               <div className="flex justify-center">
@@ -126,13 +187,14 @@ export default function QuestionModal({
                   as="h3"
                   className="text-lg leading-6 font-medium text-gray-900"
                 >
-                  {`Question ${currentQuestionIndex + 1}`}
+                  {`Question ${currentQidx + 1}`}
                 </Dialog.Title>
                 <div className="mt-6 mb-4 text-black">
                   <QuestionText
-                    text={questionSet[currentQuestionIndex].question_text}
+                    text={questionSet.questions[currentQidx].question_text}
                   />
                 </div>
+                {/* TODO: Decide on report question button placement */}
                 {/*<div className="relative h-8 sm:h-10">*/}
                 {/*  <div className="absolute right-2 sm:right-4">*/}
                 {/*    <ReportQuestionButton*/}
@@ -145,55 +207,55 @@ export default function QuestionModal({
                 {/*</div>*/}
                 <AnswerOptions
                   answerArray={
-                    questionSet[currentQuestionIndex].answers_order_randomised
+                    questionSet.questions[currentQidx].answers_order_randomised
                   }
-                  answerGiven={answersGiven[currentQuestionIndex]}
+                  answerGiven={
+                    answersGiven.length > currentQidx
+                      ? answersGiven[currentQidx]
+                      : null
+                  }
                   correctAnswer={
-                    questionSet[currentQuestionIndex].correct_answer
+                    questionSet.questions[currentQidx].correct_answer
                   }
                   onAnswerSelected={onAnswerClick}
                 />
               </div>
             </div>
             {/*FEEBACK*/}
-            {answersGiven[currentQuestionIndex] && // Check that the question has been answered
-              answersGiven[currentQuestionIndex] !==
-                questionSet[currentQuestionIndex].correct_answer && // Check that the answer is incorrect
-              questionSet[currentQuestionIndex].feedback_text && ( // Check that there is some feedback
+            {answersGiven.length > currentQidx && // Check that the question has been answered
+              answersGiven[currentQidx] !==
+                questionSet.questions[currentQidx].correct_answer && // Check that the answer is incorrect
+              questionSet.questions[currentQidx].feedback && ( // Check that there is some feedback
                 <div className="bg-gray-200 text-black py-2 my-2 rounded-sm text-center">
                   <h3 className="text-lg pt-2 font-semibold">Feedback</h3>
-                  <QuestionText
-                    text={questionSet[currentQuestionIndex].feedback_text}
-                  />
+                  <QuestionText text={questionSet[currentQidx].feedback} />
                 </div>
               )}
             {/*NEXT QUESTION BUTTON*/}
             <div className="mt-5 sm:mt-4 flex justify-between">
               <ReportQuestionButton
-                question={questionSet[currentQuestionIndex]}
+                question={questionSet[currentQidx]}
                 buttonPressFunction={buttonPressFunction}
                 backendUrl={backendUrl}
                 userId={userId}
               />
+              {/* TODO: Remove below button unless question is got wrong? */}
               <button
                 className={classNames(
-                  answersGiven[currentQuestionIndex] &&
-                    "bg-blue-600 hover:bg-blue-700 cursor-pointer",
-                  !answersGiven[currentQuestionIndex] &&
-                    "bg-gray-300 cursor-default",
+                  answersGiven.length > currentQidx
+                    ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                    : "bg-gray-300 cursor-default",
                   "inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
                 )}
                 onClick={
-                  answersGiven[currentQuestionIndex] === null
+                  answersGiven.length <= currentQidx // Deactivated as question not yet answered
                     ? () => {}
-                    : currentQuestionIndex !== questionSet.length - 1
-                    ? nextQuestion
-                    : () => onCompletion(answersGiven, questionSet)
+                    : questionSet.completed
+                    ? () => setCurrentQidx((prevState) => prevState + 1)
+                    : () => onCompletion(answersGiven, questionSet.questions)
                 }
               >
-                {currentQuestionIndex !== questionSet.length - 1
-                  ? "Next Question"
-                  : "Complete"}
+                {!questionSet.completed ? "Next Question" : "Complete"}
                 <NextArrow />
               </button>
             </div>
