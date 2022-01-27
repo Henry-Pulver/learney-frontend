@@ -2,7 +2,16 @@ export type KnowledgeLevel = { level: number };
 
 export type ConceptInfo = KnowledgeLevel & { max_level: number };
 
-export type AnswerResponse = KnowledgeLevel & {completed: boolean};
+type Completed =
+  | "completed_concept"
+  | "doing_poorly"
+  | "max_num_of_questions"
+  | null;
+
+export type AnswerResponse = KnowledgeLevel & {
+  completed: Completed;
+  next_question: Question;
+};
 
 export type AnswersGiven = Array<string>;
 
@@ -20,7 +29,7 @@ export type QuestionArray = Array<Question>;
 export type QuestionSet = {
   id: string;
   questions: QuestionArray;
-  completed: boolean;
+  completed: Completed;
   concept_id: string;
 };
 
@@ -31,6 +40,6 @@ export type QuestionSetResponse = QuestionSet & {
 export const emptyQuestionSet: QuestionSet = {
   id: null,
   questions: [],
-  completed: false,
+  completed: null,
   concept_id: null,
 };
