@@ -8,7 +8,6 @@ import { NextArrow } from "../svgs/icons";
 import { jsonHeaders } from "../../lib/headers";
 import {
   AnswersGiven,
-  Question,
   QuestionSet,
   emptyQuestionSet,
   QuestionSetResponse,
@@ -31,9 +30,7 @@ export default function QuestionModal({
 }: {
   modalShown: boolean;
   closeModal: () => void;
-  onCompletion: (
-    newKnowledgeLevel: number,
-  ) => void;
+  onCompletion: (newKnowledgeLevel: number) => void;
   conceptId: string;
   backendUrl: string;
   userId: string;
@@ -78,30 +75,30 @@ export default function QuestionModal({
     if (modalShown && questionSet.concept_id !== conceptId) getNewQuestionSet();
   }, [modalShown]);
 
-  const getNextQuestion = async () => {
-    const questionResponse = await fetch(`${backendUrl}/api/v0/questions`, {
-      method: "GET",
-      headers: jsonHeaders,
-      body: JSON.stringify({
-        user_id: userId,
-        session_id: sessionId,
-        concept_id: conceptId,
-        question_set_id: questionSet.id,
-      }),
-    });
-    const responseJson = (await handleFetchResponses(
-      questionResponse,
-      backendUrl
-    )) as Question;
-    setQuestionSet({
-      ...questionSet,
-      questions: [...questionSet.questions, responseJson],
-    });
-  };
+  // const getNextQuestion = async () => {
+  //   const questionResponse = await fetch(`${backendUrl}/api/v0/questions`, {
+  //     method: "GET",
+  //     headers: jsonHeaders,
+  //     body: JSON.stringify({
+  //       user_id: userId,
+  //       session_id: sessionId,
+  //       concept_id: conceptId,
+  //       question_set_id: questionSet.id,
+  //     }),
+  //   });
+  //   const responseJson = (await handleFetchResponses(
+  //     questionResponse,
+  //     backendUrl
+  //   )) as Question;
+  //   setQuestionSet({
+  //     ...questionSet,
+  //     questions: [...questionSet.questions, responseJson],
+  //   });
+  // };
 
-  useEffect(() => {
-    if (questionSet.id) getNextQuestion();
-  }, [answersGiven]);
+  // useEffect(() => {
+  //   if (questionSet.id) getNextQuestion();
+  // }, [answersGiven]);
 
   useEffect(() => {
     if (questionSet.questions.length === 0) {
@@ -120,13 +117,16 @@ export default function QuestionModal({
         headers: jsonHeaders,
         body: JSON.stringify({
           user_id: userId,
-          session_id: sessionId,
-          question: questionSet.id,
+          question_set: questionSet.id,
+          concept_id: conceptId,
           response: answerText,
+          // question_id:
+          //   questionSet.questions[questionSet.questions.length - 1].id,
           correct:
             answerText ===
             questionSet.questions[questionSet.questions.length - 1]
               .correct_answer,
+          session_id: sessionId,
         }),
       }
     );
@@ -139,11 +139,17 @@ export default function QuestionModal({
         questionSet.questions,
         answersGiven,
         responseJson.level,
-        responseJson.completed,
+        responseJson.completed === "completed_concept",
         progressBarPercentageFilled
       )
     );
-    setQuestionSet({...questionSet, completed: responseJson.completed});
+    let questions = [...questionSet.questions];
+    if (responseJson.next_question) questions.push(responseJson.next_question);
+    setQuestionSet({
+      ...questionSet,
+      questions: questions,
+      completed: responseJson.completed,
+    });
     setKnowledgeLevel(responseJson.level);
   };
 

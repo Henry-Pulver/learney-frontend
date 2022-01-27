@@ -172,7 +172,8 @@ export function ConceptInfo({
           modalShown={node && questionModalShown}
           closeModal={() => setQuestionModalShown(false)}
           onCompletion={(newKnowledgeLevel) => {
-            const levelsGained = Math.floor(newKnowledgeLevel) - Math.floor(data.level);
+            const levelsGained =
+              Math.floor(newKnowledgeLevel) - Math.floor(data.level);
             const conceptCompleted = newKnowledgeLevel >= data.max_level;
 
             if (conceptCompleted) onTestSuccess(node, userId, sessionId);
