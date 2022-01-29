@@ -295,19 +295,21 @@ function Navbar({
                   <LogInIconButton buttonPressFunction={buttonPressFunction} />
                 )}
                 <div className="mt-3 max-w-3xl mx-auto px-2 space-y-1 sm:px-4">
-                  {leftSideButtons.concat(rightSideButtons).map((button) => {
-                    return (
-                      <>
-                        <div
-                          className="inset-0 flex items-center"
-                          aria-hidden="true"
-                        >
-                          <div className="w-full border-t border-gray-300" />
+                  {leftSideButtons
+                    .concat(rightSideButtons)
+                    .map((button, idx) => {
+                      return (
+                        <div key={idx}>
+                          <div
+                            className="inset-0 flex items-center"
+                            aria-hidden="true"
+                          >
+                            <div className="w-full border-t border-gray-300" />
+                          </div>
+                          {button}
                         </div>
-                        {button}
-                      </>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
               </div>
             </Popover.Panel>
