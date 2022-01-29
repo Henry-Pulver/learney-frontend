@@ -16,6 +16,9 @@ import {
 } from "../lib/utils";
 import { LoadingSpinner } from "./animations";
 import { cacheHeaders, jsonHeaders } from "../lib/headers";
+import {
+  LevelsProgressBar,
+} from "./questions/progressBars";
 
 type OnVote = (node: NodeSingular, url: string, up: boolean | null) => void;
 
@@ -70,9 +73,16 @@ export function ConceptInfo({
     conceptId: node.id(),
     questionsEnabled: questionsEnabled,
   });
-  useEffect(reload, [node]); // Each time a node is selected, rerun this
+  const [knowledgeLevel, setKnowledgeLevel] = useState<number>(null);
+  useEffect(() => {
+    reload();
+    setKnowledgeLevel(null); // So the knowledge level isn't stuck on the previous node's value while loading
+  }, [node]); // Each time a node is selected, rerun this
   const [questionModalShown, setQuestionModalShown] =
     React.useState<boolean>(false);
+  useEffect(() => {
+    if (!isPending) setKnowledgeLevel(data.level);
+  }, [data]);
 
   if (node === undefined) return <></>;
   return (
@@ -86,6 +96,22 @@ export function ConceptInfo({
         }
       >
         <div className="flex flex-col text-center h-excl-toolbar w-full overflow-hidden">
+          {questionsEnabled && (
+            <>
+              <div
+                className={classNames(
+                  !isPending && data.max_level ? "visible" : "invisible"
+                )}
+              >
+                {!isPending && data.max_level
+                  ? `Progress (Max: ${data.max_level})`
+                  : "Progress"}
+              </div>
+              <div className="w-full flex justify-center mb-4">
+                <LevelsProgressBar knowledgeLevel={knowledgeLevel} />
+              </div>
+            </>
+          )}
           <h4 className="text-gray-900 text-2xl font-bold sm:text-4xl mb-2 px-4 text-center">
             {node && node.data().name}
           </h4>
@@ -96,13 +122,13 @@ export function ConceptInfo({
             <div className="absolute sm:relative bottom-0 left-0 w-full z-10 bg-white justify-around border-t border-solid border-gray-300 px-2 py-4 grid items-center grid-flow-col">
               <IconToggleButtonWithCheckbox
                 text={
-                  !learnedNodes[node.id()] && data.max_level
+                  !learnedNodes[node.id()] && !isPending && data.max_level
                     ? "Test me!"
                     : "I know this!"
                 }
                 checked={!!learnedNodes[node.id()]}
                 onCheck={
-                  !learnedNodes[node.id()] && data.max_level
+                  !learnedNodes[node.id()] && !isPending && data.max_level
                     ? () => setQuestionModalShown(true)
                     : () => onLearnedClick(node, userId, sessionId)
                 }
@@ -167,23 +193,26 @@ export function ConceptInfo({
           </ol>
         </div>
       </Overlay>
-      {data.max_level && (
+      {!isPending && data.max_level && (
         <QuestionModal
           modalShown={node && questionModalShown}
           closeModal={() => setQuestionModalShown(false)}
-          onCompletion={(newKnowledgeLevel) => {
-            const levelsGained =
-              Math.floor(newKnowledgeLevel) - Math.floor(data.level);
-            const conceptCompleted = newKnowledgeLevel >= data.max_level;
+          onCompletion={(conceptCompleted) => {
+            // const levelsGained =
+            //   Math.floor(newKnowledgeLevel) - Math.floor(data.level);
+            // const conceptCompleted = newKnowledgeLevel >= data.max_level;
 
             if (conceptCompleted) onTestSuccess(node, userId, sessionId);
-            else if (levelsGained > 0) onTestSuccess(node, userId, sessionId);
+            // else if (levelsGained > 0) onTestSuccess(node, userId, sessionId);
             else {
               reload();
               onTestFail(node);
             }
             setQuestionModalShown(false);
           }}
+          knowledgeLevel={knowledgeLevel}
+          setKnowledgeLevel={setKnowledgeLevel}
+          maxKnowledgeLevel={data.max_level}
           conceptId={node ? node.id() : null}
           backendUrl={backendUrl}
           userId={userId}

@@ -1,13 +1,47 @@
 import React from "react";
 import { classNames } from "../../lib/reactUtils";
-import { AnswersGiven, QuestionArray } from "./types";
 
-export default function ProgressBar(props: {
+export function LevelsProgressBar(props: { knowledgeLevel: number }) {
+  return (
+    <div className="max-w-lg w-full flex justify-between content-center text-gray-900 font-bold">
+      <p
+        className={classNames(
+          "text-lg bg-green-100 p-auto w-7 h-7 rounded-full",
+          (!props.knowledgeLevel || Math.floor(props.knowledgeLevel)) === 0 &&
+            "invisible"
+        )}
+      >
+        {Math.floor(props.knowledgeLevel)}
+      </p>
+      <div className="w-5/6 my-2">
+        <ProgressBar
+          colour="green"
+          percentFilled={
+            props.knowledgeLevel
+              ? Math.max(
+                  Math.min(
+                    realPercentageToProgress(props.knowledgeLevel % 1),
+                    100
+                  ),
+                  0
+                )
+              : null
+          }
+        />
+      </div>
+      <p className="text-lg bg-green-100 p-auto w-7 h-7 rounded-full">
+        {props.knowledgeLevel ? Math.floor(props.knowledgeLevel) + 1 : 1}
+      </p>
+    </div>
+  );
+}
+
+export function ProgressBar(props: {
   colour?: "green" | "blue" | "orange" | "red";
-  percentFilled: number;
+  percentFilled: number | null;
 }) {
   return (
-    <div className="w-11/12 bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
       <div
         className={classNames(
           (props.colour === undefined || props.colour === "green") &&
@@ -15,28 +49,19 @@ export default function ProgressBar(props: {
           props.colour === "blue" && "bg-blue-600",
           props.colour === "orange" && "bg-orange-600",
           props.colour === "red" && "bg-red-600",
-          `h-2.5 rounded-full transition-all duration-1000 ease-in-out`
+          props.percentFilled ? "duration-1000" : "duration-0",
+          `h-2.5 rounded-full transition-all ease-in-out`
         )}
-        style={{ width: `${props.percentFilled}%` }}
+        style={
+          props.percentFilled
+            ? { width: `${props.percentFilled}%` }
+            : { width: "0%" }
+        }
       />
     </div>
   );
 }
 
-export function realPercentageToProgress(
-  questionArray: QuestionArray,
-  answersGiven: AnswersGiven,
-  knowledgeLevel: number, // between 0 and 1
-  testSuccessfullyCompleted: boolean,
-  previousProgressLevel: number
-): number {
-  if (testSuccessfullyCompleted) return 100;
-  const correctArray: Array<number> = answersGiven.map((answer, idx) =>
-    Number(answer === questionArray[idx].correct_answer)
-  );
-  let totalProgress = 0;
-  if (answersGiven.length > 0 && correctArray.reduce((a, b) => a + b, 0))
-    totalProgress += 20;
-  totalProgress += 100 * (1 - Math.E ** -(knowledgeLevel * 1.61));
-  return Math.max(totalProgress, previousProgressLevel); // Progress bar only moves in the positive direction
+export function realPercentageToProgress(knowledgeLevel: number): number {
+    return 100 * (1 - Math.E ** -(knowledgeLevel * 1.61));
 }

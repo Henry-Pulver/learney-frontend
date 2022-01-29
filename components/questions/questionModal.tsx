@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Dialog } from "@headlessui/react";
-import { AcademicCapIcon } from "@heroicons/react/outline";
 import { InlineMath, BlockMath } from "react-katex";
 import { handleFetchResponses, isEven, isNumeric } from "../../lib/utils";
 import { classNames } from "../../lib/reactUtils";
@@ -9,6 +7,7 @@ import { jsonHeaders } from "../../lib/headers";
 import {
   AnswersGiven,
   QuestionSet,
+  Completed,
   emptyQuestionSet,
   QuestionSetResponse,
   AnswerResponse,
@@ -16,11 +15,15 @@ import {
 import { ReportQuestionButton } from "./buttons";
 import { ButtonPressFunction } from "../../lib/types";
 import Modal from "../modal";
-import ProgressBar, { realPercentageToProgress } from "./progressBars";
+import { LevelsProgressBar } from "./progressBars";
+import { LoadingSpinner } from "../animations";
 
 export default function QuestionModal({
   modalShown,
   closeModal,
+  knowledgeLevel,
+  setKnowledgeLevel,
+  maxKnowledgeLevel,
   onCompletion,
   conceptId,
   backendUrl,
@@ -30,7 +33,10 @@ export default function QuestionModal({
 }: {
   modalShown: boolean;
   closeModal: () => void;
-  onCompletion: (newKnowledgeLevel: number) => void;
+  knowledgeLevel: number;
+  setKnowledgeLevel: (knowledgeLevel: number) => void;
+  maxKnowledgeLevel: number;
+  onCompletion: (conceptCompleted: Completed) => void;
   conceptId: string;
   backendUrl: string;
   userId: string;
@@ -40,22 +46,24 @@ export default function QuestionModal({
   const [questionSet, setQuestionSet] = useState<QuestionSet>({
     ...emptyQuestionSet,
   });
-  const [knowledgeLevel, setKnowledgeLevel] = useState<number>(null);
+  const [nextQuestionPressed, setNextQuestionPressed] =
+    useState<boolean>(false);
   const [answersGiven, setAnswersGiven] = useState<AnswersGiven>([]);
-  const [progressBarPercentageFilled, setProgressBarPercentageFilled] =
-    useState<number>(0);
   const [currentQidx, setCurrentQidx] = useState<number>(0);
 
   const getNewQuestionSet = async () => {
-    const questionResponse = await fetch(`${backendUrl}/api/v0/question_set`, {
-      method: "GET",
-      headers: jsonHeaders,
-      body: JSON.stringify({
-        user_id: userId,
-        session_id: sessionId,
-        concept_id: conceptId,
-      }),
-    });
+    const questionResponse = await fetch(
+      `${backendUrl}/api/v0/question_set?` +
+        new URLSearchParams({
+          user_id: userId,
+          session_id: sessionId,
+          concept_id: conceptId,
+        }),
+      {
+        method: "GET",
+        headers: jsonHeaders,
+      }
+    );
     const responseJson = (await handleFetchResponses(
       questionResponse,
       backendUrl
@@ -74,31 +82,13 @@ export default function QuestionModal({
   useEffect(() => {
     if (modalShown && questionSet.concept_id !== conceptId) getNewQuestionSet();
   }, [modalShown]);
-
-  // const getNextQuestion = async () => {
-  //   const questionResponse = await fetch(`${backendUrl}/api/v0/questions`, {
-  //     method: "GET",
-  //     headers: jsonHeaders,
-  //     body: JSON.stringify({
-  //       user_id: userId,
-  //       session_id: sessionId,
-  //       concept_id: conceptId,
-  //       question_set_id: questionSet.id,
-  //     }),
-  //   });
-  //   const responseJson = (await handleFetchResponses(
-  //     questionResponse,
-  //     backendUrl
-  //   )) as Question;
-  //   setQuestionSet({
-  //     ...questionSet,
-  //     questions: [...questionSet.questions, responseJson],
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   if (questionSet.id) getNextQuestion();
-  // }, [answersGiven]);
+  useEffect(() => {
+    console.log(questionSet);
+    if (nextQuestionPressed && questionSet.questions.length - 1 > currentQidx) {
+      setNextQuestionPressed(false);
+      setCurrentQidx((prevState) => prevState + 1);
+    }
+  }, [questionSet, nextQuestionPressed]);
 
   useEffect(() => {
     if (questionSet.questions.length === 0) {
@@ -134,20 +124,12 @@ export default function QuestionModal({
       questionResponse,
       backendUrl
     )) as AnswerResponse;
-    setProgressBarPercentageFilled(
-      realPercentageToProgress(
-        questionSet.questions,
-        answersGiven,
-        responseJson.level,
-        responseJson.completed === "completed_concept",
-        progressBarPercentageFilled
-      )
-    );
-    let questions = [...questionSet.questions];
+    console.log(responseJson);
+    const questions = [...questionSet.questions];
     if (responseJson.next_question) questions.push(responseJson.next_question);
     setQuestionSet({
       ...questionSet,
-      questions: questions,
+      questions: [...questions],
       completed: responseJson.completed,
     });
     setKnowledgeLevel(responseJson.level);
@@ -161,19 +143,14 @@ export default function QuestionModal({
       initialFocus={currentStepRef}
       setClosed={closeModal}
       modalClassName="items-center"
-      contentClassName="w-full max-h-excl-toolbar"
+      contentClassName="max-h-excl-toolbar sm:max-w-2xl sm:p-8 sm:pb-4"
     >
-      <div>
-        {questionSet.id && ( // <-- Crushes a rare bug
+      <div className="flex justify-center">
+        {questionSet.id ? ( // <-- Stops a bug when loading questionSet
           <>
-            <div>
-              <div className="flex justify-center">
-                <ProgressBar
-                  percentFilled={Math.max(
-                    Math.min(progressBarPercentageFilled, 100),
-                    0
-                  )}
-                />
+            <div className="w-full flex flex-col">
+              <div className="w-full flex justify-center">
+                <LevelsProgressBar knowledgeLevel={knowledgeLevel} />
               </div>
               {/*TODO: Remove? Being kept now in case we want to use progress dots in some way
                    (perhaps allowing you to jump back to previous questions easily?)*/}
@@ -184,94 +161,106 @@ export default function QuestionModal({
               {/*  currentStepRef={currentStepRef}*/}
               {/*/>*/}
               <div className="mt-3 text-center sm:mt-5">
-                <div className="my-8 mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
-                  <AcademicCapIcon
-                    className="h-6 w-6 text-blue-600"
-                    aria-hidden="true"
-                  />
-                </div>
-                <Dialog.Title
-                  as="h3"
-                  className="text-lg leading-6 font-medium text-gray-900"
-                >
-                  {`Question ${currentQidx + 1}`}
-                </Dialog.Title>
-                <div className="mt-6 mb-4 text-black">
-                  <QuestionText
-                    text={questionSet.questions[currentQidx].question_text}
-                  />
-                </div>
-                {/* TODO: Decide on report question button placement */}
-                {/*<div className="relative h-8 sm:h-10">*/}
-                {/*  <div className="absolute right-2 sm:right-4">*/}
-                {/*    <ReportQuestionButton*/}
-                {/*      question={questionSet[currentQuestionIndex]}*/}
-                {/*      buttonPressFunction={buttonPressFunction}*/}
-                {/*      backendUrl={backendUrl}*/}
-                {/*      userId={userId}*/}
-                {/*    />*/}
-                {/*  </div>*/}
+                {/*<div className="my-8 mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">*/}
+                {/*  <AcademicCapIcon*/}
+                {/*    className="h-6 w-6 text-blue-600"*/}
+                {/*    aria-hidden="true"*/}
+                {/*  />*/}
                 {/*</div>*/}
-                <AnswerOptions
-                  answerArray={
-                    questionSet.questions[currentQidx].answers_order_randomised
-                  }
-                  answerGiven={
-                    answersGiven.length > currentQidx
-                      ? answersGiven[currentQidx]
-                      : null
-                  }
-                  correctAnswer={
-                    questionSet.questions[currentQidx].correct_answer
-                  }
-                  onAnswerSelected={onAnswerClick}
-                />
+                {/*<Dialog.Title*/}
+                {/*  as="h3"*/}
+                {/*  className="text-lg leading-6 font-medium text-gray-900"*/}
+                {/*>*/}
+                {/*  {`Question ${currentQidx + 1}`}*/}
+                {/*</Dialog.Title>*/}
+                <div className="w-full flex flex-row justify-center my-8">
+                  <div className="max-w-lg text-black text-lg">
+                    <QuestionText
+                      text={questionSet.questions[currentQidx].question_text}
+                    />
+                  </div>
+                </div>
+                <div className="w-full flex justify-center">
+                  <AnswerOptions
+                    answerArray={
+                      questionSet.questions[currentQidx]
+                        .answers_order_randomised
+                    }
+                    answerGiven={
+                      answersGiven.length > currentQidx
+                        ? answersGiven[currentQidx]
+                        : null
+                    }
+                    correctAnswer={
+                      questionSet.questions[currentQidx].correct_answer
+                    }
+                    onAnswerSelected={onAnswerClick}
+                  />
+                </div>
+              </div>
+              {/*FEEBACK*/}
+              {answersGiven.length > currentQidx && // Check that the question has been answered
+                answersGiven[currentQidx] !==
+                  questionSet.questions[currentQidx].correct_answer && // Check that the answer is incorrect
+                questionSet.questions[currentQidx].feedback && ( // Check that there is some feedback
+                  <div className="flex justify-center">
+                    <div className="bg-gray-200 text-black px-6 py-4 my-6 rounded text-center max-w-xl">
+                      {/*<h3 className="text-lg font-semibold">Feedback</h3>*/}
+                      <QuestionText
+                        text={questionSet.questions[currentQidx].feedback}
+                      />
+                    </div>
+                  </div>
+                )}
+              {/*NEXT QUESTION BUTTON*/}
+              <div className="flex justify-center">
+                <div className="mt-5 sm:mt-6 flex justify-between w-full max-w-lg">
+                  <ReportQuestionButton
+                    question={questionSet.questions[currentQidx]}
+                    buttonPressFunction={buttonPressFunction}
+                    backendUrl={backendUrl}
+                    userId={userId}
+                  />
+                  {/* TODO: Remove below button unless question is got wrong? */}
+                  <button
+                    className={classNames(
+                      answersGiven.length > currentQidx
+                        ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                        : "bg-gray-300 cursor-default",
+                      "inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
+                    )}
+                    onClick={
+                      answersGiven.length <= currentQidx || nextQuestionPressed // Deactivated as question not yet answered
+                        ? () => {}
+                        : !questionSet.completed
+                        ? () => setNextQuestionPressed(true)
+                        : () => onCompletion(questionSet.completed)
+                    }
+                  >
+                    {nextQuestionPressed ? (
+                      <LoadingSpinner classes="w-5 h-5 py-0.5 mx-9" />
+                    ) : !questionSet.completed ? (
+                      "Next Question"
+                    ) : (
+                      "Complete"
+                    )}
+                    <NextArrow />
+                  </button>
+                </div>
               </div>
             </div>
-            {/*FEEBACK*/}
-            {answersGiven.length > currentQidx && // Check that the question has been answered
-              answersGiven[currentQidx] !==
-                questionSet.questions[currentQidx].correct_answer && // Check that the answer is incorrect
-              questionSet.questions[currentQidx].feedback && ( // Check that there is some feedback
-                <div className="bg-gray-200 text-black py-2 my-2 rounded-sm text-center">
-                  <h3 className="text-lg pt-2 font-semibold">Feedback</h3>
-                  <QuestionText text={questionSet[currentQidx].feedback} />
-                </div>
-              )}
-            {/*NEXT QUESTION BUTTON*/}
-            <div className="mt-5 sm:mt-4 flex justify-between">
-              <ReportQuestionButton
-                question={questionSet[currentQidx]}
-                buttonPressFunction={buttonPressFunction}
-                backendUrl={backendUrl}
-                userId={userId}
-              />
-              {/* TODO: Remove below button unless question is got wrong? */}
-              <button
-                className={classNames(
-                  answersGiven.length > currentQidx
-                    ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                    : "bg-gray-300 cursor-default",
-                  "inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
-                )}
-                onClick={
-                  answersGiven.length <= currentQidx // Deactivated as question not yet answered
-                    ? () => {}
-                    : questionSet.completed
-                    ? () => setCurrentQidx((prevState) => prevState + 1)
-                    : () => onCompletion(knowledgeLevel)
-                }
-              >
-                {!questionSet.completed ? "Next Question" : "Complete"}
-                <NextArrow />
-              </button>
-            </div>
           </>
+        ) : (
+          <div className="w-full h-96 grid justify-center content-center">
+            <LoadingSpinner classes="w-20 h-20" />
+          </div>
         )}
       </div>
     </Modal>
   );
 }
+
+("In matrix addition, each element is added to the corresponding element in the other matrix.\nIn this case, that means:\n/$$\begin{bmatrix}0 + 7&10 + 6\\7 + 9&9 + 1 end{bmatrix}$$/\nLeading to:\n/$$\begin{bmatrix}7&16\\16&10 end{bmatrix}$$/");
 
 function QuestionText({
   text,
@@ -281,46 +270,43 @@ function QuestionText({
   className?: string;
 }) {
   if (isNumeric(text)) text = "$$" + text + "$$";
-  const questionTextArray = [];
+  const questionTextArr = [];
 
   const blockLatexDivs = text.split("/$$");
-  blockLatexDivs.forEach((textBlock, index) => {
-    if (isEven(index)) {
-      questionTextArray.push(<InlineTextAndMath text={textBlock} />);
+  blockLatexDivs.forEach((textBlock, idx) => {
+    if (idx === 0) {
+      questionTextArr.push(<InlineTextAndMath key={idx} text={textBlock} />);
     } else {
-      textBlock.split("$$/").forEach((nestedTextBlock, index) => {
-        if (isEven(index)) {
-          questionTextArray.push(<BlockMath>{nestedTextBlock}</BlockMath>);
+      const nestedDivs = textBlock.split("$$/");
+      nestedDivs.forEach((nestedText, indx) => {
+        if (isEven(indx)) {
+          questionTextArr.push(
+            <BlockMath key={`${idx}-${indx}`}>{nestedText}</BlockMath>
+          );
         } else {
-          questionTextArray.push(<InlineTextAndMath text={nestedTextBlock} />);
+          questionTextArr.push(
+            <InlineTextAndMath key={`${idx}-${indx}`} text={nestedText} />
+          );
         }
       });
     }
   });
-  return <div className={className}>{questionTextArray}</div>;
+  return (
+    <div className={`${className} whitespace-pre-line`}>{questionTextArr}</div>
+  );
 }
 
 function InlineTextAndMath({ text }: { text: string }) {
   const outputArray = [];
   text.split("$$").forEach((textBlock, index) => {
     if (isEven(index)) {
-      outputArray.push(...PureTextBlock(textBlock));
+      // outputArray.push(...PureTextBlock(textBlock));
+      outputArray.push(textBlock);
     } else {
-      outputArray.push(<InlineMath>{textBlock}</InlineMath>);
+      outputArray.push(<InlineMath key={index}>{textBlock}</InlineMath>);
     }
   });
   return <div>{outputArray}</div>;
-}
-
-function PureTextBlock(text: string): Array<string> {
-  const outputArray = [];
-  text.split("\n").forEach((textBlock, index) => {
-    if (index !== 0) {
-      outputArray.push(<br />);
-    }
-    outputArray.push(textBlock);
-  });
-  return outputArray;
 }
 
 function AnswerOptions({
@@ -335,7 +321,7 @@ function AnswerOptions({
   onAnswerSelected: (answer: string) => void;
 }) {
   return (
-    <div className="grid grid-cols-2 gap-3 mt-5 sm:mt-2 sm:grid-flow-row-dense">
+    <div className="w-full max-w-md grid grid-cols-2 gap-3 mt-5 sm:mt-2 sm:grid-flow-row-dense">
       {answerArray.map((answer) => (
         <AnswerOption
           key={answer}

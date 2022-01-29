@@ -1,7 +1,7 @@
 import React from "react";
 import { classNames } from "../../lib/reactUtils";
 import { CheckIcon, XIcon } from "@heroicons/react/outline";
-import { QuestionArray, AnswersGiven } from "../../lib/questions";
+import { QuestionArray, AnswersGiven } from "./types";
 
 export function ProgressDots({
   questionSet,
@@ -24,7 +24,7 @@ export function ProgressDots({
         <ol role="list" className="flex items-center">
           {questionSet.map((question, questionIdx) => (
             <li
-              key={question.question_text}
+              key={questionIdx}
               className={classNames(
                 questionIdx !== questionSet.length - 1 ? "pr-8 sm:pr-20" : "",
                 "relative"
