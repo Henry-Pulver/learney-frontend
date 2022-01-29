@@ -1,3 +1,11 @@
+run-local:
+	NEXT_PUBLIC_BACKEND_URL='http://localhost:8000' npm run dev
+
+run-staging:
+	NEXT_PUBLIC_BACKEND_URL='https://staging-api.learney.me' npm run dev
+
+run: run-staging
+
 pretty:
 	npx prettier -w .
 
