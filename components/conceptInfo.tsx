@@ -96,28 +96,33 @@ export function ConceptInfo({
         }
       >
         <div className="flex flex-col text-center h-excl-toolbar w-full overflow-hidden">
-          {questionsEnabled && (
-            <>
-              <div
-                className={classNames(
-                  !isPending && data.max_level ? "visible" : "invisible"
-                )}
-              >
-                {!isPending && data.max_level
-                  ? `Progress (Max: ${data.max_level})`
-                  : "Progress"}
-              </div>
-              <div className="w-full flex justify-center mb-4">
-                <LevelsProgressBar knowledgeLevel={knowledgeLevel} />
-              </div>
-            </>
-          )}
           <h4 className="text-gray-900 text-2xl font-bold sm:text-4xl mb-2 px-4 text-center">
             {node && node.data().name}
           </h4>
           <div className="text-left text-black mt-0 mx-auto mb-4 px-4 max-h-1/5">
             {node && node.data().description}
           </div>
+          {/* TODO: Decide on the progress bar location! */}
+          {questionsEnabled && (
+              <>
+                <div className="w-full flex justify-center">
+                  <LevelsProgressBar knowledgeLevel={knowledgeLevel} />
+                </div>
+                {/*<div className="w-full flex justify-center">*/}
+                  <div
+                      className={classNames(
+                          // "w-full max-w-xl flex justify-end",
+                          "mb-2",
+                          !isPending && data.max_level ? "visible" : "invisible"
+                      )}
+                  >
+                    {!isPending && data.max_level
+                        ? `Max level: ${data.max_level}`
+                        : "Max level"}
+                  </div>
+                {/*</div>*/}
+              </>
+          )}
           {node && (
             <div className="absolute sm:relative bottom-0 left-0 w-full z-10 bg-white justify-around border-t border-solid border-gray-300 px-2 py-4 grid items-center grid-flow-col">
               <IconToggleButtonWithCheckbox
