@@ -48,7 +48,7 @@ export function ReportQuestionButton(props: {
   return (
     <>
       <Tippy
-        content="Report issue with question!"
+        content="Report issue with question"
         placement="top"
         theme="dark"
         maxWidth="10em"
@@ -130,7 +130,6 @@ export function ReportQuestionButton(props: {
               onChange={(e) =>
                 setProblemData({ ...problemData, message: e.target.value })
               }
-              defaultValue={""}
               maxLength={8192}
             />
           </div>
