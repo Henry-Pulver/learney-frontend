@@ -110,8 +110,6 @@ export default function QuestionModal({
           question_set: questionSet.id,
           concept_id: conceptId,
           response: answerText,
-          // question_id:
-          //   questionSet.questions[questionSet.questions.length - 1].id,
           correct:
             answerText ===
             questionSet.questions[questionSet.questions.length - 1]
