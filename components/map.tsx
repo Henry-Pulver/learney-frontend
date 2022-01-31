@@ -21,10 +21,11 @@ import {
   ResetPanButton,
   ResetProgressIconButton,
 } from "./buttons";
-import { getNextNodeToLearn } from "../lib/questions";
+import { fetchConceptInfo, getNextNodeToLearn } from "../lib/questions";
 import { ButtonPressFunction } from "../lib/types";
 import { EditType } from "./editor/types";
 import { OnGoalLearnedClick, SetGoalState, SetLearnedState } from "./types";
+import QuestionModal from "./questions/questionModal";
 
 export default function Map({
   mapTitle,
@@ -154,12 +155,35 @@ export default function Map({
     editMap,
   });
 
+  // Question stuff
+  const [maxKnowledgeLevel, setMaxKnowledgeLevel] = useState<number>(null);
+  const [knowledgeLevel, setKnowledgeLevel] = useState<number>(null);
+  useEffect(() => {
+    // So the knowledge level isn't stuck on the previous node's value while loading
+    setKnowledgeLevel(null);
+    setMaxKnowledgeLevel(null);
+    if (nodeSelected) {
+      (async () => {
+        const conceptInfo = await fetchConceptInfo(
+          backendUrl,
+          userId,
+          nodeSelected.id(),
+          questionsEnabled
+        );
+        setKnowledgeLevel(conceptInfo.level);
+        setMaxKnowledgeLevel(conceptInfo.max_level);
+      })();
+    }
+  }, [nodeSelected]);
+  const [questionModalShown, setQuestionModalShown] =
+    React.useState<boolean>(false);
+
   return (
     <div className="flex flex-column sm:flex-row w-full h-excl-toolbar">
       <div
         className={classNames(
           nodeSelected !== undefined &&
-            "w-0 sm:w-[calc(100vw-30rem)] lg:w-[calc(100vw-42rem)]",
+            "w-full sm:w-[calc(100vw-27rem)] lg:w-[calc(100vw-42rem)]",
           "relative h-excl-toolbar w-full"
         )}
       >
@@ -180,10 +204,37 @@ export default function Map({
             !editMap && hoverNode && "cursor-pointer",
             "z-0 w-full bg-gray-900 h-excl-toolbar",
             nodeSelected !== undefined &&
-              "w-0 sm:w-[calc(100vw-30rem)] lg:w-[calc(100vw-42rem)]"
+              "w-0 sm:w-[calc(100vw-27rem)] lg:w-[calc(100vw-42rem)]"
           )}
           ref={cytoscapeRef}
         />
+        {maxKnowledgeLevel && (
+          <QuestionModal
+            modalShown={nodeSelected !== undefined && questionModalShown}
+            closeModal={() => setQuestionModalShown(false)}
+            onCompletion={(conceptCompleted) => {
+              // const levelsGained =
+              //   Math.floor(newKnowledgeLevel) - Math.floor(data.level);
+              // const conceptCompleted = newKnowledgeLevel >= data.max_level;
+
+              if (conceptCompleted)
+                onTestSuccess(nodeSelected, userId, sessionId);
+              // else if (levelsGained > 0) onTestSuccess(node, userId, sessionId);
+              else {
+                onTestFail(nodeSelected);
+              }
+              setQuestionModalShown(false);
+            }}
+            knowledgeLevel={knowledgeLevel}
+            setKnowledgeLevel={setKnowledgeLevel}
+            maxKnowledgeLevel={maxKnowledgeLevel}
+            conceptId={nodeSelected ? nodeSelected.id() : null}
+            backendUrl={backendUrl}
+            userId={userId}
+            sessionId={sessionId}
+            buttonPressFunction={buttonPressFunction}
+          />
+        )}
         <div
           className={classNames(
             !editMap && data && nodeSelected && "hidden sm:flex",
@@ -211,29 +262,33 @@ export default function Map({
         </div>
       </div>
       {/*RIGHT SIDE PANEL*/}
-      {!editMap && nodeSelected && (
-        <ConceptInfo
-          visible={true}
-          node={nodeSelected}
-          backendUrl={backendUrl}
-          userId={userId}
-          userEmail={userEmail}
-          mapUUID={mapUUID}
-          sessionId={sessionId}
-          hideConceptInfo={hideConceptPanel}
-          learnedNodes={learned}
-          goalNodes={goals}
-          onTestSuccess={onTestSuccess}
-          onTestFail={onTestFail}
-          onLearnedClick={onLearnedClick}
-          onSetGoalClick={onSetGoalClick}
-          allowSuggestions={allowSuggestions}
-          buttonPressFunction={buttonPressFunction}
-          userVotes={userVotes}
-          onVote={onVote}
-          allVotes={data}
-          questionsEnabled={questionsEnabled}
-        />
+      {!editMap && (
+        <div className={questionModalShown ? "hidden sm:block" : ""}>
+          <ConceptInfo
+            visible={nodeSelected !== undefined}
+            node={nodeSelected}
+            backendUrl={backendUrl}
+            userId={userId}
+            userEmail={userEmail}
+            mapUUID={mapUUID}
+            sessionId={sessionId}
+            hideConceptInfo={hideConceptPanel}
+            learnedNodes={learned}
+            goalNodes={goals}
+            knowledgeLevel={knowledgeLevel}
+            maxKnowledgeLevel={maxKnowledgeLevel}
+            questionModalShown={questionModalShown}
+            setQuestionModalShown={setQuestionModalShown}
+            onLearnedClick={onLearnedClick}
+            onSetGoalClick={onSetGoalClick}
+            allowSuggestions={allowSuggestions}
+            buttonPressFunction={buttonPressFunction}
+            userVotes={userVotes}
+            onVote={onVote}
+            allVotes={data}
+            questionsEnabled={questionsEnabled}
+          />
+        </div>
       )}
     </div>
   );

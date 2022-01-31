@@ -30,8 +30,10 @@ export function ConceptInfo({
   sessionId,
   learnedNodes,
   goalNodes,
-  onTestSuccess,
-  onTestFail,
+  knowledgeLevel,
+  maxKnowledgeLevel,
+  questionModalShown,
+  setQuestionModalShown,
   onLearnedClick,
   onSetGoalClick,
   allowSuggestions,
@@ -52,8 +54,10 @@ export function ConceptInfo({
   hideConceptInfo: () => void;
   learnedNodes: object;
   goalNodes: object;
-  onTestSuccess;
-  onTestFail;
+  knowledgeLevel: number;
+  maxKnowledgeLevel: number;
+  questionModalShown: boolean;
+  setQuestionModalShown: (shown: boolean) => void;
   onLearnedClick: OnGoalLearnedClick;
   onSetGoalClick: OnGoalLearnedClick;
   allowSuggestions: boolean;
@@ -63,25 +67,6 @@ export function ConceptInfo({
   allVotes: object;
   questionsEnabled: boolean;
 }) {
-  // Question stuff
-  const { data, isPending, reload } = useAsync({
-    promiseFn: fetchConceptInfo,
-    backendUrl: backendUrl,
-    userId: userId,
-    conceptId: node.id(),
-    questionsEnabled: questionsEnabled,
-  });
-  const [knowledgeLevel, setKnowledgeLevel] = useState<number>(null);
-  useEffect(() => {
-    reload();
-    setKnowledgeLevel(null); // So the knowledge level isn't stuck on the previous node's value while loading
-  }, [node]); // Each time a node is selected, rerun this
-  const [questionModalShown, setQuestionModalShown] =
-    React.useState<boolean>(false);
-  useEffect(() => {
-    if (!isPending) setKnowledgeLevel(data.level);
-  }, [data]);
-
   if (node === undefined) return <></>;
   return (
     <>
@@ -89,9 +74,13 @@ export function ConceptInfo({
         open={visible}
         hide={
           node
-            ? buttonPressFunction(hideConceptInfo, "Top Right Close Concept X")
+            ? buttonPressFunction(() => {
+                hideConceptInfo();
+                setQuestionModalShown(false);
+              }, "Top Right Close Concept X")
             : () => {}
         }
+        className={questionModalShown ? "z-10" : ""}
       >
         <div className="flex flex-col text-center h-excl-toolbar w-full overflow-hidden">
           <h4 className="text-gray-900 text-2xl font-bold sm:text-4xl mb-2 px-4 text-center">
@@ -110,11 +99,11 @@ export function ConceptInfo({
                 className={classNames(
                   // "w-full max-w-xl flex justify-end",
                   "mb-2",
-                  !isPending && data.max_level ? "visible" : "invisible"
+                  maxKnowledgeLevel ? "visible" : "invisible"
                 )}
               >
-                {!isPending && data.max_level
-                  ? `Max level: ${data.max_level}`
+                {maxKnowledgeLevel
+                  ? `Max level: ${maxKnowledgeLevel}`
                   : "Max level"}
               </div>
               {/*</div>*/}
@@ -124,19 +113,20 @@ export function ConceptInfo({
             <div className="absolute sm:relative bottom-0 left-0 w-full z-10 bg-white justify-around border-t border-solid border-gray-300 px-2 py-4 grid items-center grid-flow-col">
               <IconToggleButtonWithCheckbox
                 text={
-                  !learnedNodes[node.id()] && !isPending && data.max_level
+                  !learnedNodes[node.id()] && maxKnowledgeLevel
                     ? "Test me!"
                     : "I know this!"
                 }
                 checked={!!learnedNodes[node.id()]}
                 onCheck={
-                  !learnedNodes[node.id()] && !isPending && data.max_level
+                  !learnedNodes[node.id()] && maxKnowledgeLevel
                     ? () => setQuestionModalShown(true)
                     : () => onLearnedClick(node, userId, sessionId)
                 }
                 Icon={CheckCircleIcon}
                 colour={"green"}
-                loading={isPending}
+                loading={knowledgeLevel === null}
+                disabled={questionModalShown}
               />
               <IconToggleButtonWithCheckbox
                 text={"Set Goal"}
@@ -144,6 +134,7 @@ export function ConceptInfo({
                 onCheck={() => onSetGoalClick(node, userId, sessionId)}
                 Icon={FlagIcon}
                 colour={"blue"}
+                disabled={questionModalShown}
               />
             </div>
           )}
@@ -195,33 +186,6 @@ export function ConceptInfo({
           </ol>
         </div>
       </Overlay>
-      {!isPending && data.max_level && (
-        <QuestionModal
-          modalShown={node && questionModalShown}
-          closeModal={() => setQuestionModalShown(false)}
-          onCompletion={(conceptCompleted) => {
-            // const levelsGained =
-            //   Math.floor(newKnowledgeLevel) - Math.floor(data.level);
-            // const conceptCompleted = newKnowledgeLevel >= data.max_level;
-
-            if (conceptCompleted) onTestSuccess(node, userId, sessionId);
-            // else if (levelsGained > 0) onTestSuccess(node, userId, sessionId);
-            else {
-              reload();
-              onTestFail(node);
-            }
-            setQuestionModalShown(false);
-          }}
-          knowledgeLevel={knowledgeLevel}
-          setKnowledgeLevel={setKnowledgeLevel}
-          maxKnowledgeLevel={data.max_level}
-          conceptId={node ? node.id() : null}
-          backendUrl={backendUrl}
-          userId={userId}
-          sessionId={sessionId}
-          buttonPressFunction={buttonPressFunction}
-        />
-      )}
     </>
   );
 }
