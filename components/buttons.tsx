@@ -43,9 +43,9 @@ export function IconToggleButtonWithCheckbox({
         className={classNames(
           disabled || loading ? "cursor-default" : "cursor-pointer",
           disabled && "btn-deactivated",
-          colour === "blue" && "btn-blue",
-          colour === "green" && "btn-green",
-          colour === "red" && "btn-red",
+          !disabled && colour === "blue" && "btn-blue",
+          !disabled && colour === "green" && "btn-green",
+          !disabled && colour === "red" && "btn-red",
           "btn-sm inline-flex items-center px-2"
         )}
       >
@@ -61,11 +61,11 @@ export function IconToggleButtonWithCheckbox({
             onChange={() => {}}
             className={classNames(
               checked && "ring-white ring-2",
-              disabled && "text-gray-400 cursor-default",
+              disabled ? "text-gray-400 cursor-default" : "cursor-pointer",
               colour === "blue" && "text-blue-600 group-hover:text-blue-500",
               colour === "green" && "text-green-600 group-hover:text-green-500",
               colour === "red" && "text-red-600 group-hover:text-red-500",
-              "cursor-pointer h-4 w-4 ml-2 border-gray-300 rounded select-none"
+              "h-4 w-4 ml-2 border-gray-300 rounded select-none"
             )}
           />
         )}
