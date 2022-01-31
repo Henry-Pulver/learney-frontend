@@ -3,7 +3,7 @@ import { InlineMath, BlockMath } from "react-katex";
 import { handleFetchResponses, isEven, isNumeric } from "../../lib/utils";
 import { classNames } from "../../lib/reactUtils";
 import { NextArrow } from "../svgs/icons";
-import { cacheHeaders, jsonHeaders } from "../../lib/headers";
+import { jsonHeaders } from "../../lib/headers";
 import {
   AnswersGiven,
   QuestionSet,
@@ -14,7 +14,7 @@ import {
 } from "./types";
 import { ReportQuestionButton } from "./buttons";
 import { ButtonPressFunction } from "../../lib/types";
-import Modal from "../modal";
+import { NotFullScreenModal } from "../modal";
 import { LevelsProgressBar } from "./progressBars";
 import { LoadingSpinner } from "../animations";
 
@@ -136,11 +136,11 @@ export default function QuestionModal({
   const currentStepRef = useRef(null);
 
   return (
-    <Modal
+    <NotFullScreenModal
       open={modalShown}
       initialFocus={currentStepRef}
       setClosed={closeModal}
-      modalClassName="items-center"
+      modalClassName="h-full flex-col items-center"
       contentClassName="max-h-excl-toolbar sm:max-w-2xl sm:p-8 sm:pb-4"
     >
       <div className="flex justify-center">
@@ -219,7 +219,7 @@ export default function QuestionModal({
                     backendUrl={backendUrl}
                     userId={userId}
                   />
-                  {/* TODO: Remove below button unless question is got wrong? */}
+                  {/* TODO: Only show below button if user got question wrong? */}
                   <button
                     className={classNames(
                       answersGiven.length > currentQidx
@@ -254,7 +254,7 @@ export default function QuestionModal({
           </div>
         )}
       </div>
-    </Modal>
+    </NotFullScreenModal>
   );
 }
 
