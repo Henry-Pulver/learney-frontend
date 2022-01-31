@@ -56,7 +56,7 @@ export const ConceptSearchBox = ({
 
   return (
     // z-20 so it shows above concept overlay
-    <div className={classNames(classes, "z-20")}>
+    <div className={classNames(classes, "z-10")}>
       <ReactSearchAutocomplete
         items={autocompleteData}
         fuseOptions={{ keys: ["name", "parent", "description"] }}
