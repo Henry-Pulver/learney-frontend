@@ -1,15 +1,22 @@
 import React, { Fragment } from "react";
 import { Transition } from "@headlessui/react";
 import { XCloseButton } from "./utils";
+import { classNames } from "../lib/reactUtils";
 
 export default function Overlay(props: {
   open: boolean;
   hide: () => void;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
     <Transition.Root show={props.open} as={Fragment}>
-      <div className="fixed right-0 bottom-0 lg:relative shadow-md w-full sm:w-120 lg:w-168 flex overflow-hidden h-excl-toolbar">
+      <div
+        className={classNames(
+          props.className,
+          "fixed right-0 bottom-0 lg:relative shadow-md w-full sm:w-108 lg:w-168 flex overflow-hidden h-excl-toolbar z-0"
+        )}
+      >
         <Transition.Child
           as={Fragment}
           enter="transform transition ease-in-out duration-400 sm:duration-600"
