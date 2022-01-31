@@ -45,17 +45,12 @@ export function getNextNodeToLearn(
   ] as NodeSingular;
 }
 
-export const fetchConceptInfo = async ({
-  backendUrl,
-  userId,
-  conceptId,
-  questionsEnabled,
-}: {
-  backendUrl: string;
-  userId: string;
-  conceptId: string;
-  questionsEnabled: boolean;
-}): Promise<ConceptInfo> => {
+export async function fetchConceptInfo(
+  backendUrl: string,
+  userId: string,
+  conceptId: string,
+  questionsEnabled: boolean
+): Promise<ConceptInfo> {
   if (!questionsEnabled) return { level: null, max_level: null };
   const response = await fetch(
     `${backendUrl}/api/v0/concept_info?` +
@@ -69,4 +64,4 @@ export const fetchConceptInfo = async ({
     }
   );
   return (await handleFetchResponses(response, backendUrl)) as ConceptInfo;
-};
+}
