@@ -6,7 +6,7 @@ export function LevelsProgressBar(props: { knowledgeLevel: number }) {
     <div className="max-w-lg w-full flex justify-between content-center text-gray-900 font-bold">
       <p
         className={classNames(
-          "text-lg bg-green-100 p-auto w-7 h-7 rounded-full",
+          "text-base bg-green-100 p-auto w-7 h-7 rounded-full border-solid border-green-600 border-2",
           (!props.knowledgeLevel || Math.floor(props.knowledgeLevel)) === 0 &&
             "invisible"
         )}
@@ -29,7 +29,7 @@ export function LevelsProgressBar(props: { knowledgeLevel: number }) {
           }
         />
       </div>
-      <p className="text-lg bg-green-100 p-auto w-7 h-7 rounded-full">
+      <p className="text-base bg-green-100 p-auto w-7 h-7 rounded-full border-solid border-green-600 border-2">
         {props.knowledgeLevel ? Math.floor(props.knowledgeLevel) + 1 : 1}
       </p>
     </div>
@@ -63,5 +63,5 @@ export function ProgressBar(props: {
 }
 
 export function realPercentageToProgress(knowledgeLevel: number): number {
-    return 100 * (1 - Math.E ** -(knowledgeLevel * 1.61));
+  return 100 * (1 - Math.E ** -(knowledgeLevel * 1.61));
 }
