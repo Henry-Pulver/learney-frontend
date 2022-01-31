@@ -3,7 +3,7 @@ import { InlineMath, BlockMath } from "react-katex";
 import { handleFetchResponses, isEven, isNumeric } from "../../lib/utils";
 import { classNames } from "../../lib/reactUtils";
 import { NextArrow } from "../svgs/icons";
-import { jsonHeaders } from "../../lib/headers";
+import { cacheHeaders, jsonHeaders } from "../../lib/headers";
 import {
   AnswersGiven,
   QuestionSet,
