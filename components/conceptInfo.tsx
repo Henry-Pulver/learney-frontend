@@ -125,7 +125,7 @@ export function ConceptInfo({
                 }
                 Icon={CheckCircleIcon}
                 colour={"green"}
-                loading={knowledgeLevel === null}
+                loading={questionsEnabled && knowledgeLevel === null}
                 disabled={questionModalShown}
               />
               <IconToggleButtonWithCheckbox
