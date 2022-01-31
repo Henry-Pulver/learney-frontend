@@ -88,6 +88,7 @@ export function LearnNavbar({
   showExploreLearn,
   showTitle,
   setShowTitle,
+  questionsEnabled,
 }: {
   user: UserState;
   pageLoaded: boolean;
@@ -97,6 +98,7 @@ export function LearnNavbar({
   showExploreLearn: boolean;
   showTitle: boolean;
   setShowTitle: (show: boolean) => void;
+  questionsEnabled: boolean;
 }) {
   const [introShown, setIntroShown] = useState<boolean>(false);
   useEffect(() => {
@@ -125,7 +127,8 @@ export function LearnNavbar({
     <>
       <Navbar
         user={user}
-        leftSideButtons={[
+        leftSideButtons={!questionsEnabled
+            ? [
           <IntroButton
             key="IntroButton"
             setIntroShown={setIntroShown}
@@ -136,22 +139,28 @@ export function LearnNavbar({
             buttonPressFunction={buttonPressFunction}
             userEmail={user !== undefined ? user.email : ""}
           />,
-        ]}
-        rightSideButtons={[
-          <ShareCurrentPosition
-            key="ShareMapViewButton"
-            pageLoaded={pageLoaded}
-            buttonPressFunction={buttonPressFunction}
-          />,
-          <FeedBackButton
-            key="FeedbackButton"
-            buttonPressFunction={buttonPressFunction}
-          />,
-          <SlackButton
-            key="SlackButton"
-            buttonPressFunction={buttonPressFunction}
-          />,
-        ]}
+        ] : []}
+        rightSideButtons={
+          (!questionsEnabled
+            ? [
+                <ShareCurrentPosition
+                  key="ShareMapViewButton"
+                  pageLoaded={pageLoaded}
+                  buttonPressFunction={buttonPressFunction}
+                />,
+              ]
+            : []).concat(
+          [
+            <FeedBackButton
+              key="FeedbackButton"
+              buttonPressFunction={buttonPressFunction}
+            />,
+            <SlackButton
+              key="SlackButton"
+              buttonPressFunction={buttonPressFunction}
+            />,
+          ])
+        }
         buttonPressFunction={buttonPressFunction}
         mapJson={mapJson}
         pageLoaded={pageLoaded}

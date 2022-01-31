@@ -280,6 +280,7 @@ export default function MapPage({
             showExploreLearn={showExploreLearn}
             showTitle={showTitle}
             setShowTitle={setShowTitle}
+            questionsEnabled={questionsEnabled}
           />
         ))}
 

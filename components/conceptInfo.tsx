@@ -7,8 +7,6 @@ import { NodeSingular } from "cytoscape";
 import Overlay from "./overlay";
 import { ButtonPressFunction } from "../lib/types";
 import { OnGoalLearnedClick } from "./types";
-import { fetchConceptInfo } from "../lib/questions";
-import QuestionModal from "./questions/questionModal";
 import {
   getValidURLs,
   handleFetchResponses,
