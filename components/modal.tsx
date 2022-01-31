@@ -71,6 +71,69 @@ export default function Modal(props: {
   );
 }
 
+export function NotFullScreenModal(props: {
+  open: boolean;
+  initialFocus?: React.MutableRefObject<any>;
+  setClosed: () => void;
+  modalClassName?: string;
+  children: React.ReactNode;
+  contentClassName?: string;
+}) {
+  return (
+    <Transition.Root show={props.open}>
+      <div className="absolute inset-0 z-10">
+        <div
+          className={classNames(
+            props.modalClassName,
+            "flex items-end justify-center h-excl-toolbar lg:pt-2 lg:px-2 lg:pb-2 text-center sm:block sm:p-0"
+          )}
+        >
+          {/* Grey background covering! */}
+          <Transition.Child
+            // as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div
+              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity min-h-screen"
+              onClick={props.setClosed}
+            />
+          </Transition.Child>
+
+          {/* Modal itself, containing the content */}
+          <Transition.Child
+            // as={Fragment}
+            className="flex w-full h-full flex-col justify-center place-items-center"
+            enter="ease-out duration-300"
+            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            enterTo="opacity-100 translate-y-0 sm:scale-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          >
+            <div
+              className={classNames(
+                props.contentClassName,
+                "inline-block text-center align-bottom sm:align-middle overflow-y-auto bg-white lg:rounded-lg p-4 sm:p-6 text-left overflow-hidden shadow-xl transform transition-all lg:my-4 sm:max-w-xl w-full"
+              )}
+            >
+              {props.children}
+              <XCloseButton
+                onClick={props.setClosed}
+                class={"invisible lg:visible"}
+              />
+            </div>
+          </Transition.Child>
+        </div>
+      </div>
+    </Transition.Root>
+  );
+}
+
 export function AreYouSureModal(props: {
   modalShown: boolean;
   setModalClosed: () => void;
