@@ -31,13 +31,13 @@ function toggleEdgeLearned(edge: EdgeSingular): void {
   }
 }
 
-export function learnedSliderClick(
+export async function learnedSliderClick(
   node: NodeSingular,
   backendUrl: string,
   userId: string,
   mapUUID: string,
   sessionId: string
-): void {
+): Promise<void> {
   const nodeId = node.id();
   // If not learned...
   if (!(nodeId in learnedNodes)) {
@@ -59,7 +59,7 @@ export function learnedSliderClick(
       toggleEdgeLearned(edge);
     });
   }
-  saveToDB(
+  await saveToDB(
     learnedNodesString,
     learnedNodes,
     backendUrl,
@@ -129,13 +129,13 @@ function unsetGoal(node: NodeSingular): void {
   setEdgeBrightness(path.edges(), 0);
 }
 
-export function setGoalClick(
+export async function setGoalClick(
   node: NodeSingular,
   backendUrl: string,
   userId: string,
   mapUUID: string,
   sessionId: string
-): void {
+): Promise<void> {
   const nodeId = node.id();
 
   // If not already set!
@@ -146,7 +146,14 @@ export function setGoalClick(
     // If unsetting a goal, remove path from its predecessors and recalculate path to remaining goals
     unsetGoal(node);
   }
-  saveToDB(goalNodesString, goalNodes, backendUrl, userId, mapUUID, sessionId);
+  await saveToDB(
+    goalNodesString,
+    goalNodes,
+    backendUrl,
+    userId,
+    mapUUID,
+    sessionId
+  );
 }
 
 export function initialiseGraphState(userId: string): void {
