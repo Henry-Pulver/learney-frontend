@@ -250,7 +250,7 @@ export default function Map({
             />
           )}
           <ResetPanButton buttonPressFunction={buttonPressFunction} />
-          {!editMap && (
+          {!editMap && !questionsEnabled && (
             <ResetProgressIconButton
               buttonPressFunction={buttonPressFunction}
               backendUrl={backendUrl}
