@@ -127,40 +127,41 @@ export function LearnNavbar({
     <>
       <Navbar
         user={user}
-        leftSideButtons={!questionsEnabled
+        leftSideButtons={
+          !questionsEnabled
             ? [
-          <IntroButton
-            key="IntroButton"
-            setIntroShown={setIntroShown}
-            buttonPressFunction={buttonPressFunction}
-          />,
-          <MakeSuggestionIconButton
-            key="MakeSuggestionButton"
-            buttonPressFunction={buttonPressFunction}
-            userEmail={user !== undefined ? user.email : ""}
-          />,
-        ] : []}
-        rightSideButtons={
-          (!questionsEnabled
-            ? [
-                <ShareCurrentPosition
-                  key="ShareMapViewButton"
-                  pageLoaded={pageLoaded}
+                <IntroButton
+                  key="IntroButton"
+                  setIntroShown={setIntroShown}
                   buttonPressFunction={buttonPressFunction}
                 />,
+                <MakeSuggestionIconButton
+                  key="MakeSuggestionButton"
+                  buttonPressFunction={buttonPressFunction}
+                  userEmail={user !== undefined ? user.email : ""}
+                />,
               ]
-            : []).concat(
-          [
-            <FeedBackButton
-              key="FeedbackButton"
-              buttonPressFunction={buttonPressFunction}
-            />,
-            <SlackButton
-              key="SlackButton"
-              buttonPressFunction={buttonPressFunction}
-            />,
-          ])
+            : []
         }
+        rightSideButtons={(!questionsEnabled
+          ? [
+              <ShareCurrentPosition
+                key="ShareMapViewButton"
+                pageLoaded={pageLoaded}
+                buttonPressFunction={buttonPressFunction}
+              />,
+            ]
+          : []
+        ).concat([
+          <FeedBackButton
+            key="FeedbackButton"
+            buttonPressFunction={buttonPressFunction}
+          />,
+          <SlackButton
+            key="SlackButton"
+            buttonPressFunction={buttonPressFunction}
+          />,
+        ])}
         buttonPressFunction={buttonPressFunction}
         mapJson={mapJson}
         pageLoaded={pageLoaded}
