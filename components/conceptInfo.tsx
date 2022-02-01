@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useAsync } from "react-async";
-import { CheckCircleIcon, FlagIcon } from "@heroicons/react/outline";
+import {
+  CheckCircleIcon,
+  ExclamationIcon,
+  FlagIcon,
+} from "@heroicons/react/outline";
 import { IconToggleButtonWithCheckbox, MakeSuggestionButton } from "./buttons";
 import { appendToArray, classNames } from "../lib/reactUtils";
 import { NodeSingular } from "cytoscape";
@@ -14,7 +18,14 @@ import {
 } from "../lib/utils";
 import { LoadingSpinner } from "./animations";
 import { cacheHeaders, jsonHeaders } from "../lib/headers";
-import { LevelsProgressBar } from "./questions/progressBars";
+import {
+  LevelsProgressBar,
+  realPercentageToProgress,
+} from "./questions/progressBars";
+import LevelBadge from "./questions/levelBadge";
+import { Dialog } from "@headlessui/react";
+import Modal from "./modal";
+import { TrophyIcon } from "./svgs/icons";
 
 type OnVote = (node: NodeSingular, url: string, up: boolean | null) => void;
 
@@ -41,6 +52,7 @@ export function ConceptInfo({
   userVotes,
   allVotes,
   questionsEnabled,
+  setProgressModalOpen,
 }: {
   visible: boolean;
   node: NodeSingular | undefined;
@@ -64,6 +76,7 @@ export function ConceptInfo({
   onVote: OnVote;
   allVotes: object;
   questionsEnabled: boolean;
+  setProgressModalOpen: (open: boolean) => void;
 }) {
   if (node === undefined) return <></>;
   return (
@@ -78,33 +91,45 @@ export function ConceptInfo({
               }, "Top Right Close Concept X")
             : () => {}
         }
-        className={questionModalShown ? "z-10" : ""}
+        className={questionModalShown ? "z-[15]" : ""}
       >
-        <div className="flex flex-col text-center h-excl-toolbar w-full overflow-hidden">
-          <h4 className="text-gray-900 text-2xl font-bold sm:text-4xl mb-2 px-4 text-center">
+        <div
+          className={classNames(
+            !questionsEnabled && "hidden",
+            "absolute left-6 top-3"
+          )}
+        >
+          <LevelBadge
+            knowledgeLevel={Math.floor(knowledgeLevel)}
+            achieved={true}
+            onClick={() => setProgressModalOpen(true)}
+            overallClassName={"cursor-pointer text-sm"}
+          />
+        </div>
+        <div className="flex flex-col items-center text-center h-excl-toolbar w-full overflow-hidden">
+          <h4 className="max-w-lg text-gray-900 text-2xl font-bold sm:text-4xl mb-2 px-4 text-center">
             {node && node.data().name}
           </h4>
-          <div className="text-left text-black mt-0 mx-auto mb-4 px-4 max-h-1/5">
+          <div className="text-left text-black mt-2 mx-auto mb-4 px-4 max-h-1/5">
             {node && node.data().description}
           </div>
           {questionsEnabled && (
             <>
-              <div className="w-full flex justify-center">
-                <LevelsProgressBar knowledgeLevel={knowledgeLevel} />
+              <div className="w-full flex flex-col items-center mb-2">
+                <LevelsProgressBar
+                  knowledgeLevel={knowledgeLevel ? knowledgeLevel : 0}
+                  maxKnowledgeLevel={maxKnowledgeLevel ? maxKnowledgeLevel : 1}
+                  onClick={() => setProgressModalOpen(true)}
+                />
+                <div
+                  className={classNames(
+                    "-mt-4 text-sm",
+                    maxKnowledgeLevel ? "visible" : "invisible"
+                  )}
+                >
+                  Progress
+                </div>
               </div>
-              {/*<div className="w-full flex justify-center">*/}
-              <div
-                className={classNames(
-                  // "w-full max-w-xl flex justify-end",
-                  "mb-2",
-                  maxKnowledgeLevel ? "visible" : "invisible"
-                )}
-              >
-                {maxKnowledgeLevel
-                  ? `Max level: ${maxKnowledgeLevel}`
-                  : "Max level"}
-              </div>
-              {/*</div>*/}
             </>
           )}
           {node && (
@@ -138,7 +163,7 @@ export function ConceptInfo({
           )}
           <p
             className={classNames(
-              "ml-2.5 text-gray-500 text-left",
+              "w-full ml-2.5 text-gray-500 text-left",
               getAndSortLinkPreviewURLs(node, allVotes).length === 0 && "hidden"
             )}
           >
