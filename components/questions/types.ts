@@ -1,6 +1,9 @@
 export type KnowledgeLevel = { level: number };
 
 export type ConceptInfo = KnowledgeLevel & { max_level: number };
+export type NextConcept = {
+  concept_id: string;
+};
 
 export type Completed =
   | "completed_concept"
