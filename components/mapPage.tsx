@@ -31,7 +31,7 @@ import { EditType, NotificationData } from "./editor/types";
 import { NodeSingular } from "cytoscape";
 import { setNotificationProgressInfo } from "./questions/notificationMessages";
 import { XCircleIcon } from "@heroicons/react/outline";
-import { getNextNodeToLearn } from "../lib/questions";
+import { fetchNextConcept, getNextNodeToLearn } from "../lib/questions";
 import { ButtonPressFunction } from "../lib/types";
 
 export default function MapPage({
@@ -74,6 +74,7 @@ export default function MapPage({
   useEffect(() => setIsNewUser(!localStorage.getItem("userId")), []);
 
   const [goals, setNewGoalsState] = React.useState<object>({});
+  const [nextConcept, setNextConcept] = useState<NodeSingular>(null);
   const setGoalsState = (goalState: object) => {
     for (const nodeId of Object.keys(goals)) {
       if (!(nodeId in goalState)) {
@@ -92,7 +93,16 @@ export default function MapPage({
     userId: string,
     sessionId: string
   ): void => {
-    setGoalClick(node, backendUrl, userId, mapUUID, sessionId);
+    (async function () {
+      await setGoalClick(node, backendUrl, userId, mapUUID, sessionId);
+      const nextConcept = await fetchNextConcept({
+        backendUrl,
+        userId,
+        mapUUID,
+      });
+      const nextConceptNode = window.cy.getElementById(nextConcept.concept_id);
+      setNextConcept(nextConceptNode as NodeSingular);
+    })();
     setGoalsState(goalNodes);
   };
 
@@ -114,7 +124,16 @@ export default function MapPage({
     }
   };
   const onLearnedClick = (node, userId, sessionId) => {
-    learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
+    (async function () {
+      await learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
+      const nextConcept = await fetchNextConcept({
+        backendUrl,
+        userId,
+        mapUUID,
+      });
+      const nextConceptNode = window.cy.getElementById(nextConcept.concept_id);
+      setNextConcept(nextConceptNode as NodeSingular);
+    })();
     setLearnedState(learnedNodes);
   };
 
@@ -131,6 +150,7 @@ export default function MapPage({
   }, [userId]);
 
   const [pageLoaded, setPageLoaded] = React.useState(false);
+
   useEffect(() => {
     (async () => {
       if (!isLoading) {
@@ -321,6 +341,7 @@ export default function MapPage({
         editType={editType}
         questionsEnabled={questionsEnabled}
         showTitle={showTitle}
+        nextConcept={nextConcept}
       />
       {editMap && (
         <Editor
