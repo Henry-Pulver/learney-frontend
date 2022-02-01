@@ -14,7 +14,7 @@ import { initialiseGraphState } from "../lib/learningAndPlanning/learningAndPlan
 import { initCy, bindRouters } from "../lib/graph";
 import { setupCtoCentre } from "../lib/hotkeys";
 import { classNames } from "../lib/reactUtils";
-import { fetchTotalVotes } from "../lib/utils";
+import { fetchTotalVotes, handleFetchResponses } from "../lib/utils";
 import MapTitle from "./mapTitle";
 import {
   GetNextConceptButton,
@@ -26,6 +26,7 @@ import { ButtonPressFunction } from "../lib/types";
 import { EditType } from "./editor/types";
 import { OnGoalLearnedClick, SetGoalState, SetLearnedState } from "./types";
 import QuestionModal from "./questions/questionModal";
+import { ProgressModal } from "./questions/progressModal";
 
 export default function Map({
   mapTitle,
@@ -89,6 +90,7 @@ export default function Map({
     setUserVote((prevVotes) => ({ ...prevVotes, [url]: up }));
     saveVote(url, up, node, backendUrl, userId, mapUUID, sessionId);
   };
+  const [progressModalOpen, setProgressModalOpen] = useState<boolean>(false);
 
   const cytoscapeRef = useRef();
   const [nodeSelected, setNodeSelected] = React.useState<
@@ -217,7 +219,7 @@ export default function Map({
               //   Math.floor(newKnowledgeLevel) - Math.floor(data.level);
               // const conceptCompleted = newKnowledgeLevel >= data.max_level;
 
-              if (conceptCompleted)
+              if (conceptCompleted === "completed_concept")
                 onTestSuccess(nodeSelected, userId, sessionId);
               // else if (levelsGained > 0) onTestSuccess(node, userId, sessionId);
               else {
@@ -287,9 +289,17 @@ export default function Map({
             onVote={onVote}
             allVotes={data}
             questionsEnabled={questionsEnabled}
+            setProgressModalOpen={setProgressModalOpen}
           />
         </div>
       )}
+      <ProgressModal
+        progressModalOpen={progressModalOpen}
+        closeProgressModalOpen={() => setProgressModalOpen(false)}
+        knowledgeLevel={knowledgeLevel}
+        maxKnowledgeLevel={maxKnowledgeLevel}
+        conceptName={nodeSelected && nodeSelected.data().name}
+      />
     </div>
   );
 }
