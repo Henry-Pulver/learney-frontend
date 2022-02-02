@@ -21,7 +21,7 @@ import {
   ResetPanButton,
   ResetProgressIconButton,
 } from "./buttons";
-import { fetchConceptInfo, fetchNextConcept } from "../lib/questions";
+import { fetchConceptInfo } from "../lib/questions";
 import { ButtonPressFunction } from "../lib/types";
 import { EditType } from "./editor/types";
 import { OnGoalLearnedClick, SetGoalState, SetLearnedState } from "./types";
@@ -52,7 +52,7 @@ export default function Map({
   editType,
   questionsEnabled,
   showTitle,
-  nextConcept,
+  currentConcept,
 }: {
   mapTitle: string;
   mapDescription: string;
@@ -78,7 +78,7 @@ export default function Map({
   editType: EditType;
   questionsEnabled: boolean;
   showTitle: boolean;
-  nextConcept: NodeSingular;
+  currentConcept: NodeSingular;
 }) {
   const router = useRouter();
   const [userVotes, setUserVote] = React.useState({});
@@ -144,7 +144,7 @@ export default function Map({
       }
     })();
   }, [sessionId, userId]);
- 
+
   const { data } = useAsync({
     promiseFn: fetchTotalVotes,
     backendUrl,
@@ -240,7 +240,7 @@ export default function Map({
         >
           {!editMap && (
             <GetNextConceptButton
-              nextConcept={nextConcept}
+              currentConcept={currentConcept}
               buttonPressFunction={buttonPressFunction}
             />
           )}
