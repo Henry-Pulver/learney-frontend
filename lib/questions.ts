@@ -42,15 +42,11 @@ export function getNextNodeToLearn(
     Math.floor(Math.random() * possibleNextSteps.size())
   ] as NodeSingular;
 }
-export const fetchNextConcept = async ({
-  backendUrl,
-  userId,
-  mapUUID,
-}: {
-  backendUrl: string;
-  userId: string;
-  mapUUID: string;
-}): Promise<NextConcept> => {
+export const fetchCurrentConcept = async (
+  backendUrl: string,
+  userId: string,
+  mapUUID: string
+): Promise<NextConcept> => {
   const response = await fetch(
     `${backendUrl}/api/v0/current_concept?` +
       new URLSearchParams({

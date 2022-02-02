@@ -31,7 +31,7 @@ import { EditType, NotificationData } from "./editor/types";
 import { NodeSingular } from "cytoscape";
 import { setNotificationProgressInfo } from "./questions/notificationMessages";
 import { XCircleIcon } from "@heroicons/react/outline";
-import { fetchNextConcept, getNextNodeToLearn } from "../lib/questions";
+import { fetchCurrentConcept, getNextNodeToLearn } from "../lib/questions";
 import { ButtonPressFunction } from "../lib/types";
 
 export default function MapPage({
@@ -74,7 +74,7 @@ export default function MapPage({
   useEffect(() => setIsNewUser(!localStorage.getItem("userId")), []);
 
   const [goals, setNewGoalsState] = React.useState<object>({});
-  const [nextConcept, setNextConcept] = useState<NodeSingular>(null);
+  const [currentConcept, setCurrentConcept] = useState<NodeSingular>(null);
   const setGoalsState = (goalState: object) => {
     for (const nodeId of Object.keys(goals)) {
       if (!(nodeId in goalState)) {
@@ -95,13 +95,15 @@ export default function MapPage({
   ): void => {
     (async function () {
       await setGoalClick(node, backendUrl, userId, mapUUID, sessionId);
-      const nextConcept = await fetchNextConcept({
+      const currentConceptObject = await fetchCurrentConcept(
         backendUrl,
         userId,
-        mapUUID,
-      });
-      const nextConceptNode = window.cy.getElementById(nextConcept.concept_id);
-      setNextConcept(nextConceptNode as NodeSingular);
+        mapUUID
+      );
+      const currentConceptNode = window.cy.getElementById(
+        currentConceptObject.concept_id
+      );
+      setCurrentConcept(currentConceptNode as NodeSingular);
     })();
     setGoalsState(goalNodes);
   };
@@ -126,13 +128,15 @@ export default function MapPage({
   const onLearnedClick = (node, userId, sessionId) => {
     (async function () {
       await learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
-      const nextConcept = await fetchNextConcept({
+      const currentConceptObject = await fetchCurrentConcept(
         backendUrl,
         userId,
-        mapUUID,
-      });
-      const nextConceptNode = window.cy.getElementById(nextConcept.concept_id);
-      setNextConcept(nextConceptNode as NodeSingular);
+        mapUUID
+      );
+      const currentConceptNode = window.cy.getElementById(
+        currentConceptObject.concept_id
+      );
+      setCurrentConcept(currentConceptNode as NodeSingular);
     })();
     setLearnedState(learnedNodes);
   };
@@ -341,7 +345,7 @@ export default function MapPage({
         editType={editType}
         questionsEnabled={questionsEnabled}
         showTitle={showTitle}
-        nextConcept={nextConcept}
+        currentConcept={currentConcept}
       />
       {editMap && (
         <Editor
