@@ -3,7 +3,7 @@ import { BadgeCheckIcon } from "@heroicons/react/outline";
 import React from "react";
 
 export default function LevelBadge(props: {
-  knowledgeLevel: number;
+  knowledgeLevel: 1 | 2 | 3 | 4 | 5;
   achieved: boolean;
   overallClassName?: string;
   badgeClassName?: string;
@@ -14,8 +14,7 @@ export default function LevelBadge(props: {
     <div
       onClick={props.onClick ? props.onClick : () => {}}
       className={classNames(
-        props.knowledgeLevel === null && "invisible",
-        props.knowledgeLevel === 0 && "bg-gray-100",
+        !props.knowledgeLevel && "invisible",
         !props.achieved && "bg-gray-50",
         props.achieved && props.knowledgeLevel === 1 && "bg-blue-200",
         props.achieved && props.knowledgeLevel === 2 && "bg-yellow-200",
@@ -29,20 +28,18 @@ export default function LevelBadge(props: {
       <BadgeCheckIcon
         className={classNames(
           !props.achieved && "text-gray-300",
-          props.knowledgeLevel === 0 && "text-gray-700",
           props.achieved && props.knowledgeLevel === 1 && "text-blue-600",
           props.achieved && props.knowledgeLevel === 2 && "text-yellow-600",
           props.achieved && props.knowledgeLevel === 3 && "text-green-600",
           props.achieved && props.knowledgeLevel === 4 && "text-purple-600",
           props.achieved && props.knowledgeLevel === 5 && "text-pink-600",
           props.badgeClassName,
-          "rounded-full h-10 w-10"
+          "rounded-full h-8 w-8 md:h-10 md:w-10"
         )}
       />
       <p
         className={classNames(
           !props.achieved && "bg-gray-50 text-gray-400",
-          props.knowledgeLevel === 0 && "bg-gray-100 text-gray-800",
           props.achieved &&
             props.knowledgeLevel === 1 &&
             "bg-blue-100 text-blue-800",
