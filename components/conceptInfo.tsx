@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useAsync } from "react-async";
 import {
   CheckCircleIcon,
-  ExclamationIcon,
   FlagIcon,
 } from "@heroicons/react/outline";
 import { IconToggleButtonWithCheckbox, MakeSuggestionButton } from "./buttons";
@@ -20,12 +19,8 @@ import { LoadingSpinner } from "./animations";
 import { cacheHeaders, jsonHeaders } from "../lib/headers";
 import {
   LevelsProgressBar,
-  realPercentageToProgress,
 } from "./questions/progressBars";
 import LevelBadge from "./questions/levelBadge";
-import { Dialog } from "@headlessui/react";
-import Modal from "./modal";
-import { TrophyIcon } from "./svgs/icons";
 
 type OnVote = (node: NodeSingular, url: string, up: boolean | null) => void;
 
@@ -96,14 +91,14 @@ export function ConceptInfo({
         <div
           className={classNames(
             !questionsEnabled && "hidden",
-            "absolute left-6 top-3"
+            "absolute left-2 lg:left-6 top-1 lg:top-3"
           )}
         >
           <LevelBadge
             knowledgeLevel={Math.floor(knowledgeLevel)}
             achieved={true}
             onClick={() => setProgressModalOpen(true)}
-            overallClassName={"cursor-pointer text-sm"}
+            overallClassName={"cursor-pointer text-xs sm:text-sm"}
           />
         </div>
         <div className="flex flex-col items-center text-center h-excl-toolbar w-full overflow-hidden">

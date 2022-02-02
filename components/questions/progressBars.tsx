@@ -9,8 +9,8 @@ export function LevelsProgressBar(props: {
   onClick?: () => void;
 }) {
   return (
-    <div className="max-w-xl w-full grid grid-cols-8 text-sm items-center text-gray-900">
-      <div className="col-start-2 col-span-6">
+    <div className="max-w-xl w-full grid grid-cols-7 sm:grid-cols-8 gap-4 sm:gap-0 text-sm items-center text-gray-900 px-2">
+      <div className="sm:col-start-2 col-span-6">
         <ProgressBar
           colour="green"
           className="cursor-pointer"
@@ -31,7 +31,7 @@ export function LevelsProgressBar(props: {
       <LevelBadge
         overallClassName={classNames(
           props.knowledgeLevel >= props.maxKnowledgeLevel && "invisible",
-          "visible col-span-1 justify-self-center cursor-pointer text-sm"
+          "visible col-span-1 justify-self-center cursor-pointer text-xs lg:text-sm"
         )}
         knowledgeLevel={Math.floor(Math.max(props.knowledgeLevel, 0) + 1)}
         achieved={true}

@@ -40,9 +40,9 @@ export function ProgressModal(props: {
               achieved={props.knowledgeLevel > level}
               overallClassName="transition ease-in-out delay-1000 duration-700"
               badgeClassName={
-                "h-16 w-16 transition ease-in-out delay-1000 duration-700"
+                "h-8 w-8 sm:h-16 sm:w-16 transition ease-in-out delay-1000 duration-700"
               }
-              textClassName="transition ease-in-out delay-1000 duration-700"
+              textClassName="text-sm sm:text-xl transition ease-in-out delay-1000 duration-700"
             />
             {level !== props.maxKnowledgeLevel && (
               <div
@@ -83,13 +83,15 @@ export function ProgressModal(props: {
           </>
         ))}
       </div>
-      <div className="w-full flex flex-row justify-center mt-8 mb-2 text-xl font-bold">
-        {props.knowledgeLevel > 1 && (
-          <p className="text-2xl leading-5 px-2">🎉</p>
-        )}
-        You&apos;ve completed Level {Math.floor(props.knowledgeLevel)}{" "}
-        {props.knowledgeLevel > 1 && (
-          <p className="text-2xl leading-5 px-2">🎉</p>
+      <div className="w-full flex flex-row justify-center mt-8 mb-2 text-lg font-bold">
+        {props.knowledgeLevel > 1 ? (
+          <>
+            <p className="text-2xl leading-5 px-2">🎉</p>
+            You&apos;ve completed Level {Math.floor(props.knowledgeLevel)}{" "}
+            <p className="text-2xl leading-5 px-2">🎉</p>
+          </>
+        ) : (
+          "Answer questions to reach Level 1!"
         )}
       </div>
     </Modal>
