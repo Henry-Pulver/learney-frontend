@@ -53,7 +53,7 @@ export default function QuestionModal({
 
   const getNewQuestionSet = async () => {
     const questionResponse = await fetch(
-      `${backendUrl}/api/v0/question_set?` +
+      `${backendUrl}/api/v0/question_batch?` +
         new URLSearchParams({
           user_id: userId,
           session_id: sessionId,
