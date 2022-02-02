@@ -341,16 +341,16 @@ export function ResetPanButton({ buttonPressFunction }) {
 }
 
 export function GetNextConceptButton({
-  nextConcept,
+  currentConcept,
   buttonPressFunction,
 }: {
-  nextConcept?: SingularElementArgument;
+  currentConcept?: SingularElementArgument;
   buttonPressFunction: ButtonPressFunction;
 }) {
   return (
     <IconButtonTippy
       content={
-        nextConcept ? (
+        currentConcept ? (
           "Your next concept"
         ) : (
           <>
@@ -362,14 +362,14 @@ export function GetNextConceptButton({
     >
       <button
         onClick={
-          nextConcept
+          currentConcept
             ? buttonPressFunction(() => {
-                nextConcept.emit("tap");
+                currentConcept.emit("tap");
               }, "Go to next concept")
             : () => {}
         }
         className={classNames(
-          !nextConcept && "cursor-default",
+          !currentConcept && "cursor-default",
           "gray-icon-btn"
         )}
       >
