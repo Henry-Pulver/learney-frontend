@@ -14,7 +14,7 @@ import { initialiseGraphState } from "../lib/learningAndPlanning/learningAndPlan
 import { initCy, bindRouters } from "../lib/graph";
 import { setupCtoCentre } from "../lib/hotkeys";
 import { classNames } from "../lib/reactUtils";
-import { fetchTotalVotes, setURLQuery } from "../lib/utils";
+import { fetchTotalVotes, queryParams, setURLQuery } from "../lib/utils";
 import MapTitle from "./mapTitle";
 import {
   GetNextConceptButton,
@@ -183,10 +183,7 @@ export default function Map({
       });
       setQuestionModalShown(true);
     }
-    if (
-      localStorage.getItem("lastConceptClicked") &&
-      localStorage.getItem("lastConceptClicked").length > 0
-    ) {
+    if (localStorage.getItem("lastConceptClicked")) {
       setURLQuery(router, {
         ...router.query,
         concept: localStorage.getItem("lastConceptClicked"),
@@ -229,8 +226,7 @@ export default function Map({
             closeModal={() => {
               localStorage.setItem("quemodal", "false");
               setQuestionModalShown(false);
-              delete router.query.quemodal;
-              router.push(router);
+              setURLQuery(router, {}, queryParams.QUEMODAL);
             }}
             onCompletion={(conceptCompleted) => {
               // const levelsGained =
@@ -245,8 +241,7 @@ export default function Map({
               }
               localStorage.setItem("quemodal", "false");
               setQuestionModalShown(false);
-              delete router.query.quemodal;
-              router.push(router);
+              setURLQuery(router, {}, queryParams.QUEMODAL);
             }}
             knowledgeLevel={knowledgeLevel}
             setKnowledgeLevel={setKnowledgeLevel}
