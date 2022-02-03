@@ -11,6 +11,7 @@ import {
   getValidURLs,
   handleFetchResponses,
   logContentClick,
+  queryParams,
   setURLQuery,
 } from "../lib/utils";
 import { LoadingSpinner } from "./animations";
@@ -80,8 +81,7 @@ export function ConceptInfo({
                 localStorage.removeItem("lastConceptClicked");
                 localStorage.setItem("quemodal", "false");
                 setQuestionModalShown(false);
-                delete router.query.quemodal;
-                router.push(router);
+                setURLQuery(router, {}, queryParams.QUEMODAL);
               }, "Top Right Close Concept X")
             : () => {}
         }
