@@ -9,6 +9,7 @@ export default function Modal(props: {
   open: boolean;
   initialFocus?: React.MutableRefObject<any>;
   setClosed: () => void;
+  dialogClassName?: string;
   modalClassName?: string;
   children: React.ReactNode;
   contentClassName?: string;
@@ -17,7 +18,7 @@ export default function Modal(props: {
     <Transition.Root show={props.open} as={Fragment}>
       <Dialog
         as="div"
-        className="fixed z-10 inset-0 overflow-y-auto"
+        className={classNames(props.dialogClassName, "fixed z-10 inset-0 overflow-y-auto")}
         initialFocus={props.initialFocus}
         onClose={props.setClosed}
       >

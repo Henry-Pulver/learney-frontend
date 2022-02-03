@@ -71,6 +71,7 @@ export function ReportQuestionButton(props: {
         open={reportModalOpen}
         setClosed={() => setReportModalOpen(false)}
         modalClassName="items-center"
+        dialogClassName="sm:z-20"
         contentClassName="md:max-w-3xl"
       >
         {/*<Modal open={false} setClosed={() => {}}>*/}

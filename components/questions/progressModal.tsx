@@ -17,6 +17,7 @@ export function ProgressModal(props: {
     <Modal
       open={props.progressModalOpen}
       setClosed={props.closeProgressModalOpen}
+      dialogClassName="sm:z-20"
       modalClassName="items-center"
       contentClassName="md:max-w-3xl"
     >
