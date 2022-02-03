@@ -14,7 +14,7 @@ import { initialiseGraphState } from "../lib/learningAndPlanning/learningAndPlan
 import { initCy, bindRouters } from "../lib/graph";
 import { setupCtoCentre } from "../lib/hotkeys";
 import { classNames } from "../lib/reactUtils";
-import { fetchTotalVotes } from "../lib/utils";
+import { fetchTotalVotes, setURLQuery } from "../lib/utils";
 import MapTitle from "./mapTitle";
 import {
   GetNextConceptButton,
@@ -175,6 +175,24 @@ export default function Map({
   const [questionModalShown, setQuestionModalShown] =
     React.useState<boolean>(false);
 
+  useEffect(() => {
+    if (localStorage.getItem("quemodal") === "true") {
+      setURLQuery(router, {
+        ...router.query,
+        quemodal: true,
+      });
+      setQuestionModalShown(true);
+    }
+    if (
+      localStorage.getItem("lastConceptClicked") &&
+      localStorage.getItem("lastConceptClicked").length > 0
+    ) {
+      setURLQuery(router, {
+        ...router.query,
+        concept: localStorage.getItem("lastConceptClicked"),
+      });
+    }
+  }, []);
   return (
     <div className="flex flex-column sm:flex-row w-full h-excl-toolbar">
       <div
@@ -208,7 +226,12 @@ export default function Map({
         {maxKnowledgeLevel && (
           <QuestionModal
             modalShown={nodeSelected !== undefined && questionModalShown}
-            closeModal={() => setQuestionModalShown(false)}
+            closeModal={() => {
+              localStorage.setItem("quemodal", "false");
+              setQuestionModalShown(false);
+              delete router.query.quemodal;
+              router.push(router);
+            }}
             onCompletion={(conceptCompleted) => {
               // const levelsGained =
               //   Math.floor(newKnowledgeLevel) - Math.floor(data.level);
@@ -220,7 +243,10 @@ export default function Map({
               else {
                 onTestFail(nodeSelected);
               }
+              localStorage.setItem("quemodal", "false");
               setQuestionModalShown(false);
+              delete router.query.quemodal;
+              router.push(router);
             }}
             knowledgeLevel={knowledgeLevel}
             setKnowledgeLevel={setKnowledgeLevel}

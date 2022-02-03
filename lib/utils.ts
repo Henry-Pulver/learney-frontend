@@ -304,6 +304,25 @@ export function setURLQuery(router: NextRouter, newParams: ParsedQuery): void {
       undefined,
       { shallow: true }
     );
+  } else if (newParams.quemodal) {
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...newParams },
+      },
+      undefined,
+      { shallow: true }
+    );
+  } else if (q.concept === newParams.concept) {
+    delete router.query.quemodal;
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...newParams },
+      },
+      undefined,
+      { shallow: true }
+    );
   }
 }
 
@@ -403,6 +422,7 @@ type ParsedQuery = {
   x?: string;
   y?: string;
   zoom?: string;
+  quemodal?: boolean;
 };
 
 export function parseQuery(query: ParsedUrlQuery): ParsedQuery {
