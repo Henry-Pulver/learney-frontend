@@ -14,13 +14,13 @@ import {
   getValidURLs,
   handleFetchResponses,
   logContentClick,
+  setURLQuery,
 } from "../lib/utils";
 import { LoadingSpinner } from "./animations";
 import { cacheHeaders, jsonHeaders } from "../lib/headers";
-import {
-  LevelsProgressBar,
-} from "./questions/progressBars";
 import LevelBadge from "./questions/levelBadge";
+import { LevelsProgressBar } from "./questions/progressBars";
+import { useRouter } from "next/router";
 
 type OnVote = (node: NodeSingular, url: string, up: boolean | null) => void;
 
@@ -73,6 +73,7 @@ export function ConceptInfo({
   questionsEnabled: boolean;
   setProgressModalOpen: (open: boolean) => void;
 }) {
+  const router = useRouter();
   if (node === undefined) return <></>;
   return (
     <>
@@ -82,7 +83,11 @@ export function ConceptInfo({
           node
             ? buttonPressFunction(() => {
                 hideConceptInfo();
+                localStorage.removeItem("lastConceptClicked");
+                localStorage.setItem("quemodal", "false");
                 setQuestionModalShown(false);
+                delete router.query.quemodal;
+                router.push(router);
               }, "Top Right Close Concept X")
             : () => {}
         }
@@ -138,7 +143,14 @@ export function ConceptInfo({
                 checked={!!learnedNodes[node.id()]}
                 onCheck={
                   !learnedNodes[node.id()] && maxKnowledgeLevel
-                    ? () => setQuestionModalShown(true)
+                    ? () => {
+                        localStorage.setItem("quemodal", "true");
+                        setQuestionModalShown(true);
+                        setURLQuery(router, {
+                          ...router.query,
+                          quemodal: true,
+                        });
+                      }
                     : () => onLearnedClick(node, userId, sessionId)
                 }
                 Icon={CheckCircleIcon}
