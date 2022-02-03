@@ -40,7 +40,7 @@ export function ProgressModal(props: {
               achieved={props.knowledgeLevel > level}
               overallClassName="transition ease-in-out delay-1000 duration-700"
               badgeClassName={
-                "h-8 w-8 sm:h-16 sm:w-16 transition ease-in-out delay-1000 duration-700"
+                "h-8 w-8 lg:h-16 lg:w-16 transition ease-in-out delay-1000 duration-700"
               }
               textClassName="text-sm sm:text-xl transition ease-in-out delay-1000 duration-700"
             />
