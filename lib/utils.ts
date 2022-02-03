@@ -3,6 +3,7 @@ import { UserState } from "./types";
 import { ParsedUrlQuery } from "querystring";
 import { EventObject } from "cytoscape";
 import { NextRouter } from "next/router";
+import { string } from "prop-types";
 
 export function isAnonymousUser(userId: string): boolean {
   return userId.startsWith("anonymous-user|");
@@ -282,43 +283,36 @@ export async function handleFetchResponses(
   return responseJson;
 }
 
-export function setURLQuery(router: NextRouter, newParams: ParsedQuery): void {
+export function setURLQuery(
+  router: NextRouter,
+  newParams: ParsedQuery,
+  deleteParam?: string
+): void {
   const q = router.query;
   if (
     q.x !== newParams.x ||
     q.y !== newParams.y ||
     q.zoom !== newParams.zoom ||
     q.topic !== newParams.topic ||
-    q.concept !== newParams.concept
+    q.concept !== newParams.concept ||
+    newParams.quemodal
   ) {
     delete router.query.x;
     delete router.query.y;
     delete router.query.zoom;
     delete router.query.topic;
-    delete router.query.concept;
+    if (!deleteParam) {
+      delete router.query.concept;
+    }
+    if (deleteParam) {
+      deleteParam === queryParams.CONCEPT
+        ? delete router.query.concept
+        : delete router.query.quemodal;
+    }
     router.push(
       {
         pathname: router.pathname,
         query: { ...router.query, ...newParams },
-      },
-      undefined,
-      { shallow: true }
-    );
-  } else if (newParams.quemodal) {
-    router.push(
-      {
-        pathname: router.pathname,
-        query: { ...newParams },
-      },
-      undefined,
-      { shallow: true }
-    );
-  } else if (q.concept === newParams.concept) {
-    delete router.query.quemodal;
-    router.push(
-      {
-        pathname: router.pathname,
-        query: { ...newParams },
       },
       undefined,
       { shallow: true }
@@ -445,4 +439,9 @@ export function isEven(integer: number): boolean {
 
 export function isNumeric(num: string): boolean {
   return !isNaN(+num);
+}
+
+export enum queryParams {
+  "CONCEPT" = "concept",
+  "QUEMODAL" = "quemodal",
 }
