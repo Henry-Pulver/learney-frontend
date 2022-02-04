@@ -34,7 +34,7 @@ export function ProgressModal(props: {
 
       <div className="mt-6 flex justify-center items-center text-xl">
         {[...Array(props.maxKnowledgeLevel + 1).keys()].map((level) => (
-          <>
+          <div key={level}>
             <LevelBadge
               key={level}
               knowledgeLevel={level}
@@ -81,7 +81,7 @@ export function ProgressModal(props: {
                 />
               </div>
             )}
-          </>
+          </div>
         ))}
       </div>
       <div className="w-full flex flex-row justify-center mt-8 mb-2 text-lg font-bold">
