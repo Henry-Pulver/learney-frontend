@@ -76,5 +76,5 @@ export function ProgressBar(props: {
 }
 
 export function realPercentageToProgress(knowledgeLevel: number): number {
-  return 100 * (1 - Math.E ** -(knowledgeLevel * 1.61));
+  return 124.9824 * (1 - Math.E ** -(knowledgeLevel * 1.61));
 }
