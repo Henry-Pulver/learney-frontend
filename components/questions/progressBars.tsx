@@ -1,6 +1,5 @@
 import React from "react";
 import { classNames } from "../../lib/reactUtils";
-import { BadgeCheckIcon } from "@heroicons/react/outline";
 import LevelBadge from "./levelBadge";
 
 export function LevelsProgressBar(props: {

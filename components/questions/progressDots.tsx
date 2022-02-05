@@ -2,7 +2,6 @@ import React from "react";
 import { classNames } from "../../lib/reactUtils";
 import { CheckIcon, XIcon } from "@heroicons/react/outline";
 import { QuestionArray, AnswersGiven } from "./types";
-import { realPercentageToProgress } from "./progressBars";
 
 export function ProgressDots({
   questionSet: questionArray,
