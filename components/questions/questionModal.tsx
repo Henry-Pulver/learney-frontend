@@ -11,19 +11,19 @@ import {
   emptyQuestionSet,
   QuestionSetResponse,
   AnswerResponse,
+  Question,
 } from "./types";
 import { ReportQuestionButton } from "./buttons";
 import { ButtonPressFunction } from "../../lib/types";
 import { NotFullScreenModal } from "../modal";
-import { LevelsProgressBar } from "./progressBars";
 import { LoadingSpinner } from "../animations";
+import { ProgressDots } from "./progressDots";
 
 export default function QuestionModal({
   modalShown,
   closeModal,
   knowledgeLevel,
   setKnowledgeLevel,
-  maxKnowledgeLevel,
   onCompletion,
   conceptId,
   backendUrl,
@@ -36,7 +36,7 @@ export default function QuestionModal({
   knowledgeLevel: number;
   setKnowledgeLevel: (knowledgeLevel: number) => void;
   maxKnowledgeLevel: number;
-  onCompletion: (conceptCompleted: Completed) => void;
+  onCompletion: (completed: Completed, levelsGained: number) => void;
   conceptId: string;
   backendUrl: string;
   userId: string;
@@ -52,7 +52,7 @@ export default function QuestionModal({
   const [currentQidx, setCurrentQidx] = useState<number>(0);
 
   const getNewQuestionSet = async () => {
-    const questionResponse = await fetch(
+    const questionBatchResponse = await fetch(
       `${backendUrl}/api/v0/question_batch?` +
         new URLSearchParams({
           user_id: userId,
@@ -64,26 +64,59 @@ export default function QuestionModal({
         headers: jsonHeaders,
       }
     );
-    const responseJson = (await handleFetchResponses(
-      questionResponse,
+    const qBatchResponseJson = (await handleFetchResponses(
+      questionBatchResponse,
       backendUrl
     )) as QuestionSetResponse;
 
-    if (responseJson.answers_given.length > 0) {
+    if (qBatchResponseJson.answers_given.length > 0) {
       // Returning to a question set, some questions may be answered
-      setAnswersGiven([...responseJson.answers_given]);
-      setCurrentQidx(responseJson.questions.length - 1);
+      setAnswersGiven([...qBatchResponseJson.answers_given]);
+      setCurrentQidx(qBatchResponseJson.questions.length - 1);
     }
-    delete responseJson.answers_given;
+    delete qBatchResponseJson.answers_given;
 
-    setQuestionSet(responseJson as QuestionSet);
+    setQuestionSet(qBatchResponseJson as QuestionSet);
+    await getNextQuestion(qBatchResponseJson.id);
+  };
+
+  const getNextQuestion = async (batchId: string) => {
+    // Get next question
+    const questionResponse = await fetch(
+      `${backendUrl}/api/v0/questions?` +
+        new URLSearchParams({
+          user_id: userId,
+          session_id: sessionId,
+          concept_id: conceptId,
+          question_set: batchId,
+        }),
+      {
+        method: "GET",
+        headers: jsonHeaders,
+      }
+    );
+    const questionResponseJson = (await handleFetchResponses(
+      questionResponse,
+      backendUrl
+    )) as Question;
+    setQuestionSet((prevQuestionSet) => ({
+      ...prevQuestionSet,
+      questions: [...prevQuestionSet.questions, questionResponseJson],
+    }));
   };
 
   useEffect(() => {
-    if (modalShown && questionSet.concept_id !== conceptId) getNewQuestionSet();
-  }, [modalShown]);
+    if (modalShown) {
+      if (questionSet.concept_id !== conceptId) getNewQuestionSet();
+      else if (
+        currentQidx >= questionSet.questions.length - 1 &&
+        questionSet.questions.length < questionSet.max_num_questions
+      )
+        getNextQuestion(questionSet.id);
+    }
+  }, [modalShown, knowledgeLevel]);
+
   useEffect(() => {
-    console.log(questionSet);
     if (nextQuestionPressed && questionSet.questions.length - 1 > currentQidx) {
       setNextQuestionPressed(false);
       setCurrentQidx((prevState) => prevState + 1);
@@ -92,8 +125,8 @@ export default function QuestionModal({
 
   useEffect(() => {
     if (questionSet.questions.length === 0) {
-      setAnswersGiven([]);
       setCurrentQidx(0);
+      setAnswersGiven([]);
     }
   }, [questionSet]);
 
@@ -106,14 +139,13 @@ export default function QuestionModal({
         method: "POST",
         headers: jsonHeaders,
         body: JSON.stringify({
+          question_response_id: questionSet.questions[currentQidx].id,
           user_id: userId,
           question_set: questionSet.id,
           concept_id: conceptId,
           response: answerText,
           correct:
-            answerText ===
-            questionSet.questions[questionSet.questions.length - 1]
-              .correct_answer,
+            answerText === questionSet.questions[currentQidx].correct_answer,
           session_id: sessionId,
         }),
       }
@@ -123,14 +155,20 @@ export default function QuestionModal({
       backendUrl
     )) as AnswerResponse;
     console.log(responseJson);
-    const questions = [...questionSet.questions];
-    if (responseJson.next_question) questions.push(responseJson.next_question);
-    setQuestionSet({
-      ...questionSet,
-      questions: [...questions],
-      completed: responseJson.completed,
-    });
+    // const questions = [...questionSet.questions];
+    // if (responseJson.next_question) questions.push(responseJson.next_question);
     setKnowledgeLevel(responseJson.level);
+    // setQuestionSet((prevQuestionSet) => ({
+    //   ...prevQuestionSet,
+    //   // questions: [...questions],
+    //   completed: responseJson.completed,
+    // }));
+    if (responseJson.completed) {
+      onCompletion(
+        responseJson.completed,
+        responseJson.level - questionSet.initial_knowledge_level
+      );
+    }
   };
 
   const currentStepRef = useRef(null);
@@ -147,17 +185,18 @@ export default function QuestionModal({
         {questionSet.id ? ( // <-- Stops a bug when loading questionSet
           <>
             <div className="w-full flex flex-col">
-              <div className="w-full flex justify-center">
-                <LevelsProgressBar knowledgeLevel={knowledgeLevel} />
-              </div>
+              {/*<div className="w-full flex justify-center">*/}
+              {/*  <LevelsProgressBar knowledgeLevel={knowledgeLevel} />*/}
+              {/*</div>*/}
               {/*TODO: Remove? Being kept now in case we want to use progress dots in some way
                    (perhaps allowing you to jump back to previous questions easily?)*/}
-              {/*<ProgressDots*/}
-              {/*  questionSet={questionSet}*/}
-              {/*  answersGiven={answersGiven}*/}
-              {/*  currentQuestionIndex={currentQuestionIndex}*/}
-              {/*  currentStepRef={currentStepRef}*/}
-              {/*/>*/}
+              <ProgressDots
+                questionSet={questionSet.questions}
+                answersGiven={answersGiven}
+                currentQIndex={currentQidx}
+                currentStepRef={currentStepRef}
+                maxSteps={5}
+              />
               <div className="mt-3 text-center sm:mt-5">
                 {/*<div className="my-8 mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">*/}
                 {/*  <AcademicCapIcon*/}
@@ -174,7 +213,10 @@ export default function QuestionModal({
                 <div className="w-full flex flex-row justify-center my-8">
                   <div className="max-w-lg text-black text-lg">
                     <QuestionText
-                      text={questionSet.questions[currentQidx].question_text}
+                      text={
+                        questionSet.questions.length > currentQidx &&
+                        questionSet.questions[currentQidx].question_text
+                      }
                     />
                   </div>
                 </div>
@@ -228,19 +270,17 @@ export default function QuestionModal({
                       "inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
                     )}
                     onClick={
-                      answersGiven.length <= currentQidx || nextQuestionPressed // Deactivated as question not yet answered
+                      answersGiven.length <= currentQidx || // Deactivated as question not yet answered
+                      nextQuestionPressed ||
+                      questionSet.completed // Completion happens automagically
                         ? () => {}
-                        : !questionSet.completed
-                        ? () => setNextQuestionPressed(true)
-                        : () => onCompletion(questionSet.completed)
+                        : () => setNextQuestionPressed(true)
                     }
                   >
-                    {nextQuestionPressed ? (
+                    {nextQuestionPressed || questionSet.completed ? (
                       <LoadingSpinner classes="w-5 h-5 py-0.5 mx-9" />
-                    ) : !questionSet.completed ? (
-                      "Next Question"
                     ) : (
-                      "Complete"
+                      "Next Question"
                     )}
                     <NextArrow />
                   </button>
