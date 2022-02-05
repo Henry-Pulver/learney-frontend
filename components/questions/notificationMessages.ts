@@ -1,6 +1,6 @@
 import { CheckCircleIcon } from "@heroicons/react/outline";
 import { NodeSingular } from "cytoscape";
-import { NotificationData } from "../editor/types";
+import { NotificationData } from "../types";
 
 export function getRandomProgressMessage(nextNodeName: string): string {
   const progressMessages = [

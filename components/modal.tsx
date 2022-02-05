@@ -18,7 +18,10 @@ export default function Modal(props: {
     <Transition.Root show={props.open} as={Fragment}>
       <Dialog
         as="div"
-        className={classNames(props.dialogClassName, "fixed z-10 inset-0 overflow-y-auto")}
+        className={classNames(
+          props.dialogClassName,
+          "fixed z-10 inset-0 overflow-y-auto"
+        )}
         initialFocus={props.initialFocus}
         onClose={props.setClosed}
       >

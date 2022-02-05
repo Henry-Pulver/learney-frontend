@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import { Transition } from "@headlessui/react";
 import { classNames } from "../lib/reactUtils";
 import { XCloseButton } from "./utils";
-import { NotificationData } from "./editor/types";
+import { NotificationData } from "./types";
 
 export function Notification({
   info,
@@ -37,8 +37,9 @@ export function Notification({
             <div
               className={classNames(
                 "relative max-w-sm w-full shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden",
-                info.colour === "green" && "bg-green-100",
-                info.colour === "red" && "bg-red-100"
+                info.colour === "green" && "bg-green-50",
+                info.colour === "red" && "bg-red-50",
+                info.colour === "orange" && "bg-orange-50"
               )}
             >
               <div className="p-4">
@@ -48,6 +49,7 @@ export function Notification({
                       className={classNames(
                         info.colour === "green" && "text-green-400",
                         info.colour === "red" && "text-red-400",
+                        info.colour === "orange" && "bg-orange-400",
                         "h-6 w-6"
                       )}
                       aria-hidden="true"

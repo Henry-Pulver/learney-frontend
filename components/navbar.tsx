@@ -15,7 +15,7 @@ import Modal from "./modal";
 import { ConceptSearchBox } from "./ConceptSearchBox";
 import { ButtonPressFunction, UserState } from "../lib/types";
 import { ElementsDefinition } from "cytoscape";
-import { NotificationData } from "./editor/types";
+import { NotificationData } from "./types";
 
 export function EditNavbar({
   user,
