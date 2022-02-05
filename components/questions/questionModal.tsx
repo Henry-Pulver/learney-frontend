@@ -99,6 +99,8 @@ export default function QuestionModal({
       questionResponse,
       backendUrl
     )) as Question;
+    // const questions = [...questionSet.questions];
+    // questions.push(questionResponseJson);
     setQuestionSet((prevQuestionSet) => ({
       ...prevQuestionSet,
       questions: [...prevQuestionSet.questions, questionResponseJson],
@@ -106,15 +108,8 @@ export default function QuestionModal({
   };
 
   useEffect(() => {
-    if (modalShown) {
-      if (questionSet.concept_id !== conceptId) getNewQuestionSet();
-      else if (
-        currentQidx >= questionSet.questions.length - 1 &&
-        questionSet.questions.length < questionSet.max_num_questions
-      )
-        getNextQuestion(questionSet.id);
-    }
-  }, [modalShown, knowledgeLevel]);
+    if (modalShown && questionSet.concept_id !== conceptId) getNewQuestionSet();
+  }, [modalShown]);
 
   useEffect(() => {
     if (nextQuestionPressed && questionSet.questions.length - 1 > currentQidx) {
@@ -155,14 +150,14 @@ export default function QuestionModal({
       backendUrl
     )) as AnswerResponse;
     console.log(responseJson);
-    // const questions = [...questionSet.questions];
-    // if (responseJson.next_question) questions.push(responseJson.next_question);
+    const questions = [...questionSet.questions];
+    if (responseJson.next_question) questions.push(responseJson.next_question);
     setKnowledgeLevel(responseJson.level);
-    // setQuestionSet((prevQuestionSet) => ({
-    //   ...prevQuestionSet,
-    //   // questions: [...questions],
-    //   completed: responseJson.completed,
-    // }));
+    setQuestionSet((prevQuestionSet) => ({
+      ...prevQuestionSet,
+      questions: [...questions],
+      completed: responseJson.completed,
+    }));
     if (responseJson.completed) {
       onCompletion(
         responseJson.completed,
@@ -195,7 +190,7 @@ export default function QuestionModal({
                 answersGiven={answersGiven}
                 currentQIndex={currentQidx}
                 currentStepRef={currentStepRef}
-                maxSteps={5}
+                maxSteps={questionSet.max_num_questions}
               />
               <div className="mt-3 text-center sm:mt-5">
                 {/*<div className="my-8 mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">*/}
@@ -297,8 +292,6 @@ export default function QuestionModal({
     </NotFullScreenModal>
   );
 }
-
-("In matrix addition, each element is added to the corresponding element in the other matrix.\nIn this case, that means:\n/$$\begin{bmatrix}0 + 7&10 + 6\\7 + 9&9 + 1 end{bmatrix}$$/\nLeading to:\n/$$\begin{bmatrix}7&16\\16&10 end{bmatrix}$$/");
 
 function QuestionText({
   text,
