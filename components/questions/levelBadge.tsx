@@ -3,7 +3,7 @@ import { BadgeCheckIcon } from "@heroicons/react/outline";
 import React from "react";
 
 export default function LevelBadge(props: {
-  knowledgeLevel: 0 | 1 | 2 | 3 | 4 | 5;
+  knowledgeLevel: number;
   achieved: boolean;
   overallClassName?: string;
   badgeClassName?: string;

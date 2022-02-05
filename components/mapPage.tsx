@@ -27,12 +27,12 @@ import { Notification } from "./notifications";
 import ExploreLearnIntroPage from "./exploreLearnIntroPage";
 import { handleIntroAnimation } from "../lib/graph";
 import { useRouter } from "next/router";
-import { EditType, NotificationData } from "./editor/types";
+import { EditType } from "./editor/types";
 import { NodeSingular } from "cytoscape";
 import { setNotificationProgressInfo } from "./questions/notificationMessages";
-import { BookOpenIcon, XCircleIcon } from "@heroicons/react/outline";
 import { fetchCurrentConcept, getNextNodeToLearn } from "../lib/questions";
 import { ButtonPressFunction } from "../lib/types";
+import { NotificationData } from "./types";
 
 export default function MapPage({
   mapTitle,
