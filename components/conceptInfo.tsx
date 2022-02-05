@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAsync } from "react-async";
-import {
-  CheckCircleIcon,
-  FlagIcon,
-} from "@heroicons/react/outline";
+import { CheckCircleIcon, FlagIcon } from "@heroicons/react/outline";
 import { IconToggleButtonWithCheckbox, MakeSuggestionButton } from "./buttons";
 import { appendToArray, classNames } from "../lib/reactUtils";
 import { NodeSingular } from "cytoscape";
