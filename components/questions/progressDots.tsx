@@ -31,7 +31,6 @@ export function ProgressDots({
               className="flex justify-center items-center place-items-center"
             >
               {currentQIndex >= questionIdx ? (
-                // @ts-ignore
                 <PastOrCurrentProgressDot
                   past={currentQIndex > questionIdx}
                   correct={
@@ -69,32 +68,32 @@ export function ProgressDots({
   }
 }
 
-function PastOrCurrentProgressDot(
-  past: number,
-  correct: boolean | null,
-  currentStepRef,
-  className?: string
-) {
+function PastOrCurrentProgressDot(props: {
+  past: boolean;
+  correct: boolean | null;
+  currentStepRef: React.RefObject<HTMLElement>;
+  className?: string;
+}) {
   return (
     <>
-      {past ? (
-        correct ? (
-          <CorrectPastProgressDot className={className} />
+      {props.past ? (
+        props.correct ? (
+          <CorrectPastProgressDot className={props.className} />
         ) : (
-          <IncorrectPastProgressDot className={className} />
+          <IncorrectPastProgressDot className={props.className} />
         )
-      ) : correct === null ? (
+      ) : props.correct === null ? (
         <UnansweredCurrentProgressDot
-          className={className}
-          currentStepRef={currentStepRef}
+          className={props.className}
+          currentStepRef={props.currentStepRef}
         />
-      ) : correct ? (
+      ) : props.correct ? (
         <CorrectCurrentProgressDot
-          className={className}
-          currentStepRef={currentStepRef}
+          className={props.className}
+          currentStepRef={props.currentStepRef}
         />
       ) : (
-        <IncorrectCurrentProgressDot className={className} />
+        <IncorrectCurrentProgressDot className={props.className} />
       )}
     </>
   );
