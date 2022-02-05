@@ -30,7 +30,7 @@ import { useRouter } from "next/router";
 import { EditType, NotificationData } from "./editor/types";
 import { NodeSingular } from "cytoscape";
 import { setNotificationProgressInfo } from "./questions/notificationMessages";
-import { XCircleIcon } from "@heroicons/react/outline";
+import { BookOpenIcon, XCircleIcon } from "@heroicons/react/outline";
 import { fetchCurrentConcept, getNextNodeToLearn } from "../lib/questions";
 import { ButtonPressFunction } from "../lib/types";
 
@@ -258,18 +258,6 @@ export default function MapPage({
       updateNotificationInfo
     );
   };
-  const onTestFail = (node: NodeSingular): void => {
-    updateNotificationInfo({
-      title: `Mission Failed - we'll get 'em next time.`,
-      message: `Look at the resources on ${
-        node.data().name
-      } & test again when ready!`,
-      Icon: XCircleIcon,
-      colour: "red",
-      show: true,
-    });
-    node.emit("tap");
-  };
   const [showTitle, setShowTitle] = useState<boolean>(true);
 
   return (
@@ -335,17 +323,16 @@ export default function MapPage({
         learned={learned}
         onLearnedClick={onLearnedClick}
         onTestSuccess={onSuccessfulTest}
-        onTestFail={onTestFail}
         setLearnedState={setLearnedState}
         goals={goals}
         onSetGoalClick={onSetGoalClick}
         setGoalsState={setGoalsState}
-        pageLoaded={pageLoaded}
         setPageLoaded={setPageLoaded}
         editType={editType}
         questionsEnabled={questionsEnabled}
         showTitle={showTitle}
         currentConcept={currentConcept}
+        updateNotificationInfo={updateNotificationInfo}
       />
       {editMap && (
         <Editor
