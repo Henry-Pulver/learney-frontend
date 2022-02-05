@@ -20,11 +20,12 @@ export type AnswersGiven = Array<string>;
 
 export type Question = {
   id: string;
+  template_id: string;
   question_text: string;
-  answers: Array<string>;
-  correct_answer: string;
   answers_order_randomised: Array<string>;
+  correct_answer: string;
   feedback: string;
+  params: object;
 };
 
 export type QuestionArray = Array<Question>;
@@ -34,6 +35,8 @@ export type QuestionSet = {
   questions: QuestionArray;
   completed: Completed;
   concept_id: string;
+  initial_knowledge_level: number;
+  max_num_questions: number;
 };
 
 export type QuestionSetResponse = QuestionSet & {
@@ -45,4 +48,6 @@ export const emptyQuestionSet: QuestionSet = {
   questions: [],
   completed: null,
   concept_id: null,
+  initial_knowledge_level: null,
+  max_num_questions: null,
 };
