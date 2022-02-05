@@ -12,13 +12,16 @@ pretty:
 lint:
 	npm run lint
 
-pc: pretty lint
+tsc:
+	tsc
 
-build: lint
+pc: pretty lint tsc
+
+build: lint tsc
 	docker build . -t learney-frontend
 
-staging: lint
+staging: lint tsc
 	eb deploy Staging-Learneyfrontend-env
 
-prod: lint
+prod: lint tsc
 	eb deploy Learneyfrontend-env

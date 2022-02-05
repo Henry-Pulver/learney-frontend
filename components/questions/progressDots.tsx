@@ -17,19 +17,21 @@ export function ProgressDots({
   maxSteps: number;
 }) {
   if (questionArray.length < 1) return <></>;
-  else
+  else {
     return (
       <nav
         aria-label="Progress"
         className="my-4 flex items-center justify-center w-full"
       >
         <ol role="list" className="flex justify-center">
+          {/*@ts-ignore*/}
           {[...Array(maxSteps).keys()].map((questionIdx) => (
             <li
               key={questionIdx}
               className="flex justify-center items-center place-items-center"
             >
               {currentQIndex >= questionIdx ? (
+                // @ts-ignore
                 <PastOrCurrentProgressDot
                   past={currentQIndex > questionIdx}
                   correct={
@@ -64,6 +66,7 @@ export function ProgressDots({
         </ol>
       </nav>
     );
+  }
 }
 
 function PastOrCurrentProgressDot(
