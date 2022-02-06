@@ -188,17 +188,17 @@ export default function Map({
   }
 
   useEffect(() => {
-    if (localStorage.getItem("quemodal") === "true") {
+    if (localStorage.getItem("quemodal") === "true" && questionsEnabled) {
       setURLQuery(router, {
         ...router.query,
         quemodal: true,
       });
       setQuestionModalShown(true);
     }
-    if (localStorage.getItem("lastConceptClicked")) {
+    if (localStorage.getItem(`lastConceptClickedMap${mapUUID}`)) {
       setURLQuery(router, {
         ...router.query,
-        concept: localStorage.getItem("lastConceptClicked"),
+        concept: localStorage.getItem(`lastConceptClickedMap${mapUUID}`),
       });
     }
   }, []);

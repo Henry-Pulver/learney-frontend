@@ -81,7 +81,7 @@ export function ConceptInfo({
           node
             ? buttonPressFunction(() => {
                 hideConceptInfo();
-                localStorage.removeItem("lastConceptClicked");
+                localStorage.removeItem(`lastConceptClickedMap${mapUUID}`);
                 localStorage.setItem("quemodal", "false");
                 setQuestionModalShown(false);
                 setURLQuery(router, {}, queryParams.QUEMODAL);
