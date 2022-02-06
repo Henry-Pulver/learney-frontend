@@ -517,7 +517,7 @@ export function bindRouters(
     window.cy.on("tap", 'node[nodetype = "concept"]', (e) => {
       trackCyEvent(e, "Concept Click", backendUrl, userId);
       const concept = e.target as NodeSingular;
-      localStorage.setItem("lastConceptClicked", concept.id());
+      localStorage.setItem(`lastConceptClickedMap${mapUUID}`, concept.id());
       if (!isAnimated) {
         setIsAnimated(true);
         showConceptInfo(concept);
