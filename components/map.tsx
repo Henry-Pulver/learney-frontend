@@ -179,28 +179,29 @@ export default function Map({
       })();
     }
   }, [nodeSelected]);
+
   const [questionModalShown, setQuestionModalShown] =
     React.useState<boolean>(false);
-  function closeQuestionModal() {
-    localStorage.setItem("quemodal", "false");
-    setQuestionModalShown(false);
-    setURLQuery(router, {}, queryParams.QUEMODAL);
-  }
+  useEffect(() => {
+    localStorage.setItem("quemodal", String(questionModalShown));
+    setURLQuery(router, {
+      ...router.query,
+      quemodal: questionModalShown ? questionModalShown : undefined,
+    });
+  }, [questionModalShown]);
 
   useEffect(() => {
-    if (localStorage.getItem("quemodal") === "true" && questionsEnabled) {
-      setURLQuery(router, {
-        ...router.query,
-        quemodal: true,
-      });
-      setQuestionModalShown(true);
-    }
-    if (localStorage.getItem(`lastConceptClickedMap${mapUUID}`)) {
+    setQuestionModalShown(
+      localStorage.getItem("quemodal") === "true" && questionsEnabled
+    );
+    if (
+      localStorage.getItem(`lastConceptClickedMap${mapUUID}`) &&
+      !router.query.concept
+    )
       setURLQuery(router, {
         ...router.query,
         concept: localStorage.getItem(`lastConceptClickedMap${mapUUID}`),
       });
-    }
   }, []);
   return (
     <div className="flex flex-column sm:flex-row w-full h-excl-toolbar">
@@ -235,7 +236,7 @@ export default function Map({
         {maxKnowledgeLevel && (
           <QuestionModal
             modalShown={nodeSelected !== undefined && questionModalShown}
-            closeModal={closeQuestionModal}
+            closeModal={() => setQuestionModalShown(false)}
             onCompletion={(
               conceptCompleted: Completed,
               levelsGained: number
@@ -244,7 +245,7 @@ export default function Map({
                 case "completed_concept":
                   setProgressModalShown(true);
                   setTimeout(() => {
-                    closeQuestionModal();
+                    setQuestionModalShown(false);
                     onTestSuccess(nodeSelected, userId, sessionId);
                     setProgressModalShown(false);
                     setTimeout(() => {
@@ -254,7 +255,7 @@ export default function Map({
                   }, 2000);
                   break;
                 case "doing_poorly":
-                  closeQuestionModal();
+                  setQuestionModalShown(false);
                   updateNotificationInfo({
                     title: `Mission Failed - we'll get 'em next time.`,
                     message: `Look at the resources on ${
