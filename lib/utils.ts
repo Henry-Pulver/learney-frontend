@@ -266,7 +266,7 @@ export async function handleFetchResponses(
   backendUrl: string
 ): Promise<object> {
   const responseJson = await response.json();
-  if (response.status === 200 || response.status === 201) {
+  if (response.status > 199 && response.status < 300) {
     if (backendUrl === "https://api.learney.me")
       console.log(`Success! Status: ${response.status}`);
     else
@@ -289,6 +289,7 @@ export function setURLQuery(
   deleteParam?: string
 ): void {
   const q = router.query;
+  console.log(newParams);
   if (
     q.x !== newParams.x ||
     q.y !== newParams.y ||
@@ -301,6 +302,7 @@ export function setURLQuery(
     delete router.query.y;
     delete router.query.zoom;
     delete router.query.topic;
+    delete router.query.quemodal;
     if (!deleteParam) {
       delete router.query.concept;
     }
