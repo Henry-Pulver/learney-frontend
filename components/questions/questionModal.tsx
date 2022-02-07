@@ -77,7 +77,7 @@ export default function QuestionModal({
     delete qBatchResponseJson.answers_given;
 
     setQuestionSet(qBatchResponseJson as QuestionSet);
-    await getNextQuestion(qBatchResponseJson.id);
+    // await getNextQuestion(qBatchResponseJson.id);
   };
 
   const getNextQuestion = async (batchId: string) => {
@@ -149,20 +149,26 @@ export default function QuestionModal({
       questionResponse,
       backendUrl
     )) as AnswerResponse;
-    console.log(responseJson);
-    const questions = [...questionSet.questions];
-    if (responseJson.next_question) questions.push(responseJson.next_question);
-    setKnowledgeLevel(responseJson.level);
-    setQuestionSet((prevQuestionSet) => ({
-      ...prevQuestionSet,
-      questions: [...questions],
-      completed: responseJson.completed,
-    }));
-    if (responseJson.completed) {
-      onCompletion(
-        responseJson.completed,
-        responseJson.level - questionSet.initial_knowledge_level
-      );
+    if ("response" in responseJson) {
+      console.log(responseJson.response);
+      return;
+    } else {
+      if (responseJson.completed) {
+        onCompletion(
+          responseJson.completed,
+          responseJson.level - questionSet.initial_knowledge_level
+        );
+      }
+      setKnowledgeLevel(responseJson.level);
+      if (responseJson.next_questions.length > 0) {
+        const questions = [...questionSet.questions];
+        questions.push(...responseJson.next_questions);
+        setQuestionSet((prevQuestionSet) => ({
+          ...prevQuestionSet,
+          questions: [...questions],
+          completed: responseJson.completed,
+        }));
+      }
     }
   };
 

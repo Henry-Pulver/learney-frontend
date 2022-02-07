@@ -11,10 +11,12 @@ export type Completed =
   | "max_num_of_questions"
   | null;
 
-export type AnswerResponse = KnowledgeLevel & {
-  completed: Completed;
-  next_question: Question;
-};
+export type AnswerResponse =
+  | (KnowledgeLevel & {
+      completed: Completed;
+      next_questions: Array<Question>;
+    })
+  | { response: string };
 
 export type AnswersGiven = Array<string>;
 

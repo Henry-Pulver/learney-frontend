@@ -87,10 +87,11 @@ export function ReportQuestionButton(props: {
               as="h3"
               className="text-lg leading-6 font-medium text-gray-900"
             >
-              {"What's the problem?"}
+              {"You're a hero for reporting mistakes! :)"}
             </Dialog.Title>
           </div>
         </div>
+        <div className="mt-2">What&apos;s the problem?</div>
         <div className="mt-4 grid grid-rows-2 grid-cols-2 sm:grid-rows-1 sm:grid-cols-4 gap-2">
           <ProblemTypeButton
             name={incorrectQuestion}
