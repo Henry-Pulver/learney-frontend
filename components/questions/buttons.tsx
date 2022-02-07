@@ -87,7 +87,7 @@ export function ReportQuestionButton(props: {
               as="h3"
               className="text-lg leading-6 font-medium text-gray-900"
             >
-              {"You're a hero for reporting mistakes! :)"}
+              {"You're a hero for reporting mistakes!"}
             </Dialog.Title>
           </div>
         </div>
