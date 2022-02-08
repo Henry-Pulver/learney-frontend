@@ -166,13 +166,12 @@ export default function Map({
     // So the knowledge level isn't stuck on the previous node's value while loading
     setKnowledgeLevel(null);
     setMaxKnowledgeLevel(null);
-    if (nodeSelected) {
+    if (nodeSelected && questionsEnabled) {
       (async () => {
         const conceptInfo = await fetchConceptInfo(
           backendUrl,
           userId,
-          nodeSelected.id(),
-          questionsEnabled
+          nodeSelected.id()
         );
         setKnowledgeLevel(conceptInfo.level);
         setMaxKnowledgeLevel(conceptInfo.max_level);
@@ -184,6 +183,10 @@ export default function Map({
     React.useState<boolean>(false);
   useEffect(() => {
     localStorage.setItem("quemodal", String(questionModalShown));
+    console.log({
+      ...router.query,
+      quemodal: questionModalShown ? questionModalShown : undefined,
+    });
     setURLQuery(router, {
       ...router.query,
       quemodal: questionModalShown ? questionModalShown : undefined,
@@ -245,17 +248,15 @@ export default function Map({
                 case "completed_concept":
                   setProgressModalShown(true);
                   setTimeout(() => {
-                    setQuestionModalShown(false);
-                    onTestSuccess(nodeSelected, userId, sessionId);
                     setProgressModalShown(false);
+                    onTestSuccess(nodeSelected, userId, sessionId);
+                    setQuestionModalShown(false);
                     setTimeout(() => {
                       currentConcept.emit("tap");
-                      // setNotificationProgressInfo()
                     }, 500);
                   }, 2000);
                   break;
                 case "doing_poorly":
-                  setQuestionModalShown(false);
                   updateNotificationInfo({
                     title: `Mission Failed - we'll get 'em next time.`,
                     message: `Look at the resources on ${
@@ -267,11 +268,19 @@ export default function Map({
                   });
                   break;
                 case "max_num_of_questions":
+                  setProgressModalShown(true);
+                  setTimeout(() => {
+                    setProgressModalShown(false);
+                    setQuestionModalShown(false);
+                    setTimeout(() => {
+                      currentConcept.emit("tap");
+                    }, 500);
+                  }, 2000);
                   updateNotificationInfo({
                     title: levelsGained
                       ? `Congrats! You've progressed ${levelsGained} level${
                           levelsGained > 1 ? "s" : ""
-                        }`
+                        } on ${nodeSelected.data().name}!`
                       : "You're making great progress!",
                     message: levelsGained
                       ? "At this rate, you'll soon complete the concept! Test again when you're ready."
@@ -281,9 +290,19 @@ export default function Map({
                     show: true,
                   });
                   break;
+                case "review_completed":
+                  updateNotificationInfo({
+                    title: `Review of ${nodeSelected.data().name} completed!`,
+                    message: `Congrats for completing the review! You can do another or move on from here.`,
+                    Icon: BookOpenIcon,
+                    colour: "green",
+                    show: true,
+                  });
+                  break;
                 case null:
                   break;
               }
+              setQuestionModalShown(false);
             }}
             knowledgeLevel={knowledgeLevel}
             setKnowledgeLevel={setKnowledgeLevel}

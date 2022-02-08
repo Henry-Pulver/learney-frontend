@@ -133,13 +133,15 @@ export function ConceptInfo({
             <div className="absolute sm:relative bottom-0 left-0 w-full z-10 bg-white justify-around border-t border-solid border-gray-300 px-2 py-4 grid items-center grid-flow-col">
               <IconToggleButtonWithCheckbox
                 text={
-                  !learnedNodes[node.id()] && maxKnowledgeLevel
-                    ? "Test me!"
+                  questionsEnabled
+                    ? maxKnowledgeLevel && knowledgeLevel >= maxKnowledgeLevel
+                      ? "Review concept"
+                      : "Get questions"
                     : "I know this!"
                 }
                 checked={!!learnedNodes[node.id()]}
                 onCheck={
-                  !learnedNodes[node.id()] && maxKnowledgeLevel
+                  maxKnowledgeLevel // question map + info loaded
                     ? () => {
                         localStorage.setItem("quemodal", "true");
                         setQuestionModalShown(true);
@@ -148,7 +150,8 @@ export function ConceptInfo({
                           quemodal: true,
                         });
                       }
-                    : () => onLearnedClick(node, userId, sessionId)
+                    : // if on normal map
+                      () => onLearnedClick(node, userId, sessionId)
                 }
                 Icon={CheckCircleIcon}
                 colour={"green"}

@@ -72,7 +72,7 @@ export default function QuestionModal({
     if (qBatchResponseJson.answers_given.length > 0) {
       // Returning to a question set, some questions may be answered
       setAnswersGiven([...qBatchResponseJson.answers_given]);
-      setCurrentQidx(qBatchResponseJson.questions.length - 1);
+      setCurrentQidx(qBatchResponseJson.answers_given.length);
     }
     delete qBatchResponseJson.answers_given;
 
@@ -112,6 +112,7 @@ export default function QuestionModal({
   }, [modalShown]);
 
   useEffect(() => {
+    console.log("Num questions", questionSet.questions.length);
     if (nextQuestionPressed && questionSet.questions.length - 1 > currentQidx) {
       setNextQuestionPressed(false);
       setCurrentQidx((prevState) => prevState + 1);
@@ -127,6 +128,8 @@ export default function QuestionModal({
 
   const onAnswerClick = async (answerText: string) => {
     setAnswersGiven([...answersGiven, answerText]);
+    console.log(questionSet.questions[currentQidx]);
+    console.log(questionSet.questions[currentQidx].id);
     // Tell the backend about the answer given
     const questionResponse = await fetch(
       `${backendUrl}/api/v0/question_response`,
@@ -158,6 +161,8 @@ export default function QuestionModal({
           responseJson.completed,
           responseJson.level - questionSet.initial_knowledge_level
         );
+        // Answers and current Question id reset automagically when the question set is emptied
+        setQuestionSet({ ...emptyQuestionSet });
       }
       setKnowledgeLevel(responseJson.level);
       if (responseJson.next_questions.length > 0) {

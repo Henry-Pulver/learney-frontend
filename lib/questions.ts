@@ -64,10 +64,8 @@ export const fetchCurrentConcept = async (
 export async function fetchConceptInfo(
   backendUrl: string,
   userId: string,
-  conceptId: string,
-  questionsEnabled: boolean
+  conceptId: string
 ): Promise<ConceptInfo> {
-  if (!questionsEnabled) return { level: null, max_level: null };
   const response = await fetch(
     `${backendUrl}/api/v0/concept_info?` +
       new URLSearchParams({
