@@ -9,6 +9,7 @@ export type Completed =
   | "completed_concept"
   | "doing_poorly"
   | "max_num_of_questions"
+  | "review_completed"
   | null;
 
 export type AnswerResponse =
