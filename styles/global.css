@@ -87,6 +87,11 @@
   }
 }
 
+/*TODO: Remove when upgraded to Tailwind v3*/
+.columns-2 {
+  columns: 2;
+}
+
 .disableTouchActions {
   touch-action: none;
 }
