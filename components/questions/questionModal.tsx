@@ -11,7 +11,6 @@ import {
   emptyQuestionSet,
   QuestionSetResponse,
   AnswerResponse,
-  Question,
 } from "./types";
 import { ReportQuestionButton } from "./buttons";
 import { ButtonPressFunction } from "../../lib/types";
@@ -160,8 +159,7 @@ export default function QuestionModal({
       modalClassName="h-full flex-col items-center"
       contentClassName={classNames(
         questionSet.completed &&
-          answersGiven[currentQidx] ===
-            questionSet.questions[currentQidx].correct_answer &&
+          isCorrectArray(answersGiven, questionSet)[currentQidx] &&
           "bg-green-500 transition-colors duration-1000 ease-in-out",
         "max-h-excl-toolbar sm:max-w-2xl sm:p-8 sm:pb-4"
       )}
@@ -170,16 +168,10 @@ export default function QuestionModal({
         {questionSet.id && // <-- Stops a bug when loading questionSet
         !(
           questionSet.completed &&
-          answersGiven[currentQidx] ===
-            questionSet.questions[currentQidx].correct_answer
+          isCorrectArray(answersGiven, questionSet)[currentQidx]
         ) ? (
           <>
             <div className="w-full flex flex-col">
-              {/*<div className="w-full flex justify-center">*/}
-              {/*  <LevelsProgressBar knowledgeLevel={knowledgeLevel} />*/}
-              {/*</div>*/}
-              {/*TODO: Remove? Being kept now in case we want to use progress dots in some way
-                   (perhaps allowing you to jump back to previous questions easily?)*/}
               <ProgressDots
                 questionSet={questionSet.questions}
                 answersGiven={answersGiven}
@@ -230,8 +222,7 @@ export default function QuestionModal({
               </div>
               {/*FEEBACK*/}
               {answersGiven.length > currentQidx && // Check that the question has been answered
-                answersGiven[currentQidx] !==
-                  questionSet.questions[currentQidx].correct_answer && // Check that the answer is incorrect
+                !isCorrectArray(answersGiven, questionSet)[currentQidx] && // Check that the answer is incorrect
                 questionSet.questions[currentQidx].feedback && ( // Check that there is some feedback
                   <div className="flex justify-center">
                     <div className="bg-gray-200 text-black px-6 py-4 my-6 rounded text-center max-w-xl">
@@ -279,8 +270,7 @@ export default function QuestionModal({
             </div>
           </>
         ) : questionSet.completed &&
-          answersGiven[currentQidx] ===
-            questionSet.questions[currentQidx].correct_answer ? (
+          isCorrectArray(answersGiven, questionSet)[currentQidx] ? (
           <div className="w-full h-96 grid justify-center content-center">
             <div className="font-bold text-4xl text-white">
               🎉 Congratulations! 🎉
@@ -422,5 +412,15 @@ function AnswerOption({
         <QuestionText text={answerText} />
       )}
     </span>
+  );
+}
+
+function isCorrectArray(
+  answersGiven: AnswersGiven,
+  questionSet: QuestionSet
+): Array<boolean> {
+  return answersGiven.map(
+    (answerGiven: string, index: number) =>
+      answerGiven === questionSet.questions[index].correct_answer
   );
 }
