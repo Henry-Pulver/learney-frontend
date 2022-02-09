@@ -80,33 +80,6 @@ export default function QuestionModal({
     // await getNextQuestion(qBatchResponseJson.id);
   };
 
-  const getNextQuestion = async (batchId: string) => {
-    // Get next question
-    const questionResponse = await fetch(
-      `${backendUrl}/api/v0/questions?` +
-        new URLSearchParams({
-          user_id: userId,
-          session_id: sessionId,
-          concept_id: conceptId,
-          question_set: batchId,
-        }),
-      {
-        method: "GET",
-        headers: jsonHeaders,
-      }
-    );
-    const questionResponseJson = (await handleFetchResponses(
-      questionResponse,
-      backendUrl
-    )) as Question;
-    // const questions = [...questionSet.questions];
-    // questions.push(questionResponseJson);
-    setQuestionSet((prevQuestionSet) => ({
-      ...prevQuestionSet,
-      questions: [...prevQuestionSet.questions, questionResponseJson],
-    }));
-  };
-
   useEffect(() => {
     if (modalShown && questionSet.concept_id !== conceptId) getNewQuestionSet();
   }, [modalShown]);
@@ -185,10 +158,21 @@ export default function QuestionModal({
       initialFocus={currentStepRef}
       setClosed={closeModal}
       modalClassName="h-full flex-col items-center"
-      contentClassName="max-h-excl-toolbar sm:max-w-2xl sm:p-8 sm:pb-4"
+      contentClassName={classNames(
+        questionSet.completed &&
+          answersGiven[currentQidx] ===
+            questionSet.questions[currentQidx].correct_answer &&
+          "bg-green-500 transition-colors duration-1000 ease-in-out",
+        "max-h-excl-toolbar sm:max-w-2xl sm:p-8 sm:pb-4"
+      )}
     >
       <div className="flex justify-center">
-        {questionSet.id ? ( // <-- Stops a bug when loading questionSet
+        {questionSet.id && // <-- Stops a bug when loading questionSet
+        !(
+          questionSet.completed &&
+          answersGiven[currentQidx] ===
+            questionSet.questions[currentQidx].correct_answer
+        ) ? (
           <>
             <div className="w-full flex flex-col">
               {/*<div className="w-full flex justify-center">*/}
@@ -294,6 +278,15 @@ export default function QuestionModal({
               </div>
             </div>
           </>
+        ) : questionSet.completed &&
+          answersGiven[currentQidx] ===
+            questionSet.questions[currentQidx].correct_answer ? (
+          <div className="w-full h-96 grid justify-center content-center">
+            <div className="font-bold text-4xl text-white">
+              🎉 Congratulations! 🎉
+            </div>
+            <div className="text-2xl text-white">You completed the quiz.</div>
+          </div>
         ) : (
           <div className="w-full h-96 grid justify-center content-center">
             <LoadingSpinner classes="w-20 h-20" />
