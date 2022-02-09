@@ -22,7 +22,12 @@ export function Notification({
         aria-live="assertive"
         className="fixed inset-0 z-20 flex items-end px-4 py-6 sm:py-20 sm:px-6 pointer-events-none sm:items-start"
       >
-        <div className="w-full flex flex-col items-center space-y-4 sm:items-end">
+        <div
+          className={classNames(
+            info.side === "left" ? "sm:items-start" : "sm:items-end",
+            "w-full flex flex-col items-center space-y-4"
+          )}
+        >
           {/* Notification panel, dynamically insert this into the live region when it needs to be displayed */}
           <Transition
             show={info.show}

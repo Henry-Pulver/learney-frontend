@@ -252,7 +252,7 @@ export default function Map({
                     onTestSuccess(nodeSelected, userId, sessionId);
                     setQuestionModalShown(false);
                     setTimeout(() => {
-                      currentConcept.emit("tap");
+                      if (currentConcept) currentConcept.emit("tap");
                     }, 500);
                   }, 2000);
                   break;
@@ -265,6 +265,7 @@ export default function Map({
                     Icon: BookOpenIcon,
                     colour: "orange",
                     show: true,
+                    side: "left",
                   });
                   break;
                 case "max_num_of_questions":
@@ -273,21 +274,25 @@ export default function Map({
                     setProgressModalShown(false);
                     setQuestionModalShown(false);
                     setTimeout(() => {
-                      currentConcept.emit("tap");
+                      if (currentConcept) currentConcept.emit("tap");
                     }, 500);
                   }, 2000);
                   updateNotificationInfo({
-                    title: levelsGained
-                      ? `Congrats! You've progressed ${levelsGained} level${
-                          levelsGained > 1 ? "s" : ""
-                        } on ${nodeSelected.data().name}!`
-                      : "You're making great progress!",
+                    title:
+                      levelsGained >= 1
+                        ? `Congrats! You've progressed ${Math.floor(
+                            levelsGained
+                          )} level${levelsGained >= 1 ? "s" : ""} on ${
+                            nodeSelected.data().name
+                          }!`
+                        : "You're making great progress!",
                     message: levelsGained
                       ? "At this rate, you'll soon complete the concept! Test again when you're ready."
                       : "Keep it up to reach the next level! Check out the content for this concept and test again. :)",
                     Icon: levelsGained ? ArrowCircleUpIcon : BookOpenIcon,
                     colour: "green",
                     show: true,
+                    side: "left",
                   });
                   break;
                 case "review_completed":
@@ -297,6 +302,7 @@ export default function Map({
                     Icon: BookOpenIcon,
                     colour: "green",
                     show: true,
+                    side: "left",
                   });
                   break;
                 case null:
