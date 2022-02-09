@@ -15,4 +15,5 @@ export type NotificationData = {
   Icon: React.ComponentType<any>;
   colour: "green" | "red" | "orange" | "";
   show: boolean;
+  side?: "right" | "left";
 };

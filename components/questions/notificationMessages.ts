@@ -42,11 +42,12 @@ export function setNotificationProgressInfo(
       message = getRandomGoalMessage(nextNodeToLearn.data().name);
     } else message = undefined;
     updateNotificationInfo({
-      title: `Congratulations - reached goal: ${node.data().name}!`,
+      title: `Congratulations - reached your goal: ${node.data().name}!`,
       message: message,
       Icon: CheckCircleIcon,
       colour: "green",
       show: true,
+      side: "left",
     });
   } else if (nextNodeToLearn === undefined) {
     // If no goal set - prompt to set goal
@@ -58,6 +59,7 @@ export function setNotificationProgressInfo(
       Icon: CheckCircleIcon,
       colour: "green",
       show: true,
+      side: "left",
     });
   } else {
     // If concept on path learned
@@ -67,6 +69,7 @@ export function setNotificationProgressInfo(
       Icon: CheckCircleIcon,
       colour: "green",
       show: true,
+      side: "left",
     });
     nextNodeToLearn.emit("tap");
   }

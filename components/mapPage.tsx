@@ -33,6 +33,7 @@ import { setNotificationProgressInfo } from "./questions/notificationMessages";
 import { fetchCurrentConcept, getNextNodeToLearn } from "../lib/questions";
 import { ButtonPressFunction } from "../lib/types";
 import { NotificationData } from "./types";
+import { CheckCircleIcon } from "@heroicons/react/outline";
 
 export default function MapPage({
   mapTitle,
@@ -221,6 +222,7 @@ export default function MapPage({
     Icon: () => <></>,
     colour: "",
     show: false,
+    side: "right",
   });
   const updateNotificationInfo = (
     newNotificationInfo: NotificationData
@@ -241,7 +243,7 @@ export default function MapPage({
             return currentState;
           }
         }),
-      5000
+      10000
     );
   };
 

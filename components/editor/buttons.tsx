@@ -172,6 +172,7 @@ export function SaveMapButton({
                 Icon: CheckCircleIcon,
                 colour: "green",
                 show: true,
+                side: "right",
               };
               updateNotificationInfo(newState);
             }, "Editor - Save Layout")
