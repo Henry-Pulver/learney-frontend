@@ -244,7 +244,11 @@ function Navbar({
                   mapJson={mapJson}
                   onSelect={
                     pageLoaded
-                      ? (item) => window.cy.getElementById(item.id).emit("tap")
+                      ? (item) => {
+                          const concept = window.cy.getElementById(item.id);
+                          concept.emit("tap");
+                          concept.select();
+                        }
                       : () => {}
                     // TODO: When not loaded, add selected item to a queue to be
                     //  executed when cytoscape has loaded

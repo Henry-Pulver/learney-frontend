@@ -371,6 +371,7 @@ export function GetNextConceptButton({
           currentConcept
             ? buttonPressFunction(() => {
                 currentConcept.emit("tap");
+                currentConcept.select();
               }, "Go to next concept")
             : () => {}
         }

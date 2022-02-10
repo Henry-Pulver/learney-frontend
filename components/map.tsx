@@ -162,6 +162,8 @@ export default function Map({
   // Question stuff
   const [maxKnowledgeLevel, setMaxKnowledgeLevel] = useState<number>(null);
   const [knowledgeLevel, setKnowledgeLevel] = useState<number>(null);
+  const [progressModalKnowledgeLevel, setProgressModalKnowledgeLevel] =
+    useState<number>(null);
   useEffect(() => {
     // So the knowledge level isn't stuck on the previous node's value while loading
     setKnowledgeLevel(null);
@@ -244,17 +246,22 @@ export default function Map({
               conceptCompleted: Completed,
               levelsGained: number
             ) => {
+              setProgressModalKnowledgeLevel(knowledgeLevel - levelsGained);
               switch (conceptCompleted) {
                 case "completed_concept":
                   setProgressModalShown(true);
+                  setProgressModalKnowledgeLevel(null);
                   setTimeout(() => {
                     setProgressModalShown(false);
                     onTestSuccess(nodeSelected, userId, sessionId);
                     setQuestionModalShown(false);
                     setTimeout(() => {
-                      if (currentConcept) currentConcept.emit("tap");
-                    }, 500);
-                  }, 2000);
+                      if (currentConcept) {
+                        currentConcept.emit("tap");
+                        currentConcept.select();
+                      }
+                    }, 1500);
+                  }, 3000);
                   break;
                 case "doing_poorly":
                   updateNotificationInfo({
@@ -270,11 +277,15 @@ export default function Map({
                   break;
                 case "max_num_of_questions":
                   setProgressModalShown(true);
+                  setProgressModalKnowledgeLevel(null);
                   setTimeout(() => {
                     setProgressModalShown(false);
                     setQuestionModalShown(false);
                     setTimeout(() => {
-                      if (currentConcept) currentConcept.emit("tap");
+                      if (currentConcept) {
+                        currentConcept.emit("tap");
+                        currentConcept.select();
+                      }
                     }, 1500);
                   }, 3000);
                   updateNotificationInfo({
@@ -309,6 +320,7 @@ export default function Map({
                   break;
               }
               setQuestionModalShown(false);
+              setTimeout(() => setProgressModalKnowledgeLevel(null), 5000);
             }}
             knowledgeLevel={knowledgeLevel}
             setKnowledgeLevel={setKnowledgeLevel}
@@ -379,7 +391,11 @@ export default function Map({
       <ProgressModal
         progressModalOpen={progressModalShown}
         closeProgressModalOpen={() => setProgressModalShown(false)}
-        knowledgeLevel={knowledgeLevel}
+        knowledgeLevel={
+          progressModalKnowledgeLevel !== null
+            ? progressModalKnowledgeLevel
+            : knowledgeLevel
+        }
         maxKnowledgeLevel={maxKnowledgeLevel}
         conceptName={nodeSelected && nodeSelected.data().name}
       />
