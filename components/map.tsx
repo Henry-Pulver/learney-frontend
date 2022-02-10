@@ -275,8 +275,8 @@ export default function Map({
                     setQuestionModalShown(false);
                     setTimeout(() => {
                       if (currentConcept) currentConcept.emit("tap");
-                    }, 500);
-                  }, 2000);
+                    }, 1500);
+                  }, 3000);
                   updateNotificationInfo({
                     title:
                       levelsGained >= 1
