@@ -384,9 +384,9 @@ export default function Editor({
   return (
     <>
       <div
-        className={`flex flex-row items-end absolute bottom-0 left-0 m-4 disableTouchActions`}
+        className={`disableTouchActions absolute bottom-0 left-0 m-4 flex flex-row items-end`}
       >
-        <div className="block bg-white cursor-pointer rounded-lg m-1 z-20">
+        <div className="z-20 m-1 block cursor-pointer rounded-lg bg-white">
           <CursorButton
             editType={editType}
             setEditType={setEditType}
@@ -411,7 +411,7 @@ export default function Editor({
       </div>
       <div
         className={
-          "cursor-default pointer-events-none absolute bottom-5 text-center w-full text-lg text-white z-10"
+          "pointer-events-none absolute bottom-5 z-10 w-full cursor-default text-center text-lg text-white"
         }
       >
         {editType === "cursor"

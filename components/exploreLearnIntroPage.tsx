@@ -79,11 +79,11 @@ export default function ExploreLearnIntroPage({
 
   return (
     // <!-- Extra Large Modal -->
-    <div className="overflow-x-hidden overflow-y-auto fixed inset-0 z-40 justify-center items-center">
-      <div className="flex justify-center relative w-full h-full md:h-auto">
+    <div className="fixed inset-0 z-40 items-center justify-center overflow-y-auto overflow-x-hidden">
+      <div className="relative flex h-full w-full justify-center md:h-auto">
         {/* Grey out the map in the background */}
         <button
-          className="cursor-default bg-black opacity-30 w-screen h-screen absolute left-0 top-0"
+          className="absolute left-0 top-0 h-screen w-screen cursor-default bg-black opacity-30"
           onClick={
             !learnClicked
               ? buttonPressFunction(
@@ -95,7 +95,7 @@ export default function ExploreLearnIntroPage({
           }
         />
         {/* Modal content */}
-        <div className="relative bg-white max-w-2xl min-w-full md:min-w-0 min-h-full md:min-h-0 rounded-none md:rounded-xl shadow relative md:mt-20 xl:mt-28 dark:bg-gray-700">
+        <div className="relative relative min-h-full min-w-full max-w-2xl rounded-none bg-white shadow dark:bg-gray-700 md:mt-20 md:min-h-0 md:min-w-0 md:rounded-xl xl:mt-28">
           <XCloseButton
             onClick={
               !learnClicked
@@ -112,11 +112,11 @@ export default function ExploreLearnIntroPage({
           <div className="flex flex-col">
             <div className="flex flex-col items-center">
               <img
-                className="absolute sm:relative left-0 top-0 m-1 sm:mt-4 md:mt-8 xl:mt-12 h-8 sm:h-10 md:h-14 xl:h-16 w-auto"
+                className="absolute left-0 top-0 m-1 h-8 w-auto sm:relative sm:mt-4 sm:h-10 md:mt-8 md:h-14 xl:mt-12 xl:h-16"
                 src={"/images/learney_logo_256x256.png"}
                 alt="Learney"
               />
-              <h3 className="text-base md:text-3xl max-w-xxs sm:max-w-xl text-gray-700 mt-4 sm:mt-12 text-center">
+              <h3 className="mt-4 max-w-xxs text-center text-base text-gray-700 sm:mt-12 sm:max-w-xl md:text-3xl">
                 From <b>{mapName}</b>, I want to learn...
               </h3>
               {/* Search box wrapper to add red outline when  */}
@@ -124,8 +124,8 @@ export default function ExploreLearnIntroPage({
                 className={classNames(
                   learnClicked === false &&
                     Object.keys(goalsSet).length === 0 &&
-                    "ring-2 ring-offset-2 ring-red-400 rounded-full",
-                  "w-5/6 max-w-2xl z-10 mt-4 sm:mt-8"
+                    "rounded-full ring-2 ring-red-400 ring-offset-2",
+                  "z-10 mt-4 w-5/6 max-w-2xl sm:mt-8"
                 )}
               >
                 <ConceptSearchBox
@@ -153,7 +153,7 @@ export default function ExploreLearnIntroPage({
                   learnClicked === false && Object.keys(goalsSet).length === 0
                     ? "visible"
                     : "invisible",
-                  "text-red-500 text-lg font-bold mt-4"
+                  "mt-4 text-lg font-bold text-red-500"
                 )}
               >
                 Set what you want to learn
@@ -167,15 +167,15 @@ export default function ExploreLearnIntroPage({
             </div>
           </div>
           {/* FOOTER BAR */}
-          <div className="absolute bottom-0 z-50 bg-white flex w-full justify-between sm:justify-center place-content-center space-x-2 items-center p-2 sm:p-4 border-t border-gray-200 rounded-none md:rounded-b-xl dark:border-gray-600">
+          <div className="absolute bottom-0 z-50 flex w-full place-content-center items-center justify-between space-x-2 rounded-none border-t border-gray-200 bg-white p-2 dark:border-gray-600 sm:justify-center sm:p-4 md:rounded-b-xl">
             {/* EXPLORE BUTTON */}
-            <div className="relative sm:absolute sm:left-0 flex p-1 md:p-2 flex-row sm:flex-col text-gray-500">
+            <div className="relative flex flex-row p-1 text-gray-500 sm:absolute sm:left-0 sm:flex-col md:p-2">
               <div className="flex flex-row justify-center text-sm">
                 <div className="pr-1 align-middle">Or</div>
-                <p className="hidden md:flex pr-2">just</p>
+                <p className="hidden pr-2 md:flex">just</p>
               </div>
               <button
-                className="btn-3 whitespace-pre-wrap sm:whitespace-normal btn-xs md:btn-md"
+                className="btn-3 btn-xs md:btn-md whitespace-pre-wrap sm:whitespace-normal"
                 onClick={
                   !learnClicked
                     ? buttonPressFunction(
@@ -204,7 +204,7 @@ export default function ExploreLearnIntroPage({
               className={classNames(
                 learnClicked === false &&
                   Object.keys(goalsSet).length === 0 &&
-                  "ring-2 ring-offset-2 ring-red-400 focus:ring-2 focus:ring-offset-2 focus:ring-red-500",
+                  "ring-2 ring-red-400 ring-offset-2 focus:ring-2 focus:ring-red-500 focus:ring-offset-2",
                 "btn-blue btn-lg md:btn-xl"
               )}
               onClick={
@@ -247,12 +247,12 @@ function GoalsList({
   return (
     <span
       className={classNames(
-        "relative block w-10/12 overflow-auto h-28 sm:h-40 max-w-xl mt-4 mb-28 mx-12 sm:mx-60 border-2 xl:border-4 border-gray-200 border-dashed rounded-xl p-2 md:p-6 text-center focus:outline-none",
+        "focus:outline-none relative mx-12 mt-4 mb-28 block h-28 w-10/12 max-w-xl overflow-auto rounded-xl border-2 border-dashed border-gray-200 p-2 text-center sm:mx-60 sm:h-40 md:p-6 xl:border-4",
         classes
       )}
     >
       {Object.keys(goals).length !== 0 ? (
-        <div className="flex flex-row flex-wrap gap-y-0.5 sm:gap-y-1 gap-x-1">
+        <div className="flex flex-row flex-wrap gap-y-0.5 gap-x-1 sm:gap-y-1">
           {Object.keys(goals).map((goalId) => (
             <GoalListItem
               goalInfo={goalInfoFromId(goalId, mapJson)}
@@ -264,8 +264,8 @@ function GoalsList({
         </div>
       ) : (
         <>
-          <AcademicCapIcon className="mx-auto h-12 w-auto md:h-16 text-gray-300" />
-          <span className="mt-2 block text-sm lg:text-lg sm:font-medium text-gray-500">
+          <AcademicCapIcon className="mx-auto h-12 w-auto text-gray-300 md:h-16" />
+          <span className="mt-2 block text-sm text-gray-500 sm:font-medium lg:text-lg">
             Set what you want to learn
           </span>
         </>
@@ -286,7 +286,7 @@ function GoalListItem({
   return (
     <span
       style={{ backgroundColor: goalInfo.colour }}
-      className={`text-sm sm:text-lg text-gray-300 sm:font-semibold px-1.5 sm:pl-3.5 py-0.5 sm:py-1 rounded-lg flex align-middle`}
+      className={`flex rounded-lg px-1.5 py-0.5 align-middle text-sm text-gray-300 sm:py-1 sm:pl-3.5 sm:text-lg sm:font-semibold`}
     >
       {goalInfo.name}
       <button
@@ -295,7 +295,7 @@ function GoalListItem({
           `Explore Learn Intro Page Remove Goal Selected: ${goalInfo.name}`
         )}
       >
-        <XIcon className="ml-0.5 sm:ml-1 h-5 sm:h-6 w-5 sm:w-6 text-gray-400 hover:text-gray-500" />
+        <XIcon className="ml-0.5 h-5 w-5 text-gray-400 hover:text-gray-500 sm:ml-1 sm:h-6 sm:w-6" />
       </button>
     </span>
   );

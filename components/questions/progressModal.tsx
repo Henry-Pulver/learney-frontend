@@ -22,10 +22,10 @@ export function ProgressModal(props: {
       contentClassName="md:max-w-3xl"
     >
       <div className="sm:flex sm:items-start">
-        <div className="text-blue-800 mx-auto shrink-0 flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-blue-100 sm:mx-0">
+        <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-800 sm:mx-0 sm:h-16 sm:w-16">
           <TrophyIcon />
         </div>
-        <div className="md:my-auto mt-3 text-center sm:ml-4 sm:text-left">
+        <div className="mt-3 text-center sm:ml-4 sm:text-left md:my-auto">
           <Dialog.Title as="h3" className="text-lg leading-6 text-gray-900">
             Your Progress on &quot;<b>{props.conceptName}</b>&quot;
           </Dialog.Title>
@@ -53,14 +53,14 @@ export function ProgressModal(props: {
                   props.maxKnowledgeLevel === 3 && "w-28",
                   props.maxKnowledgeLevel === 4 && "w-20",
                   props.maxKnowledgeLevel === 5 && "w-14",
-                  "h-1 flex items-center bg-gray-200"
+                  "flex h-1 items-center bg-gray-200"
                 )}
               >
                 <div
                   className={classNames(
                     props.knowledgeLevel > level + 1 && "w-full",
                     props.knowledgeLevel <= level + 1 && "rounded-r-full",
-                    "bg-green-600 h-1 duration-1000 transition-all ease-in-out"
+                    "h-1 bg-green-600 transition-all duration-1000 ease-in-out"
                   )}
                   style={
                     props.knowledgeLevel &&
@@ -85,12 +85,12 @@ export function ProgressModal(props: {
           </div>
         ))}
       </div>
-      <div className="w-full flex flex-row justify-center mt-8 mb-2 text-lg font-bold">
+      <div className="mt-8 mb-2 flex w-full flex-row justify-center text-lg font-bold">
         {props.knowledgeLevel > 1 ? (
           <>
-            <p className="text-2xl leading-5 px-2">🎉</p>
+            <p className="px-2 text-2xl leading-5">🎉</p>
             You&apos;ve completed Level {Math.floor(props.knowledgeLevel)}{" "}
-            <p className="text-2xl leading-5 px-2">🎉</p>
+            <p className="px-2 text-2xl leading-5">🎉</p>
           </>
         ) : (
           "Answer questions to reach Level 1!"

@@ -177,7 +177,7 @@ export default function QuestionModal({
           isCorrectArray(answersGiven, questionSet)[currentQidx]
         ) ? (
           <>
-            <div className="w-full flex flex-col">
+            <div className="flex w-full flex-col">
               <ProgressDots
                 questionSet={questionSet.questions}
                 answersGiven={answersGiven}
@@ -198,8 +198,8 @@ export default function QuestionModal({
                 {/*>*/}
                 {/*  {`Question ${currentQidx + 1}`}*/}
                 {/*</Dialog.Title>*/}
-                <div className="w-full flex flex-row justify-center my-8">
-                  <div className="max-w-lg text-black text-lg">
+                <div className="my-8 flex w-full flex-row justify-center">
+                  <div className="max-w-lg text-lg text-black">
                     <QuestionText
                       text={
                         questionSet.questions.length > currentQidx &&
@@ -208,7 +208,7 @@ export default function QuestionModal({
                     />
                   </div>
                 </div>
-                <div className="w-full flex justify-center">
+                <div className="flex w-full justify-center">
                   <AnswerOptions
                     answerArray={
                       questionSet.questions[currentQidx]
@@ -231,7 +231,7 @@ export default function QuestionModal({
                 !isCorrectArray(answersGiven, questionSet)[currentQidx] && // Check that the answer is incorrect
                 questionSet.questions[currentQidx].feedback && ( // Check that there is some feedback
                   <div className="flex justify-center">
-                    <div className="bg-gray-200 text-black px-6 py-4 my-6 rounded text-center max-w-xl">
+                    <div className="my-6 max-w-xl rounded bg-gray-200 px-6 py-4 text-center text-black">
                       {/*<h3 className="text-lg font-semibold">Feedback</h3>*/}
                       <QuestionText
                         text={questionSet.questions[currentQidx].feedback}
@@ -241,7 +241,7 @@ export default function QuestionModal({
                 )}
               {/*NEXT QUESTION BUTTON*/}
               <div className="flex justify-center">
-                <div className="mt-5 sm:mt-6 flex justify-between w-full max-w-lg">
+                <div className="mt-5 flex w-full max-w-lg justify-between sm:mt-6">
                   <ReportQuestionButton
                     question={questionSet.questions[currentQidx]}
                     buttonPressFunction={buttonPressFunction}
@@ -252,9 +252,9 @@ export default function QuestionModal({
                   <button
                     className={classNames(
                       answersGiven.length > currentQidx
-                        ? "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                        : "bg-gray-300 cursor-default",
-                      "inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
+                        ? "cursor-pointer bg-blue-600 hover:bg-blue-700"
+                        : "cursor-default bg-gray-300",
+                      "focus:outline-none inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm"
                     )}
                     onClick={
                       answersGiven.length <= currentQidx || // Deactivated as question not yet answered
@@ -277,14 +277,14 @@ export default function QuestionModal({
           </>
         ) : questionSet.completed &&
           isCorrectArray(answersGiven, questionSet)[currentQidx] ? (
-          <div className="w-full h-96 grid justify-center content-center">
-            <div className="font-bold text-4xl text-white">
+          <div className="grid h-96 w-full content-center justify-center">
+            <div className="text-4xl font-bold text-white">
               🎉 Congratulations! 🎉
             </div>
             <div className="text-2xl text-white">You completed the quiz.</div>
           </div>
         ) : (
-          <div className="w-full h-96 grid justify-center content-center">
+          <div className="grid h-96 w-full content-center justify-center">
             <LoadingSpinner classes="w-20 h-20" />
           </div>
         )}
@@ -352,7 +352,7 @@ function AnswerOptions({
   onAnswerSelected: (answer: string) => void;
 }) {
   return (
-    <div className="w-full max-w-md grid grid-cols-2 gap-3 mt-5 sm:mt-2 sm:grid-flow-row-dense">
+    <div className="mt-5 grid w-full max-w-md grid-cols-2 gap-3 sm:mt-2 sm:grid-flow-row-dense">
       {answerArray.map((answer) => (
         <AnswerOption
           key={answer}
@@ -381,17 +381,17 @@ function AnswerOption({
     <span
       className={classNames(
         // Not answered
-        !answerGiven ? "border-gray-300 cursor-pointer" : "cursor-default",
+        !answerGiven ? "cursor-pointer border-gray-300" : "cursor-default",
         // Answered incorrectly, gave a different answer & this is correct
         answerGiven &&
           answerGiven !== correctAnswer &&
           answerText === correctAnswer &&
-          "outline-none ring-1 ring-green-500 border-green-500",
+          "outline-none border-green-500 ring-1 ring-green-500",
         // Answered incorrectly & this is incorrect
         answerGiven &&
           answerGiven !== correctAnswer &&
           answerText !== correctAnswer &&
-          "outline-none ring-1 ring-red-500 border-red-500",
+          "outline-none border-red-500 ring-1 ring-red-500",
         // Gave different answer / unanswered
         answerGiven !== answerText && "bg-white hover:bg-gray-50",
         // Gave this answer & correct
@@ -402,7 +402,7 @@ function AnswerOption({
         answerGiven === answerText &&
           answerGiven !== correctAnswer &&
           "bg-red-500",
-        "z-0 shadow-sm flex justify-around inline-flex justify-center items-center px-4 py-3 border rounded-md text-sm font-medium text-gray-700 "
+        "z-0 flex inline-flex items-center justify-center justify-around rounded-md border px-4 py-3 text-sm font-medium text-gray-700 shadow-sm "
       )}
       onClick={
         answerGiven === null ? () => onAnswerSelected(answerText) : () => {}

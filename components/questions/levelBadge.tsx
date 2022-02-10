@@ -34,7 +34,7 @@ export default function LevelBadge(props: {
           props.achieved && props.knowledgeLevel === 4 && "text-purple-600",
           props.achieved && props.knowledgeLevel === 5 && "text-pink-600",
           props.badgeClassName,
-          "rounded-full h-8 w-8 md:h-10 md:w-10"
+          "h-8 w-8 rounded-full md:h-10 md:w-10"
         )}
       />
       <p
@@ -56,7 +56,7 @@ export default function LevelBadge(props: {
             props.knowledgeLevel === 5 &&
             "bg-pink-100 text-pink-800",
           props.textClassName,
-          "px-1 rounded-full whitespace-nowrap"
+          "whitespace-nowrap rounded-full px-1"
         )}
       >
         {`Level ${props.knowledgeLevel}`}

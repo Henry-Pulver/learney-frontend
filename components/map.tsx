@@ -207,12 +207,12 @@ export default function Map({
       });
   }, []);
   return (
-    <div className="flex flex-column sm:flex-row w-full h-excl-toolbar">
+    <div className="flex-column h-excl-toolbar flex w-full sm:flex-row">
       <div
         className={classNames(
           nodeSelected !== undefined &&
             "w-full sm:w-[calc(100vw-27rem)] lg:w-[calc(100vw-42rem)]",
-          "relative h-excl-toolbar w-full"
+          "h-excl-toolbar relative w-full"
         )}
       >
         {!nodeSelected && showTitle && (
@@ -230,7 +230,7 @@ export default function Map({
             editMap && editType === "addEdges" && "cursor-crosshair",
             editMap && editType === "delete" && "cursor-pointer",
             !editMap && hoverNode && "cursor-pointer",
-            "z-0 w-full bg-gray-900 h-excl-toolbar",
+            "h-excl-toolbar z-0 w-full bg-gray-900",
             nodeSelected !== undefined &&
               "w-0 sm:w-[calc(100vw-27rem)] lg:w-[calc(100vw-42rem)]"
           )}
@@ -323,7 +323,7 @@ export default function Map({
         <div
           className={classNames(
             !editMap && data && nodeSelected && "hidden sm:flex",
-            "flex flex-col md:flex-row items-end gap-4 absolute bottom-0 right-0 m-4"
+            "absolute bottom-0 right-0 m-4 flex flex-col items-end gap-4 md:flex-row"
           )}
         >
           {!editMap && (

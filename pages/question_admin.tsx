@@ -63,7 +63,7 @@ export default function AdminPageForQuestions({
     ([topic, nodes]: [topic: string, nodes: Array<NodeDefinition>]) => {
       components.push(
         <div key={topic}>
-          <h2 className="text-xl font-bold text-center">{topic}</h2>
+          <h2 className="text-center text-xl font-bold">{topic}</h2>
         </div>
       );
       nodes.forEach((concept) => {
@@ -82,8 +82,8 @@ export default function AdminPageForQuestions({
   );
 
   return (
-    <div className="relative w-full h-full overflow-y-auto">
-      <div className="px-10 pt-5 flex justify-around">
+    <div className="relative h-full w-full overflow-y-auto">
+      <div className="flex justify-around px-10 pt-5">
         <UserDropdown
           userChosen={userChosen}
           setuserChosen={setUserChosen}
@@ -92,10 +92,10 @@ export default function AdminPageForQuestions({
         <button
           className={classNames(
             (userChosen.id === "" || status !== "pre-click") &&
-              "px-10 bg-red-600 hover:bg-red-700 cursor-not-allowed",
+              "cursor-not-allowed bg-red-600 px-10 hover:bg-red-700",
             status === "success" &&
-              "px-10 bg-green-600 hover:bg-green-700 cursor-not-allowed",
-            "px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg justify-self-end"
+              "cursor-not-allowed bg-green-600 px-10 hover:bg-green-700",
+            "justify-self-end rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
           )}
           onClick={
             userChosen.id !== "" && status === "pre-click"
@@ -189,7 +189,7 @@ function AdminConceptElement(props: {
   return (
     <div className="border">
       <div className="flex flex-row items-center justify-between">
-        <h3 className="text-lg font-bold w-1/2">
+        <h3 className="w-1/2 text-lg font-bold">
           {props.conceptJson.data.name}
         </h3>
         <form>
@@ -263,7 +263,7 @@ export function UserDropdown(props: {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500">
+        <Menu.Button className="focus:outline-none inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100">
           <div
             className={classNames(
               props.userChosen ? "bg-gray-100 text-gray-900" : "text-gray-700",
@@ -272,7 +272,7 @@ export function UserDropdown(props: {
           >
             <img
               src={props.userChosen.picture}
-              className="rounded-full w-10 h-10"
+              className="h-10 w-10 rounded-full"
             />
             {props.userChosen.name}
           </div>
@@ -289,7 +289,7 @@ export function UserDropdown(props: {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Menu.Items className="focus:outline-none absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
           <div className="py-1">
             {props.usersJson.map((userInfo) => (
               <Menu.Item key={userInfo.id}>
@@ -297,13 +297,13 @@ export function UserDropdown(props: {
                   <div
                     className={classNames(
                       active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                      "flex flex-row block px-4 py-2 text-sm"
+                      "block flex flex-row px-4 py-2 text-sm"
                     )}
                     onClick={() => props.setuserChosen({ ...userInfo })}
                   >
                     <img
                       src={userInfo.picture}
-                      className="rounded-full w-10 h-10 mr-2"
+                      className="mr-2 h-10 w-10 rounded-full"
                     />
                     {userInfo.name}
                   </div>

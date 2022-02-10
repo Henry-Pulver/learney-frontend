@@ -8,8 +8,8 @@ export function LevelsProgressBar(props: {
   onClick?: () => void;
 }) {
   return (
-    <div className="max-w-xl w-full grid grid-cols-7 sm:grid-cols-8 gap-4 sm:gap-0 text-sm items-center text-gray-900 px-2">
-      <div className="sm:col-start-2 col-span-6">
+    <div className="grid w-full max-w-xl grid-cols-7 items-center gap-4 px-2 text-sm text-gray-900 sm:grid-cols-8 sm:gap-0">
+      <div className="col-span-6 sm:col-start-2">
         <ProgressBar
           colour="green"
           className="cursor-pointer"
@@ -51,7 +51,7 @@ export function ProgressBar(props: {
     <div
       className={classNames(
         props.className,
-        "w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700"
+        "h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700"
       )}
       onClick={props.onClick ? props.onClick : () => {}}
     >

@@ -37,7 +37,7 @@ export function IconToggleButtonWithCheckbox({
   colour: "blue" | "green" | "red";
 }) {
   return (
-    <span className="relative group z-0 inline-flex items-center shadow-sm rounded-md">
+    <span className="group relative z-0 inline-flex items-center rounded-md shadow-sm">
       <button
         onClick={loading || disabled ? () => {} : onCheck}
         className={classNames(
@@ -60,8 +60,8 @@ export function IconToggleButtonWithCheckbox({
             disabled={disabled}
             onChange={() => {}}
             className={classNames(
-              checked && "ring-white ring-2",
-              disabled ? "text-gray-300 cursor-default" : "cursor-pointer",
+              checked && "ring-2 ring-white",
+              disabled ? "cursor-default text-gray-300" : "cursor-pointer",
               !disabled &&
                 colour === "blue" &&
                 "text-blue-600 group-hover:text-blue-500",
@@ -71,7 +71,7 @@ export function IconToggleButtonWithCheckbox({
               !disabled &&
                 colour === "red" &&
                 "text-red-600 group-hover:text-red-500",
-              "h-4 w-4 ml-2 border-gray-300 rounded select-none"
+              "ml-2 h-4 w-4 select-none rounded border-gray-300"
             )}
           />
         )}
@@ -90,7 +90,7 @@ export function IconButtonTippy(props) {
       maxWidth={"12em"}
       content={props.content}
       disabled={props.disabled === true}
-      className="invisible lg:visible text-center"
+      className="invisible text-center lg:visible"
     >
       {props.children}
     </Tippy>
@@ -111,13 +111,13 @@ export function FeedBackButton({ buttonPressFunction }) {
           "Give Feedback"
         )}
       >
-        <div className="block lg:hidden px-2 sm:px-4 text-black">
+        <div className="block px-2 text-black sm:px-4 lg:hidden">
           Give us your feedback!
         </div>
         <span className="sr-only">Give Feedback</span>
         <div className="relative h-7 w-7">
-          <ChatIcon className="absolute h-6 w-6 right-0.5 top-0.5" />
-          <ThumbUpIcon className="bg-white rounded-full absolute h-4 w-4 left-4 bottom-3.5" />
+          <ChatIcon className="absolute right-0.5 top-0.5 h-6 w-6" />
+          <ThumbUpIcon className="absolute left-4 bottom-3.5 h-4 w-4 rounded-full bg-white" />
         </div>
       </button>
     </IconButtonTippy>
@@ -136,7 +136,7 @@ export function SlackButton({ buttonPressFunction }) {
           );
         }, "Join Slack")}
       >
-        <div className="block lg:hidden px-2 sm:px-4 text-black">
+        <div className="block px-2 text-black sm:px-4 lg:hidden">
           Say Hi in our Slack!
         </div>
         <span className="sr-only">Join Slack</span>
@@ -207,7 +207,7 @@ export function ShareCurrentPosition({
         maxWidth={"12em"}
         visible={!!copiedQueryParams}
         content={"Link copied!"}
-        className={"invisible lg:visible text-center"}
+        className={"invisible text-center lg:visible"}
       >
         <button
           onClick={
@@ -229,7 +229,7 @@ export function ShareCurrentPosition({
               "cursor-default lg:hover:text-gray-400 lg:hover:shadow-sm"
           )}
         >
-          <div className="block lg:hidden px-2 sm:px-4 text-black">
+          <div className="block px-2 text-black sm:px-4 lg:hidden">
             {copiedQueryParams ? "Link copied!" : "Copy link to this map view"}
           </div>
           <span className="sr-only">Copy link to map view</span>
@@ -250,11 +250,11 @@ export function MakeSuggestionIconButton({ buttonPressFunction, userEmail }) {
         )}
         className="mobile-icon-button lg:gray-icon-btn"
       >
-        <div className="block lg:hidden px-2 sm:px-4 text-black">
+        <div className="block px-2 text-black sm:px-4 lg:hidden">
           Suggest concepts or content
         </div>
         <span className="sr-only">Make suggestion</span>
-        <LightBulbIcon className="w-7 h-7" />
+        <LightBulbIcon className="h-7 w-7" />
       </button>
     </IconButtonTippy>
   );
@@ -315,7 +315,7 @@ export function ResetProgressIconButton({
       <IconButtonTippy content={"Reset your progress"} placement={"top"}>
         <button onClick={() => setModalShown(true)} className="gray-icon-btn">
           <span className="sr-only">Reset your progress</span>
-          <TrashIcon className="w-7 h-7" />
+          <TrashIcon className="h-7 w-7" />
         </button>
       </IconButtonTippy>
       <AreYouSureModal

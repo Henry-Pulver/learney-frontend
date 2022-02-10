@@ -20,7 +20,7 @@ export default function Modal(props: {
         as="div"
         className={classNames(
           props.dialogClassName,
-          "fixed z-10 inset-0 overflow-y-auto"
+          "fixed inset-0 z-10 overflow-y-auto"
         )}
         initialFocus={props.initialFocus}
         onClose={props.setClosed}
@@ -28,7 +28,7 @@ export default function Modal(props: {
         <div
           className={classNames(
             props.modalClassName,
-            "flex items-end justify-center min-h-screen pt-4 px-2 pb-20 text-center sm:block sm:p-0"
+            "flex min-h-screen items-end justify-center px-2 pt-4 pb-20 text-center sm:block sm:p-0"
           )}
         >
           <Transition.Child
@@ -45,7 +45,7 @@ export default function Modal(props: {
 
           {/* This element is to trick the browser into centering the modal contents. */}
           <span
-            className="hidden sm:inline-block sm:align-middle sm:h-screen"
+            className="hidden sm:inline-block sm:h-screen sm:align-middle"
             aria-hidden="true"
           >
             &#8203;
@@ -62,7 +62,7 @@ export default function Modal(props: {
             <div
               className={classNames(
                 props.contentClassName,
-                "inline-block text-center align-bottom sm:align-middle bg-white rounded-lg p-4 sm:p-6 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full"
+                "inline-block transform overflow-hidden rounded-lg bg-white p-4 text-left text-center align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 sm:align-middle"
               )}
             >
               {props.children}
@@ -89,7 +89,7 @@ export function NotFullScreenModal(props: {
         <div
           className={classNames(
             props.modalClassName,
-            "flex items-end justify-center h-excl-toolbar lg:pt-2 lg:px-2 lg:pb-2 text-center sm:block sm:p-0"
+            "h-excl-toolbar flex items-end justify-center text-center sm:block sm:p-0 lg:px-2 lg:pt-2 lg:pb-2"
           )}
         >
           {/* Grey background covering! */}
@@ -103,7 +103,7 @@ export function NotFullScreenModal(props: {
             leaveTo="opacity-0"
           >
             <div
-              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity min-h-screen"
+              className="fixed inset-0 min-h-screen bg-gray-500 bg-opacity-75 transition-opacity"
               onClick={props.setClosed}
             />
           </Transition.Child>
@@ -111,7 +111,7 @@ export function NotFullScreenModal(props: {
           {/* Modal itself, containing the content */}
           <Transition.Child
             // as={Fragment}
-            className="flex w-full h-full flex-col justify-center place-items-center"
+            className="flex h-full w-full flex-col place-items-center justify-center"
             enter="ease-out duration-300"
             enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -122,7 +122,7 @@ export function NotFullScreenModal(props: {
             <div
               className={classNames(
                 props.contentClassName,
-                "inline-block text-center align-bottom sm:align-middle overflow-y-auto bg-white lg:rounded-lg p-4 sm:p-6 text-left overflow-hidden shadow-xl transform transition-all lg:my-4 sm:max-w-xl w-full"
+                "inline-block w-full transform overflow-hidden overflow-y-auto bg-white p-4 text-left text-center align-bottom shadow-xl transition-all sm:max-w-xl sm:p-6 sm:align-middle lg:my-4 lg:rounded-lg"
               )}
             >
               {props.children}
@@ -156,7 +156,7 @@ export function AreYouSureModal(props: {
       modalClassName=""
     >
       <div className="sm:flex sm:items-start">
-        <div className="mx-auto shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+        <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
           <ExclamationIcon
             className="h-6 w-6 text-red-600"
             aria-hidden="true"
@@ -166,7 +166,7 @@ export function AreYouSureModal(props: {
         <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
           <Dialog.Title
             as="h3"
-            className="text-lg leading-6 font-medium text-gray-900"
+            className="text-lg font-medium leading-6 text-gray-900"
           >
             {props.titleText}
           </Dialog.Title>
@@ -178,7 +178,7 @@ export function AreYouSureModal(props: {
       <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
         <button
           type="button"
-          className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+          className="focus:outline-none inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
           onClick={() => {
             props.actionButtonFunction();
             props.setModalClosed();
@@ -188,7 +188,7 @@ export function AreYouSureModal(props: {
         </button>
         <button
           type="button"
-          className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+          className="focus:outline-none mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
           onClick={() => props.setModalClosed()}
         >
           Cancel

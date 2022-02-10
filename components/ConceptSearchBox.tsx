@@ -44,7 +44,7 @@ export const ConceptSearchBox = ({
         <div className="flex justify-between align-middle">
           <p className="text-xs sm:text-lg">{conceptName}</p>
           <p
-            className="absolute right-1 text-gray-300 px-2.5 py-0.5 hidden sm:block text-base rounded-lg"
+            className="absolute right-1 hidden rounded-lg px-2.5 py-0.5 text-base text-gray-300 sm:block"
             style={{ backgroundColor: `${topicData.colour}` }}
           >
             {itemConceptData.parent}

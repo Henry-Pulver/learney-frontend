@@ -14,7 +14,7 @@ export default function Overlay(props: {
       <div
         className={classNames(
           props.className,
-          "fixed right-0 bottom-0 lg:relative shadow-md w-full sm:w-108 lg:w-168 flex overflow-hidden h-excl-toolbar z-0"
+          "h-excl-toolbar fixed right-0 bottom-0 z-0 flex w-full overflow-hidden shadow-md sm:w-108 lg:relative lg:w-168"
         )}
       >
         <Transition.Child
@@ -26,9 +26,9 @@ export default function Overlay(props: {
           leaveFrom="translate-y-0 sm:translate-x-0"
           leaveTo="translate-y-full sm:translate-x-full"
         >
-          <div className="relative flex flex-col w-full sm:py-6 bg-white shadow-xl overflow-y-hidden">
+          <div className="relative flex w-full flex-col overflow-y-hidden bg-white shadow-xl sm:py-6">
             <XCloseButton onClick={props.hide} visibleOnMobile={true} />
-            <div className="mt-4 sm:mt-6 flex-1 sm:px-2">{props.children}</div>
+            <div className="mt-4 flex-1 sm:mt-6 sm:px-2">{props.children}</div>
           </div>
         </Transition.Child>
       </div>

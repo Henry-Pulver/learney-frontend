@@ -218,17 +218,17 @@ function Navbar({
       >
         {({ open }) => (
           <>
-            <div className="max-w-full mx-auto px-2 sm:px-4 lg:px-4">
+            <div className="mx-auto max-w-full px-2 sm:px-4 lg:px-4">
               <div className="relative flex justify-evenly lg:gap-x-3">
-                <div className="flex flex-none md:absolute md:left-0 md:inset-y-0 lg:static xl:col-span-2">
+                <div className="flex flex-none md:absolute md:inset-y-0 md:left-0 lg:static xl:col-span-2">
                   <div className="group flex items-center">
                     <img
-                      className="h-10 w-auto block group-hover:hidden"
+                      className="block h-10 w-auto group-hover:hidden"
                       src="/images/learney_logo_256x256.png"
                       alt="Learney"
                     />
                     <img
-                      className="h-10 w-auto hidden group-hover:block"
+                      className="hidden h-10 w-auto group-hover:block"
                       src="/learney_logo_emoji_size.gif"
                       alt="Learney"
                     />
@@ -262,9 +262,9 @@ function Navbar({
                     buttonPressFunction={buttonPressFunction}
                   />
                 </div>
-                <div className="flex items-center md:absolute md:right-0 md:inset-y-0 lg:hidden">
+                <div className="flex items-center md:absolute md:inset-y-0 md:right-0 lg:hidden">
                   {/* Mobile menu button */}
-                  <Popover.Button className="-mx-1 rounded-md p-2 inline-flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+                  <Popover.Button className="focus:outline-none -mx-1 inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-blue-500">
                     <span className="sr-only">Open menu</span>
                     {open ? (
                       <XIcon className="block h-6 w-6" aria-hidden="true" />
@@ -279,7 +279,7 @@ function Navbar({
             <Popover.Panel as="nav" className="lg:hidden" aria-label="Global">
               <div className="border-t border-gray-200 pt-4 pb-3">
                 {user !== undefined ? (
-                  <div className="flex flex-row justify-between items-center max-w-3xl mx-auto px-4 sm:px-6">
+                  <div className="mx-auto flex max-w-3xl flex-row items-center justify-between px-4 sm:px-6">
                     <div className="flex flex-row">
                       <div className="shrink-0">
                         <img
@@ -304,7 +304,7 @@ function Navbar({
                 ) : (
                   <LogInIconButton buttonPressFunction={buttonPressFunction} />
                 )}
-                <div className="mt-3 max-w-3xl mx-auto px-2 space-y-1 sm:px-4">
+                <div className="mx-auto mt-3 max-w-3xl space-y-1 px-2 sm:px-4">
                   {leftSideButtons
                     .concat(rightSideButtons)
                     .map((button, idx) => {

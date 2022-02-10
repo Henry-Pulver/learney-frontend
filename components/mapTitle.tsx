@@ -18,7 +18,7 @@ export default function MapTitle({
   return (
     <div
       className={classNames(
-        "absolute z-10 overflow-y-auto left-0 sm:left-8 top-0 sm:top-6 bg-white sm:rounded-lg border-t border-t-gray-300 max-w-xl px-4 py-2",
+        "absolute left-0 top-0 z-10 max-w-xl overflow-y-auto border-t border-t-gray-300 bg-white px-4 py-2 sm:left-8 sm:top-6 sm:rounded-lg",
         descriptionExpanded && "h-excl-toolbar sm:h-[auto]"
       )}
       onClick={
@@ -31,15 +31,15 @@ export default function MapTitle({
       }
     >
       <div className="relative">
-        <div className="text-2xl sm:text-3xl text-gray-900 font-semibold pr-6 sm:pr-0">
+        <div className="pr-6 text-2xl font-semibold text-gray-900 sm:pr-0 sm:text-3xl">
           {title}
         </div>
         {description.length > 0 && (
           <div
             className={classNames(
-              "text-lg text-gray-700 py-1 whitespace-pre-line",
+              "whitespace-pre-line py-1 text-lg text-gray-700",
               !descriptionExpanded &&
-                "overflow-hidden max-h-0 sm:max-h-8 whitespace-nowrap overflow-ellipsis pr-8"
+                "max-h-0 overflow-hidden overflow-ellipsis whitespace-nowrap pr-8 sm:max-h-8"
             )}
           >
             {description}
@@ -48,7 +48,7 @@ export default function MapTitle({
         {description.length > 64 && (
           <div className="absolute right-0 bottom-0">
             <button
-              className="gray-icon-btn-no-padding rounded-xl text-gray-500 hover:text-gray-600 z-20"
+              className="gray-icon-btn-no-padding z-20 rounded-xl text-gray-500 hover:text-gray-600"
               onClick={buttonPressFunction((e) => {
                 e.stopPropagation(); // Stops parent div's onClick function from being called!
                 setDescriptionExpanded((expanded) => !expanded);

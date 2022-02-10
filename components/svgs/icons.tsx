@@ -31,7 +31,7 @@ export function TargetFinderIcon({ classes }: { classes: string }) {
 export function NextArrow() {
   return (
     <svg
-      className="w-5 h-5 ml-1"
+      className="ml-1 h-5 w-5"
       fill="currentColor"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +48,7 @@ export function NextArrow() {
 export function PrevArrow() {
   return (
     <svg
-      className="w-5 h-5 mr-1"
+      className="mr-1 h-5 w-5"
       fill="currentColor"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
