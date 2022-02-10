@@ -4,18 +4,19 @@ import { CheckIcon, XIcon } from "@heroicons/react/outline";
 import { QuestionArray, AnswersGiven } from "./types";
 
 export function ProgressDots({
-  questionSet: questionArray,
+  questionArray,
   answersGiven,
   currentQIndex,
   currentStepRef,
   maxSteps,
 }: {
-  questionSet: QuestionArray;
+  questionArray: QuestionArray;
   answersGiven: AnswersGiven;
   currentQIndex: number;
   currentStepRef;
   maxSteps: number;
 }) {
+  console.log("Q index", currentQIndex);
   if (questionArray.length < 1) return <></>;
   else {
     return (

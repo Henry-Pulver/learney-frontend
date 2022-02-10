@@ -61,9 +61,7 @@ export function Notification({
                     />
                   </div>
                   <div className="ml-2 w-0 flex-1 pt-0.5">
-                    <p className="text-md text-gray-900">
-                      {info.title}
-                    </p>
+                    <p className="text-md text-gray-900">{info.title}</p>
                     {info.message && (
                       <p className="mt-1 text-sm text-gray-500">
                         {info.message}

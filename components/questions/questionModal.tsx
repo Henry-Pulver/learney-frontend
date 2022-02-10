@@ -45,12 +45,18 @@ export default function QuestionModal({
   const [questionSet, setQuestionSet] = useState<QuestionSet>({
     ...emptyQuestionSet,
   });
+  const questionIds = [];
+  questionSet.questions.forEach((question) => {
+    questionIds.push(question.id);
+  });
+  console.log("questionIds", questionIds);
   const [nextQuestionPressed, setNextQuestionPressed] =
     useState<boolean>(false);
   const [answersGiven, setAnswersGiven] = useState<AnswersGiven>([]);
   const [currentQidx, setCurrentQidx] = useState<number>(0);
 
   const getNewQuestionSet = async () => {
+    setNextQuestionPressed(false); // if this is true, it'll jump currentQidx to 1 when questionSet is loaded
     const questionBatchResponse = await fetch(
       `${backendUrl}/api/v0/question_batch?` +
         new URLSearchParams({
@@ -135,6 +141,10 @@ export default function QuestionModal({
       return;
     } else {
       if (responseJson.completed) {
+        console.log(
+          "gained",
+          responseJson.level - questionSet.initial_knowledge_level
+        );
         onCompletion(
           responseJson.completed,
           responseJson.level - questionSet.initial_knowledge_level
@@ -144,11 +154,17 @@ export default function QuestionModal({
       }
       setKnowledgeLevel(responseJson.level);
       if (responseJson.next_questions.length > 0) {
-        const questions = [...questionSet.questions];
-        questions.push(...responseJson.next_questions);
         setQuestionSet((prevQuestionSet) => ({
           ...prevQuestionSet,
-          questions: [...questions],
+          questions: [
+            ...prevQuestionSet.questions,
+            ...responseJson.next_questions,
+          ],
+          completed: responseJson.completed,
+        }));
+      } else {
+        setQuestionSet((prevQuestionSet) => ({
+          ...prevQuestionSet,
           completed: responseJson.completed,
         }));
       }
@@ -179,7 +195,7 @@ export default function QuestionModal({
           <>
             <div className="flex w-full flex-col">
               <ProgressDots
-                questionSet={questionSet.questions}
+                questionArray={questionSet.questions}
                 answersGiven={answersGiven}
                 currentQIndex={currentQidx}
                 currentStepRef={currentStepRef}
@@ -264,8 +280,11 @@ export default function QuestionModal({
                         : () => setNextQuestionPressed(true)
                     }
                   >
-                    {nextQuestionPressed || questionSet.completed ? (
+                    {nextQuestionPressed ? (
                       <LoadingSpinner classes="w-5 h-5 py-0.5 mx-9" />
+                    ) : questionSet.max_num_questions ===
+                      answersGiven.length ? (
+                      "Complete"
                     ) : (
                       "Next Question"
                     )}
