@@ -55,13 +55,13 @@ export function Notification({
                         info.colour === "green" && "text-green-400",
                         info.colour === "red" && "text-red-400",
                         info.colour === "orange" && "bg-orange-400",
-                        "h-6 w-6"
+                        "h-8 w-8"
                       )}
                       aria-hidden="true"
                     />
                   </div>
-                  <div className="ml-3 w-0 flex-1 pt-0.5">
-                    <p className="text-sm font-medium text-gray-900">
+                  <div className="ml-2 w-0 flex-1 pt-0.5">
+                    <p className="text-md text-gray-900">
                       {info.title}
                     </p>
                     {info.message && (
