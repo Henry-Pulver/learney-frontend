@@ -84,8 +84,17 @@ export default function QuestionModal({
   }, [modalShown]);
 
   useEffect(() => {
-    console.log("Num questions", questionSet.questions.length);
-    if (nextQuestionPressed && questionSet.questions.length - 1 > currentQidx) {
+    console.log(
+      "Num questions loaded",
+      questionSet.questions.length,
+      "Num questions asked",
+      answersGiven.length
+    );
+    if (
+      nextQuestionPressed &&
+      questionSet.questions.length - 1 > currentQidx &&
+      questionSet.max_num_questions - 1 > currentQidx
+    ) {
       setNextQuestionPressed(false);
       setCurrentQidx((prevState) => prevState + 1);
     }
@@ -100,8 +109,6 @@ export default function QuestionModal({
 
   const onAnswerClick = async (answerText: string) => {
     setAnswersGiven([...answersGiven, answerText]);
-    console.log(questionSet.questions[currentQidx]);
-    console.log(questionSet.questions[currentQidx].id);
     // Tell the backend about the answer given
     const questionResponse = await fetch(
       `${backendUrl}/api/v0/question_response`,
@@ -125,7 +132,6 @@ export default function QuestionModal({
       backendUrl
     )) as AnswerResponse;
     if ("response" in responseJson) {
-      console.log(responseJson.response);
       return;
     } else {
       if (responseJson.completed) {
