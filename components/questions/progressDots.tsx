@@ -21,14 +21,14 @@ export function ProgressDots({
     return (
       <nav
         aria-label="Progress"
-        className="my-4 flex items-center justify-center w-full"
+        className="my-4 flex w-full items-center justify-center"
       >
         <ol role="list" className="flex justify-center">
           {/*@ts-ignore*/}
           {[...Array(maxSteps).keys()].map((questionIdx) => (
             <li
               key={questionIdx}
-              className="flex justify-center items-center place-items-center"
+              className="flex place-items-center items-center justify-center"
             >
               {currentQIndex >= questionIdx ? (
                 <PastOrCurrentProgressDot
@@ -40,11 +40,11 @@ export function ProgressDots({
                       : null
                   }
                   currentStepRef={currentStepRef}
-                  className={maxSteps <= 5 ? "w-8 h-8" : "w-6 h-6"}
+                  className={maxSteps <= 5 ? "h-8 w-8" : "h-6 w-6"}
                 />
               ) : (
                 <FutureProgressDot
-                  className={maxSteps <= 5 ? "w-8 h-8" : "w-6 h-6"}
+                  className={maxSteps <= 5 ? "h-8 w-8" : "h-6 w-6"}
                 />
               )}
               {questionIdx < maxSteps - 1 && (
@@ -56,7 +56,7 @@ export function ProgressDots({
                     maxSteps === 5 && "w-14",
                     maxSteps === 6 && "w-10",
                     maxSteps > 6 && "w-5",
-                    "h-0.5 flex items-center bg-gray-200"
+                    "flex h-0.5 items-center bg-gray-200"
                   )}
                 />
               )}
@@ -104,10 +104,10 @@ function CorrectPastProgressDot(props: { className?: string }) {
     <div
       className={classNames(
         props.className,
-        "relative w-7 h-7 flex items-center justify-center bg-green-600 rounded-full"
+        "relative flex h-7 w-7 items-center justify-center rounded-full bg-green-600"
       )}
     >
-      <CheckIcon className="w-5 h-5 text-white" aria-hidden="true" />
+      <CheckIcon className="h-5 w-5 text-white" aria-hidden="true" />
       <span className="sr-only">Correct past question</span>
     </div>
   );
@@ -118,10 +118,10 @@ function IncorrectPastProgressDot(props: { className?: string }) {
     <div
       className={classNames(
         props.className,
-        "relative w-7 h-7 flex items-center justify-center bg-red-600 rounded-full"
+        "relative flex h-7 w-7 items-center justify-center rounded-full bg-red-600"
       )}
     >
-      <XIcon className="w-5 h-5 text-white" aria-hidden="true" />
+      <XIcon className="h-5 w-5 text-white" aria-hidden="true" />
       <span className="sr-only">Incorrect past question</span>
     </div>
   );
@@ -136,12 +136,12 @@ function UnansweredCurrentProgressDot(props: {
       ref={props.currentStepRef}
       className={classNames(
         props.className,
-        "relative w-7 h-7 flex items-center justify-center bg-white border-2 border-blue-600 rounded-full"
+        "relative flex h-7 w-7 items-center justify-center rounded-full border-2 border-blue-600 bg-white"
       )}
       aria-current="step"
     >
       <span
-        className="h-2.5 w-2.5 bg-blue-600 rounded-full"
+        className="h-2.5 w-2.5 rounded-full bg-blue-600"
         aria-hidden="true"
       />
       <span className="sr-only">Unanswered current question</span>
@@ -158,10 +158,10 @@ function CorrectCurrentProgressDot(props: {
       ref={props.currentStepRef}
       className={classNames(
         props.className,
-        "relative w-7 h-7 flex items-center justify-center bg-green-200 rounded-full"
+        "relative flex h-7 w-7 items-center justify-center rounded-full bg-green-200"
       )}
     >
-      <CheckIcon className="w-5 h-5 text-green-600" aria-hidden="true" />
+      <CheckIcon className="h-5 w-5 text-green-600" aria-hidden="true" />
       <span className="sr-only">Correct current question</span>
     </div>
   );
@@ -172,10 +172,10 @@ function IncorrectCurrentProgressDot(props: { className?: string }) {
     <div
       className={classNames(
         props.className,
-        "relative w-7 h-7 flex items-center justify-center bg-red-200 rounded-full"
+        "relative flex h-7 w-7 items-center justify-center rounded-full bg-red-200"
       )}
     >
-      <XIcon className="w-5 h-5 text-red-600" aria-hidden="true" />
+      <XIcon className="h-5 w-5 text-red-600" aria-hidden="true" />
       <span className="sr-only">Incorrect current question</span>
     </div>
   );
@@ -186,11 +186,11 @@ function FutureProgressDot(props: { className?: string }) {
     <div
       className={classNames(
         props.className,
-        "group relative w-7 h-7 flex items-center justify-center bg-white border-2 border-gray-300 rounded-full"
+        "group relative flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-white"
       )}
     >
       <span
-        className="h-2.5 w-2.5 bg-transparent rounded-full"
+        className="h-2.5 w-2.5 rounded-full bg-transparent"
         aria-hidden="true"
       />
       <span className="sr-only">Future question</span>

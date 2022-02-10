@@ -13,12 +13,12 @@ export function XCloseButton(props: {
       className={classNames(
         props.class,
         !props.visibleOnMobile && "hidden sm:block",
-        "absolute top-1 sm:top-4 right-1 sm:right-4 z-10"
+        "absolute top-1 right-1 z-10 sm:top-4 sm:right-4"
       )}
     >
       <button
         type="button"
-        className="bg-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        className="focus:outline-none rounded-md bg-transparent focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         onClick={props.onClick}
       >
         <span className="sr-only">Close</span>

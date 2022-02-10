@@ -16,7 +16,7 @@ export default function IntroButton({ setIntroShown, buttonPressFunction }) {
             "Open Intro To Learney"
           )}
         >
-          <div className="block lg:hidden px-2 sm:px-4 text-black">
+          <div className="block px-2 text-black sm:px-4 lg:hidden">
             How to use Learney
           </div>
           <span className="sr-only">Information</span>
@@ -51,10 +51,10 @@ export function IntroSection({
 
   return (
     <div className="text-black">
-      <h2 className="text-black m-2 text-2xl font-bold">
+      <h2 className="m-2 text-2xl font-bold text-black">
         {introSlides ? introSlides[introSlideNumber].title : ""}
       </h2>
-      <div className="flex mb-4">
+      <div className="mb-4 flex">
         <video
           className="m-auto"
           src={
@@ -101,7 +101,7 @@ function IntroTextSection({ introSlides, introSlideNumber }) {
       } else if (textItem[0] === "a") {
         elementArray.push(
           <a
-            className="underline text-blue-500 hover:text-blue-600 cursor-pointer visited:text-pink-500"
+            className="cursor-pointer text-blue-500 underline visited:text-pink-500 hover:text-blue-600"
             {...textItem[1]}
             key={elementArray.length}
           >
@@ -131,7 +131,7 @@ function SlideDiv({
   const lastSlide = introSlideNumber === numSlides - 1;
 
   return (
-    <div className="pt-4 pb-2 m-auto inline-flex">
+    <div className="m-auto inline-flex pt-4 pb-2">
       <button
         onClick={firstSlide ? () => {} : prevSlide}
         className={classNames(
@@ -142,7 +142,7 @@ function SlideDiv({
         <PrevArrow />
         Prev
       </button>
-      <div className="text-center text-gray-500 px-4 py-2">
+      <div className="px-4 py-2 text-center text-gray-500">
         {(introSlideNumber + 1).toString() + "/" + numSlides.toString()}
       </div>
       <button

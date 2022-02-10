@@ -76,23 +76,23 @@ export function ReportQuestionButton(props: {
       >
         {/*<Modal open={false} setClosed={() => {}}>*/}
         <div className="sm:flex sm:items-start">
-          <div className="mx-auto shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+          <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
             <ExclamationIcon
               className="h-6 w-6 text-red-600"
               aria-hidden="true"
             />
           </div>
-          <div className="md:my-auto mt-3 text-center sm:ml-4 sm:text-left">
+          <div className="mt-3 text-center sm:ml-4 sm:text-left md:my-auto">
             <Dialog.Title
               as="h3"
-              className="text-lg leading-6 font-medium text-gray-900"
+              className="text-lg font-medium leading-6 text-gray-900"
             >
               {"You're a hero for reporting mistakes!"}
             </Dialog.Title>
           </div>
         </div>
         <div className="mt-2">What&apos;s the problem?</div>
-        <div className="mt-4 grid grid-rows-2 grid-cols-2 sm:grid-rows-1 sm:grid-cols-4 gap-2">
+        <div className="mt-4 grid grid-cols-2 grid-rows-2 gap-2 sm:grid-cols-4 sm:grid-rows-1">
           <ProblemTypeButton
             name={incorrectQuestion}
             problemType={problemData.type}
@@ -122,12 +122,12 @@ export function ReportQuestionButton(props: {
         >
           <div>
             <div className="flex flex-row">
-              <label className="text-sm sm:text-base text-gray-700">
+              <label className="text-sm text-gray-700 sm:text-base">
                 Add a message (optional)
               </label>
             </div>
             <textarea
-              className="h-32 resize-none transition ease-in-out duration-200 shadow-sm focus:ring-yellow-500 focus:border-yellow-500 block w-full sm:text-lg border-gray-300 rounded-md"
+              className="block h-32 w-full resize-none rounded-md border-gray-300 shadow-sm transition duration-200 ease-in-out focus:border-yellow-500 focus:ring-yellow-500 sm:text-lg"
               value={problemData.message}
               onChange={(e) =>
                 setProblemData({ ...problemData, message: e.target.value })
@@ -170,7 +170,7 @@ function ProblemTypeButton(props: {
         props.problemType &&
           props.problemType !== props.name &&
           "bg-white hover:bg-yellow-50",
-        "px-3 btn-md text-center justify-center btn-2-yellow"
+        "btn-md btn-2-yellow justify-center px-3 text-center"
       )}
       onClick={() =>
         props.setProblemType((prevData) => {

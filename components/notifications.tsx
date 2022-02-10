@@ -20,12 +20,12 @@ export function Notification({
       {/* Global notification live region, render this permanently at the end of the document */}
       <div
         aria-live="assertive"
-        className="fixed inset-0 z-20 flex items-end px-4 py-6 sm:py-20 sm:px-6 pointer-events-none sm:items-start"
+        className="pointer-events-none fixed inset-0 z-20 flex items-end px-4 py-6 sm:items-start sm:py-20 sm:px-6"
       >
         <div
           className={classNames(
             info.side === "left" ? "sm:items-start" : "sm:items-end",
-            "w-full flex flex-col items-center space-y-4"
+            "flex w-full flex-col items-center space-y-4"
           )}
         >
           {/* Notification panel, dynamically insert this into the live region when it needs to be displayed */}
@@ -41,7 +41,7 @@ export function Notification({
           >
             <div
               className={classNames(
-                "relative max-w-sm w-full shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden",
+                "pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5",
                 info.colour === "green" && "bg-green-50",
                 info.colour === "red" && "bg-red-50",
                 info.colour === "orange" && "bg-orange-50"
