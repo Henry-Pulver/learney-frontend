@@ -142,7 +142,10 @@ export function handleIntroAnimation(
       };
     } else if (parsedQuery.concept) {
       const queryConcept = window.cy.getElementById(parsedQuery.concept);
-      if (queryConcept.size() > 0) queryConcept.emit("tap");
+      if (queryConcept.size() > 0) {
+        queryConcept.emit("tap");
+        queryConcept.select();
+      }
     } else {
       animationParams = {
         pan: { x: Number(parsedQuery.x), y: Number(parsedQuery.y) },
