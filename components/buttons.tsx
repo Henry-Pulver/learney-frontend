@@ -372,6 +372,7 @@ export function GetNextConceptButton({
             ? buttonPressFunction(() => {
                 currentConcept.emit("tap");
                 currentConcept.select();
+                window.cy.$(":selected").unselect();
               }, "Go to next concept")
             : () => {}
         }

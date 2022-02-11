@@ -246,6 +246,7 @@ function Navbar({
                     pageLoaded
                       ? (item) => {
                           const concept = window.cy.getElementById(item.id);
+                          window.cy.$(":selected").unselect();
                           concept.emit("tap");
                           concept.select();
                         }
