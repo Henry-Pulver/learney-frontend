@@ -11,7 +11,7 @@ import {
   learnedNodes,
 } from "../lib/learningAndPlanning/variables";
 import { initialiseGraphState } from "../lib/learningAndPlanning/learningAndPlanning";
-import {initCy, bindRouters, selectConcept} from "../lib/graph";
+import { initCy, bindRouters, selectConcept } from "../lib/graph";
 import { setupCtoCentre } from "../lib/hotkeys";
 import { classNames } from "../lib/reactUtils";
 import { fetchTotalVotes, queryParams, setURLQuery } from "../lib/utils";

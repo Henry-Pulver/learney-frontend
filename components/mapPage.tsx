@@ -252,8 +252,10 @@ export default function MapPage({
     userId: string,
     sessionId: string
   ): void => {
-    learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
-    setLearnedState(learnedNodes);
+    if (learnedNodes[node.id()] !== true) {
+      learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
+      setLearnedState(learnedNodes);
+    }
     setNotificationProgressInfo(
       node,
       getNextNodeToLearn(node),
