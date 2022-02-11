@@ -258,6 +258,7 @@ export default function Map({
                     setTimeout(() => {
                       if (currentConcept) {
                         currentConcept.emit("tap");
+                        window.cy.$(":selected").unselect();
                         currentConcept.select();
                       }
                     }, 1500);
@@ -285,6 +286,7 @@ export default function Map({
                       if (currentConcept) {
                         currentConcept.emit("tap");
                         currentConcept.select();
+                        window.cy.$(":selected").unselect();
                       }
                     }, 1500);
                   }, 3000);
