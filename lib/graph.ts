@@ -565,3 +565,9 @@ export function bindRouters(
     }
   });
 }
+
+export function selectConcept(concept: NodeSingular): void {
+  window.cy.$(":selected").unselect();
+  concept.emit("tap");
+  concept.select();
+}

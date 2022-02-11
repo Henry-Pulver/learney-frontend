@@ -14,8 +14,9 @@ import { SaveMapButton, MapSettingsIconButton } from "./editor/buttons";
 import Modal from "./modal";
 import { ConceptSearchBox } from "./ConceptSearchBox";
 import { ButtonPressFunction, UserState } from "../lib/types";
-import { ElementsDefinition } from "cytoscape";
+import {ElementsDefinition, NodeSingular} from "cytoscape";
 import { NotificationData } from "./types";
+import {selectConcept} from "../lib/graph";
 
 export function EditNavbar({
   user,
@@ -245,10 +246,8 @@ function Navbar({
                   onSelect={
                     pageLoaded
                       ? (item) => {
-                          const concept = window.cy.getElementById(item.id);
-                          window.cy.$(":selected").unselect();
-                          concept.emit("tap");
-                          concept.select();
+                          const concept = window.cy.getElementById(item.id) as NodeSingular;
+                          selectConcept(concept);
                         }
                       : () => {}
                     // TODO: When not loaded, add selected item to a queue to be

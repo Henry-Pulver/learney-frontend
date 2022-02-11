@@ -11,7 +11,7 @@ import {
   learnedNodes,
 } from "../lib/learningAndPlanning/variables";
 import { initialiseGraphState } from "../lib/learningAndPlanning/learningAndPlanning";
-import { initCy, bindRouters } from "../lib/graph";
+import {initCy, bindRouters, selectConcept} from "../lib/graph";
 import { setupCtoCentre } from "../lib/hotkeys";
 import { classNames } from "../lib/reactUtils";
 import { fetchTotalVotes, queryParams, setURLQuery } from "../lib/utils";
@@ -256,11 +256,7 @@ export default function Map({
                     onTestSuccess(nodeSelected, userId, sessionId);
                     setQuestionModalShown(false);
                     setTimeout(() => {
-                      if (currentConcept) {
-                        currentConcept.emit("tap");
-                        window.cy.$(":selected").unselect();
-                        currentConcept.select();
-                      }
+                      if (currentConcept) selectConcept(currentConcept);
                     }, 1500);
                   }, 3000);
                   break;
@@ -283,11 +279,7 @@ export default function Map({
                     setProgressModalShown(false);
                     setQuestionModalShown(false);
                     setTimeout(() => {
-                      if (currentConcept) {
-                        currentConcept.emit("tap");
-                        currentConcept.select();
-                        window.cy.$(":selected").unselect();
-                      }
+                      if (currentConcept) selectConcept(currentConcept);
                     }, 1500);
                   }, 3000);
                   updateNotificationInfo({
@@ -340,12 +332,12 @@ export default function Map({
             "absolute bottom-0 right-0 m-4 flex flex-col items-end gap-4 md:flex-row"
           )}
         >
-          {!editMap && (
-            <GetNextConceptButton
-              currentConcept={currentConcept}
-              buttonPressFunction={buttonPressFunction}
-            />
-          )}
+          {/*{!editMap && (*/}
+          {/*  <GetNextConceptButton*/}
+          {/*    currentConcept={currentConcept}*/}
+          {/*    buttonPressFunction={buttonPressFunction}*/}
+          {/*  />*/}
+          {/*)}*/}
           <ResetPanButton buttonPressFunction={buttonPressFunction} />
           {!editMap && !questionsEnabled && (
             <ResetProgressIconButton
