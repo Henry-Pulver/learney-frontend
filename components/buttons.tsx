@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Tippy from "@tippyjs/react";
 import { resetProgress } from "../lib/learningAndPlanning/learningAndPlanning";
 import { goToFormFunction } from "../lib/suggestions";
-import {fitCytoTo, selectConcept, unhighlightNodes} from "../lib/graph";
+import { fitCytoTo, selectConcept, unhighlightNodes } from "../lib/graph";
 import {
   ChatIcon,
   GlobeAltIcon,
@@ -14,7 +14,7 @@ import { ShareIcon } from "@heroicons/react/outline";
 import { AreYouSureModal } from "./modal";
 import { classNames } from "../lib/reactUtils";
 import { ButtonPressFunction } from "../lib/types";
-import {NodeSingular, SingularElementArgument} from "cytoscape";
+import { NodeSingular, SingularElementArgument } from "cytoscape";
 import { TargetFinderIcon } from "./svgs/icons";
 import { SetGoalState, SetLearnedState } from "./types";
 import { LoadingSpinner } from "./animations";
@@ -370,7 +370,8 @@ export function GetNextConceptButton({
         onClick={
           currentConcept
             ? buttonPressFunction(() => {
-                if (currentConcept) selectConcept(currentConcept as NodeSingular);
+                if (currentConcept)
+                  selectConcept(currentConcept as NodeSingular);
               }, "Go to next concept")
             : () => {}
         }
