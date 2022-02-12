@@ -43,18 +43,22 @@ export const getServerSideProps = withPageAuthRequired({
         headers: cacheHeaders,
       }
     );
-    const session = getSession(ctx.req, ctx.res);
     const mapInfoJson = await mapResponse.json();
-    // TODO: Currently we redirect, change to showing custom 'blocked' page & link to map
-    if (
-      ![
-        // ...mapInfoJson.usersWithAccess.map((user) => user.toLowerCase()),
-        "henrypulver13@gmail.com", // Henry can access every map
-        "matthew@learney.me",
-      ].includes(session.user.email.toLowerCase())
-    ) {
+
+    const authUsers = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v0/auth_question_users`,
+      {
+        method: "GET",
+        headers: cacheHeaders,
+      }
+    );
+    const authUsersJson = await authUsers.json();
+
+    const session = getSession(ctx.req, ctx.res);
+    // Currently we redirect if they're not authorised
+    if (!authUsersJson.includes(session.user.sub)) {
       return {
-        redirect: { destination: `/` },
+        redirect: { destination: `/maps/questionsmap` },
       };
     }
     return {
