@@ -13,7 +13,7 @@ export type NotificationData = {
   title: string;
   message: string;
   Icon: React.ComponentType<any>;
-  colour: "green" | "red" | "orange" | "";
+  colour: "green" | "red" | "";
   show: boolean;
   side?: "right" | "left";
 };
