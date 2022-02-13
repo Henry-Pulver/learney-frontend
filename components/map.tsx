@@ -267,7 +267,7 @@ export default function Map({
                       nodeSelected.data().name
                     } & test again when ready!`,
                     Icon: BookOpenIcon,
-                    colour: "orange",
+                    colour: "red",
                     show: true,
                     side: "left",
                   });
