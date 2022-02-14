@@ -386,9 +386,9 @@ export function AnswerOptions({
 }) {
   return (
     <div className="mt-5 grid w-full max-w-md grid-cols-2 gap-3 sm:mt-2 sm:grid-flow-row-dense">
-      {answerArray.map((answer) => (
+      {answerArray.map((answer, idx) => (
         <AnswerOption
-          key={answer}
+          key={idx}
           answerText={answer}
           answerGiven={answerGiven}
           correctAnswer={correctAnswer}
