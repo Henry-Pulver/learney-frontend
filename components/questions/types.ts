@@ -90,3 +90,5 @@ export const emptyTemplate: Template = {
   correct_answer_letter: "a",
   active: false,
 };
+
+export type QuestionType = "conceptual" | "practice" | "";
