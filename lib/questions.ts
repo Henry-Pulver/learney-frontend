@@ -1,54 +1,16 @@
 import { NodeSingular } from "cytoscape";
 import { handleFetchResponses } from "./utils";
 import { jsonHeaders } from "./headers";
-
-export type QuestionResponseFormat = {
-  id: string;
-  question_text: string;
-  answer_text: Array<string>;
-  correct_answer?: string;
-  answers_order_randomised: Array<string>;
-  feedback_text: string;
-};
-
-export type QuestionSet = Array<QuestionResponseFormat>;
-
-export type QuestionResponseJSON = {
-  question_set: QuestionSet;
-  correct_threshold: number;
-};
-
-export function completeTest(
-  answersGiven,
-  node: NodeSingular,
-  learnedNodes: object,
-  goalNodes: object,
-  questionSet,
-  correctThreshold: number,
-  onSuccess: () => void,
-  onFail: () => void
-): void {
-  const correctAnswers = questionSet.map(
-    (question, questionIdx) =>
-      question.correct_answer === answersGiven[questionIdx]
-  );
-  const numberCorrect = correctAnswers.filter(Boolean).length;
-  const thresholdReached = numberCorrect >= correctThreshold;
-
-  if (thresholdReached) onSuccess();
-  else onFail();
-}
+import { ConceptInfo, NextConcept } from "../components/questions/types";
 
 export function getNextNodeToLearn(
   newlyLearnedNode: NodeSingular = null
 ): NodeSingular | undefined {
   const learned = window.cy.nodes(".learned");
   const goals = window.cy.nodes(".goal").not(learned);
-
   if (window.cy.nodes(".goal").or(".path").not(".learned").size() === 0) {
     return undefined;
   } // goal(s) are set
-
   // Find possible next steps
   let possibleNextSteps = window.cy.collection();
   // target of learned or roots, not learned, on path & where all predecessors are learned!
@@ -80,26 +42,33 @@ export function getNextNodeToLearn(
     Math.floor(Math.random() * possibleNextSteps.size())
   ] as NodeSingular;
 }
-
-export const fetchQuestionSet = async ({
-  backendUrl,
-  mapUUID,
-  userId,
-  conceptId,
-  questionsEnabled,
-}: {
-  backendUrl: string;
-  mapUUID: string;
-  userId: string;
-  conceptId: string;
-  questionsEnabled: boolean;
-}): Promise<QuestionResponseJSON> => {
-  if (!questionsEnabled) return { question_set: [], correct_threshold: 0 };
-  console.log("FETCHING QUESTIONS");
+export const fetchCurrentConcept = async (
+  backendUrl: string,
+  userId: string,
+  mapUUID: string
+): Promise<NextConcept> => {
   const response = await fetch(
-    `${backendUrl}/api/v0/questions?` +
+    `${backendUrl}/api/v0/current_concept?` +
       new URLSearchParams({
+        user_id: userId,
         map_uuid: mapUUID,
+      }),
+    {
+      method: "GET",
+      headers: jsonHeaders,
+    }
+  );
+  return (await handleFetchResponses(response, backendUrl)) as NextConcept;
+};
+
+export async function fetchConceptInfo(
+  backendUrl: string,
+  userId: string,
+  conceptId: string
+): Promise<ConceptInfo> {
+  const response = await fetch(
+    `${backendUrl}/api/v0/concept_info?` +
+      new URLSearchParams({
         user_id: userId,
         concept_id: conceptId,
       }),
@@ -108,23 +77,5 @@ export const fetchQuestionSet = async ({
       headers: jsonHeaders,
     }
   );
-  const responseJson = (await handleFetchResponses(
-    response,
-    backendUrl
-  )) as QuestionResponseJSON;
-  // {
-  //  correct_threshold: 3,
-  //  question_set: [{question_text: "...",
-  //                  answer_text: ["...", "..."],
-  //                  feedback_text: "..."}]
-  // }
-
-  // DOES RANDOM ORDERING OF QUESTIONS
-  responseJson.question_set.forEach((question) => {
-    question.correct_answer = question.answer_text[0];
-    question.answers_order_randomised = question.answer_text.sort(
-      () => 0.5 - Math.random()
-    );
-  });
-  return responseJson;
-};
+  return (await handleFetchResponses(response, backendUrl)) as ConceptInfo;
+}

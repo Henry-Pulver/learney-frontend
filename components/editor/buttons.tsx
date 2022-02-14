@@ -54,7 +54,7 @@ export function MapSettingsIconButton({
   pageLoaded: boolean;
 }) {
   return (
-    <Menu as="div" className="ml-3 relative">
+    <Menu as="div" className="relative ml-3">
       {({ open }) => (
         <>
           <div>
@@ -66,8 +66,8 @@ export function MapSettingsIconButton({
               <Menu.Button className="gray-icon-btn">
                 <span className="sr-only">Map layout settings</span>
                 <div className="relative h-7 w-7">
-                  <MapIcon className="absolute h-6 w-6 right-0.5 top-0.5" />
-                  <CogIcon className="bg-white rounded-full absolute h-4 w-4 left-4 bottom-3.5" />
+                  <MapIcon className="absolute right-0.5 top-0.5 h-6 w-6" />
+                  <CogIcon className="absolute left-4 bottom-3.5 h-4 w-4 rounded-full bg-white" />
                 </div>
               </Menu.Button>
             </IconButtonTippy>
@@ -81,7 +81,7 @@ export function MapSettingsIconButton({
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="origin-top-left absolute left-0 mt-2 w-48 rounded-md shadow-lg z-20 py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <Menu.Items className="focus:outline-none absolute left-0 z-20 mt-2 w-48 origin-top-left rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
               <Menu.Item>
                 {({ active }) => (
                   <button
@@ -96,7 +96,7 @@ export function MapSettingsIconButton({
                     }
                     className={classNames(
                       active ? "bg-gray-100" : "",
-                      "block px-4 py-2 w-48 text-sm text-left text-gray-700"
+                      "block w-48 px-4 py-2 text-left text-sm text-gray-700"
                     )}
                   >
                     Undo all
@@ -117,7 +117,7 @@ export function MapSettingsIconButton({
                     }
                     className={classNames(
                       active ? "bg-gray-100" : "",
-                      "block px-4 py-2 w-48 text-sm text-left text-gray-700"
+                      "block w-48 px-4 py-2 text-left text-sm text-gray-700"
                     )}
                   >
                     Auto-generate Layout
@@ -163,7 +163,7 @@ export function SaveMapButton({
                     You can now see this map live at{" "}
                     <a
                       href={pathElements.join("/")}
-                      className="text-semibold text-gray-900 underline underline-offset-4 decoration-blue-300 hover:decoration-blue-400 hover:text-blue-400"
+                      className="text-semibold underline-offset-4 decoration-blue-300 hover:decoration-blue-400 text-gray-900 underline hover:text-blue-400"
                     >
                       {pathElements.join("/")}
                     </a>
@@ -172,6 +172,7 @@ export function SaveMapButton({
                 Icon: CheckCircleIcon,
                 colour: "green",
                 show: true,
+                side: "right",
               };
               updateNotificationInfo(newState);
             }, "Editor - Save Layout")
@@ -276,7 +277,7 @@ export function AddNodeButton({ editType, setEditType, buttonPressFunction }) {
           "Editor Add Node Tool"
         )}
       >
-        <PlusCircleIcon className="text-black w-10 h-10" />
+        <PlusCircleIcon className="h-10 w-10 text-black" />
       </div>
     </EditorModeTippy>
   );
@@ -334,7 +335,7 @@ export function DeleteElementButton({
           "Editor Delete Tool"
         )}
       >
-        <TrashIcon className="text-black w-9 h-9" />
+        <TrashIcon className="h-9 w-9 text-black" />
       </div>
     </EditorModeTippy>
   );

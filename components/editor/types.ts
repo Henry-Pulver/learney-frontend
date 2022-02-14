@@ -1,3 +1,5 @@
+import React from "react";
+
 export type EditType = "cursor" | "addNode" | "addEdges" | "delete";
 export type NodeData = {
   id: string;
@@ -15,10 +17,3 @@ export type ParentNodeData = {
   nodetype: string;
 };
 export type ShowEditData = "concept" | "topic";
-export type NotificationData = {
-  title: string;
-  message: string;
-  Icon: Function;
-  colour: "green" | "red" | "";
-  show: boolean;
-};

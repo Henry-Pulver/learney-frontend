@@ -27,12 +27,13 @@ import { Notification } from "./notifications";
 import ExploreLearnIntroPage from "./exploreLearnIntroPage";
 import { handleIntroAnimation } from "../lib/graph";
 import { useRouter } from "next/router";
-import { EditType, NotificationData } from "./editor/types";
+import { EditType } from "./editor/types";
 import { NodeSingular } from "cytoscape";
 import { setNotificationProgressInfo } from "./questions/notificationMessages";
-import { XCircleIcon } from "@heroicons/react/outline";
-import { getNextNodeToLearn } from "../lib/questions";
+import { fetchCurrentConcept, getNextNodeToLearn } from "../lib/questions";
 import { ButtonPressFunction } from "../lib/types";
+import { NotificationData } from "./types";
+import { CheckCircleIcon } from "@heroicons/react/outline";
 
 export default function MapPage({
   mapTitle,
@@ -74,6 +75,7 @@ export default function MapPage({
   useEffect(() => setIsNewUser(!localStorage.getItem("userId")), []);
 
   const [goals, setNewGoalsState] = React.useState<object>({});
+  const [currentConcept, setCurrentConcept] = useState<NodeSingular>(null);
   const setGoalsState = (goalState: object) => {
     for (const nodeId of Object.keys(goals)) {
       if (!(nodeId in goalState)) {
@@ -92,7 +94,18 @@ export default function MapPage({
     userId: string,
     sessionId: string
   ): void => {
-    setGoalClick(node, backendUrl, userId, mapUUID, sessionId);
+    (async function () {
+      await setGoalClick(node, backendUrl, userId, mapUUID, sessionId);
+      const currentConceptObject = await fetchCurrentConcept(
+        backendUrl,
+        userId,
+        mapUUID
+      );
+      const currentConceptNode = window.cy.getElementById(
+        currentConceptObject.concept_id
+      );
+      setCurrentConcept(currentConceptNode as NodeSingular);
+    })();
     setGoalsState(goalNodes);
   };
 
@@ -114,7 +127,18 @@ export default function MapPage({
     }
   };
   const onLearnedClick = (node, userId, sessionId) => {
-    learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
+    (async function () {
+      await learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
+      const currentConceptObject = await fetchCurrentConcept(
+        backendUrl,
+        userId,
+        mapUUID
+      );
+      const currentConceptNode = window.cy.getElementById(
+        currentConceptObject.concept_id
+      );
+      setCurrentConcept(currentConceptNode as NodeSingular);
+    })();
     setLearnedState(learnedNodes);
   };
 
@@ -131,6 +155,7 @@ export default function MapPage({
   }, [userId]);
 
   const [pageLoaded, setPageLoaded] = React.useState(false);
+
   useEffect(() => {
     (async () => {
       if (!isLoading) {
@@ -197,6 +222,7 @@ export default function MapPage({
     Icon: () => <></>,
     colour: "",
     show: false,
+    side: "right",
   });
   const updateNotificationInfo = (
     newNotificationInfo: NotificationData
@@ -217,7 +243,7 @@ export default function MapPage({
             return currentState;
           }
         }),
-      5000
+      10000
     );
   };
 
@@ -226,25 +252,15 @@ export default function MapPage({
     userId: string,
     sessionId: string
   ): void => {
-    learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
-    setLearnedState(learnedNodes);
+    if (learnedNodes[node.id()] !== true) {
+      learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
+      setLearnedState(learnedNodes);
+    }
     setNotificationProgressInfo(
       node,
       getNextNodeToLearn(node),
       updateNotificationInfo
     );
-  };
-  const onTestFail = (node: NodeSingular): void => {
-    updateNotificationInfo({
-      title: `Mission Failed - we'll get 'em next time.`,
-      message: `Look at the resources on ${
-        node.data().name
-      } & test again when ready!`,
-      Icon: XCircleIcon,
-      colour: "red",
-      show: true,
-    });
-    node.emit("tap");
   };
   const [showTitle, setShowTitle] = useState<boolean>(true);
 
@@ -280,6 +296,7 @@ export default function MapPage({
             showExploreLearn={showExploreLearn}
             showTitle={showTitle}
             setShowTitle={setShowTitle}
+            questionsEnabled={questionsEnabled}
           />
         ))}
 
@@ -310,16 +327,16 @@ export default function MapPage({
         learned={learned}
         onLearnedClick={onLearnedClick}
         onTestSuccess={onSuccessfulTest}
-        onTestFail={onTestFail}
         setLearnedState={setLearnedState}
         goals={goals}
         onSetGoalClick={onSetGoalClick}
         setGoalsState={setGoalsState}
-        pageLoaded={pageLoaded}
         setPageLoaded={setPageLoaded}
         editType={editType}
         questionsEnabled={questionsEnabled}
         showTitle={showTitle}
+        currentConcept={currentConcept}
+        updateNotificationInfo={updateNotificationInfo}
       />
       {editMap && (
         <Editor

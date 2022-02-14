@@ -12,10 +12,10 @@ export function ProfileButton({
   buttonPressFunction: ButtonPressFunction;
 }) {
   return (
-    <Popover as="div" className="flex-none relative">
+    <Popover as="div" className="relative flex-none">
       <div id="profileImageButton">
         {user !== undefined ? (
-          <Popover.Button className="bg-transparent transition duration-200 ease-in-out rounded-full focus:outline-none focus:ring-2 hover:bg-white hover:ring-offset-2 focus:ring-offset-2 focus:ring-blue-500 hover:ring-blue-500 hover:ring-2 hover:ring-opacity-75">
+          <Popover.Button className="focus:outline-none rounded-full bg-transparent transition duration-200 ease-in-out hover:bg-white hover:ring-2 hover:ring-blue-500 hover:ring-opacity-75 hover:ring-offset-2 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
             <span className="sr-only">Open user menu</span>
             <img
               className="h-8 w-8 rounded-full"
@@ -38,7 +38,7 @@ export function ProfileButton({
       >
         <Popover.Panel
           static
-          className="origin-top-right absolute z-10 right-0 mt-2 w-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-1 focus:outline-none"
+          className="focus:outline-none absolute right-0 z-10 mt-2 w-96 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5"
         >
           <ProfileSelectedDiv
             user={user}
@@ -58,11 +58,11 @@ function ProfileSelectedDiv({
   buttonPressFunction: ButtonPressFunction;
 }) {
   return (
-    <div className="text-center bg-white p-4 rounded-md m-2 sm:max-w-8xl">
-      <h2 className="my-2 text-black font-bold text-xl">
+    <div className="sm:max-w-8xl m-2 rounded-md bg-white p-4 text-center">
+      <h2 className="my-2 text-xl font-bold text-black">
         Welcome, {user.name}!
       </h2>
-      <h5 className="my-2 text-gray-500 font-normal">{user.email}</h5>
+      <h5 className="my-2 font-normal text-gray-500">{user.email}</h5>
       <LogOut buttonPressFunction={buttonPressFunction} />
     </div>
   );
@@ -92,7 +92,7 @@ export function LogOutIconButton({ buttonPressFunction }) {
       }, "Log Out")}
     >
       <span className="sr-only">Log out</span>
-      <LogoutIcon className="w-7 h-7" />
+      <LogoutIcon className="h-7 w-7" />
     </button>
   );
 }
@@ -107,7 +107,7 @@ export function LogInIconButton({ buttonPressFunction }) {
         location.href = `${base_url}/api/auth/login`;
       }, "Log In")}
     >
-      <div className="block lg:hidden px-2 sm:px-4 font-bold text-black">
+      <div className="block px-2 font-bold text-black sm:px-4 lg:hidden">
         Sign in
       </div>
       <div className="lg:white-icon-btn p-1">

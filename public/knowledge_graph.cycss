@@ -19,6 +19,10 @@ node:child {
 }
 
 node:child:selected {
+  padding: 10px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: white;
   min-zoomed-font-size: 0;
   background-color: white;
   font-size: 0px;
@@ -33,7 +37,7 @@ node:parent {
   z-index: 1;
   text-wrap: wrap;
   text-max-width: 240px;
-  compound-sizing-wrt-labels: exclude;
+  compound-sizing-wrt-labels: include;
   padding: 80px;
   border-width: 0;
   min-width: 400px;

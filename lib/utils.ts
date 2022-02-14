@@ -3,6 +3,7 @@ import { UserState } from "./types";
 import { ParsedUrlQuery } from "querystring";
 import { EventObject } from "cytoscape";
 import { NextRouter } from "next/router";
+import { string } from "prop-types";
 
 export function isAnonymousUser(userId: string): boolean {
   return userId.startsWith("anonymous-user|");
@@ -233,6 +234,7 @@ export function buttonPress(
     handleFetchResponses(response, backendUrl);
   };
 }
+
 export async function trackCyEvent(
   event: EventObject,
   eventType: string,
@@ -264,7 +266,7 @@ export async function handleFetchResponses(
   backendUrl: string
 ): Promise<object> {
   const responseJson = await response.json();
-  if (response.status === 200 || response.status === 201) {
+  if (response.status > 199 && response.status < 300) {
     if (backendUrl === "https://api.learney.me")
       console.log(`Success! Status: ${response.status}`);
     else
@@ -281,20 +283,34 @@ export async function handleFetchResponses(
   return responseJson;
 }
 
-export function setURLQuery(router: NextRouter, newParams: ParsedQuery): void {
+export function setURLQuery(
+  router: NextRouter,
+  newParams: ParsedQuery,
+  deleteParam?: string
+): void {
   const q = router.query;
+  console.log(newParams);
   if (
     q.x !== newParams.x ||
     q.y !== newParams.y ||
     q.zoom !== newParams.zoom ||
     q.topic !== newParams.topic ||
-    q.concept !== newParams.concept
+    q.concept !== newParams.concept ||
+    newParams.quemodal
   ) {
     delete router.query.x;
     delete router.query.y;
     delete router.query.zoom;
     delete router.query.topic;
-    delete router.query.concept;
+    delete router.query.quemodal;
+    if (!deleteParam) {
+      delete router.query.concept;
+    }
+    if (deleteParam) {
+      deleteParam === queryParams.CONCEPT
+        ? delete router.query.concept
+        : delete router.query.quemodal;
+    }
     router.push(
       {
         pathname: router.pathname,
@@ -402,6 +418,7 @@ type ParsedQuery = {
   x?: string;
   y?: string;
   zoom?: string;
+  quemodal?: boolean;
 };
 
 export function parseQuery(query: ParsedUrlQuery): ParsedQuery {
@@ -424,4 +441,9 @@ export function isEven(integer: number): boolean {
 
 export function isNumeric(num: string): boolean {
   return !isNaN(+num);
+}
+
+export enum queryParams {
+  "CONCEPT" = "concept",
+  "QUEMODAL" = "quemodal",
 }

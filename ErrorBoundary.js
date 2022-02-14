@@ -21,7 +21,7 @@ export class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex justify-center items-center h-screen">
+        <div className="flex h-screen items-center justify-center">
           <Image src={wentWrongImage} alt={"Error page"} />
         </div>
       );
