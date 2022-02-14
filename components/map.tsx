@@ -287,7 +287,7 @@ export default function Map({
                       levelsGained >= 1
                         ? `Congrats! You've progressed ${Math.floor(
                             levelsGained
-                          )} level${levelsGained >= 1 ? "s" : ""} on ${
+                          )} level${levelsGained >= 2 ? "s" : ""} on ${
                             nodeSelected.data().name
                           }!`
                         : "You're making great progress!",
