@@ -31,7 +31,7 @@ export function TargetFinderIcon({ classes }: { classes: string }) {
 export function NextArrow() {
   return (
     <svg
-      className="w-5 h-5 ml-1"
+      className="ml-1 h-5 w-5"
       fill="currentColor"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +48,7 @@ export function NextArrow() {
 export function PrevArrow() {
   return (
     <svg
-      className="w-5 h-5 mr-1"
+      className="mr-1 h-5 w-5"
       fill="currentColor"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -58,6 +58,31 @@ export function PrevArrow() {
         d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z"
         clipRule="evenodd"
       />
+    </svg>
+  );
+}
+
+export function TrophyIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-trophy"
+      width="36"
+      height="36"
+      viewBox="0 0 24 24"
+      strokeWidth="2"
+      stroke="currentColor"
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <line x1="8" y1="21" x2="16" y2="21" />
+      <line x1="12" y1="17" x2="12" y2="21" />
+      <line x1="7" y1="4" x2="17" y2="4" />
+      <path d="M17 4v8a5 5 0 0 1 -10 0v-8" />
+      <circle cx="5" cy="9" r="2" />
+      <circle cx="19" cy="9" r="2" />
     </svg>
   );
 }

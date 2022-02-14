@@ -7,15 +7,18 @@ import { NodeSingular } from "cytoscape";
 import Overlay from "./overlay";
 import { ButtonPressFunction } from "../lib/types";
 import { OnGoalLearnedClick } from "./types";
-import { completeTest, fetchQuestionSet } from "../lib/questions";
-import QuestionModal from "./questions/questionModal";
 import {
   getValidURLs,
   handleFetchResponses,
   logContentClick,
+  queryParams,
+  setURLQuery,
 } from "../lib/utils";
 import { LoadingSpinner } from "./animations";
 import { cacheHeaders, jsonHeaders } from "../lib/headers";
+import LevelBadge from "./questions/levelBadge";
+import { LevelsProgressBar } from "./questions/progressBars";
+import { useRouter } from "next/router";
 
 type OnVote = (node: NodeSingular, url: string, up: boolean | null) => void;
 
@@ -29,8 +32,10 @@ export function ConceptInfo({
   sessionId,
   learnedNodes,
   goalNodes,
-  onTestSuccess,
-  onTestFail,
+  knowledgeLevel,
+  maxKnowledgeLevel,
+  questionModalShown,
+  setQuestionModalShown,
   onLearnedClick,
   onSetGoalClick,
   allowSuggestions,
@@ -40,6 +45,7 @@ export function ConceptInfo({
   userVotes,
   allVotes,
   questionsEnabled,
+  setProgressModalOpen,
 }: {
   visible: boolean;
   node: NodeSingular | undefined;
@@ -51,8 +57,10 @@ export function ConceptInfo({
   hideConceptInfo: () => void;
   learnedNodes: object;
   goalNodes: object;
-  onTestSuccess;
-  onTestFail;
+  knowledgeLevel: number;
+  maxKnowledgeLevel: number;
+  questionModalShown: boolean;
+  setQuestionModalShown: (shown: boolean) => void;
   onLearnedClick: OnGoalLearnedClick;
   onSetGoalClick: OnGoalLearnedClick;
   allowSuggestions: boolean;
@@ -61,84 +69,94 @@ export function ConceptInfo({
   onVote: OnVote;
   allVotes: object;
   questionsEnabled: boolean;
+  setProgressModalOpen: (open: boolean) => void;
 }) {
-  // Question stuff
-  const { data, isPending, reload } = useAsync({
-    promiseFn: fetchQuestionSet,
-    backendUrl: backendUrl,
-    mapUUID: mapUUID,
-    userId: userId,
-    conceptId: node.id(),
-    questionsEnabled: questionsEnabled,
-  });
-  useEffect(reload, [node]); // Each time a node is selected, rerun this
-  const [questionModalShown, setQuestionModalShown] =
-    React.useState<boolean>(false);
-
+  const router = useRouter();
   if (node === undefined) return <></>;
   return (
     <>
-      {data && data.correct_threshold !== 0 ? (
-        <QuestionModal
-          questionSet={data.question_set}
-          modalShown={questionModalShown}
-          closeModal={() => setQuestionModalShown(false)}
-          onCompletion={(answersGiven) => {
-            completeTest(
-              answersGiven,
-              node,
-              learnedNodes,
-              goalNodes,
-              data.question_set,
-              data.correct_threshold,
-              () => onTestSuccess(node, userId, sessionId),
-              () => {
-                reload();
-                onTestFail(node);
-              }
-            );
-            setQuestionModalShown(false);
-          }}
-          backendUrl={backendUrl}
-          userId={userId}
-          sessionId={sessionId}
-          buttonPressFunction={buttonPressFunction}
-        />
-      ) : (
-        <></>
-      )}
       <Overlay
         open={visible}
         hide={
           node
-            ? buttonPressFunction(hideConceptInfo, "Top Right Close Concept X")
+            ? buttonPressFunction(() => {
+                hideConceptInfo();
+                localStorage.removeItem(`lastConceptClickedMap${mapUUID}`);
+                localStorage.setItem("quemodal", "false");
+                setQuestionModalShown(false);
+                setURLQuery(router, {}, queryParams.QUEMODAL);
+              }, "Top Right Close Concept X")
             : () => {}
         }
+        className={questionModalShown ? "z-[15]" : ""}
       >
-        <div className="flex flex-col text-center h-excl-toolbar w-full overflow-hidden">
-          <h4 className="text-gray-900 text-2xl font-bold sm:text-4xl mb-2 px-4 text-center">
+        <div
+          className={classNames(
+            !questionsEnabled && "hidden",
+            "absolute left-2 top-1 lg:left-6 lg:top-3"
+          )}
+        >
+          <LevelBadge
+            knowledgeLevel={Math.floor(knowledgeLevel)}
+            achieved={true}
+            onClick={() => setProgressModalOpen(true)}
+            overallClassName={"cursor-pointer text-xs sm:text-sm"}
+          />
+        </div>
+        <div className="h-excl-toolbar flex w-full flex-col items-center overflow-hidden text-center">
+          <h4 className="mb-2 max-w-lg px-4 text-center text-2xl font-bold text-gray-900 sm:text-4xl">
             {node && node.data().name}
           </h4>
-          <div className="text-left text-black mt-0 mx-auto mb-4 px-4 max-h-1/5">
+          <div className="max-h-1/5 mx-auto mt-2 mb-4 px-4 text-left text-black">
             {node && node.data().description}
           </div>
+          {questionsEnabled && (
+            <>
+              <div className="mb-2 flex w-full flex-col items-center">
+                <LevelsProgressBar
+                  knowledgeLevel={knowledgeLevel ? knowledgeLevel : 0}
+                  maxKnowledgeLevel={maxKnowledgeLevel ? maxKnowledgeLevel : 1}
+                  onClick={() => setProgressModalOpen(true)}
+                />
+                <div
+                  className={classNames(
+                    "-mt-4 text-sm",
+                    maxKnowledgeLevel ? "visible" : "invisible"
+                  )}
+                >
+                  Progress
+                </div>
+              </div>
+            </>
+          )}
           {node && (
-            <div className="absolute sm:relative bottom-0 left-0 w-full z-10 bg-white justify-around border-t border-solid border-gray-300 px-2 py-4 grid items-center grid-flow-col">
+            <div className="absolute bottom-0 left-0 z-10 grid w-full grid-flow-col items-center justify-around border-t border-solid border-gray-300 bg-white px-2 py-4 sm:relative">
               <IconToggleButtonWithCheckbox
                 text={
-                  !learnedNodes[node.id()] && data && data.correct_threshold > 0
-                    ? "Test me!"
+                  questionsEnabled
+                    ? maxKnowledgeLevel && knowledgeLevel >= maxKnowledgeLevel
+                      ? "Review concept"
+                      : "Get questions"
                     : "I know this!"
                 }
                 checked={!!learnedNodes[node.id()]}
                 onCheck={
-                  !learnedNodes[node.id()] && data && data.correct_threshold > 0
-                    ? () => setQuestionModalShown(true)
-                    : () => onLearnedClick(node, userId, sessionId)
+                  maxKnowledgeLevel // question map + info loaded
+                    ? () => {
+                        localStorage.setItem("quemodal", "true");
+                        setQuestionModalShown(true);
+                        setURLQuery(router, {
+                          ...router.query,
+                          quemodal: true,
+                        });
+                      }
+                    : // if on normal map
+                      () => onLearnedClick(node, userId, sessionId)
                 }
                 Icon={CheckCircleIcon}
                 colour={"green"}
-                loading={isPending}
+                loading={questionsEnabled && knowledgeLevel === null}
+                disabled={questionModalShown}
               />
               <IconToggleButtonWithCheckbox
                 text={"Set Goal"}
@@ -146,18 +164,19 @@ export function ConceptInfo({
                 onCheck={() => onSetGoalClick(node, userId, sessionId)}
                 Icon={FlagIcon}
                 colour={"blue"}
+                disabled={questionModalShown}
               />
             </div>
           )}
           <p
             className={classNames(
-              "ml-2.5 text-gray-500 text-left",
+              "ml-2.5 w-full text-left text-gray-500",
               getAndSortLinkPreviewURLs(node, allVotes).length === 0 && "hidden"
             )}
           >
             Done?
           </p>
-          <ol className="shrink grow list-none pl-0 m-0 overflow-auto mb-20 md:mb-0 pb-2 sm:pb-20 sm:px-2 w-full">
+          <ol className="m-0 mb-20 w-full shrink grow list-none overflow-auto pl-0 pb-2 sm:px-2 sm:pb-20 md:mb-0">
             {node &&
               appendToArray(
                 getAndSortLinkPreviewURLs(node, allVotes).map((url) => (
@@ -244,12 +263,12 @@ function ConceptLinkPreview({
   }, [data, isLoading]);
 
   return (
-    <li className="flex flex-row py-auto text-gray-900 relative">
+    <li className="py-auto relative flex flex-row text-gray-900">
       <a
         href={url}
         className={classNames(
-          "hover:bg-gray-100 bg-white hover:shadow-md h-24 rounded overflow-hidden flex text-left mx-0.5 my-1 w-full",
-          checked && "hover:bg-green-200 bg-green-100"
+          "mx-0.5 my-1 flex h-24 w-full overflow-hidden rounded bg-white text-left hover:bg-gray-100 hover:shadow-md",
+          checked && "bg-green-100 hover:bg-green-200"
         )}
         target="_blank"
         rel="noreferrer"
@@ -264,7 +283,7 @@ function ConceptLinkPreview({
           )
         }
       >
-        <div className="relative h-full flex flex-col justify-center pr-4">
+        <div className="relative flex h-full flex-col justify-center pr-4">
           <input
             type="checkbox"
             checked={checked}
@@ -275,12 +294,12 @@ function ConceptLinkPreview({
             }}
             className={classNames(
               checked &&
-                "!ring-green-500 ring-offset-2 focus:!ring-offset-2 ring-2 focus:!ring-2",
-              "focus:ring-0 focus:ring-offset-0 text-green-600 cursor-pointer h-6 w-6 ml-2 border-gray-300 rounded select-none"
+                "ring-2 !ring-green-500 ring-offset-2 focus:!ring-2 focus:!ring-offset-2",
+              "ml-2 h-6 w-6 cursor-pointer select-none rounded border-gray-300 text-green-600 focus:ring-0 focus:ring-offset-0"
             )}
           />
         </div>
-        <div className="flex items-center max-h-full w-20 sm:w-32">
+        <div className="flex max-h-full w-20 items-center sm:w-32">
           {data ? (
             <img
               src={(data as LinkPreviewData).image_url}
@@ -291,14 +310,14 @@ function ConceptLinkPreview({
             <LoadingSpinner classes="h-3/5 w-3/5 m-auto" />
           )}
         </div>
-        <div className="w-[calc(100%-8.25rem)] sm:w-[calc(100%-13.25rem)] grow mr-0 ml-1 no-underline overflow-hidden overflow-ellipsis">
-          <h4 className="text-lg sm:text-xl sm:py-1 overflow-hidden whitespace-nowrap overflow-ellipsis">
+        <div className="mr-0 ml-1 w-[calc(100%-8.25rem)] grow overflow-hidden overflow-ellipsis no-underline sm:w-[calc(100%-13.25rem)]">
+          <h4 className="overflow-hidden overflow-ellipsis whitespace-nowrap text-lg sm:py-1 sm:text-xl">
             {data ? (data as LinkPreviewData).title : "Loading..."}
           </h4>
           <p
             className={classNames(
               data && (data as LinkPreviewData).description ? "h-15" : "h-10",
-              "-mt-0.5 mb-0.5 text-sm overflow-hidden overflow-ellipsis text-gray-800 sm:max-h-40"
+              "-mt-0.5 mb-0.5 overflow-hidden overflow-ellipsis text-sm text-gray-800 sm:max-h-40"
             )}
           >
             {data ? (data as LinkPreviewData).description : ""}
@@ -308,7 +327,7 @@ function ConceptLinkPreview({
               data &&
                 (data as LinkPreviewData).description &&
                 "hidden sm:block",
-              "text-xxs sm:text-sm text-gray-500 whitespace-nowrap overflow-ellipsis overflow-hidden max-w-xs my-0"
+              "my-0 max-w-xs overflow-hidden overflow-ellipsis whitespace-nowrap text-xxs text-gray-500 sm:text-sm"
             )}
           >
             {url}
@@ -316,14 +335,14 @@ function ConceptLinkPreview({
         </div>
         <div className="w-10" />
       </a>
-      <div className="absolute right-1 top-0 w-8 my-1">
+      <div className="absolute right-1 top-0 my-1 w-8">
         <div className="h-8 w-8">
           <div
             className={classNames(
               userVotes[url]
                 ? "border-b-green-500 hover:border-b-green-400"
                 : "border-b-gray-500 hover:border-b-gray-400",
-              "w-0 h-0 border-[1rem] border-t-0 border-t-transparent border-b-[2rem] cursor-pointer border-t-transparent border-l-transparent border-r-transparent"
+              "h-0 w-0 cursor-pointer border-[1rem] border-t-0 border-b-[2rem] border-t-transparent border-t-transparent border-l-transparent border-r-transparent"
             )}
             onClick={
               userVotes[url]
@@ -335,7 +354,7 @@ function ConceptLinkPreview({
           />
         </div>
         {/*Vote count number*/}
-        <div className={"text-sm font-semibold py-1.5"}>
+        <div className={"py-1.5 text-sm font-semibold"}>
           {allVotes && Math.abs(allVotes[url]) > 5
             ? userVotes[url] === true
               ? allVotes[url] + 1
@@ -350,7 +369,7 @@ function ConceptLinkPreview({
               userVotes[url] === false
                 ? "border-t-red-500 hover:border-t-red-400"
                 : "border-t-gray-500 hover:border-t-gray-400",
-              "w-0 h-0 border-[1rem] border-b-0 border-b-transparent border-t-[2rem] cursor-pointer border-b-transparent border-l-transparent border-r-transparent"
+              "h-0 w-0 cursor-pointer border-[1rem] border-b-0 border-t-[2rem] border-b-transparent border-b-transparent border-l-transparent border-r-transparent"
             )}
             onClick={
               userVotes[url] === false

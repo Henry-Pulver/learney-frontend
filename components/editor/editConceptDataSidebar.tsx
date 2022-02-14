@@ -22,7 +22,7 @@ export function EditConceptDataSidebar({
   buttonPressFunction: ButtonPressFunction;
 }) {
   return (
-    <div className="absolute right-1 top-24 py-6 bg-white rounded-lg max-h-screen-80 w-120 overflow-y-auto">
+    <div className="absolute right-1 top-24 max-h-screen-80 w-120 overflow-y-auto rounded-lg bg-white py-6">
       {/* Close X in top right */}
       <XCloseButton
         onClick={buttonPressFunction(
@@ -103,7 +103,7 @@ export function EditConceptDataSidebar({
             Cancel
           </span>
           <span
-            className="btn-green btn-sm px-6 mt-3 mr-6"
+            className="btn-green btn-sm mt-3 mr-6 px-6"
             onClick={buttonPressFunction(
               () => saveEditNodeData(userId),
               `Edit Concept Save Button (Concept: ${
@@ -128,7 +128,7 @@ export function EditTopicDataSidebar({
   setShowEditData,
 }) {
   return (
-    <div className="absolute right-1 top-24 py-6 bg-white rounded-lg max-h-screen-80 w-120">
+    <div className="absolute right-1 top-24 max-h-screen-80 w-120 rounded-lg bg-white py-6">
       {/* X IN THE TOP RIGHT */}
       <XCloseButton
         onClick={buttonPressFunction(
@@ -184,7 +184,7 @@ export function EditTopicDataSidebar({
             Cancel
           </span>
           <span
-            className="btn-green btn-sm px-6 mt-3 mr-6"
+            className="btn-green btn-sm mt-3 mr-6 px-6"
             onClick={buttonPressFunction(
               () => saveEditParentNodeData(editParentNodeData),
               `Edit Topic Save Button (Topic: ${
@@ -202,7 +202,7 @@ export function EditTopicDataSidebar({
 
 function EditDataLabel(props) {
   return (
-    <div className="text-gray-600 font-xs font-medium mx-7 my-1">
+    <div className="font-xs mx-7 my-1 font-medium text-gray-600">
       {props.children}
     </div>
   );
@@ -211,7 +211,7 @@ function EditDataLabel(props) {
 function EditDataTextArea({ value, editValue }) {
   return (
     <textarea
-      className="mt-0.5 mb-4 mx-6 min-h-30 w-108 resize-none border-sm rounded-lg"
+      className="border-sm mx-6 mt-0.5 mb-4 min-h-30 w-108 resize-none rounded-lg"
       value={value}
       onChange={editValue}
     />
@@ -233,7 +233,7 @@ function EditDataInput({
     <input
       className={classNames(
         classes && classes,
-        "text-black rounded-lg mt-0.5 mb-4 mx-6 w-108"
+        "mx-6 mt-0.5 mb-4 w-108 rounded-lg text-black"
       )}
       type={type}
       value={value}

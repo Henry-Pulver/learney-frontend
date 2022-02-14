@@ -142,7 +142,10 @@ export function handleIntroAnimation(
       };
     } else if (parsedQuery.concept) {
       const queryConcept = window.cy.getElementById(parsedQuery.concept);
-      if (queryConcept.size() > 0) queryConcept.emit("tap");
+      if (queryConcept.size() > 0) {
+        queryConcept.emit("tap");
+        queryConcept.select();
+      }
     } else {
       animationParams = {
         pan: { x: Number(parsedQuery.x), y: Number(parsedQuery.y) },
@@ -517,6 +520,7 @@ export function bindRouters(
     window.cy.on("tap", 'node[nodetype = "concept"]', (e) => {
       trackCyEvent(e, "Concept Click", backendUrl, userId);
       const concept = e.target as NodeSingular;
+      localStorage.setItem(`lastConceptClickedMap${mapUUID}`, concept.id());
       if (!isAnimated) {
         setIsAnimated(true);
         showConceptInfo(concept);
@@ -560,4 +564,10 @@ export function bindRouters(
       );
     }
   });
+}
+
+export function selectConcept(concept: NodeSingular): void {
+  window.cy.$(":selected").unselect();
+  concept.emit("tap");
+  concept.select();
 }

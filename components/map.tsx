@@ -11,20 +11,29 @@ import {
   learnedNodes,
 } from "../lib/learningAndPlanning/variables";
 import { initialiseGraphState } from "../lib/learningAndPlanning/learningAndPlanning";
-import { initCy, bindRouters } from "../lib/graph";
+import { initCy, bindRouters, selectConcept } from "../lib/graph";
 import { setupCtoCentre } from "../lib/hotkeys";
 import { classNames } from "../lib/reactUtils";
-import { fetchTotalVotes } from "../lib/utils";
+import { fetchTotalVotes, queryParams, setURLQuery } from "../lib/utils";
 import MapTitle from "./mapTitle";
 import {
   GetNextConceptButton,
   ResetPanButton,
   ResetProgressIconButton,
 } from "./buttons";
-import { getNextNodeToLearn } from "../lib/questions";
+import { fetchConceptInfo } from "../lib/questions";
 import { ButtonPressFunction } from "../lib/types";
 import { EditType } from "./editor/types";
-import { OnGoalLearnedClick, SetGoalState, SetLearnedState } from "./types";
+import {
+  OnGoalLearnedClick,
+  SetGoalState,
+  SetLearnedState,
+  NotificationData,
+} from "./types";
+import QuestionModal from "./questions/questionModal";
+import { ProgressModal } from "./questions/progressModal";
+import { ArrowCircleUpIcon, BookOpenIcon } from "@heroicons/react/outline";
+import { Completed } from "./questions/types";
 
 export default function Map({
   mapTitle,
@@ -41,16 +50,16 @@ export default function Map({
   learned,
   onLearnedClick,
   onTestSuccess,
-  onTestFail,
   setLearnedState,
   goals,
   onSetGoalClick,
   setGoalsState,
-  pageLoaded,
   setPageLoaded,
   editType,
   questionsEnabled,
   showTitle,
+  currentConcept,
+  updateNotificationInfo,
 }: {
   mapTitle: string;
   mapDescription: string;
@@ -66,16 +75,16 @@ export default function Map({
   learned: object;
   onLearnedClick: OnGoalLearnedClick;
   onTestSuccess;
-  onTestFail;
   setLearnedState: SetLearnedState;
   goals: object;
   onSetGoalClick: OnGoalLearnedClick;
   setGoalsState: SetGoalState;
-  pageLoaded: boolean;
   setPageLoaded: (boolean) => void;
   editType: EditType;
   questionsEnabled: boolean;
   showTitle: boolean;
+  currentConcept: NodeSingular;
+  updateNotificationInfo: (notificationData: NotificationData) => void;
 }) {
   const router = useRouter();
   const [userVotes, setUserVote] = React.useState({});
@@ -88,6 +97,7 @@ export default function Map({
     setUserVote((prevVotes) => ({ ...prevVotes, [url]: up }));
     saveVote(url, up, node, backendUrl, userId, mapUUID, sessionId);
   };
+  const [progressModalShown, setProgressModalShown] = useState<boolean>(false);
 
   const cytoscapeRef = useRef();
   const [nodeSelected, setNodeSelected] = React.useState<
@@ -141,11 +151,6 @@ export default function Map({
       }
     })();
   }, [sessionId, userId]);
-  const [nextConcept, setNextConcept] = useState<NodeSingular>(null);
-
-  useEffect(() => {
-    if (!editMap && pageLoaded) setNextConcept(getNextNodeToLearn());
-  }, [pageLoaded, learned, goals]);
 
   const { data } = useAsync({
     promiseFn: fetchTotalVotes,
@@ -154,13 +159,62 @@ export default function Map({
     editMap,
   });
 
+  // Question stuff
+  const [maxKnowledgeLevel, setMaxKnowledgeLevel] = useState<number>(null);
+  const [knowledgeLevel, setKnowledgeLevel] = useState<number>(null);
+  const [progressModalKnowledgeLevel, setProgressModalKnowledgeLevel] =
+    useState<number>(null);
+  useEffect(() => {
+    // So the knowledge level isn't stuck on the previous node's value while loading
+    setKnowledgeLevel(null);
+    setMaxKnowledgeLevel(null);
+    if (nodeSelected && questionsEnabled) {
+      (async () => {
+        const conceptInfo = await fetchConceptInfo(
+          backendUrl,
+          userId,
+          nodeSelected.id()
+        );
+        setKnowledgeLevel(conceptInfo.level);
+        setMaxKnowledgeLevel(conceptInfo.max_level);
+      })();
+    }
+  }, [nodeSelected]);
+
+  const [questionModalShown, setQuestionModalShown] =
+    React.useState<boolean>(false);
+  useEffect(() => {
+    localStorage.setItem("quemodal", String(questionModalShown));
+    console.log({
+      ...router.query,
+      quemodal: questionModalShown ? questionModalShown : undefined,
+    });
+    setURLQuery(router, {
+      ...router.query,
+      quemodal: questionModalShown ? questionModalShown : undefined,
+    });
+  }, [questionModalShown]);
+
+  useEffect(() => {
+    setQuestionModalShown(
+      localStorage.getItem("quemodal") === "true" && questionsEnabled
+    );
+    if (
+      localStorage.getItem(`lastConceptClickedMap${mapUUID}`) &&
+      !router.query.concept
+    )
+      setURLQuery(router, {
+        ...router.query,
+        concept: localStorage.getItem(`lastConceptClickedMap${mapUUID}`),
+      });
+  }, []);
   return (
-    <div className="flex flex-column sm:flex-row w-full h-excl-toolbar">
+    <div className="flex-column h-excl-toolbar flex w-full sm:flex-row">
       <div
         className={classNames(
           nodeSelected !== undefined &&
-            "w-0 sm:w-[calc(100vw-30rem)] lg:w-[calc(100vw-42rem)]",
-          "relative h-excl-toolbar w-full"
+            "w-full sm:w-[calc(100vw-27rem)] lg:w-[calc(100vw-42rem)]",
+          "h-excl-toolbar relative w-full"
         )}
       >
         {!nodeSelected && showTitle && (
@@ -178,26 +232,114 @@ export default function Map({
             editMap && editType === "addEdges" && "cursor-crosshair",
             editMap && editType === "delete" && "cursor-pointer",
             !editMap && hoverNode && "cursor-pointer",
-            "z-0 w-full bg-gray-900 h-excl-toolbar",
+            "h-excl-toolbar z-0 w-full bg-gray-900",
             nodeSelected !== undefined &&
-              "w-0 sm:w-[calc(100vw-30rem)] lg:w-[calc(100vw-42rem)]"
+              "w-0 sm:w-[calc(100vw-27rem)] lg:w-[calc(100vw-42rem)]"
           )}
           ref={cytoscapeRef}
         />
+        {maxKnowledgeLevel && (
+          <QuestionModal
+            modalShown={nodeSelected !== undefined && questionModalShown}
+            closeModal={() => setQuestionModalShown(false)}
+            onCompletion={(
+              conceptCompleted: Completed,
+              levelsGained: number
+            ) => {
+              setProgressModalKnowledgeLevel(knowledgeLevel - levelsGained);
+              switch (conceptCompleted) {
+                case "completed_concept":
+                  setProgressModalShown(true);
+                  setProgressModalKnowledgeLevel(null);
+                  setTimeout(() => {
+                    setProgressModalShown(false);
+                    onTestSuccess(nodeSelected, userId, sessionId);
+                    setQuestionModalShown(false);
+                    setTimeout(() => {
+                      if (currentConcept) selectConcept(currentConcept);
+                    }, 1500);
+                  }, 3000);
+                  break;
+                case "doing_poorly":
+                  updateNotificationInfo({
+                    title: `Mission Failed - we'll get 'em next time.`,
+                    message: `Look at the resources on ${
+                      nodeSelected.data().name
+                    } & test again when ready!`,
+                    Icon: BookOpenIcon,
+                    colour: "red",
+                    show: true,
+                    side: "left",
+                  });
+                  break;
+                case "max_num_of_questions":
+                  setProgressModalShown(true);
+                  setProgressModalKnowledgeLevel(null);
+                  setTimeout(() => {
+                    setProgressModalShown(false);
+                    setQuestionModalShown(false);
+                    setTimeout(() => {
+                      if (currentConcept) selectConcept(currentConcept);
+                    }, 1500);
+                  }, 3000);
+                  updateNotificationInfo({
+                    title:
+                      levelsGained >= 1
+                        ? `Congrats! You've progressed ${Math.floor(
+                            levelsGained
+                          )} level${levelsGained >= 1 ? "s" : ""} on ${
+                            nodeSelected.data().name
+                          }!`
+                        : "You're making great progress!",
+                    message: levelsGained
+                      ? "At this rate, you'll soon complete the concept! Test again when you're ready."
+                      : "Keep it up to reach the next level! Check out the content for this concept and test again. :)",
+                    Icon: levelsGained ? ArrowCircleUpIcon : BookOpenIcon,
+                    colour: "green",
+                    show: true,
+                    side: "left",
+                  });
+                  break;
+                case "review_completed":
+                  updateNotificationInfo({
+                    title: `Review of ${nodeSelected.data().name} completed!`,
+                    message: `Congrats for completing the review! You can do another or move on from here.`,
+                    Icon: BookOpenIcon,
+                    colour: "green",
+                    show: true,
+                    side: "left",
+                  });
+                  break;
+                case null:
+                  break;
+              }
+              setQuestionModalShown(false);
+              setTimeout(() => setProgressModalKnowledgeLevel(null), 5000);
+            }}
+            knowledgeLevel={knowledgeLevel}
+            setKnowledgeLevel={setKnowledgeLevel}
+            maxKnowledgeLevel={maxKnowledgeLevel}
+            conceptId={nodeSelected ? nodeSelected.id() : null}
+            backendUrl={backendUrl}
+            userId={userId}
+            sessionId={sessionId}
+            buttonPressFunction={buttonPressFunction}
+          />
+        )}
         <div
           className={classNames(
             !editMap && data && nodeSelected && "hidden sm:flex",
-            "flex flex-col md:flex-row items-end gap-4 absolute bottom-0 right-0 m-4"
+            "absolute bottom-0 right-0 m-4 flex flex-col items-end gap-4 md:flex-row"
           )}
         >
-          {!editMap && (
-            <GetNextConceptButton
-              nextConcept={nextConcept}
-              buttonPressFunction={buttonPressFunction}
-            />
-          )}
+          {/*{!editMap && (*/}
+          {/*  <GetNextConceptButton*/}
+          {/*    currentConcept={currentConcept}*/}
+          {/*    buttonPressFunction={buttonPressFunction}*/}
+          {/*  />*/}
+          {/*)}*/}
           <ResetPanButton buttonPressFunction={buttonPressFunction} />
-          {!editMap && (
+          {!editMap && !questionsEnabled && (
             <ResetProgressIconButton
               buttonPressFunction={buttonPressFunction}
               backendUrl={backendUrl}
@@ -211,30 +353,46 @@ export default function Map({
         </div>
       </div>
       {/*RIGHT SIDE PANEL*/}
-      {!editMap && nodeSelected && (
-        <ConceptInfo
-          visible={true}
-          node={nodeSelected}
-          backendUrl={backendUrl}
-          userId={userId}
-          userEmail={userEmail}
-          mapUUID={mapUUID}
-          sessionId={sessionId}
-          hideConceptInfo={hideConceptPanel}
-          learnedNodes={learned}
-          goalNodes={goals}
-          onTestSuccess={onTestSuccess}
-          onTestFail={onTestFail}
-          onLearnedClick={onLearnedClick}
-          onSetGoalClick={onSetGoalClick}
-          allowSuggestions={allowSuggestions}
-          buttonPressFunction={buttonPressFunction}
-          userVotes={userVotes}
-          onVote={onVote}
-          allVotes={data}
-          questionsEnabled={questionsEnabled}
-        />
+      {!editMap && (
+        <div className={questionModalShown ? "hidden sm:block" : ""}>
+          <ConceptInfo
+            visible={nodeSelected !== undefined}
+            node={nodeSelected}
+            backendUrl={backendUrl}
+            userId={userId}
+            userEmail={userEmail}
+            mapUUID={mapUUID}
+            sessionId={sessionId}
+            hideConceptInfo={hideConceptPanel}
+            learnedNodes={learned}
+            goalNodes={goals}
+            knowledgeLevel={knowledgeLevel}
+            maxKnowledgeLevel={maxKnowledgeLevel}
+            questionModalShown={questionModalShown}
+            setQuestionModalShown={setQuestionModalShown}
+            onLearnedClick={onLearnedClick}
+            onSetGoalClick={onSetGoalClick}
+            allowSuggestions={allowSuggestions}
+            buttonPressFunction={buttonPressFunction}
+            userVotes={userVotes}
+            onVote={onVote}
+            allVotes={data}
+            questionsEnabled={questionsEnabled}
+            setProgressModalOpen={setProgressModalShown}
+          />
+        </div>
       )}
+      <ProgressModal
+        progressModalOpen={progressModalShown}
+        closeProgressModalOpen={() => setProgressModalShown(false)}
+        knowledgeLevel={
+          progressModalKnowledgeLevel !== null
+            ? progressModalKnowledgeLevel
+            : knowledgeLevel
+        }
+        maxKnowledgeLevel={maxKnowledgeLevel}
+        conceptName={nodeSelected && nodeSelected.data().name}
+      />
     </div>
   );
 }
