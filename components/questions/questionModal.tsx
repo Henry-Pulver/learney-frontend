@@ -174,11 +174,15 @@ export default function QuestionModal({
   const [loadingMessage, setLoadingMessage] = useState<string>(null);
   useEffect(() => {
     // When the question batch is loading, change the message every 3 seconds
-    if (!(questionSet.id &&
+    if (
+      !(
+        questionSet.id &&
         !(
           questionSet.completed &&
           isCorrectArray(answersGiven, questionSet)[currentQidx]
-        )))
+        )
+      )
+    )
       setTimeout(() => setLoadingMessage(randomLoadingMessage()), 1500);
   }, [modalShown, loadingMessage]);
 
@@ -203,108 +207,104 @@ export default function QuestionModal({
           questionSet.completed &&
           isCorrectArray(answersGiven, questionSet)[currentQidx]
         ) ? (
-          <>
-            <div className="flex w-full flex-col">
-              <ProgressDots
-                questionArray={questionSet.questions}
-                answersGiven={answersGiven}
-                currentQIndex={currentQidx}
-                currentStepRef={currentStepRef}
-                maxSteps={questionSet.max_num_questions}
-              />
-              <div className="mt-3 text-center sm:mt-5">
-                {/*<div className="my-8 mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">*/}
-                {/*  <AcademicCapIcon*/}
-                {/*    className="h-6 w-6 text-blue-600"*/}
-                {/*    aria-hidden="true"*/}
-                {/*  />*/}
-                {/*</div>*/}
-                {/*<Dialog.Title*/}
-                {/*  as="h3"*/}
-                {/*  className="text-lg leading-6 font-medium text-gray-900"*/}
-                {/*>*/}
-                {/*  {`Question ${currentQidx + 1}`}*/}
-                {/*</Dialog.Title>*/}
-                <div className="my-8 flex w-full flex-row justify-center">
-                  <div className="max-w-lg text-lg text-black">
+          <div className="flex w-full flex-col">
+            <ProgressDots
+              questionArray={questionSet.questions}
+              answersGiven={answersGiven}
+              currentQIndex={currentQidx}
+              currentStepRef={currentStepRef}
+              maxSteps={questionSet.max_num_questions}
+            />
+            <div className="mt-3 text-center sm:mt-5">
+              {/*<div className="my-8 mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">*/}
+              {/*  <AcademicCapIcon*/}
+              {/*    className="h-6 w-6 text-blue-600"*/}
+              {/*    aria-hidden="true"*/}
+              {/*  />*/}
+              {/*</div>*/}
+              {/*<Dialog.Title*/}
+              {/*  as="h3"*/}
+              {/*  className="text-lg leading-6 font-medium text-gray-900"*/}
+              {/*>*/}
+              {/*  {`Question ${currentQidx + 1}`}*/}
+              {/*</Dialog.Title>*/}
+              <div className="my-8 flex w-full flex-row justify-center">
+                <div className="max-w-lg text-lg text-black">
+                  <QuestionText
+                    text={
+                      questionSet.questions.length > currentQidx &&
+                      questionSet.questions[currentQidx].question_text
+                    }
+                  />
+                </div>
+              </div>
+              <div className="flex w-full justify-center">
+                <AnswerOptions
+                  answerArray={
+                    questionSet.questions[currentQidx].answers_order_randomised
+                  }
+                  answerGiven={
+                    answersGiven.length > currentQidx
+                      ? answersGiven[currentQidx]
+                      : null
+                  }
+                  correctAnswer={
+                    questionSet.questions[currentQidx].correct_answer
+                  }
+                  onAnswerSelected={onAnswerClick}
+                />
+              </div>
+            </div>
+            {/*FEEBACK*/}
+            {answersGiven.length > currentQidx && // Check that the question has been answered
+              !isCorrectArray(answersGiven, questionSet)[currentQidx] && // Check that the answer is incorrect
+              questionSet.questions[currentQidx].feedback && ( // Check that there is some feedback
+                <div className="flex justify-center">
+                  <div className="my-6 max-w-xl rounded bg-gray-200 px-6 py-4 text-center text-black">
+                    {/*<h3 className="text-lg font-semibold">Feedback</h3>*/}
                     <QuestionText
-                      text={
-                        questionSet.questions.length > currentQidx &&
-                        questionSet.questions[currentQidx].question_text
-                      }
+                      text={questionSet.questions[currentQidx].feedback}
                     />
                   </div>
                 </div>
-                <div className="flex w-full justify-center">
-                  <AnswerOptions
-                    answerArray={
-                      questionSet.questions[currentQidx]
-                        .answers_order_randomised
-                    }
-                    answerGiven={
-                      answersGiven.length > currentQidx
-                        ? answersGiven[currentQidx]
-                        : null
-                    }
-                    correctAnswer={
-                      questionSet.questions[currentQidx].correct_answer
-                    }
-                    onAnswerSelected={onAnswerClick}
-                  />
-                </div>
-              </div>
-              {/*FEEBACK*/}
-              {answersGiven.length > currentQidx && // Check that the question has been answered
-                !isCorrectArray(answersGiven, questionSet)[currentQidx] && // Check that the answer is incorrect
-                questionSet.questions[currentQidx].feedback && ( // Check that there is some feedback
-                  <div className="flex justify-center">
-                    <div className="my-6 max-w-xl rounded bg-gray-200 px-6 py-4 text-center text-black">
-                      {/*<h3 className="text-lg font-semibold">Feedback</h3>*/}
-                      <QuestionText
-                        text={questionSet.questions[currentQidx].feedback}
-                      />
-                    </div>
-                  </div>
-                )}
-              {/*NEXT QUESTION BUTTON*/}
-              <div className="flex justify-center">
-                <div className="mt-5 flex w-full max-w-lg justify-between sm:mt-6">
-                  <ReportQuestionButton
-                    question={questionSet.questions[currentQidx]}
-                    buttonPressFunction={buttonPressFunction}
-                    backendUrl={backendUrl}
-                    userId={userId}
-                  />
-                  {/* TODO: Only show below button if user got question wrong? */}
-                  <button
-                    className={classNames(
-                      answersGiven.length > currentQidx
-                        ? "cursor-pointer bg-blue-600 hover:bg-blue-700"
-                        : "cursor-default bg-gray-300",
-                      "focus:outline-none inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm"
-                    )}
-                    onClick={
-                      answersGiven.length <= currentQidx || // Deactivated as question not yet answered
-                      nextQuestionPressed ||
-                      questionSet.completed // Completion happens automagically
-                        ? () => {}
-                        : () => setNextQuestionPressed(true)
-                    }
-                  >
-                    {nextQuestionPressed ? (
-                      <LoadingSpinner classes="w-5 h-5 py-0.5 mx-9" />
-                    ) : questionSet.max_num_questions ===
-                      answersGiven.length ? (
-                      "Complete"
-                    ) : (
-                      "Next Question"
-                    )}
-                    <NextArrow />
-                  </button>
-                </div>
+              )}
+            {/*NEXT QUESTION BUTTON*/}
+            <div className="flex justify-center">
+              <div className="mt-5 flex w-full max-w-lg justify-between sm:mt-6">
+                <ReportQuestionButton
+                  question={questionSet.questions[currentQidx]}
+                  buttonPressFunction={buttonPressFunction}
+                  backendUrl={backendUrl}
+                  userId={userId}
+                />
+                {/* TODO: Only show below button if user got question wrong? */}
+                <button
+                  className={classNames(
+                    answersGiven.length > currentQidx
+                      ? "cursor-pointer bg-blue-600 hover:bg-blue-700"
+                      : "cursor-default bg-gray-300",
+                    "focus:outline-none inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm"
+                  )}
+                  onClick={
+                    answersGiven.length <= currentQidx || // Deactivated as question not yet answered
+                    nextQuestionPressed ||
+                    questionSet.completed // Completion happens automagically
+                      ? () => {}
+                      : () => setNextQuestionPressed(true)
+                  }
+                >
+                  {nextQuestionPressed ? (
+                    <LoadingSpinner classes="w-5 h-5 py-0.5 mx-9" />
+                  ) : questionSet.max_num_questions === answersGiven.length ? (
+                    "Complete"
+                  ) : (
+                    "Next Question"
+                  )}
+                  <NextArrow />
+                </button>
               </div>
             </div>
-          </>
+          </div>
         ) : questionSet.completed &&
           isCorrectArray(answersGiven, questionSet)[currentQidx] ? (
           <div className="grid h-96 w-full content-center justify-center">
@@ -315,7 +315,7 @@ export default function QuestionModal({
           </div>
         ) : (
           <div className="grid h-96 w-full content-center justify-center">
-            <div className="flex flex-col gap-y-4 place-items-center text-xl">
+            <div className="flex flex-col place-items-center gap-y-4 text-xl">
               <LoadingSpinner classes="w-20 h-20" />
               {loadingMessage}
             </div>
@@ -326,7 +326,7 @@ export default function QuestionModal({
   );
 }
 
-function QuestionText({
+export function QuestionText({
   text,
   className = "",
 }: {
@@ -373,7 +373,7 @@ function InlineTextAndMath({ text }: { text: string }) {
   return <div>{outputArray}</div>;
 }
 
-function AnswerOptions({
+export function AnswerOptions({
   answerArray,
   answerGiven,
   correctAnswer,
@@ -386,9 +386,9 @@ function AnswerOptions({
 }) {
   return (
     <div className="mt-5 grid w-full max-w-md grid-cols-2 gap-3 sm:mt-2 sm:grid-flow-row-dense">
-      {answerArray.map((answer) => (
+      {answerArray.map((answer, idx) => (
         <AnswerOption
-          key={answer}
+          key={idx}
           answerText={answer}
           answerGiven={answerGiven}
           correctAnswer={correctAnswer}
