@@ -171,6 +171,17 @@ export default function QuestionModal({
     }
   };
 
+  const [loadingMessage, setLoadingMessage] = useState<string>(null);
+  useEffect(() => {
+    // When the question batch is loading, change the message every 3 seconds
+    if (!(questionSet.id &&
+        !(
+          questionSet.completed &&
+          isCorrectArray(answersGiven, questionSet)[currentQidx]
+        )))
+      setTimeout(() => setLoadingMessage(randomLoadingMessage()), 1500);
+  }, [modalShown, loadingMessage]);
+
   const currentStepRef = useRef(null);
 
   return (
@@ -304,7 +315,10 @@ export default function QuestionModal({
           </div>
         ) : (
           <div className="grid h-96 w-full content-center justify-center">
-            <LoadingSpinner classes="w-20 h-20" />
+            <div className="flex flex-col gap-y-4 place-items-center text-xl">
+              <LoadingSpinner classes="w-20 h-20" />
+              {loadingMessage}
+            </div>
           </div>
         )}
       </div>
@@ -448,4 +462,33 @@ function isCorrectArray(
     (answerGiven: string, index: number) =>
       answerGiven === questionSet.questions[index].correct_answer
   );
+}
+
+function randomLoadingMessage(): string {
+  return [
+    "Getting the flywheel spinning...",
+    "Awakening the elves...",
+    "Getting the juices flowing...",
+    "Breaking out the highlighters...",
+    "Turning on the lights...",
+    "Generating more magic!",
+    "More cowbell!!",
+    "Getting the machines learning...",
+    "Paying the elves generously...",
+    "Caffeinating the question-writers...",
+    "Alerting the gentry...",
+    "Calling the cavalry...",
+    "Turning up the heat...",
+    "Cracking the whip...",
+    "Fuelling the flames...",
+    "Expanding our minds...",
+    "Furiously writing questions...",
+    "Blasting off...",
+    "Fastening seatbelts...",
+    "Putting on sunglasses...",
+    "Adding a sprinkle of greatness...",
+    "Giving motivational Ted talk...",
+    "Seasoning to taste...",
+    "Stirring the sauce...",
+  ][Math.floor(Math.random() * 24)];
 }
