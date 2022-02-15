@@ -6,7 +6,7 @@ import { appendToArray, classNames } from "../lib/reactUtils";
 import { NodeSingular } from "cytoscape";
 import Overlay from "./overlay";
 import { ButtonPressFunction } from "../lib/types";
-import { OnGoalLearnedClick } from "./types";
+import { OnGoalLearnedClick, UserData } from "./types";
 import {
   getValidURLs,
   handleFetchResponses,
@@ -27,7 +27,7 @@ export function ConceptInfo({
   hideConceptInfo,
   node,
   backendUrl,
-  userId,
+  userData,
   mapUUID,
   sessionId,
   learnedNodes,
@@ -40,7 +40,6 @@ export function ConceptInfo({
   onSetGoalClick,
   allowSuggestions,
   buttonPressFunction,
-  userEmail,
   onVote,
   userVotes,
   allVotes,
@@ -50,8 +49,7 @@ export function ConceptInfo({
   visible: boolean;
   node: NodeSingular | undefined;
   backendUrl: string;
-  userId: string;
-  userEmail: string;
+  userData: UserData;
   mapUUID: string;
   sessionId: string;
   hideConceptInfo: () => void;
@@ -151,7 +149,7 @@ export function ConceptInfo({
                         });
                       }
                     : // if on normal map
-                      () => onLearnedClick(node, userId, sessionId)
+                      () => onLearnedClick(node, userData.id, sessionId)
                 }
                 Icon={CheckCircleIcon}
                 colour={"green"}
@@ -161,7 +159,7 @@ export function ConceptInfo({
               <IconToggleButtonWithCheckbox
                 text={"Set Goal"}
                 checked={!!goalNodes[node.id()]}
-                onCheck={() => onSetGoalClick(node, userId, sessionId)}
+                onCheck={() => onSetGoalClick(node, userData.id, sessionId)}
                 Icon={FlagIcon}
                 colour={"blue"}
                 disabled={questionModalShown}
@@ -184,7 +182,7 @@ export function ConceptInfo({
                     key={url}
                     node={node}
                     url={url}
-                    userId={userId}
+                    userId={userData.id}
                     backendUrl={backendUrl}
                     mapUUID={mapUUID}
                     sessionId={sessionId}
@@ -206,7 +204,7 @@ export function ConceptInfo({
                   <div key="Make suggestion button">
                     <MakeSuggestionButton
                       buttonPressFunction={buttonPressFunction}
-                      userEmail={userEmail}
+                      userEmail={userData.email}
                       buttonName={"Suggest Content"}
                       text={"Suggest Content"}
                     />
