@@ -149,6 +149,9 @@ export async function logPageView(
   else {
     requestBody["user_id"] = user.sub;
     requestBody["user_data"] = user;
+    const date = new Date();
+    requestBody["user_data"]["utc_tz_difference"] =
+      date.getTimezoneOffset() / 60; // Convert mins to hours
   }
 
   const response = await fetch(`${backendUrl}/api/v0/page_visit`, {
