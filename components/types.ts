@@ -17,3 +17,17 @@ export type NotificationData = {
   show: boolean;
   side?: "right" | "left";
 };
+
+export type UserData = {
+  id: string;
+  email: string;
+  questions_streak: number;
+  batch_completed_today: boolean;
+};
+
+export const emptyUserData = {
+  id: undefined,
+  email: "",
+  questions_streak: 0,
+  batch_completed_today: false,
+};

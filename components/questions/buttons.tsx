@@ -56,13 +56,9 @@ export function ReportQuestionButton(props: {
       >
         <button
           className="red-icon-btn"
-          onClick={props.buttonPressFunction(
-            () => {
-              setReportModalOpen(true);
-            },
-            // () => {},
-            "Report question button"
-          )}
+          onClick={props.buttonPressFunction(() => {
+            setReportModalOpen(true);
+          }, "Report question button")}
         >
           <ExclamationIcon className="h-7 w-7" />
         </button>
