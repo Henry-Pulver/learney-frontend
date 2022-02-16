@@ -15,8 +15,9 @@ import Modal from "./modal";
 import { ConceptSearchBox } from "./ConceptSearchBox";
 import { ButtonPressFunction, UserState } from "../lib/types";
 import { ElementsDefinition, NodeSingular } from "cytoscape";
-import { NotificationData } from "./types";
+import { NotificationData, UserData } from "./types";
 import { selectConcept } from "../lib/graph";
+import StreakIcon from "./questions/streaks";
 
 export function EditNavbar({
   user,
@@ -82,6 +83,7 @@ export function EditNavbar({
 
 export function LearnNavbar({
   user,
+  userData,
   pageLoaded,
   buttonPressFunction,
   mapJson,
@@ -92,6 +94,7 @@ export function LearnNavbar({
   questionsEnabled,
 }: {
   user: UserState;
+  userData: UserData;
   pageLoaded: boolean;
   buttonPressFunction: ButtonPressFunction;
   mapJson: ElementsDefinition;
@@ -142,10 +145,19 @@ export function LearnNavbar({
                   userEmail={user !== undefined ? user.email : ""}
                 />,
               ]
-            : []
+            : [
+                <FeedBackButton
+                  key="FeedbackButton"
+                  buttonPressFunction={buttonPressFunction}
+                />,
+              ]
         }
         rightSideButtons={(!questionsEnabled
           ? [
+              <FeedBackButton
+                key="FeedbackButton"
+                buttonPressFunction={buttonPressFunction}
+              />,
               // <ShareCurrentPosition
               //   key="ShareMapViewButton"
               //   pageLoaded={pageLoaded}
@@ -153,16 +165,24 @@ export function LearnNavbar({
               // />,
             ]
           : []
-        ).concat([
-          <FeedBackButton
-            key="FeedbackButton"
-            buttonPressFunction={buttonPressFunction}
-          />,
-          <SlackButton
-            key="SlackButton"
-            buttonPressFunction={buttonPressFunction}
-          />,
-        ])}
+        )
+          .concat([
+            <SlackButton
+              key="SlackButton"
+              buttonPressFunction={buttonPressFunction}
+            />,
+          ])
+          .concat(
+            !questionsEnabled
+              ? []
+              : [
+                  <StreakIcon
+                    key="StreakIcon"
+                    streak={userData.questions_streak}
+                    today={userData.batch_completed_today}
+                  />,
+                ]
+          )}
         buttonPressFunction={buttonPressFunction}
         mapJson={mapJson}
         pageLoaded={pageLoaded}
@@ -235,7 +255,7 @@ function Navbar({
                     />
                   </div>
                 </div>
-                <div className="hidden lg:flex lg:items-center lg:justify-evenly lg:gap-4">
+                <div className="hidden lg:flex lg:items-center lg:justify-evenly lg:gap-8">
                   {leftSideButtons.map((button, idx) => (
                     <div key={idx}>{button}</div>
                   ))}
@@ -258,7 +278,7 @@ function Navbar({
                   showTitle={showTitle}
                   setShowTitle={setShowTitle}
                 />
-                <div className="hidden lg:flex lg:items-center lg:justify-evenly lg:gap-4">
+                <div className="hidden lg:flex lg:items-center lg:justify-evenly lg:gap-8">
                   {rightSideButtons.map((button, idx) => (
                     <div key={idx}>{button}</div>
                   ))}

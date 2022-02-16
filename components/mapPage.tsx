@@ -8,7 +8,6 @@ import {
 } from "../lib/trackingScripts";
 import {
   buttonPress,
-  isAnonymousUser,
   logPageView,
   setURLQuery,
   URLQuerySet,
@@ -32,8 +31,7 @@ import { NodeSingular } from "cytoscape";
 import { setNotificationProgressInfo } from "./questions/notificationMessages";
 import { fetchCurrentConcept, getNextNodeToLearn } from "../lib/questions";
 import { ButtonPressFunction } from "../lib/types";
-import { NotificationData } from "./types";
-import { CheckCircleIcon } from "@heroicons/react/outline";
+import { emptyUserData, NotificationData, UserData } from "./types";
 
 export default function MapPage({
   mapTitle,
@@ -66,8 +64,7 @@ export default function MapPage({
   const router = useRouter();
 
   // TODO: Move all these into a redux/MST store
-  const [userId, setUserId] = React.useState<string | undefined>(undefined);
-  const [userEmail, setUserEmail] = React.useState<string>("");
+  const [userData, setUserData] = React.useState<UserData>(emptyUserData);
   const [sessionId, setSessionId] = React.useState<string | null>(null);
   // Whether to show LearnExploreIntroPage on load
   const [showExploreLearn, setExploreLearn] = useState<boolean | null>(null);
@@ -147,12 +144,12 @@ export default function MapPage({
   const [buttonPressFunction, setButtonPressFunction] =
     useState<ButtonPressFunction>(() => () => () => {});
   useEffect(() => {
-    if (userId !== undefined) {
+    if (userData.id !== undefined) {
       setButtonPressFunction(() => (runFirst, buttonName) => {
-        return buttonPress(runFirst, buttonName, backendUrl, userId);
+        return buttonPress(runFirst, buttonName, backendUrl, userData.id);
       });
     }
-  }, [userId]);
+  }, [userData.id]);
 
   const [pageLoaded, setPageLoaded] = React.useState(false);
 
@@ -170,21 +167,27 @@ export default function MapPage({
           responseJson = await logPageView(user, backendUrl, mapUrlExtension);
         setSessionId(responseJson.session_id);
 
-        let newUserId: string;
         if (user !== undefined) {
-          newUserId = user.sub;
-          setUserEmail(user.email);
+          setUserData((prevData) => ({
+            ...prevData,
+            id: user.sub,
+            email: user.email,
+            questions_streak: responseJson.questions_streak,
+            batch_completed_today: responseJson.batch_completed_today,
+          }));
+          initialiseMixpanelTracking(user.sub, user);
         } else {
-          newUserId = responseJson.user_id;
-          localStorage.setItem("userId", newUserId);
+          // Anonymous user
+          setUserData((prevData) => ({
+            ...prevData,
+            id: responseJson.user_id,
+          }));
+          localStorage.setItem("userId", responseJson.user_id);
+          initialiseSignInTooltip();
+          initialiseMixpanelTracking(responseJson.user_id, user);
         }
-        setUserId(newUserId);
-
         setupTracking();
         ReactGA.pageview(window.location.pathname);
-        initialiseMixpanelTracking(newUserId, user);
-
-        if (isAnonymousUser(newUserId)) initialiseSignInTooltip();
       }
     })();
   }, [isLoading]);
@@ -276,7 +279,7 @@ export default function MapPage({
         (editMap ? (
           <EditNavbar
             user={user}
-            userId={userId}
+            userId={userData.id}
             buttonPressFunction={buttonPressFunction}
             backendUrl={backendUrl}
             mapUUID={mapUUID}
@@ -289,6 +292,7 @@ export default function MapPage({
         ) : (
           <LearnNavbar
             user={user}
+            userData={userData}
             pageLoaded={pageLoaded}
             buttonPressFunction={buttonPressFunction}
             mapJson={mapJson}
@@ -307,7 +311,7 @@ export default function MapPage({
           mapJson={mapJson}
           setGoal={onSetGoalClick}
           pageLoaded={pageLoaded}
-          userId={userId}
+          userId={userData.id}
           sessionId={sessionId}
           buttonPressFunction={buttonPressFunction}
         />
@@ -316,8 +320,8 @@ export default function MapPage({
         mapTitle={mapTitle ? mapTitle : mapUrlExtension}
         mapDescription={mapDescription}
         backendUrl={backendUrl}
-        userId={userId}
-        userEmail={userEmail}
+        userData={userData}
+        setUserData={setUserData}
         allowSuggestions={allowSuggestions}
         editMap={editMap}
         mapJson={mapJson}
@@ -342,7 +346,7 @@ export default function MapPage({
         <Editor
           buttonPressFunction={buttonPressFunction}
           backendUrl={backendUrl}
-          userId={userId}
+          userId={userData.id}
           mapUUID={mapUUID}
           pageLoaded={pageLoaded}
           editType={editType}
