@@ -255,7 +255,7 @@ function Navbar({
                     />
                   </div>
                 </div>
-                <div className="hidden lg:flex lg:items-center lg:justify-evenly lg:gap-4">
+                <div className="hidden lg:flex lg:items-center lg:justify-evenly lg:gap-8">
                   {leftSideButtons.map((button, idx) => (
                     <div key={idx}>{button}</div>
                   ))}
@@ -278,7 +278,7 @@ function Navbar({
                   showTitle={showTitle}
                   setShowTitle={setShowTitle}
                 />
-                <div className="hidden lg:flex lg:items-center lg:justify-evenly lg:gap-4">
+                <div className="hidden lg:flex lg:items-center lg:justify-evenly lg:gap-8">
                   {rightSideButtons.map((button, idx) => (
                     <div key={idx}>{button}</div>
                   ))}
