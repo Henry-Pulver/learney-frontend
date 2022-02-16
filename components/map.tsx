@@ -29,18 +29,21 @@ import {
   SetGoalState,
   SetLearnedState,
   NotificationData,
+  UserData,
 } from "./types";
 import QuestionModal from "./questions/questionModal";
 import { ProgressModal } from "./questions/progressModal";
 import { ArrowCircleUpIcon, BookOpenIcon } from "@heroicons/react/outline";
 import { Completed } from "./questions/types";
 
+type PrevUserDataFn = (prevUserData: UserData) => UserData;
+
 export default function Map({
   mapTitle,
   mapDescription,
   backendUrl,
-  userId,
-  userEmail,
+  userData,
+  setUserData,
   allowSuggestions,
   editMap,
   mapJson,
@@ -64,8 +67,8 @@ export default function Map({
   mapTitle: string;
   mapDescription: string;
   backendUrl: string;
-  userId: string;
-  userEmail: string;
+  userData: UserData;
+  setUserData: (prevUserDataFn: PrevUserDataFn) => void;
   allowSuggestions: boolean;
   editMap: boolean;
   mapJson: ElementsDefinition;
@@ -95,7 +98,7 @@ export default function Map({
   };
   const onVote = (node, url, up) => {
     setUserVote((prevVotes) => ({ ...prevVotes, [url]: up }));
-    saveVote(url, up, node, backendUrl, userId, mapUUID, sessionId);
+    saveVote(url, up, node, backendUrl, userData.id, mapUUID, sessionId);
   };
   const [progressModalShown, setProgressModalShown] = useState<boolean>(false);
 
@@ -111,11 +114,11 @@ export default function Map({
 
   useEffect(() => {
     (async function () {
-      if (sessionId && userId) {
+      if (sessionId && userData.id) {
         let initLearnedNodes, initGoalNodes, initVotes;
         if (!editMap) {
           [initLearnedNodes, initGoalNodes, initVotes] =
-            await getDataFromStorage(backendUrl, userId, mapUUID);
+            await getDataFromStorage(backendUrl, userData.id, mapUUID);
           if (typeof initVotes === "string")
             initialiseUserVotes(JSON.parse(initVotes));
           else initialiseUserVotes(initVotes);
@@ -131,11 +134,18 @@ export default function Map({
 
         const styleResponse = await fetch(`/knowledge_graph.cycss`);
         const styleText = await styleResponse.text();
-        await initCy(mapJson, styleText, backendUrl, userId, mapUUID, editMap);
-        initialiseGraphState(userId); // Set initially learned or goal nodes
+        await initCy(
+          mapJson,
+          styleText,
+          backendUrl,
+          userData.id,
+          mapUUID,
+          editMap
+        );
+        initialiseGraphState(userData.id); // Set initially learned or goal nodes
         bindRouters(
           backendUrl,
-          userId,
+          userData.id,
           mapUUID,
           sessionId,
           showConceptPanel,
@@ -150,7 +160,7 @@ export default function Map({
         setPageLoaded(true);
       }
     })();
-  }, [sessionId, userId]);
+  }, [sessionId, userData.id]);
 
   const { data } = useAsync({
     promiseFn: fetchTotalVotes,
@@ -172,7 +182,7 @@ export default function Map({
       (async () => {
         const conceptInfo = await fetchConceptInfo(
           backendUrl,
-          userId,
+          userData.id,
           nodeSelected.id()
         );
         setKnowledgeLevel(conceptInfo.level);
@@ -247,13 +257,21 @@ export default function Map({
               levelsGained: number
             ) => {
               setProgressModalKnowledgeLevel(knowledgeLevel - levelsGained);
+              setUserData((prevData: UserData) => ({
+                ...prevData,
+                questions_streak:
+                  prevData.questions_streak +
+                  1 -
+                  Number(prevData.batch_completed_today),
+                batch_completed_today: true,
+              }));
               switch (conceptCompleted) {
                 case "completed_concept":
                   setProgressModalShown(true);
                   setProgressModalKnowledgeLevel(null);
                   setTimeout(() => {
                     setProgressModalShown(false);
-                    onTestSuccess(nodeSelected, userId, sessionId);
+                    onTestSuccess(nodeSelected, userData.id, sessionId);
                     setQuestionModalShown(false);
                     setTimeout(() => {
                       if (currentConcept) selectConcept(currentConcept);
@@ -321,7 +339,7 @@ export default function Map({
             maxKnowledgeLevel={maxKnowledgeLevel}
             conceptId={nodeSelected ? nodeSelected.id() : null}
             backendUrl={backendUrl}
-            userId={userId}
+            userId={userData.id}
             sessionId={sessionId}
             buttonPressFunction={buttonPressFunction}
           />
@@ -343,7 +361,7 @@ export default function Map({
             <ResetProgressIconButton
               buttonPressFunction={buttonPressFunction}
               backendUrl={backendUrl}
-              userId={userId}
+              userId={userData.id}
               mapUUID={mapUUID}
               sessionId={sessionId}
               setGoalsState={setGoalsState}
@@ -359,8 +377,7 @@ export default function Map({
             visible={nodeSelected !== undefined}
             node={nodeSelected}
             backendUrl={backendUrl}
-            userId={userId}
-            userEmail={userEmail}
+            userData={userData}
             mapUUID={mapUUID}
             sessionId={sessionId}
             hideConceptInfo={hideConceptPanel}
