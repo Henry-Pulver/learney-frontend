@@ -36,7 +36,6 @@ export default function TemplateEditor({
   useEffect(() => {
     setAnswerGiven(null);
   }, [question]);
-  console.log(template);
 
   return (
     <div className="grid h-screen grid-cols-2 gap-x-2 bg-gray-800">
@@ -219,7 +218,6 @@ export default function TemplateEditor({
                     );
                     const questionJson =
                       (await templateResponse.json()) as QuestionEditingResponse;
-                    console.log(questionJson);
                     setQuestion((prevQuestion) => ({
                       ...prevQuestion,
                       error: undefined,
@@ -309,7 +307,6 @@ export const getServerSideProps = withPageAuthRequired({
     const templateJson = (await templateResponse.json()) as {
       template_text: string;
     };
-    console.log(templateJson);
     return {
       props: {
         backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
