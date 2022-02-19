@@ -163,7 +163,7 @@ export function SaveMapButton({
                     You can now see this map live at{" "}
                     <a
                       href={pathElements.join("/")}
-                      className="text-semibold underline-offset-4 decoration-blue-300 hover:decoration-blue-400 text-gray-900 underline hover:text-blue-400"
+                      className="text-semibold decoration-blue-300 underline-offset-4 hover:decoration-blue-400 text-gray-900 underline hover:text-blue-400"
                     >
                       {pathElements.join("/")}
                     </a>
