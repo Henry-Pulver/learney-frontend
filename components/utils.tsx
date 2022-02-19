@@ -18,7 +18,7 @@ export function XCloseButton(props: {
     >
       <button
         type="button"
-        className="focus:outline-none rounded-md bg-transparent focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="rounded-md bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         onClick={props.onClick}
       >
         <span className="sr-only">Close</span>
