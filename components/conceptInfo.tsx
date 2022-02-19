@@ -10,6 +10,7 @@ import { OnGoalLearnedClick, UserData } from "./types";
 import {
   getValidURLs,
   handleFetchResponses,
+  isAnonymousUser,
   logContentClick,
   queryParams,
   setURLQuery,
@@ -19,6 +20,7 @@ import { cacheHeaders, jsonHeaders } from "../lib/headers";
 import LevelBadge from "./questions/levelBadge";
 import { LevelsProgressBar } from "./questions/progressBars";
 import { useRouter } from "next/router";
+import { signInTooltip } from "../lib/learningAndPlanning/learningAndPlanning";
 
 type OnVote = (node: NodeSingular, url: string, up: boolean | null) => void;
 
@@ -458,6 +460,7 @@ async function postChecked(
   mapUUID: string,
   userId: string
 ) {
+  if (isAnonymousUser(userId)) signInTooltip.show();
   const response = await fetch(`${backendUrl}/api/v0/check_off_link`, {
     method: "POST",
     headers: jsonHeaders,
