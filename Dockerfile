@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:14-alpine
+FROM node:17-alpine
 RUN apk update && apk upgrade && \
     apk add --no-cache bash git openssh libc6-compat
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
