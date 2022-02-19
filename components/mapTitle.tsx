@@ -39,7 +39,7 @@ export default function MapTitle({
             className={classNames(
               "whitespace-pre-line py-1 text-lg text-gray-700",
               !descriptionExpanded &&
-                "max-h-0 overflow-hidden overflow-ellipsis whitespace-nowrap pr-8 sm:max-h-8"
+                "max-h-0 overflow-hidden text-ellipsis whitespace-nowrap pr-8 sm:max-h-8"
             )}
           >
             {description}

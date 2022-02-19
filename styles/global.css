@@ -2,8 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
 @layer components {
-  /* BUTTONS */
   .btn-xs {
     @apply py-1.5 px-3 text-xs;
   }
@@ -53,7 +54,7 @@
   }
 
   .circular-icon-btn {
-    @apply focus:outline-none w-auto flex-shrink-0 rounded-full shadow-sm transition duration-300 ease-in-out hover:shadow-md;
+    @apply focus:outline-none w-auto shrink-0 rounded-full shadow-sm transition duration-300 ease-in-out hover:shadow-md;
   }
   .white-icon-btn {
     @apply circular-icon-btn bg-white;
@@ -74,7 +75,6 @@
     @apply duration-200 ease-in-out hover:scale-105 hover:transform;
   }
 
-  /* TEXT */
   .hotkey-label-text {
     @apply ml-1 rounded bg-gray-700 px-1 pt-0.5 text-center font-mono text-gray-100;
   }
@@ -87,11 +87,6 @@
   }
 }
 
-/*TODO: Remove when upgraded to Tailwind v3*/
-.columns-2 {
-  columns: 2;
-}
-
 .disableTouchActions {
   touch-action: none;
 }
@@ -100,20 +95,9 @@ html {
   overflow: hidden;
 }
 
-/*DESKTOP*/
 @media only screen and (min-device-width: 768px) {
   html,
   body {
     font: 14px helvetica neue, helvetica, arial, sans-serif;
   }
-}
-
-.select2-search__field {
-  height: 1.2em !important;
-  resize: none !important;
-  overflow: hidden !important;
-}
-
-.select2-dropdown {
-  color: black;
 }
