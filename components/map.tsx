@@ -186,7 +186,7 @@ export default function Map({
           nodeSelected.id()
         );
         setKnowledgeLevel(conceptInfo.level);
-        setMaxKnowledgeLevel(conceptInfo.max_level);
+        setMaxKnowledgeLevel(Math.floor(conceptInfo.max_level));
       })();
     }
   }, [nodeSelected]);

@@ -45,11 +45,6 @@ export default function QuestionModal({
   const [questionSet, setQuestionSet] = useState<QuestionSet>({
     ...emptyQuestionSet,
   });
-  const questionIds = [];
-  questionSet.questions.forEach((question) => {
-    questionIds.push(question.id);
-  });
-  console.log("questionIds", questionIds);
   const [nextQuestionPressed, setNextQuestionPressed] =
     useState<boolean>(false);
   const [answersGiven, setAnswersGiven] = useState<AnswersGiven>([]);
