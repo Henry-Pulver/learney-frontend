@@ -1,7 +1,6 @@
 module.exports = {
   mode: "jit",
-  purge: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
-  darkMode: false, // or 'media' or 'class'
+  content: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       cursor: {
@@ -50,11 +49,6 @@ module.exports = {
         learney: "linear-gradient(40deg, #ff0080, #008ef2)",
       },
       // animation: TODO: Add this if I have time!!
-    },
-  },
-  variants: {
-    extend: {
-      backgroundColor: ["visited"],
     },
   },
   plugins: [require("@tailwindcss/forms")],
