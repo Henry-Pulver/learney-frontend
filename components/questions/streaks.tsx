@@ -17,7 +17,7 @@ export default function StreakIcon(props: { streak: number; today: boolean }) {
       <div className="group">
         <div
           className={classNames(
-            "focus:outline-none w-auto flex-shrink-0 cursor-default rounded-full p-0.5 shadow-sm",
+            "w-auto shrink-0 cursor-default rounded-full p-0.5 shadow-sm focus:outline-none",
             props.today
               ? "bg-yellow-200 text-red-500 group-hover:bg-yellow-300 group-hover:text-red-600"
               : "bg-white text-gray-400 group-hover:bg-gray-100 group-hover:text-gray-500"

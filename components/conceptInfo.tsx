@@ -310,14 +310,14 @@ function ConceptLinkPreview({
             <LoadingSpinner classes="h-3/5 w-3/5 m-auto" />
           )}
         </div>
-        <div className="mr-0 ml-1 w-[calc(100%-8.25rem)] grow overflow-hidden overflow-ellipsis no-underline sm:w-[calc(100%-13.25rem)]">
-          <h4 className="overflow-hidden overflow-ellipsis whitespace-nowrap text-lg sm:py-1 sm:text-xl">
+        <div className="mr-0 ml-1 w-[calc(100%-8.25rem)] grow overflow-hidden text-ellipsis no-underline sm:w-[calc(100%-13.25rem)]">
+          <h4 className="overflow-hidden text-ellipsis whitespace-nowrap text-lg sm:py-1 sm:text-xl">
             {data ? (data as LinkPreviewData).title : "Loading..."}
           </h4>
           <p
             className={classNames(
               data && (data as LinkPreviewData).description ? "h-15" : "h-10",
-              "-mt-0.5 mb-0.5 overflow-hidden overflow-ellipsis text-sm text-gray-800 sm:max-h-40"
+              "-mt-0.5 mb-0.5 overflow-hidden text-ellipsis text-sm text-gray-800 sm:max-h-40"
             )}
           >
             {data ? (data as LinkPreviewData).description : ""}
@@ -327,7 +327,7 @@ function ConceptLinkPreview({
               data &&
                 (data as LinkPreviewData).description &&
                 "hidden sm:block",
-              "my-0 max-w-xs overflow-hidden overflow-ellipsis whitespace-nowrap text-xxs text-gray-500 sm:text-sm"
+              "my-0 max-w-xs overflow-hidden text-ellipsis whitespace-nowrap text-xxs text-gray-500 sm:text-sm"
             )}
           >
             {url}

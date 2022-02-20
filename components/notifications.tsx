@@ -48,7 +48,7 @@ export function Notification({
             >
               <div className="p-4">
                 <div className="flex items-start">
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     <info.Icon
                       className={classNames(
                         info.colour === "green" && "text-green-400",
