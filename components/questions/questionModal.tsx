@@ -278,7 +278,7 @@ export default function QuestionModal({
                     answersGiven.length > currentQidx
                       ? "cursor-pointer bg-blue-600 hover:bg-blue-700"
                       : "cursor-default bg-gray-300",
-                    "focus:outline-none inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm sm:ml-3 sm:w-auto sm:text-sm"
+                    "inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-base font-medium text-white shadow-sm focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
                   )}
                   onClick={
                     answersGiven.length <= currentQidx || // Deactivated as question not yet answered
@@ -414,12 +414,12 @@ function AnswerOption({
         answerGiven &&
           answerGiven !== correctAnswer &&
           answerText === correctAnswer &&
-          "outline-none border-green-500 ring-1 ring-green-500",
+          "border-green-500 outline-none ring-1 ring-green-500",
         // Answered incorrectly & this is incorrect
         answerGiven &&
           answerGiven !== correctAnswer &&
           answerText !== correctAnswer &&
-          "outline-none border-red-500 ring-1 ring-red-500",
+          "border-red-500 outline-none ring-1 ring-red-500",
         // Gave different answer / unanswered
         answerGiven !== answerText && "bg-white hover:bg-gray-50",
         // Gave this answer & correct

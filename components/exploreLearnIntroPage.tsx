@@ -247,7 +247,7 @@ function GoalsList({
   return (
     <span
       className={classNames(
-        "focus:outline-none relative mx-12 mt-4 mb-28 block h-28 w-10/12 max-w-xl overflow-auto rounded-xl border-2 border-dashed border-gray-200 p-2 text-center sm:mx-60 sm:h-40 md:p-6 xl:border-4",
+        "relative mx-12 mt-4 mb-28 block h-28 w-10/12 max-w-xl overflow-auto rounded-xl border-2 border-dashed border-gray-200 p-2 text-center focus:outline-none sm:mx-60 sm:h-40 md:p-6 xl:border-4",
         classes
       )}
     >

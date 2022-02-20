@@ -81,7 +81,7 @@ export function MapSettingsIconButton({
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="focus:outline-none absolute left-0 z-20 mt-2 w-48 origin-top-left rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
+            <Menu.Items className="absolute left-0 z-20 mt-2 w-48 origin-top-left rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <Menu.Item>
                 {({ active }) => (
                   <button
@@ -163,7 +163,7 @@ export function SaveMapButton({
                     You can now see this map live at{" "}
                     <a
                       href={pathElements.join("/")}
-                      className="text-semibold decoration-blue-300 underline-offset-4 hover:decoration-blue-400 text-gray-900 underline hover:text-blue-400"
+                      className="text-semibold text-gray-900 underline decoration-blue-300 underline-offset-4 hover:text-blue-400 hover:decoration-blue-400"
                     >
                       {pathElements.join("/")}
                     </a>
