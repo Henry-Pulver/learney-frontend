@@ -23,7 +23,7 @@ export default function OriginalMap({
       backendUrl={backendUrl}
       mapUUID={mapUUID}
       mapUrlExtension={"questionsmap"}
-      allowSuggestions={true}
+      allowSuggestions={false}
       editMap={false}
       mapJsonString={mapJson}
       questionsEnabled={true}
