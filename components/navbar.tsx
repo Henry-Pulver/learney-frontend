@@ -154,17 +154,23 @@ export function LearnNavbar({
         }
         rightSideButtons={(!questionsEnabled
           ? [
+              <ShareCurrentPosition
+                key="ShareMapViewButton"
+                pageLoaded={pageLoaded}
+                buttonPressFunction={buttonPressFunction}
+              />,
               <FeedBackButton
                 key="FeedbackButton"
                 buttonPressFunction={buttonPressFunction}
               />,
-              // <ShareCurrentPosition
-              //   key="ShareMapViewButton"
-              //   pageLoaded={pageLoaded}
-              //   buttonPressFunction={buttonPressFunction}
-              // />,
             ]
-          : []
+          : [
+              <ShareCurrentPosition
+                key="ShareMapViewButton"
+                pageLoaded={pageLoaded}
+                buttonPressFunction={buttonPressFunction}
+              />,
+            ]
         )
           .concat([
             <SlackButton
