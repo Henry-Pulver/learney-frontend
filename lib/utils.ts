@@ -288,32 +288,25 @@ export async function handleFetchResponses(
 
 export function setURLQuery(
   router: NextRouter,
-  newParams: ParsedQuery,
-  deleteParam?: string
+  newParams: ParsedQuery // To replace all parameters
 ): void {
   const q = router.query;
-  console.log(newParams);
   if (
     q.x !== newParams.x ||
     q.y !== newParams.y ||
     q.zoom !== newParams.zoom ||
     q.topic !== newParams.topic ||
     q.concept !== newParams.concept ||
-    newParams.quemodal
+    (q.quemodal !== "true" && newParams.quemodal) ||
+    (q.quemodal === "true" && !newParams.quemodal)
   ) {
     delete router.query.x;
     delete router.query.y;
     delete router.query.zoom;
     delete router.query.topic;
+    delete router.query.concept;
     delete router.query.quemodal;
-    if (!deleteParam) {
-      delete router.query.concept;
-    }
-    if (deleteParam) {
-      deleteParam === queryParams.CONCEPT
-        ? delete router.query.concept
-        : delete router.query.quemodal;
-    }
+    if (newParams.quemodal === undefined) delete newParams.quemodal;
     router.push(
       {
         pathname: router.pathname,
@@ -444,9 +437,4 @@ export function isEven(integer: number): boolean {
 
 export function isNumeric(num: string): boolean {
   return !isNaN(+num);
-}
-
-export enum queryParams {
-  "CONCEPT" = "concept",
-  "QUEMODAL" = "quemodal",
 }
