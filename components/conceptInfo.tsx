@@ -12,7 +12,6 @@ import {
   handleFetchResponses,
   isAnonymousUser,
   logContentClick,
-  queryParams,
   setURLQuery,
 } from "../lib/utils";
 import { LoadingSpinner } from "./animations";
@@ -81,10 +80,9 @@ export function ConceptInfo({
           node
             ? buttonPressFunction(() => {
                 hideConceptInfo();
-                localStorage.removeItem(`lastConceptClickedMap${mapUUID}`);
-                localStorage.setItem("quemodal", "false");
+                localStorage.removeItem("quemodal");
                 setQuestionModalShown(false);
-                setURLQuery(router, {}, queryParams.QUEMODAL);
+                setURLQuery(router, {});
               }, "Top Right Close Concept X")
             : () => {}
         }
@@ -145,10 +143,6 @@ export function ConceptInfo({
                     ? () => {
                         localStorage.setItem("quemodal", "true");
                         setQuestionModalShown(true);
-                        setURLQuery(router, {
-                          ...router.query,
-                          quemodal: true,
-                        });
                       }
                     : // if on normal map
                       () => onLearnedClick(node, userData.id, sessionId)
