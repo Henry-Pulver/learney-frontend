@@ -182,7 +182,8 @@ export default function QuestionModal({
   }, [modalShown, loadingMessage]);
 
   const currentStepRef = useRef(null);
-
+  const colorArray = ["bg-gray-200","bg-blue-200", "bg-yellow-200","bg-green-200", "bg-purple-200", "bg-pink-200"];
+  const difficultyLevelColorIn = Math.round(knowledgeLevel);
   return (
     <NotFullScreenModal
       open={modalShown}
@@ -202,6 +203,10 @@ export default function QuestionModal({
           questionSet.completed &&
           isCorrectArray(answersGiven, questionSet)[currentQidx]
         ) ? (
+          <div className="flex w-full flex-row">
+          <div>
+          <div className={classNames("flex border-black rounded-full border-solid border-2 text-2xl w-9 justify-center", colorArray[ difficultyLevelColorIn<1?0:difficultyLevelColorIn])}>{questionSet.questions[currentQidx].difficulty}</div>
+          </div>
           <div className="flex w-full flex-col">
             <ProgressDots
               questionArray={questionSet.questions}
@@ -299,6 +304,7 @@ export default function QuestionModal({
                 </button>
               </div>
             </div>
+          </div>
           </div>
         ) : questionSet.completed &&
           isCorrectArray(answersGiven, questionSet)[currentQidx] ? (
