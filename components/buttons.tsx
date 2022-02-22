@@ -215,7 +215,7 @@ export function ShareCurrentPosition({
               ? buttonPressFunction(() => {}, "Get Shareable Link (void)")
               : buttonPressFunction(() => {
                   navigator.clipboard.writeText(
-                    `${location.href}/?` +
+                    `${location.href.split("?")[0]}/?` +
                       // @ts-ignore
                       // ts-ignore necessary because .toString() doesn't work as input to URLSearchParams!
                       new URLSearchParams(getCurrentQueryParams(pageLoaded))
