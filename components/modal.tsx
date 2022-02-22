@@ -122,7 +122,7 @@ export function NotFullScreenModal(props: {
             <div
               className={classNames(
                 props.contentClassName,
-                "inline-block w-full transform overflow-hidden overflow-y-auto bg-white p-4 text-left text-center align-bottom shadow-xl transition-all sm:max-w-xl sm:p-6 sm:align-middle lg:my-4 md:rounded-lg"
+                "inline-block w-full transform overflow-hidden overflow-y-auto bg-white p-4 text-left text-center align-bottom shadow-xl transition-all sm:max-w-xl sm:p-6 sm:align-middle md:rounded-lg lg:my-4"
               )}
             >
               {props.children}

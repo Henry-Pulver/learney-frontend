@@ -127,6 +127,7 @@ export function fitCytoTo(fitParams, onComplete: () => void = () => {}): void {
 }
 
 export function handleIntroAnimation(
+  router: NextRouter,
   query: ParsedUrlQuery,
   goals: object
 ): void {
@@ -151,6 +152,7 @@ export function handleIntroAnimation(
         pan: { x: Number(parsedQuery.x), y: Number(parsedQuery.y) },
         zoom: Number(parsedQuery.zoom),
       };
+      setURLQuery(router, {}); // Empty url params
     }
   } else if (Object.keys(goals).length > 0) {
     animationParams = {
@@ -530,7 +532,7 @@ export function bindRouters(
           unhighlightNodes(window.cy.getElementById(previousSelectedNodeID));
           highlightNodes(concept, true);
           setIsAnimated(false);
-          setURLQuery(router, { concept: concept.id() });
+          setURLQuery(router, { ...router.query, concept: concept.id() });
         });
       }
     });
@@ -566,8 +568,12 @@ export function bindRouters(
   });
 }
 
-export function selectConcept(concept: NodeSingular): void {
+export function selectConceptFromId(conceptId: string): void {
+  const concept = window.cy.getElementById(conceptId);
   window.cy.$(":selected").unselect();
+  if (concept.size() === 0) {
+    throw new Error(`Concept with id: ${conceptId} not found!`);
+  }
   concept.emit("tap");
   concept.select();
 }

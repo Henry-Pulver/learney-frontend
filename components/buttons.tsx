@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Tippy from "@tippyjs/react";
 import { resetProgress } from "../lib/learningAndPlanning/learningAndPlanning";
 import { goToFormFunction } from "../lib/suggestions";
-import { fitCytoTo, selectConcept, unhighlightNodes } from "../lib/graph";
+import { fitCytoTo, selectConceptFromId, unhighlightNodes } from "../lib/graph";
 import {
   ChatIcon,
   GlobeAltIcon,
@@ -347,16 +347,16 @@ export function ResetPanButton({ buttonPressFunction }) {
 }
 
 export function GetNextConceptButton({
-  currentConcept,
+  currentConceptId,
   buttonPressFunction,
 }: {
-  currentConcept?: NodeSingular;
+  currentConceptId?: string;
   buttonPressFunction: ButtonPressFunction;
 }) {
   return (
     <IconButtonTippy
       content={
-        currentConcept ? (
+        currentConceptId ? (
           "Your next concept"
         ) : (
           <>
@@ -368,15 +368,14 @@ export function GetNextConceptButton({
     >
       <button
         onClick={
-          currentConcept
+          currentConceptId
             ? buttonPressFunction(() => {
-                if (currentConcept)
-                  selectConcept(currentConcept as NodeSingular);
+                if (currentConceptId) selectConceptFromId(currentConceptId);
               }, "Go to next concept")
             : () => {}
         }
         className={classNames(
-          !currentConcept && "cursor-default",
+          !currentConceptId && "cursor-default",
           "gray-icon-btn"
         )}
       >
