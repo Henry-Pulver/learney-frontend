@@ -203,7 +203,7 @@ export default function MapPage({
 
   // Introduction animations when the map is shown
   useEffect(() => {
-    const query = router.query;
+    let query = router.query;
     const querySet = URLQuerySet(query);
     if (
       currentConceptId !== undefined &&
@@ -211,8 +211,11 @@ export default function MapPage({
       !showExploreLearn &&
       (querySet || Object.keys(goals).length > 0)
     ) {
-      if (currentConceptId && (!querySet || (querySet && query.concept)))
-        setURLQuery(router, { concept: currentConceptId });
+      if (
+        currentConceptId &&
+        (!querySet || (querySet && query.concept !== undefined))
+      )
+        query = { concept: currentConceptId };
       handleIntroAnimation(router, query, goals);
     }
   }, [pageLoaded, showExploreLearn]);
