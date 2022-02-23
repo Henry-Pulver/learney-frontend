@@ -185,9 +185,9 @@ export default function QuestionModal({
   const currentStepRef = useRef(null);
   
   const colorMap = {
-    "Easy":"text-green-100",
-    "Medium":"text-yellow-400",
-    "Hard":"text-red-600",
+    "Easy":"text-green-600 bg-green-100",
+    "Medium":"text-yellow-400 bg-yellow-50",
+    "Hard":"text-red-600 bg-red-50",
   }
   
   const getDifficultyLevel = (difficultyNumber:number) =>{
@@ -201,7 +201,7 @@ export default function QuestionModal({
     else if(difficultyNumber<=maxKnowledgeLevel) {
       return "Hard";
     }
-    return "";
+    return "Hard";
   }
   return (
     <NotFullScreenModal
@@ -222,11 +222,10 @@ export default function QuestionModal({
           questionSet.completed &&
           isCorrectArray(answersGiven, questionSet)[currentQidx]
         ) ? (
-          <div >
-            <div className="inline-block">
+          < >
               <div
                 className={classNames(
-                  "absolute top-4 left-4 text-base",
+                  "absolute w-20 top-4 left-4 text-base border-solid border  border-stone-200 rounded-full",
                   colorMap[
                     getDifficultyLevel(questionSet.questions[currentQidx].difficulty)
                   ]
@@ -234,7 +233,6 @@ export default function QuestionModal({
               >
                 {getDifficultyLevel(questionSet.questions[currentQidx].difficulty)}
               </div>
-            </div>
             <div className="flex w-full flex-col">
               <ProgressDots
                 questionArray={questionSet.questions}
@@ -335,7 +333,7 @@ export default function QuestionModal({
                 </div>
               </div>
             </div>
-          </div>
+          </>
         ) : questionSet.completed &&
           isCorrectArray(answersGiven, questionSet)[currentQidx] ? (
           <div className="grid h-96 w-full content-center justify-center">
