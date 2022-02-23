@@ -164,13 +164,7 @@ export function LearnNavbar({
                 buttonPressFunction={buttonPressFunction}
               />,
             ]
-          : [
-              <ShareCurrentPosition
-                key="ShareMapViewButton"
-                pageLoaded={pageLoaded}
-                buttonPressFunction={buttonPressFunction}
-              />,
-            ]
+          : []
         )
           .concat([
             <SlackButton
