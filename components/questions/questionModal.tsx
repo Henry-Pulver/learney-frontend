@@ -183,26 +183,24 @@ export default function QuestionModal({
   }, [modalShown, loadingMessage]);
 
   const currentStepRef = useRef(null);
-  
+
   const colorMap = {
-    "Easy":"text-green-600 bg-green-100",
-    "Medium":"text-yellow-400 bg-yellow-50",
-    "Hard":"text-red-600 bg-red-50",
-  }
-  
-  const getDifficultyLevel = (difficultyNumber:number) =>{
-    const eachLevelSpread = maxKnowledgeLevel/3;
-    if(difficultyNumber<=eachLevelSpread) {
+    Easy: "text-green-600 bg-green-100",
+    Medium: "text-yellow-400 bg-yellow-50",
+    Hard: "text-red-600 bg-red-50",
+  };
+
+  const getDifficultyLevel = (difficultyNumber: number) => {
+    const eachLevelSpread = maxKnowledgeLevel / 3;
+    if (difficultyNumber <= eachLevelSpread) {
       return "Easy";
-    }
-    else if (difficultyNumber<=2*eachLevelSpread) {
+    } else if (difficultyNumber <= 2 * eachLevelSpread) {
       return "Medium";
-    }
-    else if(difficultyNumber<=maxKnowledgeLevel) {
+    } else if (difficultyNumber <= maxKnowledgeLevel) {
       return "Hard";
     }
     return "Hard";
-  }
+  };
   return (
     <NotFullScreenModal
       open={modalShown}
@@ -222,17 +220,21 @@ export default function QuestionModal({
           questionSet.completed &&
           isCorrectArray(answersGiven, questionSet)[currentQidx]
         ) ? (
-          < >
-              <div
-                className={classNames(
-                  "absolute w-20 top-4 left-4 text-base border-solid border  border-stone-200 rounded-full",
-                  colorMap[
-                    getDifficultyLevel(questionSet.questions[currentQidx].difficulty)
-                  ]
-                )}
-              >
-                {getDifficultyLevel(questionSet.questions[currentQidx].difficulty)}
-              </div>
+          <>
+            <div
+              className={classNames(
+                "absolute top-4 left-4 w-20 rounded-full border border-solid  border-stone-200 text-base",
+                colorMap[
+                  getDifficultyLevel(
+                    questionSet.questions[currentQidx].difficulty
+                  )
+                ]
+              )}
+            >
+              {getDifficultyLevel(
+                questionSet.questions[currentQidx].difficulty
+              )}
+            </div>
             <div className="flex w-full flex-col">
               <ProgressDots
                 questionArray={questionSet.questions}
