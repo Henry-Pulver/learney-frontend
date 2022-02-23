@@ -76,8 +76,13 @@ export default function MapPage({
     let currConceptObj;
     if (questionsEnabled)
       currConceptObj = await fetchCurrentConcept(backendUrl, userId, mapUUID);
-    else currConceptObj = getNextNodeToLearn(null);
+    else {
+      const nextNode = getNextNodeToLearn(null);
+      if (nextNode) currConceptObj = { concept_id: nextNode.id() };
+      else currConceptObj = { concept_id: null };
+    }
     setCurrentConceptId(currConceptObj.concept_id);
+    return currConceptObj.concept_id;
   };
 
   const [goals, setNewGoalsState] = React.useState<object>({});
@@ -144,9 +149,6 @@ export default function MapPage({
   }, [userData.id]);
 
   const [pageLoaded, setPageLoaded] = React.useState(false);
-  useEffect(() => {
-    if (userData.id) updateCurrentConceptId(userData.id);
-  }, [userData]);
 
   useEffect(() => {
     (async () => {
@@ -181,7 +183,7 @@ export default function MapPage({
           initialiseSignInTooltip();
           initialiseMixpanelTracking(responseJson.user_id, user);
         }
-        setupTracking();
+        setupTracking(questionsEnabled);
         ReactGA.pageview(window.location.pathname);
       }
     })();
@@ -201,22 +203,35 @@ export default function MapPage({
       setExploreLearn(true);
   }, [isNewUser, goals, pageLoaded]);
 
+  useEffect(() => {
+    // The version of updateCurrentConceptId without questions enabled uses
+    // window.cy so requires the page to be loaded before running!
+    if (userData.id && questionsEnabled) updateCurrentConceptId(userData.id);
+  }, [userData]);
   // Introduction animations when the map is shown
   useEffect(() => {
     let query = router.query;
     const querySet = URLQuerySet(query);
     if (
-      currentConceptId !== undefined &&
       pageLoaded &&
       !showExploreLearn &&
       (querySet || Object.keys(goals).length > 0)
     ) {
-      if (
-        currentConceptId &&
-        (!querySet || (querySet && query.concept !== undefined))
-      )
-        query = { concept: currentConceptId };
-      handleIntroAnimation(router, query, goals);
+      (async () => {
+        // The version of updateCurrentConceptId without questions enabled uses
+        // window.cy so requires the page to be loaded before running!
+        let updatedConceptId;
+        if (!questionsEnabled)
+          updatedConceptId = await updateCurrentConceptId(userData.id);
+        // If questionsEnabled, it's been preloaded as it fetches from backend
+        else updatedConceptId = currentConceptId;
+        if (
+          updatedConceptId &&
+          (!querySet || (querySet && query.concept !== undefined))
+        )
+          query = { concept: updatedConceptId };
+        handleIntroAnimation(router, query, goals);
+      })();
     }
   }, [pageLoaded, showExploreLearn]);
 
