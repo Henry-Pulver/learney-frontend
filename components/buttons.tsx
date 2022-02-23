@@ -18,6 +18,7 @@ import { NodeSingular, SingularElementArgument } from "cytoscape";
 import { TargetFinderIcon } from "./svgs/icons";
 import { SetGoalState, SetLearnedState } from "./types";
 import { LoadingSpinner } from "./animations";
+import {NextRouter, useRouter} from "next/router";
 
 export function IconToggleButtonWithCheckbox({
   checked,
@@ -154,6 +155,8 @@ export function SlackButton({ buttonPressFunction }) {
 }
 
 type QueryParams =
+  | { concept: string }
+  | { topic: string }
   | {
       x: number;
       y: number;
@@ -166,13 +169,20 @@ type QueryParams =
     };
 const emptyQueryParams = { x: null, y: null, zoom: null };
 
-function getCurrentQueryParams(pageLoaded: boolean): QueryParams {
+function getCurrentQueryParams(pageLoaded: boolean, router: NextRouter): QueryParams {
   if (pageLoaded) {
-    return {
-      x: window.cy.pan().x,
-      y: window.cy.pan().y,
-      zoom: window.cy.zoom(),
-    };
+      if (router.query.concept) {
+          return {concept: router.query.concept as string};
+      } else if (router.query.topic) {
+          return {topic: router.query.topic as string};
+      } else {
+          return {
+              x: window.cy.pan().x,
+              y: window.cy.pan().y,
+              zoom: window.cy.zoom(),
+          };
+      }
+
   } else {
     return emptyQueryParams;
   }
@@ -185,6 +195,7 @@ export function ShareCurrentPosition({
   pageLoaded: boolean;
   buttonPressFunction: ButtonPressFunction;
 }) {
+  const router = useRouter();
   const [copiedQueryParams, setCopiedQueryParams] =
     useState<null | QueryParams>(null);
   useEffect(() => {
@@ -214,13 +225,19 @@ export function ShareCurrentPosition({
             copiedQueryParams
               ? buttonPressFunction(() => {}, "Get Shareable Link (void)")
               : buttonPressFunction(() => {
+                  const queryParams = getCurrentQueryParams(pageLoaded, router);
+                  let mapUrl = location.href.split("?")[0];
+                  if (mapUrl.endsWith("/")) mapUrl = mapUrl.slice(0, -1);
                   navigator.clipboard.writeText(
-                    `${location.href.split("?")[0]}/?` +
+                    `${mapUrl}/?` +
                       // @ts-ignore
                       // ts-ignore necessary because .toString() doesn't work as input to URLSearchParams!
-                      new URLSearchParams(getCurrentQueryParams(pageLoaded))
+                      new URLSearchParams(queryParams)
                   );
-                  setCopiedQueryParams(getCurrentQueryParams(pageLoaded));
+                  setCopiedQueryParams(queryParams);
+                  setTimeout(() => {
+                    setCopiedQueryParams(null);
+                  }, 3000);
                 }, "Get Shareable Link")
           }
           className={classNames(
