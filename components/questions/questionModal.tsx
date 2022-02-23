@@ -186,8 +186,8 @@ export default function QuestionModal({
 
   const colorMap = {
     Easy: "text-green-600 bg-green-100",
-    Medium: "text-yellow-400 bg-yellow-50",
-    Hard: "text-red-600 bg-red-50",
+    Medium: "text-yellow-500 bg-yellow-100",
+    Hard: "text-red-600 bg-red-100",
   };
 
   const getDifficultyLevel = (difficultyNumber: number) => {
