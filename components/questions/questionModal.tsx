@@ -101,7 +101,7 @@ export default function QuestionModal({
       setNextQuestionPressed(false);
       setCurrentQidx((prevState) => prevState + 1);
     }
-    setDescriptionExpanded(false);
+    setFeedbackExpanded(false);
   }, [questionSet, nextQuestionPressed]);
 
   useEffect(() => {
@@ -180,8 +180,7 @@ export default function QuestionModal({
       setTimeout(() => setLoadingMessage(randomLoadingMessage()), 1500);
   }, [modalShown, loadingMessage]);
 
-  const [descriptionExpanded, setDescriptionExpanded] =
-    useState<boolean>(false);
+  const [feedbackExpanded, setFeedbackExpanded] = useState<boolean>(false);
 
   const currentStepRef = useRef(null);
 
@@ -212,6 +211,10 @@ export default function QuestionModal({
         questionSet.completed &&
           isCorrectArray(answersGiven, questionSet)[currentQidx] &&
           "bg-green-500 transition-colors duration-1000 ease-in-out",
+        questionSet.completed &&
+          isCorrectArray(answersGiven, questionSet)[currentQidx] &&
+          !feedbackExpanded &&
+          "overflow-y-hidden", // Stops tricky bug where a scroll bar shows up for the question modal unnecessarily
         "max-h-excl-toolbar sm:max-w-2xl sm:p-8 sm:pb-4"
       )}
     >
@@ -301,9 +304,9 @@ export default function QuestionModal({
                         <div
                           className={classNames("relative z-10")}
                           onClick={
-                            !descriptionExpanded
+                            !feedbackExpanded
                               ? buttonPressFunction(
-                                  () => setDescriptionExpanded(true),
+                                  () => setFeedbackExpanded(true),
                                   "Map Title Anywhere (Expand)"
                                 )
                               : buttonPressFunction(() => {},
@@ -314,7 +317,7 @@ export default function QuestionModal({
                             text={questionSet.questions[currentQidx].feedback}
                             className={classNames(
                               "whitespace-pre-line py-1 text-lg text-gray-700",
-                              !descriptionExpanded &&
+                              !feedbackExpanded &&
                                 "max-h-8 overflow-hidden text-ellipsis whitespace-nowrap pr-8"
                             )}
                           />
@@ -325,17 +328,15 @@ export default function QuestionModal({
                                 className="gray-icon-btn-no-padding z-20 rounded-xl bg-gray-100 text-gray-500 hover:text-gray-600"
                                 onClick={buttonPressFunction((e) => {
                                   e.stopPropagation(); // Stops parent div's onClick function from being called!
-                                  setDescriptionExpanded(
-                                    (expanded) => !expanded
-                                  );
+                                  setFeedbackExpanded((expanded) => !expanded);
                                 }, "Expand/Minimise Correct   Question Feedback")}
                               >
                                 <span className="sr-only">
-                                  {descriptionExpanded
+                                  {feedbackExpanded
                                     ? "Minimise description"
                                     : "Expand description"}
                                 </span>
-                                {descriptionExpanded ? (
+                                {feedbackExpanded ? (
                                   <ChevronUpIcon className="h-7 w-7" />
                                 ) : (
                                   <ChevronDownIcon className="h-7 w-7" />
