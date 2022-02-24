@@ -35,6 +35,8 @@ import QuestionModal from "./questions/questionModal";
 import { ProgressModal } from "./questions/progressModal";
 import { ArrowCircleUpIcon, BookOpenIcon } from "@heroicons/react/outline";
 import { Completed } from "./questions/types";
+import { setUserData } from "./userDataSlice";
+import { useAppDispatch, useAppSelector } from "../hooks";
 
 type PrevUserDataFn = (prevUserData: UserData) => UserData;
 
@@ -42,8 +44,6 @@ export default function Map({
   mapTitle,
   mapDescription,
   backendUrl,
-  userData,
-  setUserData,
   allowSuggestions,
   editMap,
   mapJson,
@@ -67,8 +67,6 @@ export default function Map({
   mapTitle: string;
   mapDescription: string;
   backendUrl: string;
-  userData: UserData;
-  setUserData: (prevUserDataFn: PrevUserDataFn) => void;
   allowSuggestions: boolean;
   editMap: boolean;
   mapJson: ElementsDefinition;
@@ -89,6 +87,8 @@ export default function Map({
   currentConcept: NodeSingular;
   updateNotificationInfo: (notificationData: NotificationData) => void;
 }) {
+  const dispatch = useAppDispatch();
+  const userData =  useAppSelector((state) => state.userData);
   const router = useRouter();
   const [userVotes, setUserVote] = React.useState({});
   const initialiseUserVotes = (initialVotes) => {
@@ -257,14 +257,15 @@ export default function Map({
               levelsGained: number
             ) => {
               setProgressModalKnowledgeLevel(knowledgeLevel - levelsGained);
-              setUserData((prevData: UserData) => ({
-                ...prevData,
-                questions_streak:
-                  prevData.questions_streak +
-                  1 -
-                  Number(prevData.batch_completed_today),
-                batch_completed_today: true,
-              }));
+              dispatch(
+                setUserData({
+                  questions_streak:
+                    userData.questions_streak +
+                    1 -
+                    Number(userData.batch_completed_today),
+                  batch_completed_today: true,
+                })
+              );
               switch (conceptCompleted) {
                 case "completed_concept":
                   setProgressModalShown(true);

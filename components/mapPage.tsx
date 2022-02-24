@@ -31,7 +31,9 @@ import { NodeSingular } from "cytoscape";
 import { setNotificationProgressInfo } from "./questions/notificationMessages";
 import { fetchCurrentConcept, getNextNodeToLearn } from "../lib/questions";
 import { ButtonPressFunction } from "../lib/types";
-import { emptyUserData, NotificationData, UserData } from "./types";
+import { NotificationData } from "./types";
+import { useAppSelector, useAppDispatch } from "../hooks";
+import { setUserData } from "./userDataSlice";
 
 export default function MapPage({
   mapTitle,
@@ -63,8 +65,10 @@ export default function MapPage({
   const mapJson = JSON.parse(mapJsonString);
   const router = useRouter();
 
+  const dispatch = useAppDispatch();
+  const userData =  useAppSelector((state) => state.userData);
+  
   // TODO: Move all these into a redux/MST store
-  const [userData, setUserData] = React.useState<UserData>(emptyUserData);
   const [sessionId, setSessionId] = React.useState<string | null>(null);
   // Whether to show LearnExploreIntroPage on load
   const [showExploreLearn, setExploreLearn] = useState<boolean | null>(null);
@@ -168,20 +172,10 @@ export default function MapPage({
         setSessionId(responseJson.session_id);
 
         if (user !== undefined) {
-          setUserData((prevData) => ({
-            ...prevData,
-            id: user.sub,
-            email: user.email,
-            questions_streak: responseJson.questions_streak,
-            batch_completed_today: responseJson.batch_completed_today,
-          }));
+          dispatch(setUserData({id:user.sub, email:user.email, questions_streak:responseJson.questions_streak,batch_completed_today: responseJson.batch_completed_today}));
           initialiseMixpanelTracking(user.sub, user);
         } else {
-          // Anonymous user
-          setUserData((prevData) => ({
-            ...prevData,
-            id: responseJson.user_id,
-          }));
+          dispatch(setUserData({id:responseJson.user_id}));
           localStorage.setItem("userId", responseJson.user_id);
           initialiseSignInTooltip();
           initialiseMixpanelTracking(responseJson.user_id, user);
@@ -320,8 +314,6 @@ export default function MapPage({
         mapTitle={mapTitle ? mapTitle : mapUrlExtension}
         mapDescription={mapDescription}
         backendUrl={backendUrl}
-        userData={userData}
-        setUserData={setUserData}
         allowSuggestions={allowSuggestions}
         editMap={editMap}
         mapJson={mapJson}
