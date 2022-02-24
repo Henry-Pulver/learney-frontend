@@ -1,14 +1,9 @@
 import { compose, configureStore } from "@reduxjs/toolkit";
 import userDataSlice from "./components/userDataSlice";
 
-declare global {
-  interface Window {
-    devToolsExtension: any;
-  }
-}
-
 // TODO: Handle activating redux dev tools gracefully.
 const enhancers = compose(
+  //@ts-ignore
   typeof window !== "undefined" && window.devToolsExtension
     ? window.devToolsExtension()
     : (f) => f
