@@ -66,8 +66,8 @@ export default function MapPage({
   const router = useRouter();
 
   const dispatch = useAppDispatch();
-  const userData =  useAppSelector((state) => state.userData);
-  
+  const userData = useAppSelector((state) => state.userData);
+
   // TODO: Move all these into a redux/MST store
   const [sessionId, setSessionId] = React.useState<string | null>(null);
   // Whether to show LearnExploreIntroPage on load
@@ -172,10 +172,17 @@ export default function MapPage({
         setSessionId(responseJson.session_id);
 
         if (user !== undefined) {
-          dispatch(setUserData({id:user.sub, email:user.email, questions_streak:responseJson.questions_streak,batch_completed_today: responseJson.batch_completed_today}));
+          dispatch(
+            setUserData({
+              id: user.sub,
+              email: user.email,
+              questions_streak: responseJson.questions_streak,
+              batch_completed_today: responseJson.batch_completed_today,
+            })
+          );
           initialiseMixpanelTracking(user.sub, user);
         } else {
-          dispatch(setUserData({id:responseJson.user_id}));
+          dispatch(setUserData({ id: responseJson.user_id }));
           localStorage.setItem("userId", responseJson.user_id);
           initialiseSignInTooltip();
           initialiseMixpanelTracking(responseJson.user_id, user);
