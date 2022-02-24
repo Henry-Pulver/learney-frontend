@@ -1,17 +1,19 @@
 import { compose, configureStore } from "@reduxjs/toolkit";
-// import testSlice from "./components/testSlice";
 import userDataSlice from "./components/userDataSlice";
 
+// TODO: Handle activating redux dev tools gracefully.
 const enhancers = compose(
   //@ts-ignore
-  (typeof window !== 'undefined' && window.devToolsExtension) ? window.devToolsExtension() : f => f
- );
+  typeof window !== "undefined" && window.devToolsExtension
+    ? window.devToolsExtension()
+    : (f) => f
+);
 const store = configureStore({
   reducer: {
-    userData: userDataSlice
+    userData: userDataSlice,
   },
   //@ts-ignore
-  devTools:enhancers,
+  devTools: enhancers,
 });
 
 export type RootState = ReturnType<typeof store.getState>;

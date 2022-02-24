@@ -88,7 +88,7 @@ export default function Map({
   updateNotificationInfo: (notificationData: NotificationData) => void;
 }) {
   const dispatch = useAppDispatch();
-  const userData =  useAppSelector((state) => state.userData);
+  const userData = useAppSelector((state) => state.userData);
   const router = useRouter();
   const [userVotes, setUserVote] = React.useState({});
   const initialiseUserVotes = (initialVotes) => {
