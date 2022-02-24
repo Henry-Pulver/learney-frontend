@@ -289,7 +289,7 @@ export default function QuestionModal({
               {answersGiven.length > currentQidx && // Check that the question has been answered
                 questionSet.questions[currentQidx].feedback && ( // Check that there is some feedback
                   <div className="flex justify-center">
-                    <div className="my-6 max-w-xl rounded bg-gray-200 px-6 py-4 text-center text-black">
+                    <div className="my-6 max-w-full rounded bg-gray-200 px-4 py-4 text-center text-black md:px-6 xl:max-w-xl">
                       {!isCorrectArray(answersGiven, questionSet)[
                         currentQidx
                       ] ? ( // If incorrect, simply show the feedback
@@ -315,7 +315,7 @@ export default function QuestionModal({
                             className={classNames(
                               "whitespace-pre-line py-1 text-lg text-gray-700",
                               !descriptionExpanded &&
-                                "max-h-0 overflow-hidden text-ellipsis whitespace-nowrap pr-8 sm:max-h-8"
+                                "max-h-8 overflow-hidden text-ellipsis whitespace-nowrap pr-8"
                             )}
                           />
                           {questionSet.questions[currentQidx].feedback.length >
