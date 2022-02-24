@@ -11,10 +11,10 @@ import {
   learnedNodes,
 } from "../lib/learningAndPlanning/variables";
 import { initialiseGraphState } from "../lib/learningAndPlanning/learningAndPlanning";
-import { initCy, bindRouters, selectConcept } from "../lib/graph";
+import { initCy, bindRouters, selectConceptFromId } from "../lib/graph";
 import { setupCtoCentre } from "../lib/hotkeys";
 import { classNames } from "../lib/reactUtils";
-import { fetchTotalVotes, queryParams, setURLQuery } from "../lib/utils";
+import { fetchTotalVotes, setURLQuery, URLQuerySet } from "../lib/utils";
 import MapTitle from "./mapTitle";
 import {
   GetNextConceptButton,
@@ -61,7 +61,7 @@ export default function Map({
   editType,
   questionsEnabled,
   showTitle,
-  currentConcept,
+  currentConceptId,
   updateNotificationInfo,
 }: {
   mapTitle: string;
@@ -86,7 +86,7 @@ export default function Map({
   editType: EditType;
   questionsEnabled: boolean;
   showTitle: boolean;
-  currentConcept: NodeSingular;
+  currentConceptId: string;
   updateNotificationInfo: (notificationData: NotificationData) => void;
 }) {
   const router = useRouter();
@@ -192,32 +192,32 @@ export default function Map({
   }, [nodeSelected]);
 
   const [questionModalShown, setQuestionModalShown] =
-    React.useState<boolean>(false);
-  useEffect(() => {
-    localStorage.setItem("quemodal", String(questionModalShown));
-    console.log({
-      ...router.query,
-      quemodal: questionModalShown ? questionModalShown : undefined,
-    });
-    setURLQuery(router, {
-      ...router.query,
-      quemodal: questionModalShown ? questionModalShown : undefined,
-    });
-  }, [questionModalShown]);
-
+    React.useState<boolean>(null);
   useEffect(() => {
     setQuestionModalShown(
       localStorage.getItem("quemodal") === "true" && questionsEnabled
     );
     if (
       localStorage.getItem(`lastConceptClickedMap${mapUUID}`) &&
-      !router.query.concept
+      !URLQuerySet(router.query)
     )
       setURLQuery(router, {
         ...router.query,
         concept: localStorage.getItem(`lastConceptClickedMap${mapUUID}`),
       });
   }, []);
+
+  useEffect(() => {
+    if (questionModalShown !== null) {
+      if (questionModalShown) localStorage.setItem("quemodal", "true");
+      else localStorage.removeItem("quemodal");
+      setURLQuery(router, {
+        ...router.query,
+        quemodal: questionModalShown ? questionModalShown : undefined,
+      });
+    }
+  }, [questionModalShown]);
+
   return (
     <div className="flex-column h-excl-toolbar flex w-full sm:flex-row">
       <div
@@ -274,7 +274,8 @@ export default function Map({
                     onTestSuccess(nodeSelected, userData.id, sessionId);
                     setQuestionModalShown(false);
                     setTimeout(() => {
-                      if (currentConcept) selectConcept(currentConcept);
+                      if (currentConceptId)
+                        selectConceptFromId(currentConceptId);
                     }, 1500);
                   }, 3000);
                   break;
@@ -297,7 +298,8 @@ export default function Map({
                     setProgressModalShown(false);
                     setQuestionModalShown(false);
                     setTimeout(() => {
-                      if (currentConcept) selectConcept(currentConcept);
+                      if (currentConceptId)
+                        selectConceptFromId(currentConceptId);
                     }, 1500);
                   }, 3000);
                   updateNotificationInfo({
@@ -350,12 +352,12 @@ export default function Map({
             "absolute bottom-0 right-0 m-4 flex flex-col items-end gap-4 md:flex-row"
           )}
         >
-          {/*{!editMap && (*/}
-          {/*  <GetNextConceptButton*/}
-          {/*    currentConcept={currentConcept}*/}
-          {/*    buttonPressFunction={buttonPressFunction}*/}
-          {/*  />*/}
-          {/*)}*/}
+          {!editMap && (
+            <GetNextConceptButton
+              currentConceptId={currentConceptId}
+              buttonPressFunction={buttonPressFunction}
+            />
+          )}
           <ResetPanButton buttonPressFunction={buttonPressFunction} />
           {!editMap && !questionsEnabled && (
             <ResetProgressIconButton

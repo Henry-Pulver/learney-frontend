@@ -16,7 +16,7 @@ import { ConceptSearchBox } from "./ConceptSearchBox";
 import { ButtonPressFunction, UserState } from "../lib/types";
 import { ElementsDefinition, NodeSingular } from "cytoscape";
 import { NotificationData, UserData } from "./types";
-import { selectConcept } from "../lib/graph";
+import { selectConceptFromId } from "../lib/graph";
 import StreakIcon from "./questions/streaks";
 
 export function EditNavbar({
@@ -154,15 +154,15 @@ export function LearnNavbar({
         }
         rightSideButtons={(!questionsEnabled
           ? [
+              <ShareCurrentPosition
+                key="ShareMapViewButton"
+                pageLoaded={pageLoaded}
+                buttonPressFunction={buttonPressFunction}
+              />,
               <FeedBackButton
                 key="FeedbackButton"
                 buttonPressFunction={buttonPressFunction}
               />,
-              // <ShareCurrentPosition
-              //   key="ShareMapViewButton"
-              //   pageLoaded={pageLoaded}
-              //   buttonPressFunction={buttonPressFunction}
-              // />,
             ]
           : []
         )
@@ -265,12 +265,7 @@ function Navbar({
                   mapJson={mapJson}
                   onSelect={
                     pageLoaded
-                      ? (item) => {
-                          const concept = window.cy.getElementById(
-                            item.id
-                          ) as NodeSingular;
-                          selectConcept(concept);
-                        }
+                      ? (item) => selectConceptFromId(item.id)
                       : () => {}
                     // TODO: When not loaded, add selected item to a queue to be
                     //  executed when cytoscape has loaded

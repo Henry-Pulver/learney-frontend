@@ -71,8 +71,21 @@ export default function MapPage({
   const [isNewUser, setIsNewUser] = useState<boolean>(false);
   useEffect(() => setIsNewUser(!localStorage.getItem("userId")), []);
 
+  const [currentConceptId, setCurrentConceptId] = useState<string>(undefined);
+  const updateCurrentConceptId = async (userId: string) => {
+    let currConceptObj;
+    if (questionsEnabled)
+      currConceptObj = await fetchCurrentConcept(backendUrl, userId, mapUUID);
+    else {
+      const nextNode = getNextNodeToLearn(null);
+      if (nextNode) currConceptObj = { concept_id: nextNode.id() };
+      else currConceptObj = { concept_id: null };
+    }
+    setCurrentConceptId(currConceptObj.concept_id);
+    return currConceptObj.concept_id;
+  };
+
   const [goals, setNewGoalsState] = React.useState<object>({});
-  const [currentConcept, setCurrentConcept] = useState<NodeSingular>(null);
   const setGoalsState = (goalState: object) => {
     for (const nodeId of Object.keys(goals)) {
       if (!(nodeId in goalState)) {
@@ -93,15 +106,7 @@ export default function MapPage({
   ): void => {
     (async function () {
       await setGoalClick(node, backendUrl, userId, mapUUID, sessionId);
-      const currentConceptObject = await fetchCurrentConcept(
-        backendUrl,
-        userId,
-        mapUUID
-      );
-      const currentConceptNode = window.cy.getElementById(
-        currentConceptObject.concept_id
-      );
-      setCurrentConcept(currentConceptNode as NodeSingular);
+      await updateCurrentConceptId(userId);
     })();
     setGoalsState(goalNodes);
   };
@@ -126,15 +131,7 @@ export default function MapPage({
   const onLearnedClick = (node, userId, sessionId) => {
     (async function () {
       await learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
-      const currentConceptObject = await fetchCurrentConcept(
-        backendUrl,
-        userId,
-        mapUUID
-      );
-      const currentConceptNode = window.cy.getElementById(
-        currentConceptObject.concept_id
-      );
-      setCurrentConcept(currentConceptNode as NodeSingular);
+      await updateCurrentConceptId(userId);
     })();
     setLearnedState(learnedNodes);
   };
@@ -186,7 +183,7 @@ export default function MapPage({
           initialiseSignInTooltip();
           initialiseMixpanelTracking(responseJson.user_id, user);
         }
-        setupTracking();
+        setupTracking(questionsEnabled);
         ReactGA.pageview(window.location.pathname);
       }
     })();
@@ -206,16 +203,35 @@ export default function MapPage({
       setExploreLearn(true);
   }, [isNewUser, goals, pageLoaded]);
 
+  useEffect(() => {
+    // The version of updateCurrentConceptId without questions enabled uses
+    // window.cy so requires the page to be loaded before running!
+    if (userData.id && questionsEnabled) updateCurrentConceptId(userData.id);
+  }, [userData]);
   // Introduction animations when the map is shown
   useEffect(() => {
-    const query = router.query;
+    let query = router.query;
+    const querySet = URLQuerySet(query);
     if (
       pageLoaded &&
       !showExploreLearn &&
-      (URLQuerySet(query) || Object.keys(goals).length > 0)
+      (querySet || Object.keys(goals).length > 0)
     ) {
-      handleIntroAnimation(query, goals);
-      setURLQuery(router, {});
+      (async () => {
+        // The version of updateCurrentConceptId without questions enabled uses
+        // window.cy so requires the page to be loaded before running!
+        let updatedConceptId;
+        if (!questionsEnabled)
+          updatedConceptId = await updateCurrentConceptId(userData.id);
+        // If questionsEnabled, it's been preloaded as it fetches from backend
+        else updatedConceptId = currentConceptId;
+        if (
+          updatedConceptId &&
+          (!querySet || (querySet && query.concept !== undefined))
+        )
+          query = { concept: updatedConceptId };
+        handleIntroAnimation(router, query, goals);
+      })();
     }
   }, [pageLoaded, showExploreLearn]);
 
@@ -230,6 +246,7 @@ export default function MapPage({
   const updateNotificationInfo = (
     newNotificationInfo: NotificationData
   ): void => {
+    /** Set new notification values, with a 10-second timeout **/
     setNotificationInfo((prevState) => ({
       ...prevState,
       ...newNotificationInfo,
@@ -255,14 +272,26 @@ export default function MapPage({
     userId: string,
     sessionId: string
   ): void => {
+    /** Questions-ONLY - run when a question batch is successful **/
     if (learnedNodes[node.id()] !== true) {
-      learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
-      setLearnedState(learnedNodes);
+      (async () => {
+        await learnedSliderClick(node, backendUrl, userId, mapUUID, sessionId);
+        setLearnedState(learnedNodes);
+        updateCurrentConceptId(userId);
+      })();
     }
-    setNotificationProgressInfo(
-      node,
-      getNextNodeToLearn(node),
-      updateNotificationInfo
+    let currentConcept = window.cy.getElementById(
+      currentConceptId
+    ) as NodeSingular;
+    if (currentConcept.size() === 0) currentConcept = null;
+    setTimeout(
+      () =>
+        setNotificationProgressInfo(
+          node,
+          currentConcept,
+          updateNotificationInfo
+        ),
+      1500
     );
   };
   const [showTitle, setShowTitle] = useState<boolean>(true);
@@ -339,7 +368,7 @@ export default function MapPage({
         editType={editType}
         questionsEnabled={questionsEnabled}
         showTitle={showTitle}
-        currentConcept={currentConcept}
+        currentConceptId={currentConceptId}
         updateNotificationInfo={updateNotificationInfo}
       />
       {editMap && (
