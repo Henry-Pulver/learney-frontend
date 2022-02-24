@@ -18,7 +18,7 @@ import { NodeSingular, SingularElementArgument } from "cytoscape";
 import { TargetFinderIcon } from "./svgs/icons";
 import { SetGoalState, SetLearnedState } from "./types";
 import { LoadingSpinner } from "./animations";
-import {NextRouter, useRouter} from "next/router";
+import { NextRouter, useRouter } from "next/router";
 
 export function IconToggleButtonWithCheckbox({
   checked,
@@ -169,20 +169,22 @@ type QueryParams =
     };
 const emptyQueryParams = { x: null, y: null, zoom: null };
 
-function getCurrentQueryParams(pageLoaded: boolean, router: NextRouter): QueryParams {
+function getCurrentQueryParams(
+  pageLoaded: boolean,
+  router: NextRouter
+): QueryParams {
   if (pageLoaded) {
-      if (router.query.concept) {
-          return {concept: router.query.concept as string};
-      } else if (router.query.topic) {
-          return {topic: router.query.topic as string};
-      } else {
-          return {
-              x: window.cy.pan().x,
-              y: window.cy.pan().y,
-              zoom: window.cy.zoom(),
-          };
-      }
-
+    if (router.query.concept) {
+      return { concept: router.query.concept as string };
+    } else if (router.query.topic) {
+      return { topic: router.query.topic as string };
+    } else {
+      return {
+        x: window.cy.pan().x,
+        y: window.cy.pan().y,
+        zoom: window.cy.zoom(),
+      };
+    }
   } else {
     return emptyQueryParams;
   }
