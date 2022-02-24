@@ -8,13 +8,17 @@ import "tippy.js/animations/scale.css";
 import "tippy.js/themes/light.css";
 import { ErrorBoundary } from "../ErrorBoundary";
 import "katex/dist/katex.min.css";
+import { Provider } from "react-redux";
+import store from "../store";
 
 export default function App({ Component, pageProps }) {
   return (
     <ErrorBoundary>
-      <UserProvider>
-        <Component {...pageProps} />
-      </UserProvider>
+      <Provider store={store}>
+        <UserProvider>
+          <Component {...pageProps} />
+        </UserProvider>
+      </Provider>
     </ErrorBoundary>
   );
 }

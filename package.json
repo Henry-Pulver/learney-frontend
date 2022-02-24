@@ -9,9 +9,11 @@
   "dependencies": {
     "@auth0/nextjs-auth0": "^1.5.0",
     "@headlessui/react": "^1.4.1",
+    "@reduxjs/toolkit": "^1.7.2",
     "@sentry/nextjs": "^6.15.0",
     "@tailwindcss/nesting": "^0.0.0-insiders.565cd3e",
     "@tippyjs/react": "^4.2.5",
+    "@types/react-redux": "^7.1.22",
     "cytoscape": "^3.19.1",
     "cytoscape-dagre": "^2.3.2",
     "cytoscape-edgehandles": "^4.0.1",
@@ -33,7 +35,9 @@
     "react-dom": "^17.0.2",
     "react-ga": "^3.3.0",
     "react-katex": "^2.0.2",
+    "react-redux": "^7.2.6",
     "react-scripts": "^5.0.0",
+    "redux": "^4.1.2",
     "styled-components": "^4.4.1",
     "tippy.js": "^6.3.2"
   },
