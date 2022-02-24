@@ -17,6 +17,7 @@ import { ButtonPressFunction } from "../../lib/types";
 import { NotFullScreenModal } from "../modal";
 import { LoadingSpinner } from "../animations";
 import { ProgressDots } from "./progressDots";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/solid";
 
 export default function QuestionModal({
   modalShown,
@@ -100,6 +101,7 @@ export default function QuestionModal({
       setNextQuestionPressed(false);
       setCurrentQidx((prevState) => prevState + 1);
     }
+    setDescriptionExpanded(false);
   }, [questionSet, nextQuestionPressed]);
 
   useEffect(() => {
@@ -137,10 +139,6 @@ export default function QuestionModal({
       return;
     } else {
       if (responseJson.completed) {
-        console.log(
-          "gained",
-          responseJson.level - questionSet.initial_knowledge_level
-        );
         onCompletion(
           responseJson.completed,
           responseJson.level - questionSet.initial_knowledge_level
@@ -181,6 +179,9 @@ export default function QuestionModal({
     )
       setTimeout(() => setLoadingMessage(randomLoadingMessage()), 1500);
   }, [modalShown, loadingMessage]);
+
+  const [descriptionExpanded, setDescriptionExpanded] =
+    useState<boolean>(false);
 
   const currentStepRef = useRef(null);
 
@@ -286,14 +287,64 @@ export default function QuestionModal({
               </div>
               {/*FEEBACK*/}
               {answersGiven.length > currentQidx && // Check that the question has been answered
-                !isCorrectArray(answersGiven, questionSet)[currentQidx] && // Check that the answer is incorrect
                 questionSet.questions[currentQidx].feedback && ( // Check that there is some feedback
                   <div className="flex justify-center">
-                    <div className="my-6 max-w-xl rounded bg-gray-200 px-6 py-4 text-center text-black">
-                      {/*<h3 className="text-lg font-semibold">Feedback</h3>*/}
-                      <QuestionText
-                        text={questionSet.questions[currentQidx].feedback}
-                      />
+                    <div className="my-6 max-w-full rounded bg-gray-200 px-4 py-4 text-center text-black md:px-6 xl:max-w-xl">
+                      {!isCorrectArray(answersGiven, questionSet)[
+                        currentQidx
+                      ] ? ( // If incorrect, simply show the feedback
+                        <QuestionText
+                          text={questionSet.questions[currentQidx].feedback}
+                        />
+                      ) : (
+                        // If correct, show the feedback with a dropdown toggle
+                        <div
+                          className={classNames("relative z-10")}
+                          onClick={
+                            !descriptionExpanded
+                              ? buttonPressFunction(
+                                  () => setDescriptionExpanded(true),
+                                  "Map Title Anywhere (Expand)"
+                                )
+                              : buttonPressFunction(() => {},
+                                "Map Title Anywhere (Invalid)")
+                          }
+                        >
+                          <QuestionText
+                            text={questionSet.questions[currentQidx].feedback}
+                            className={classNames(
+                              "whitespace-pre-line py-1 text-lg text-gray-700",
+                              !descriptionExpanded &&
+                                "max-h-8 overflow-hidden text-ellipsis whitespace-nowrap pr-8"
+                            )}
+                          />
+                          {questionSet.questions[currentQidx].feedback.length >
+                            64 && (
+                            <div className="absolute -right-2 -bottom-2">
+                              <button
+                                className="gray-icon-btn-no-padding z-20 rounded-xl bg-gray-100 text-gray-500 hover:text-gray-600"
+                                onClick={buttonPressFunction((e) => {
+                                  e.stopPropagation(); // Stops parent div's onClick function from being called!
+                                  setDescriptionExpanded(
+                                    (expanded) => !expanded
+                                  );
+                                }, "Expand/Minimise Correct   Question Feedback")}
+                              >
+                                <span className="sr-only">
+                                  {descriptionExpanded
+                                    ? "Minimise description"
+                                    : "Expand description"}
+                                </span>
+                                {descriptionExpanded ? (
+                                  <ChevronUpIcon className="h-7 w-7" />
+                                ) : (
+                                  <ChevronDownIcon className="h-7 w-7" />
+                                )}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
