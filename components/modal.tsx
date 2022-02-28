@@ -89,7 +89,7 @@ export function NotFullScreenModal(props: {
         <div
           className={classNames(
             props.modalClassName,
-            "h-excl-toolbar flex items-end justify-center text-center sm:block sm:p-0 lg:px-2 lg:pt-2 lg:pb-2"
+            "h-excl-toolbar flex items-end justify-center text-center sm:block sm:p-0 lg:px-2"
           )}
         >
           {/* Grey background covering! */}
@@ -122,7 +122,7 @@ export function NotFullScreenModal(props: {
             <div
               className={classNames(
                 props.contentClassName,
-                "inline-block w-full transform overflow-hidden overflow-y-auto bg-white p-4 text-left text-center align-bottom shadow-xl transition-all sm:max-w-xl sm:p-6 sm:align-middle md:rounded-lg lg:my-4"
+                "inline-block w-full transform overflow-hidden overflow-y-auto bg-white p-4 text-left text-center align-bottom shadow-xl transition-all sm:max-w-xl sm:p-6 sm:align-middle md:rounded-lg"
               )}
             >
               {props.children}
