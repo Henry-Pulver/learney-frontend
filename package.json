@@ -25,6 +25,7 @@
     "jose": "^3.20.1",
     "jquery": "^3.6.0",
     "lodash.isequal": "^4.5.0",
+    "marked-react": "^1.0.3",
     "mixpanel-browser": "^2.42.0",
     "next": "latest",
     "next-csrf": "^0.1.2",
