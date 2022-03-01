@@ -4,6 +4,7 @@ import { handleFetchResponses, isEven, isNumeric } from "../../lib/utils";
 import { classNames } from "../../lib/reactUtils";
 import { NextArrow } from "../svgs/icons";
 import { jsonHeaders } from "../../lib/headers";
+// import Markdown from "../marked-react/src";
 import Markdown from "marked-react";
 import {
   AnswersGiven,
@@ -474,9 +475,9 @@ function InlineTextMathImg({ text }: { text: string }) {
             textSplitByLine.forEach((text, idx) => {
               if (text)
                 outputArray.push(
-                  <Markdown gfm={true} breaks={true}>
-                    {text}
-                  </Markdown>
+                  <p id="md" className="inline">
+                    <Markdown>{text}</Markdown>
+                  </p>
                 );
               else if (idx > 0 && !textSplitByLine[idx - 1])
                 outputArray.push(<br />);
