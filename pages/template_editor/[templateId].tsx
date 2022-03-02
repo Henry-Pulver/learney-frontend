@@ -287,9 +287,11 @@ export const getServerSideProps = withPageAuthRequired({
     const session = getSession(ctx.req, ctx.res);
     // Currently we redirect if they're not authorised
     if (
-      !["matthew@learney.me", "henrypulver13@gmail.com"].includes(
-        session.user.email.toLowerCase()
-      )
+      ![
+        "matthew@learney.me",
+        "henrypulver13@gmail.com",
+        "samo.hromadka@gmail.com",
+      ].includes(session.user.email.toLowerCase())
     ) {
       return {
         redirect: { destination: `/questions` },
