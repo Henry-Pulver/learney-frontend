@@ -99,3 +99,7 @@ html {
     font: 14px helvetica neue, helvetica, arial, sans-serif;
   }
 }
+
+#md > * {
+  display: inline;
+}

@@ -4,6 +4,8 @@ import { handleFetchResponses, isEven, isNumeric } from "../../lib/utils";
 import { classNames } from "../../lib/reactUtils";
 import { NextArrow } from "../svgs/icons";
 import { jsonHeaders } from "../../lib/headers";
+// import Markdown from "../marked-react/src";
+import Markdown from "marked-react";
 import {
   AnswersGiven,
   QuestionSet,
@@ -422,7 +424,7 @@ export function QuestionText({
   const blockLatexDivs = text.split("/$$");
   blockLatexDivs.forEach((textBlock, idx) => {
     if (idx === 0) {
-      questionTextArr.push(<InlineTextAndMath key={idx} text={textBlock} />);
+      questionTextArr.push(<InlineTextMathImg key={idx} text={textBlock} />);
     } else {
       const nestedDivs = textBlock.split("$$/");
       nestedDivs.forEach((nestedText, indx) => {
@@ -432,7 +434,7 @@ export function QuestionText({
           );
         } else {
           questionTextArr.push(
-            <InlineTextAndMath key={`${idx}-${indx}`} text={nestedText} />
+            <InlineTextMathImg key={`${idx}-${indx}`} text={nestedText} />
           );
         }
       });
@@ -443,17 +445,83 @@ export function QuestionText({
   );
 }
 
-function InlineTextAndMath({ text }: { text: string }) {
+function InlineTextMathImg({ text }: { text: string }) {
   const outputArray = [];
-  text.split("$$").forEach((textBlock, index) => {
-    if (isEven(index)) {
-      // outputArray.push(...PureTextBlock(textBlock));
-      outputArray.push(textBlock);
-    } else {
-      outputArray.push(<InlineMath key={index}>{textBlock}</InlineMath>);
+  const splitTextImg = text.split(/(<img [^/][^>]+\s+\/>)/);
+  // Split into text and imgs
+  splitTextImg.forEach((block, idx) => {
+    if (block) {
+      // .split() returns empty string between two matches - ignore these
+      const isImgRegex = block.match("<img (.*\\S\\s)\\s*/>");
+      if (isImgRegex) {
+        const params = parseParams(isImgRegex[1]);
+        const imgEle = (
+          <img
+            key={params.src}
+            src={params.src}
+            className={params.className}
+            alt={params.alt}
+          />
+        );
+        // Add <img/> tags to one horizontal div if they're adjacent!
+        if (Array.isArray(outputArray[outputArray.length - 1]))
+          outputArray[outputArray.length - 1].push(imgEle);
+        else outputArray.push([imgEle]);
+      } else {
+        block.split("$$").forEach((textBlock, index) => {
+          if (isEven(index)) {
+            const textSplitByLine = textBlock.split("\n");
+            // Markdown removes extra line-breaks, so we want to add them back
+            textSplitByLine.forEach((text, idx) => {
+              if (text)
+                outputArray.push(
+                  <p id="md" className="inline">
+                    <Markdown>{text}</Markdown>
+                  </p>
+                );
+              else if (idx > 0 && !textSplitByLine[idx - 1])
+                outputArray.push(<br />);
+            });
+          } else {
+            outputArray.push(
+              <InlineMath key={`${idx}_${index}`}>{textBlock}</InlineMath>
+            );
+          }
+        });
+      }
     }
   });
-  return <div>{outputArray}</div>;
+  return (
+    <div>
+      {outputArray.map((el) => {
+        if (Array.isArray(el))
+          return (
+            <div className="flex flex-row justify-around">
+              {el.map((el) => el)}
+            </div>
+          );
+        else return el;
+      })}
+    </div>
+  );
+}
+
+function parseParams(params: string): {
+  src?: string;
+  className?: string;
+  alt?: string;
+} {
+  const paramsObj = {};
+  const paramRegex = {
+    src: /src=("\S*"|'\S*')/,
+    className: /className=("[^"]*"|'[^']*')/,
+    alt: /alt=(".*"|'.*')\s+/,
+  };
+  Object.entries(paramRegex).forEach(([key, regex]) => {
+    const match = params.match(regex);
+    if (match) paramsObj[key] = match[1].slice(1, -1);
+  });
+  return paramsObj;
 }
 
 export function AnswerOptions({
