@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect } from "react";
 import { getSession, withPageAuthRequired } from "@auth0/nextjs-auth0";
+import { useRouter } from "next/router";
 import {
   AnswerOptions,
   QuestionText,
@@ -12,10 +13,11 @@ import {
   Template,
   QuestionType,
 } from "../../components/questions/types";
-import { RefreshIcon, SaveIcon } from "@heroicons/react/outline";
+import { PlusIcon, RefreshIcon, SaveIcon } from "@heroicons/react/outline";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import { classNames } from "../../lib/reactUtils";
+import Tippy from "@tippyjs/react";
 
 export default function TemplateEditor({
   backendUrl,
@@ -26,6 +28,7 @@ export default function TemplateEditor({
   templateId: string;
   templateJson: Template;
 }) {
+  const router = useRouter();
   const [template, setTemplate] = React.useState<Template>({
     ...emptyTemplate,
     ...templateJson,
@@ -70,6 +73,43 @@ export default function TemplateEditor({
                 }));
               }}
             />
+          </div>
+          <div>
+            <Tippy
+              placement={"bottom"}
+              maxWidth={"14em"}
+              content={"Add new question template on this concept!"}
+            >
+              <button
+                className="btn-green p-2"
+                onClick={() => {
+                  (async () => {
+                    const saveResponse = await fetch(
+                      `${backendUrl}/api/v0/question_template`,
+                      {
+                        method: "PUT",
+                        headers: cacheHeaders,
+                        body: JSON.stringify({ template_id: templateId }),
+                      }
+                    );
+                    const saveJson = (await saveResponse.json()) as {
+                      template_id: string;
+                    };
+                    await router.push(
+                      {
+                        pathname: router.pathname,
+                        query: { templateId: saveJson.template_id },
+                      },
+                      undefined,
+                      { shallow: false }
+                    );
+                    router.reload();
+                  })();
+                }}
+              >
+                <PlusIcon className="h-7 w-7" />
+              </button>
+            </Tippy>
           </div>
         </div>
         <div className="my-1 flex flex-row justify-between">
