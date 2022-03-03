@@ -64,6 +64,7 @@ export default function Map({
   showTitle,
   currentConceptId,
   updateNotificationInfo,
+  setCurrentConceptId,
 }: {
   mapTitle: string;
   mapDescription: string;
@@ -87,6 +88,7 @@ export default function Map({
   showTitle: boolean;
   currentConceptId: string;
   updateNotificationInfo: (notificationData: NotificationData) => void;
+  setCurrentConceptId: (conceptId: string) => void;
 }) {
   const dispatch = useAppDispatch();
   const userData = useAppSelector((state) => state.userData);
@@ -402,7 +404,10 @@ export default function Map({
             knowledgeLevel={knowledgeLevel}
             maxKnowledgeLevel={maxKnowledgeLevel}
             questionModalShown={questionModalShown}
-            setQuestionModalShown={setQuestionModalShown}
+            setQuestionModalShown={(show: boolean) => {
+              setQuestionModalShown(show);
+              setCurrentConceptId(nodeSelected.id());
+            }}
             onLearnedClick={onLearnedClick}
             onSetGoalClick={onSetGoalClick}
             allowSuggestions={allowSuggestions}
