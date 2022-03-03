@@ -98,15 +98,21 @@ export function ConceptInfo({
         <div
           className={classNames(
             !questionsEnabled && "hidden",
-            "absolute left-2 top-1 lg:left-6 lg:top-3"
+            "absolute left-2 top-1 flex flex-row place-items-center gap-4 lg:left-6 lg:top-3"
           )}
         >
           <LevelBadge
-            knowledgeLevel={Math.floor(knowledgeLevel)}
+            knowledgeLevel={Math.min(
+              Math.floor(knowledgeLevel),
+              maxKnowledgeLevel
+            )}
             achieved={true}
             onClick={() => setProgressModalOpen(true)}
             overallClassName={"cursor-pointer text-xs sm:text-sm"}
           />
+          {knowledgeLevel > maxKnowledgeLevel && (
+            <p className="w-20 font-bold"> Expert level achieved!</p>
+          )}
         </div>
         <div className="h-excl-toolbar flex w-full flex-col items-center overflow-hidden text-center">
           <h4 className="mb-2 max-w-lg px-4 text-center text-2xl font-bold text-gray-900 sm:text-4xl">
