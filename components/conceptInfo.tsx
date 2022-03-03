@@ -20,6 +20,7 @@ import LevelBadge from "./questions/levelBadge";
 import { LevelsProgressBar } from "./questions/progressBars";
 import { useRouter } from "next/router";
 import { signInTooltip } from "../lib/learningAndPlanning/learningAndPlanning";
+import { ContentModal } from "./contentModal";
 
 type OnVote = (node: NodeSingular, url: string, up: boolean | null) => void;
 
@@ -46,6 +47,9 @@ export function ConceptInfo({
   allVotes,
   questionsEnabled,
   setProgressModalOpen,
+  isContentModalOpen,
+  setIsContentModalOpen,
+  setContentURL,
 }: {
   visible: boolean;
   node: NodeSingular | undefined;
@@ -69,6 +73,9 @@ export function ConceptInfo({
   allVotes: object;
   questionsEnabled: boolean;
   setProgressModalOpen: (open: boolean) => void;
+  isContentModalOpen: boolean;
+  setIsContentModalOpen: (open: boolean) => void;
+  setContentURL: (url: string) => void;
 }) {
   const router = useRouter();
   if (node === undefined) return <></>;
@@ -185,6 +192,9 @@ export function ConceptInfo({
                     userVotes={userVotes}
                     allVotes={allVotes}
                     onVote={onVote}
+                    isContentModalOpen={isContentModalOpen}
+                    setIsContentModalOpen={setIsContentModalOpen}
+                    setContentURL={setContentURL}
                   />
                 )),
                 getAndSortLinkPreviewURLs(node, allVotes).length === 0 && (
@@ -232,6 +242,9 @@ function ConceptLinkPreview({
   userVotes,
   allVotes,
   onVote,
+  isContentModalOpen,
+  setIsContentModalOpen,
+  setContentURL,
 }: {
   node: NodeSingular;
   url: string;
@@ -242,6 +255,9 @@ function ConceptLinkPreview({
   userVotes: object;
   allVotes: object;
   onVote: OnVote;
+  isContentModalOpen: boolean;
+  setIsContentModalOpen: (open: boolean) => void;
+  setContentURL: (url: string) => void;
 }) {
   const { data, isLoading } = useAsync({
     promiseFn: fetchLinkPreview,
@@ -255,127 +271,150 @@ function ConceptLinkPreview({
   useEffect(() => {
     if (!isLoading) setChecked(data.checked);
   }, [data, isLoading]);
-
+  const conceptOnClickHandler = async (externalURL: string) => {
+    let extractedURL = "";
+    try {
+      const res = await fetch("/api/iframe/url", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contentURL: externalURL,
+        }),
+      });
+      const resJSON = await res.json();
+      extractedURL = resJSON.url;
+    } catch (err) {
+      console.log("Error while handling iframe URL:", err);
+    }
+    if (extractedURL.length > 0) {
+      setIsContentModalOpen(true);
+      setContentURL(extractedURL);
+    } else {
+      window.open(url, "_blank");
+    }
+  };
   return (
-    <li className="py-auto relative flex flex-row text-gray-900">
-      <a
-        href={url}
-        className={classNames(
-          "mx-0.5 my-1 flex h-24 w-full overflow-hidden rounded bg-white text-left hover:bg-gray-100 hover:shadow-md",
-          checked && "bg-green-100 hover:bg-green-200"
-        )}
-        target="_blank"
-        rel="noreferrer"
-        onClick={() =>
-          logContentClick(
-            url,
-            Number(node.id()),
-            backendUrl,
-            userId,
-            mapUUID,
-            sessionId
-          )
-        }
-      >
-        <div className="relative flex h-full flex-col justify-center pr-4">
-          <input
-            type="checkbox"
-            checked={checked}
-            onClick={(e) => e.stopPropagation()}
-            onChange={() => {
-              setChecked(!checked);
-              postChecked(node, url, backendUrl, mapUUID, userId);
-            }}
-            className={classNames(
-              checked &&
-                "ring-2 !ring-green-500 ring-offset-2 focus:!ring-2 focus:!ring-offset-2",
-              "ml-2 h-6 w-6 cursor-pointer select-none rounded border-gray-300 text-green-600 focus:ring-0 focus:ring-offset-0"
-            )}
-          />
-        </div>
-        <div className="flex max-h-full w-20 items-center sm:w-32">
-          {data ? (
-            <img
-              src={(data as LinkPreviewData).image_url}
-              className="m-auto max-h-full"
-              alt={(data as LinkPreviewData).title}
-            />
-          ) : (
-            <LoadingSpinner classes="h-3/5 w-3/5 m-auto" />
+    <>
+      <li className="py-auto relative flex flex-row text-gray-900">
+        <div
+          className={classNames(
+            "mx-0.5 my-1 flex h-24 w-full overflow-hidden rounded bg-white text-left hover:bg-gray-100 hover:shadow-md ",
+            checked && "bg-green-100 hover:bg-green-200"
           )}
-        </div>
-        <div className="mr-0 ml-1 w-[calc(100%-8.25rem)] grow overflow-hidden text-ellipsis no-underline sm:w-[calc(100%-13.25rem)]">
-          <h4 className="overflow-hidden text-ellipsis whitespace-nowrap text-lg sm:py-1 sm:text-xl">
-            {data ? (data as LinkPreviewData).title : "Loading..."}
-          </h4>
-          <p
-            className={classNames(
-              data && (data as LinkPreviewData).description ? "h-15" : "h-10",
-              "-mt-0.5 mb-0.5 overflow-hidden text-ellipsis text-sm text-gray-800 sm:max-h-40"
+          onClick={async () => {
+            await conceptOnClickHandler(url);
+            logContentClick(
+              url,
+              Number(node.id()),
+              backendUrl,
+              userId,
+              mapUUID,
+              sessionId
+            );
+          }}
+        >
+          <div className="relative flex h-full flex-col justify-center pr-4">
+            <input
+              type="checkbox"
+              checked={checked}
+              onClick={(e) => e.stopPropagation()}
+              onChange={() => {
+                setChecked(!checked);
+                postChecked(node, url, backendUrl, mapUUID, userId);
+              }}
+              className={classNames(
+                checked &&
+                  "ring-2 !ring-green-500 ring-offset-2 focus:!ring-2 focus:!ring-offset-2",
+                "ml-2 h-6 w-6 cursor-pointer select-none rounded border-gray-300 text-green-600 focus:ring-0 focus:ring-offset-0"
+              )}
+            />
+          </div>
+          <div className="flex max-h-full w-20 items-center sm:w-32">
+            {data ? (
+              <img
+                src={(data as LinkPreviewData).image_url}
+                className="m-auto max-h-full"
+                alt={(data as LinkPreviewData).title}
+              />
+            ) : (
+              <LoadingSpinner classes="h-3/5 w-3/5 m-auto" />
             )}
-          >
-            {data ? (data as LinkPreviewData).description : ""}
-          </p>
-          <p
-            className={classNames(
-              data &&
-                (data as LinkPreviewData).description &&
-                "hidden sm:block",
-              "my-0 max-w-xs overflow-hidden text-ellipsis whitespace-nowrap text-xxs text-gray-500 sm:text-sm"
-            )}
-          >
-            {url}
-          </p>
+          </div>
+          <div className="mr-0 ml-1 w-[calc(100%-8.25rem)] grow overflow-hidden text-ellipsis no-underline sm:w-[calc(100%-13.25rem)]">
+            <h4 className="overflow-hidden text-ellipsis whitespace-nowrap text-lg sm:py-1 sm:text-xl">
+              {data ? (data as LinkPreviewData).title : "Loading..."}
+            </h4>
+            <p
+              className={classNames(
+                data && (data as LinkPreviewData).description ? "h-15" : "h-10",
+                "-mt-0.5 mb-0.5 overflow-hidden text-ellipsis text-sm text-gray-800 sm:max-h-40"
+              )}
+            >
+              {data ? (data as LinkPreviewData).description : ""}
+            </p>
+            <p
+              className={classNames(
+                data &&
+                  (data as LinkPreviewData).description &&
+                  "hidden sm:block",
+                "my-0 max-w-xs overflow-hidden text-ellipsis whitespace-nowrap text-xxs text-gray-500 sm:text-sm"
+              )}
+            >
+              {url}
+            </p>
+          </div>
+          <div className="w-10" />
         </div>
-        <div className="w-10" />
-      </a>
-      <div className="absolute right-1 top-0 my-1 w-8">
-        <div className="h-8 w-8">
-          <div
-            className={classNames(
-              userVotes[url]
-                ? "border-b-green-500 hover:border-b-green-400"
-                : "border-b-gray-500 hover:border-b-gray-400",
-              "h-0 w-0 cursor-pointer border-[1rem] border-t-0 border-b-[2rem] border-t-transparent border-t-transparent border-l-transparent border-r-transparent"
-            )}
-            onClick={
-              userVotes[url]
-                ? () => onVote(node, url, null) // true  ->  null
-                : userVotes[url] === null || userVotes[url] === undefined
-                ? () => onVote(node, url, true) // null  ->  true
-                : () => onVote(node, url, null) // false ->  null
-            }
-          />
+        <div className="absolute right-1 top-0 my-1 w-8">
+          <div className="h-8 w-8">
+            <div
+              className={classNames(
+                userVotes[url]
+                  ? "border-b-green-500 hover:border-b-green-400"
+                  : "border-b-gray-500 hover:border-b-gray-400",
+                "h-0 w-0 cursor-pointer border-[1rem] border-t-0 border-b-[2rem] border-t-transparent border-t-transparent border-l-transparent border-r-transparent"
+              )}
+              onClick={
+                userVotes[url]
+                  ? () => onVote(node, url, null) // true  ->  null
+                  : userVotes[url] === null || userVotes[url] === undefined
+                  ? () => onVote(node, url, true) // null  ->  true
+                  : () => onVote(node, url, null) // false ->  null
+              }
+            />
+          </div>
+          {/*Vote count number*/}
+          <div className={"py-1.5 text-sm font-semibold"}>
+            {allVotes && Math.abs(allVotes[url]) > 5
+              ? userVotes[url] === true
+                ? allVotes[url] + 1
+                : userVotes[url] === false
+                ? allVotes[url] - 1
+                : allVotes[url]
+              : "Vote"}
+          </div>
+          <div className="h-8 w-8">
+            <div
+              className={classNames(
+                userVotes[url] === false
+                  ? "border-t-red-500 hover:border-t-red-400"
+                  : "border-t-gray-500 hover:border-t-gray-400",
+                "h-0 w-0 cursor-pointer border-[1rem] border-b-0 border-t-[2rem] border-b-transparent border-b-transparent border-l-transparent border-r-transparent"
+              )}
+              onClick={
+                userVotes[url] === false
+                  ? () => onVote(node, url, null) // false ->  null
+                  : userVotes[url] === null || userVotes[url] === undefined
+                  ? () => onVote(node, url, false) // null  ->  false
+                  : () => onVote(node, url, null) // true  ->  null
+              }
+            />
+          </div>
         </div>
-        {/*Vote count number*/}
-        <div className={"py-1.5 text-sm font-semibold"}>
-          {allVotes && Math.abs(allVotes[url]) > 5
-            ? userVotes[url] === true
-              ? allVotes[url] + 1
-              : userVotes[url] === false
-              ? allVotes[url] - 1
-              : allVotes[url]
-            : "Vote"}
-        </div>
-        <div className="h-8 w-8">
-          <div
-            className={classNames(
-              userVotes[url] === false
-                ? "border-t-red-500 hover:border-t-red-400"
-                : "border-t-gray-500 hover:border-t-gray-400",
-              "h-0 w-0 cursor-pointer border-[1rem] border-b-0 border-t-[2rem] border-b-transparent border-b-transparent border-l-transparent border-r-transparent"
-            )}
-            onClick={
-              userVotes[url] === false
-                ? () => onVote(node, url, null) // false ->  null
-                : userVotes[url] === null || userVotes[url] === undefined
-                ? () => onVote(node, url, false) // null  ->  false
-                : () => onVote(node, url, null) // true  ->  null
-            }
-          />
-        </div>
-      </div>
-    </li>
+      </li>
+    </>
   );
 }
 
