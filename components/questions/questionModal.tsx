@@ -479,8 +479,7 @@ function InlineTextMathImg({ text }: { text: string }) {
                     <Markdown>{text}</Markdown>
                   </p>
                 );
-              else if (idx > 0 && !textSplitByLine[idx - 1])
-                outputArray.push(<br />);
+              if (idx < textSplitByLine.length - 1) outputArray.push(<br />);
             });
           } else {
             outputArray.push(
