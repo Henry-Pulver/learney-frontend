@@ -37,6 +37,7 @@ import { ArrowCircleUpIcon, BookOpenIcon } from "@heroicons/react/outline";
 import { Completed } from "./questions/types";
 import { setUserData } from "./userDataSlice";
 import { useAppDispatch, useAppSelector } from "../hooks";
+import { ContentModal } from "./contentModal";
 
 type PrevUserDataFn = (prevUserData: UserData) => UserData;
 
@@ -193,6 +194,21 @@ export default function Map({
 
   const [questionModalShown, setQuestionModalShown] =
     React.useState<boolean>(null);
+  const [isContentModalOpen, setIsContentModalOpen] =
+    React.useState<boolean>(false);
+  const [contentURL, setContentURL] = React.useState<string>("");
+  useEffect(() => {
+    localStorage.setItem("quemodal", String(questionModalShown));
+    console.log({
+      ...router.query,
+      quemodal: questionModalShown ? questionModalShown : undefined,
+    });
+    setURLQuery(router, {
+      ...router.query,
+      quemodal: questionModalShown ? questionModalShown : undefined,
+    });
+  }, [questionModalShown]);
+
   useEffect(() => {
     setQuestionModalShown(
       localStorage.getItem("quemodal") === "true" && questionsEnabled
@@ -347,6 +363,13 @@ export default function Map({
             buttonPressFunction={buttonPressFunction}
           />
         )}
+        {isContentModalOpen && (
+          <ContentModal
+            modalShown={isContentModalOpen}
+            closeModal={() => setIsContentModalOpen(false)}
+            contentURL={contentURL}
+          />
+        )}
         <div
           className={classNames(
             !editMap && data && nodeSelected && "hidden sm:flex",
@@ -399,6 +422,9 @@ export default function Map({
             allVotes={data}
             questionsEnabled={questionsEnabled}
             setProgressModalOpen={setProgressModalShown}
+            isContentModalOpen={isContentModalOpen}
+            setIsContentModalOpen={setIsContentModalOpen}
+            setContentURL={setContentURL}
           />
         </div>
       )}
