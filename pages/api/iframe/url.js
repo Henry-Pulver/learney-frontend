@@ -13,12 +13,11 @@ export default async function handler(req, res) {
     const iframeElement = documentModel.getElementsByTagName("iframe");
     if (iframeElement && iframeElement.length > 0) {
       const iframeURL = iframeElement[0].getAttribute("src");
-      console.log(iframeURL);
-      return res.status(200).json({ url: iframeURL });
+      return res.status(200).json({ url: iframeURL , type:resJson.type});
     }
-    return res.status(200).json({ url: "" });
+    return res.status(200).json({ url: "" , type:''});
   } catch (err) {
-    console.log("Erro at /pages/api/iframe/url endppooint", err.message);
+    console.warn("Error at /pages/api/iframe/url endpooint", err.message);
     throw err;
   }
 }
