@@ -3,14 +3,33 @@ import { handleFetchResponses } from "./utils";
 import { jsonHeaders } from "./headers";
 import { ConceptInfo, NextConcept } from "../components/questions/types";
 
-export function getNextNodeToLearn(
+export function anyValidCurrentConcepts(): boolean {
+  /** Answers: "Are there any valid current concepts?" **/
+  return window.cy.nodes(".goal").or(".path").not(".learned").size() > 0;
+}
+
+export function validCurrentConcept(concept: NodeSingular): boolean {
+  const onPath = concept.hasClass("goal") || concept.hasClass("path");
+  const isLearned = !concept.hasClass("learned");
+  return onPath && isLearned && allPrereqsLearned(concept);
+}
+
+export function allPrereqsLearned(concept: NodeSingular): boolean {
+  return (
+    concept.predecessors("node").empty() ||
+    concept
+      .predecessors("node")
+      .toArray()
+      .every((predecessor) => predecessor.hasClass("learned"))
+  );
+}
+
+export function getCurrentNodeToLearn(
   newlyLearnedNode: NodeSingular = null
 ): NodeSingular | undefined {
   const learned = window.cy.nodes(".learned");
   const goals = window.cy.nodes(".goal").not(learned);
-  if (window.cy.nodes(".goal").or(".path").not(".learned").size() === 0) {
-    return undefined;
-  } // goal(s) are set
+  if (!anyValidCurrentConcepts()) return undefined;
   // Find possible next steps
   let possibleNextSteps = window.cy.collection();
   // target of learned or roots, not learned, on path & where all predecessors are learned!
@@ -20,15 +39,8 @@ export function getNextNodeToLearn(
     .and(goals.or(".path"))
     .not(learned)
     .forEach((node) => {
-      if (
-        node.predecessors("node").empty() ||
-        node
-          .predecessors("node")
-          .toArray()
-          .every((predecessor) => predecessor.hasClass("learned"))
-      ) {
+      if (allPrereqsLearned(node))
         possibleNextSteps = possibleNextSteps.or(node);
-      }
     });
   // Prefer successor of newly learned if possible
   if (
