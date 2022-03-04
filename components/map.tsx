@@ -197,18 +197,7 @@ export default function Map({
   const [isContentModalOpen, setIsContentModalOpen] =
     React.useState<boolean>(false);
   const [contentURL, setContentURL] = React.useState<string>("");
-  useEffect(() => {
-    localStorage.setItem("quemodal", String(questionModalShown));
-    console.log({
-      ...router.query,
-      quemodal: questionModalShown ? questionModalShown : undefined,
-    });
-    setURLQuery(router, {
-      ...router.query,
-      quemodal: questionModalShown ? questionModalShown : undefined,
-    });
-  }, [questionModalShown]);
-
+  const [contentType, setContentType] = React.useState<string>("");
   useEffect(() => {
     setQuestionModalShown(
       localStorage.getItem("quemodal") === "true" && questionsEnabled
@@ -368,6 +357,7 @@ export default function Map({
             modalShown={isContentModalOpen}
             closeModal={() => setIsContentModalOpen(false)}
             contentURL={contentURL}
+            contentType={contentType}
           />
         )}
         <div
@@ -422,8 +412,8 @@ export default function Map({
             allVotes={data}
             questionsEnabled={questionsEnabled}
             setProgressModalOpen={setProgressModalShown}
-            isContentModalOpen={isContentModalOpen}
             setIsContentModalOpen={setIsContentModalOpen}
+            setContentType = {setContentType}
             setContentURL={setContentURL}
           />
         </div>

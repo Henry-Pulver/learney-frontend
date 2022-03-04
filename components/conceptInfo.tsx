@@ -47,9 +47,9 @@ export function ConceptInfo({
   allVotes,
   questionsEnabled,
   setProgressModalOpen,
-  isContentModalOpen,
   setIsContentModalOpen,
   setContentURL,
+  setContentType,
 }: {
   visible: boolean;
   node: NodeSingular | undefined;
@@ -73,9 +73,9 @@ export function ConceptInfo({
   allVotes: object;
   questionsEnabled: boolean;
   setProgressModalOpen: (open: boolean) => void;
-  isContentModalOpen: boolean;
   setIsContentModalOpen: (open: boolean) => void;
   setContentURL: (url: string) => void;
+  setContentType:(type:string) =>void;
 }) {
   const router = useRouter();
   if (node === undefined) return <></>;
@@ -192,9 +192,9 @@ export function ConceptInfo({
                     userVotes={userVotes}
                     allVotes={allVotes}
                     onVote={onVote}
-                    isContentModalOpen={isContentModalOpen}
                     setIsContentModalOpen={setIsContentModalOpen}
                     setContentURL={setContentURL}
+                    setContentType={setContentType}
                   />
                 )),
                 getAndSortLinkPreviewURLs(node, allVotes).length === 0 && (
@@ -242,9 +242,9 @@ function ConceptLinkPreview({
   userVotes,
   allVotes,
   onVote,
-  isContentModalOpen,
   setIsContentModalOpen,
   setContentURL,
+  setContentType
 }: {
   node: NodeSingular;
   url: string;
@@ -255,9 +255,9 @@ function ConceptLinkPreview({
   userVotes: object;
   allVotes: object;
   onVote: OnVote;
-  isContentModalOpen: boolean;
   setIsContentModalOpen: (open: boolean) => void;
   setContentURL: (url: string) => void;
+  setContentType:(type:string) =>void;
 }) {
   const { data, isLoading } = useAsync({
     promiseFn: fetchLinkPreview,
@@ -273,6 +273,7 @@ function ConceptLinkPreview({
   }, [data, isLoading]);
   const conceptOnClickHandler = async (externalURL: string) => {
     let extractedURL = "";
+    let contentType = "";
     try {
       const res = await fetch("/api/iframe/url", {
         method: "POST",
@@ -285,23 +286,25 @@ function ConceptLinkPreview({
       });
       const resJSON = await res.json();
       extractedURL = resJSON.url;
+      contentType = resJSON.type;
     } catch (err) {
-      console.log("Error while handling iframe URL:", err);
+      console.warn("Error while handling iframe URL:", err);
     }
     if (extractedURL.length > 0) {
-      setIsContentModalOpen(true);
       setContentURL(extractedURL);
+      setContentType(contentType);
+      setIsContentModalOpen(true);
     } else {
       window.open(url, "_blank");
     }
   };
   return (
     <>
-      <li className="py-auto relative flex flex-row text-gray-900">
+      <li className="py-auto relative flex flex-row text-gray-900 cursor-pointer">
         <div
           className={classNames(
             "mx-0.5 my-1 flex h-24 w-full overflow-hidden rounded bg-white text-left hover:bg-gray-100 hover:shadow-md ",
-            checked && "bg-green-100 hover:bg-green-200"
+            checked && "bg-green-100 hover:bg-green-200 "
           )}
           onClick={async () => {
             await conceptOnClickHandler(url);
