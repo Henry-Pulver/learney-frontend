@@ -75,7 +75,7 @@ export function ConceptInfo({
   setProgressModalOpen: (open: boolean) => void;
   setIsContentModalOpen: (open: boolean) => void;
   setContentURL: (url: string) => void;
-  setContentType:(type:string) =>void;
+  setContentType: (type: string) => void;
 }) {
   const router = useRouter();
   if (node === undefined) return <></>;
@@ -251,7 +251,7 @@ function ConceptLinkPreview({
   onVote,
   setIsContentModalOpen,
   setContentURL,
-  setContentType
+  setContentType,
 }: {
   node: NodeSingular;
   url: string;
@@ -264,7 +264,7 @@ function ConceptLinkPreview({
   onVote: OnVote;
   setIsContentModalOpen: (open: boolean) => void;
   setContentURL: (url: string) => void;
-  setContentType:(type:string) =>void;
+  setContentType: (type: string) => void;
 }) {
   const { data, isLoading } = useAsync({
     promiseFn: fetchLinkPreview,
@@ -307,7 +307,7 @@ function ConceptLinkPreview({
   };
   return (
     <>
-      <li className="py-auto relative flex flex-row text-gray-900 cursor-pointer">
+      <li className="py-auto relative flex cursor-pointer flex-row text-gray-900">
         <div
           className={classNames(
             "mx-0.5 my-1 flex h-24 w-full overflow-hidden rounded bg-white text-left hover:bg-gray-100 hover:shadow-md ",
