@@ -369,6 +369,7 @@ export default function MapPage({
         showTitle={showTitle}
         currentConceptId={currentConceptId}
         updateNotificationInfo={updateNotificationInfo}
+        setCurrentConceptId={setCurrentConceptId}
       />
       {editMap && (
         <Editor

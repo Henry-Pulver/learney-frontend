@@ -4,7 +4,6 @@ import { handleFetchResponses, isEven, isNumeric } from "../../lib/utils";
 import { classNames } from "../../lib/reactUtils";
 import { NextArrow } from "../svgs/icons";
 import { jsonHeaders } from "../../lib/headers";
-// import Markdown from "../marked-react/src";
 import Markdown from "marked-react";
 import {
   AnswersGiven,
@@ -81,7 +80,6 @@ export default function QuestionModal({
     delete qBatchResponseJson.answers_given;
 
     setQuestionSet(qBatchResponseJson as QuestionSet);
-    // await getNextQuestion(qBatchResponseJson.id);
   };
 
   useEffect(() => {
@@ -97,11 +95,31 @@ export default function QuestionModal({
     );
     if (
       nextQuestionPressed &&
-      questionSet.questions.length - 1 > currentQidx &&
-      questionSet.max_num_questions - 1 > currentQidx
+      (questionSet.completed ||
+        (questionSet.questions.length - 1 > currentQidx &&
+          questionSet.max_num_questions - 1 > currentQidx))
     ) {
-      setNextQuestionPressed(false);
-      setCurrentQidx((prevState) => prevState + 1);
+      if (!questionSet.completed) {
+        setNextQuestionPressed(false);
+        setCurrentQidx((prevState) => prevState + 1);
+      } else if (questionSet.completed === "completed_concept") {
+        // Answers and current Question id reset automagically when the question set is emptied
+        setTimeout(() => {
+          setNextQuestionPressed(false);
+          onCompletion(
+            questionSet.completed,
+            knowledgeLevel - questionSet.initial_knowledge_level
+          );
+          setQuestionSet({ ...emptyQuestionSet });
+        }, 2000);
+      } else {
+        setNextQuestionPressed(false);
+        onCompletion(
+          questionSet.completed,
+          knowledgeLevel - questionSet.initial_knowledge_level
+        );
+        setQuestionSet({ ...emptyQuestionSet });
+      }
     }
     setFeedbackExpanded(false);
   }, [questionSet, nextQuestionPressed]);
@@ -140,14 +158,6 @@ export default function QuestionModal({
     if ("response" in responseJson) {
       return;
     } else {
-      if (responseJson.completed) {
-        onCompletion(
-          responseJson.completed,
-          responseJson.level - questionSet.initial_knowledge_level
-        );
-        // Answers and current Question id reset automagically when the question set is emptied
-        setQuestionSet({ ...emptyQuestionSet });
-      }
       setKnowledgeLevel(responseJson.level);
       if (responseJson.next_questions.length > 0) {
         setQuestionSet((prevQuestionSet) => ({
@@ -211,9 +221,10 @@ export default function QuestionModal({
       modalClassName="h-full flex-col items-center"
       contentClassName={classNames(
         questionSet.completed &&
+          nextQuestionPressed &&
           isCorrectArray(answersGiven, questionSet)[currentQidx] &&
           "bg-green-500 transition-colors duration-1000 ease-in-out",
-        questionSet.completed &&
+        questionSet.questions.length > 0 &&
           isCorrectArray(answersGiven, questionSet)[currentQidx] &&
           !feedbackExpanded &&
           "overflow-y-hidden", // Stops tricky bug where a scroll bar shows up for the question modal unnecessarily
@@ -222,10 +233,7 @@ export default function QuestionModal({
     >
       <div className="flex justify-center">
         {questionSet.id && // <-- Stops a bug when loading questionSet
-        !(
-          questionSet.completed &&
-          isCorrectArray(answersGiven, questionSet)[currentQidx]
-        ) ? (
+        !(questionSet.completed && nextQuestionPressed) ? (
           <>
             <div
               className={classNames(
@@ -370,8 +378,7 @@ export default function QuestionModal({
                     )}
                     onClick={
                       answersGiven.length <= currentQidx || // Deactivated as question not yet answered
-                      nextQuestionPressed ||
-                      questionSet.completed // Completion happens automagically
+                      nextQuestionPressed
                         ? () => {}
                         : () => setNextQuestionPressed(true)
                     }
@@ -391,12 +398,15 @@ export default function QuestionModal({
             </div>
           </>
         ) : questionSet.completed &&
-          isCorrectArray(answersGiven, questionSet)[currentQidx] ? (
+          questionSet.completed === "completed_concept" ? (
           <div className="grid h-96 w-full content-center justify-center">
             <div className="text-4xl font-bold text-white">
               🎉 Congratulations! 🎉
             </div>
-            <div className="text-2xl text-white">You completed the quiz.</div>
+            <div className="text-2xl text-white">
+              You&apos;ve reached expert level at &lsquo;
+              {window.cy.getElementById(conceptId).data().name}&rsquo;
+            </div>
           </div>
         ) : (
           <div className="grid h-96 w-full content-center justify-center">
