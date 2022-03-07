@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     }
     return res.status(200).json({ url: "" , type:''});
   } catch (err) {
-    console.warn("Error at /pages/api/iframe/url endpooint", err.message);
+    console.warn("Error at /pages/api/iframe/url endpoint", err.message);
     throw err;
   }
 }
