@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { classNames } from "../lib/reactUtils";
 import { LoadingSpinner } from "./animations";
 import { NotFullScreenModal } from "./modal";
 
@@ -32,7 +33,7 @@ export const ContentModal = ({
         src={contentURL}
         title="Content Player"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        className="h-full w-full"
+        className={classNames('h-full w-full' , loader && "hidden")}
         onLoad={hideLoader}
       ></iframe>
     </NotFullScreenModal>
