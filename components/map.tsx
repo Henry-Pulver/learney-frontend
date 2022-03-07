@@ -37,6 +37,7 @@ import { ArrowCircleUpIcon, BookOpenIcon } from "@heroicons/react/outline";
 import { Completed } from "./questions/types";
 import { setUserData } from "./userDataSlice";
 import { useAppDispatch, useAppSelector } from "../hooks";
+import { ContentModal } from "./contentModal";
 
 type PrevUserDataFn = (prevUserData: UserData) => UserData;
 
@@ -193,6 +194,10 @@ export default function Map({
 
   const [questionModalShown, setQuestionModalShown] =
     React.useState<boolean>(null);
+  const [isContentModalOpen, setIsContentModalOpen] =
+    React.useState<boolean>(false);
+  const [contentURL, setContentURL] = React.useState<string>("");
+  const [contentType, setContentType] = React.useState<string>("");
   useEffect(() => {
     setQuestionModalShown(
       localStorage.getItem("quemodal") === "true" && questionsEnabled
@@ -347,6 +352,14 @@ export default function Map({
             buttonPressFunction={buttonPressFunction}
           />
         )}
+        {isContentModalOpen && (
+          <ContentModal
+            modalShown={isContentModalOpen}
+            closeModal={() => setIsContentModalOpen(false)}
+            contentURL={contentURL}
+            contentType={contentType}
+          />
+        )}
         <div
           className={classNames(
             !editMap && data && nodeSelected && "hidden sm:flex",
@@ -399,6 +412,9 @@ export default function Map({
             allVotes={data}
             questionsEnabled={questionsEnabled}
             setProgressModalOpen={setProgressModalShown}
+            setIsContentModalOpen={setIsContentModalOpen}
+            setContentType = {setContentType}
+            setContentURL={setContentURL}
           />
         </div>
       )}
