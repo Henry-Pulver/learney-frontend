@@ -42,7 +42,7 @@ export const ContentModal = ({
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         className={classNames("h-full w-full", loader && "hidden")}
         onLoad={hideLoader}
-      ></iframe>
+      />
     </NotFullScreenModal>
   );
 };
