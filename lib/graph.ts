@@ -226,16 +226,30 @@ export function updateMinZoom(editMap = true) {
 function resizeNodes(nodes: NodeCollection, newSize: "big" | "small"): void {
   nodes.forEach((node) => {
     if (node.id() !== selectedNodeID) {
-      let nodeSize;
+      // These are default values - changed if newSize === "big"!
+      let nodeSize = node.data().relative_importance * nodeBaseSize;
+      let fontSize = 1.25 * node.data().relative_importance * 24;
+      let textMaxWidth = 240;
+      let minZoomFontSize = 1.25;
+      const zoom = window.cy.zoom();
+
       if (newSize === "big") {
-        nodeSize = 1.5 * node.data().relative_importance * nodeBaseSize;
-      } else {
-        nodeSize = node.data().relative_importance * nodeBaseSize;
+        nodeSize *= 1.5;
+        if (zoom < 0.5) {
+          fontSize *=
+            1 / (Math.sqrt(zoom) * Math.sqrt(node.data().relative_importance));
+          textMaxWidth *= 1 / (zoom * 2);
+          minZoomFontSize *= Math.sqrt(zoom);
+        }
       }
-      node.style("width", nodeSize.toString() + "px");
-      node.style("height", nodeSize.toString() + "px");
-      const fontSize = 1.25 * node.data().relative_importance * 24;
-      node.style("font-size", fontSize.toString() + "px");
+
+      node.style({
+        width: nodeSize.toString() + "px",
+        height: nodeSize.toString() + "px",
+        "font-size": fontSize.toString() + "px",
+        "text-max-width": textMaxWidth.toString() + "px",
+        "min-zoomed-font-size": minZoomFontSize.toString() + "em",
+      });
     }
   });
 }
@@ -394,9 +408,7 @@ function checkEdgeInvisible(edge: EdgeSingular): boolean {
 
 export function highlightNodes(nodes, resize: boolean): void {
   setNodeBrightness(nodes, 3);
-  if (resize) {
-    resizeNodes(nodes, "big");
-  }
+  if (resize) resizeNodes(nodes, "big");
 }
 
 export function unhighlightNodes(nodes: NodeCollection): void {
