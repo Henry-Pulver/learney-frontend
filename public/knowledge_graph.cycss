@@ -37,7 +37,7 @@ node:parent {
   z-index: 1;
   text-wrap: wrap;
   text-max-width: 240px;
-  compound-sizing-wrt-labels: include;
+  compound-sizing-wrt-labels: exclude;
   padding: 80px;
   border-width: 0;
   min-width: 400px;
