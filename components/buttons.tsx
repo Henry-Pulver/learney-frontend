@@ -376,7 +376,13 @@ export function GetNextConceptButton({
     <IconButtonTippy
       content={
         currentConceptId ? (
-          "Your next concept"
+          <>
+            Your next concept (
+            <p className="inline rounded bg-[#ff0080] px-0.5 text-white">
+              shown in pink
+            </p>
+            )
+          </>
         ) : (
           <>
             Your next concept <b>(first set a goal)</b>

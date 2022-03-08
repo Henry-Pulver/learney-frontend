@@ -60,6 +60,7 @@ const cyColours = {
   goal: "#ff9e00",
   learned: "#059669",
   learnedArrow: "#34D399",
+  currentConcept: "#ff0080",
 };
 const nodeBaseSize = 48;
 
@@ -251,13 +252,15 @@ export function setNodeBrightness(
   nodes: NodeCollection,
   brightnessLevel = 0
 ): void {
-  nodes.forEach((node) => {
+  nodes.forEach((node: NodeSingular) => {
     const nId = node.id();
     const parentColour: string | undefined = node
       .parent()
       .style("background-color");
     node.removeStyle("background-color");
-    if (nId in learnedNodes && learnedNodes[nId]) {
+    if (node.hasClass("current-concept")) {
+      node.style("background-color", cyColours.currentConcept);
+    } else if (nId in learnedNodes && learnedNodes[nId]) {
       node.style("background-color", cyColours.learned);
     } else if (nId in goalNodes) {
       node.style("background-color", cyColours.goal);
@@ -389,7 +392,7 @@ function checkEdgeInvisible(edge: EdgeSingular): boolean {
   }
 }
 
-function highlightNodes(nodes, resize: boolean): void {
+export function highlightNodes(nodes, resize: boolean): void {
   setNodeBrightness(nodes, 3);
   if (resize) {
     resizeNodes(nodes, "big");

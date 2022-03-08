@@ -418,7 +418,7 @@ export default function Map({
             questionsEnabled={questionsEnabled}
             setProgressModalOpen={setProgressModalShown}
             setIsContentModalOpen={setIsContentModalOpen}
-            setContentType = {setContentType}
+            setContentType={setContentType}
             setContentURL={setContentURL}
           />
         </div>

@@ -24,12 +24,20 @@ import { EditNavbar, LearnNavbar } from "./navbar";
 import Editor from "./editor/editor";
 import { Notification } from "./notifications";
 import ExploreLearnIntroPage from "./exploreLearnIntroPage";
-import { handleIntroAnimation } from "../lib/graph";
+import {
+  handleIntroAnimation,
+  unhighlightNodes,
+  highlightNodes,
+} from "../lib/graph";
 import { useRouter } from "next/router";
 import { EditType } from "./editor/types";
 import { NodeSingular } from "cytoscape";
 import { setNotificationProgressInfo } from "./questions/notificationMessages";
-import { fetchCurrentConcept, getNextNodeToLearn } from "../lib/questions";
+import {
+  fetchCurrentConcept,
+  getCurrentNodeToLearn,
+  validCurrentConcept,
+} from "../lib/questions";
 import { ButtonPressFunction } from "../lib/types";
 import { NotificationData } from "./types";
 import { useAppSelector, useAppDispatch } from "../hooks";
@@ -75,17 +83,32 @@ export default function MapPage({
   const [isNewUser, setIsNewUser] = useState<boolean>(false);
   useEffect(() => setIsNewUser(!localStorage.getItem("userId")), []);
 
+  const [pageLoaded, setPageLoaded] = React.useState(false);
+
   const [currentConceptId, setCurrentConceptId] = useState<string>(undefined);
   const updateCurrentConceptId = async (userId: string) => {
     let currConceptObj;
     if (questionsEnabled)
       currConceptObj = await fetchCurrentConcept(backendUrl, userId, mapUUID);
     else {
-      const nextNode = getNextNodeToLearn(null);
+      const nextNode = getCurrentNodeToLearn(null);
       if (nextNode) currConceptObj = { concept_id: nextNode.id() };
       else currConceptObj = { concept_id: null };
     }
-    setCurrentConceptId(currConceptObj.concept_id);
+    setCurrentConceptId((prevCurrConcId) => {
+      if (prevCurrConcId !== undefined) {
+        const prevCurrConc = window.cy.getElementById(prevCurrConcId);
+        // De-highlight it
+        prevCurrConc.removeClass("current-concept");
+        unhighlightNodes(prevCurrConc);
+        // Get new current concept
+        const currConc = window.cy.getElementById(currConceptObj.concept_id);
+        // Highlight it
+        currConc.addClass("current-concept");
+        highlightNodes(currConc, true);
+      }
+      return currConceptObj.concept_id;
+    });
     return currConceptObj.concept_id;
   };
 
@@ -151,8 +174,6 @@ export default function MapPage({
       });
     }
   }, [userData.id]);
-
-  const [pageLoaded, setPageLoaded] = React.useState(false);
 
   useEffect(() => {
     (async () => {
@@ -226,11 +247,13 @@ export default function MapPage({
           updatedConceptId = await updateCurrentConceptId(userData.id);
         // If questionsEnabled, it's been preloaded as it fetches from backend
         else updatedConceptId = currentConceptId;
-        if (
-          updatedConceptId &&
-          (!querySet || (querySet && query.concept !== undefined))
-        )
+        if (updatedConceptId && !querySet)
           query = { concept: updatedConceptId };
+        const currConc = window.cy.getElementById(updatedConceptId);
+        // Highlight current concept
+        currConc.addClass("current-concept");
+        highlightNodes(currConc, true);
+
         handleIntroAnimation(router, query, goals);
       })();
     }
@@ -369,7 +392,20 @@ export default function MapPage({
         showTitle={showTitle}
         currentConceptId={currentConceptId}
         updateNotificationInfo={updateNotificationInfo}
-        setCurrentConceptId={setCurrentConceptId}
+        setCurrentConceptId={(currConcId: string) => {
+          const currConc = window.cy.getElementById(currConcId);
+          if (validCurrentConcept(currConc)) {
+            const prevCurrConc = window.cy.getElementById(currentConceptId);
+            // De-highlight it
+            prevCurrConc.removeClass("current-concept");
+            unhighlightNodes(prevCurrConc);
+            // Highlight new current concept
+            currConc.addClass("current-concept");
+            highlightNodes(currConc, true);
+
+            setCurrentConceptId(currConcId);
+          }
+        }}
       />
       {editMap && (
         <Editor
