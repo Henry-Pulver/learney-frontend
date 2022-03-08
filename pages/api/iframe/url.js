@@ -13,9 +13,9 @@ export default async function handler(req, res) {
     const iframeElement = documentModel.getElementsByTagName("iframe");
     if (iframeElement && iframeElement.length > 0) {
       const iframeURL = iframeElement[0].getAttribute("src");
-      return res.status(200).json({ url: iframeURL , type:resJson.type});
+      return res.status(200).json({ url: iframeURL, type: resJson.type });
     }
-    return res.status(200).json({ url: "" , type:''});
+    return res.status(200).json({ url: "", type: "" });
   } catch (err) {
     console.warn("Error at /pages/api/iframe/url endpoint", err.message);
     throw err;
