@@ -187,9 +187,9 @@ export function ConceptInfo({
           <ol className="m-0 mb-20 w-full shrink grow list-none overflow-auto pl-0 pb-2 sm:px-2 sm:pb-20 md:mb-0">
             {node &&
               appendToArray(
-                getAndSortLinkPreviewURLs(node, allVotes).map((url) => (
+                getAndSortLinkPreviewURLs(node, allVotes).map((url, idx) => (
                   <ConceptLinkPreview
-                    key={url}
+                    key={`${url}-${idx}`}
                     node={node}
                     url={url}
                     userId={userData.id}
