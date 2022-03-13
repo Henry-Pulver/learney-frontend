@@ -9,7 +9,7 @@ export function Notification({
   setNotificationInfo,
 }: {
   info: NotificationData;
-  setNotificationInfo: (
+  setNotificationInfo?: (
     getNotificationInfo: (
       notificationInfo: NotificationData
     ) => NotificationData
@@ -20,7 +20,10 @@ export function Notification({
       {/* Global notification live region, render this permanently at the end of the document */}
       <div
         aria-live="assertive"
-        className="pointer-events-none fixed inset-0 z-50 flex items-end px-4 py-6 sm:items-start sm:py-20 sm:px-6"
+        className={classNames(
+          info.bottom ? "inset-x-0 bottom-0" : "inset-0",
+          "pointer-events-none fixed z-50 flex items-end px-4 py-6 sm:items-start sm:px-6 sm:pt-20"
+        )}
       >
         <div
           className={classNames(
@@ -43,7 +46,8 @@ export function Notification({
               className={classNames(
                 "pointer-events-auto relative w-full max-w-sm overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5",
                 info.colour === "green" && "bg-green-50",
-                info.colour === "red" && "bg-red-50"
+                info.colour === "red" && "bg-red-50",
+                info.colour === "blue" && "bg-blue-50"
               )}
             >
               <div className="p-4">
@@ -53,6 +57,7 @@ export function Notification({
                       className={classNames(
                         info.colour === "green" && "text-green-400",
                         info.colour === "red" && "text-red-400",
+                        info.colour === "blue" && "text-blue-500",
                         "h-8 w-8"
                       )}
                       aria-hidden="true"
@@ -66,14 +71,16 @@ export function Notification({
                       </p>
                     )}
                   </div>
-                  <XCloseButton
-                    onClick={() =>
-                      setNotificationInfo((prevState) => ({
-                        ...prevState,
-                        show: false,
-                      }))
-                    }
-                  />
+                  {setNotificationInfo && (
+                    <XCloseButton
+                      onClick={() =>
+                        setNotificationInfo((prevState) => ({
+                          ...prevState,
+                          show: false,
+                        }))
+                      }
+                    />
+                  )}
                 </div>
               </div>
             </div>
