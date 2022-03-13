@@ -24,9 +24,10 @@ export const userDataSlice = createSlice({
       state.batch_completed_today = batch_completed_today
         ? batch_completed_today
         : state.batch_completed_today;
-      state.questions_streak = questions_streak
-        ? questions_streak
-        : state.questions_streak;
+      state.questions_streak =
+        questions_streak !== undefined
+          ? questions_streak
+          : state.questions_streak;
     },
   },
 });
