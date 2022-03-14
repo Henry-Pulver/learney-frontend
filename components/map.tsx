@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { ElementsDefinition, NodeSingular } from "cytoscape";
+import { ElementsDefinition, NodeSingular, Stylesheet } from "cytoscape";
 import { useAsync } from "react-async";
 import { ConceptInfo } from "./conceptInfo";
 import { getDataFromStorage, saveVote } from "../lib/tooltips";
@@ -29,7 +29,6 @@ import {
   SetGoalState,
   SetLearnedState,
   NotificationData,
-  UserData,
 } from "./types";
 import QuestionModal from "./questions/questionModal";
 import { ProgressModal } from "./questions/progressModal";
@@ -38,8 +37,6 @@ import { Completed } from "./questions/types";
 import { setUserData } from "./userDataSlice";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { ContentModal } from "./contentModal";
-
-type PrevUserDataFn = (prevUserData: UserData) => UserData;
 
 export default function Map({
   mapTitle,
@@ -136,7 +133,8 @@ export default function Map({
         setLearnedState(learnedNodes);
 
         const styleResponse = await fetch(`/knowledge_graph.cycss`);
-        const styleText = await styleResponse.text();
+        const styleText =
+          (await styleResponse.text()) as unknown as Stylesheet[];
         await initCy(
           mapJson,
           styleText,

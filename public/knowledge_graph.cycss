@@ -9,6 +9,7 @@ node {
 }
 
 node:child {
+  background-color: #475569;
   color: #e2e8f0;
   width: 48px;
   height: 48px;
@@ -67,4 +68,65 @@ edge[line_name] {
 
 .eh-ghost {
   label: "";
+}
+
+.node-dark {
+  background-color: #475569;
+}
+.node-med {
+  background-color: #546379;
+}
+.node-med-bright {
+  background-color: #7C8CA2;
+  transition-property: background-color;
+  transition-duration: 0.7s;
+  transition-timing-function: ease-in-out;
+}
+.node-bright {
+  background-color: #94a3b8;
+  transition-property: background-color;
+  transition-duration: 0.7s;
+  transition-timing-function: ease-in-out;
+}
+.edge-dark {
+  line-color: #334155;
+  mid-target-arrow-color: #475569;
+}
+.edge-med {
+  line-color : #3D4A5E;
+  mid-target-arrow-color : #546379;
+}
+.edge-med-bright {
+  line-color : #546379;
+  mid-target-arrow-color : #7C8CA2;
+  transition-property: line-color mid-target-arrow-color;
+  transition-duration: 0.7s;
+  transition-timing-function: ease-in-out;
+}
+.edge-bright {
+  line-color : #64748b;
+  mid-target-arrow-color : #94a3b8;
+  transition-property: line-color mid-target-arrow-color;
+  transition-duration: 0.7s;
+  transition-timing-function: ease-in-out;
+}
+
+.learned {
+  background-color: #059669;
+  line-color: #059669;
+  mid-target-arrow-color: #34D399;
+}
+
+.path {
+  background-color: #1D4ED8;
+  line-color: #1D4ED8;
+  mid-target-arrow-color: #93C5FD;
+}
+
+.goal {
+  background-color: #ff9e00;
+}
+
+.current-concept {
+  background-color: #ff0080;
 }
