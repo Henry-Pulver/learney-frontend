@@ -6,12 +6,7 @@ import {
   setupTracking,
   initialiseMixpanelTracking,
 } from "../lib/trackingScripts";
-import {
-  buttonPress,
-  logPageView,
-  setURLQuery,
-  URLQuerySet,
-} from "../lib/utils";
+import { buttonPress, logPageView, URLQuerySet } from "../lib/utils";
 import MapHeader from "./headers";
 import Map from "./map";
 import { goalNodes, learnedNodes } from "../lib/learningAndPlanning/variables";
@@ -42,6 +37,7 @@ import { ButtonPressFunction } from "../lib/types";
 import { NotificationData } from "./types";
 import { useAppSelector, useAppDispatch } from "../hooks";
 import { setUserData } from "./userDataSlice";
+import { ChipIcon } from "@heroicons/react/solid";
 
 export default function MapPage({
   mapTitle,
@@ -422,6 +418,29 @@ export default function MapPage({
         info={notificationInfo}
         setNotificationInfo={setNotificationInfo}
       />
+      {!questionsEnabled &&
+        userData.questions_streak !== undefined &&
+        !editMap && (
+          <Notification
+            info={{
+              title: "Learney AI Tutor Access!",
+              message: (
+                <a
+                  href={"https://app.learney.me/questions"}
+                  className="text-semibold text-gray-900 underline decoration-blue-300 underline-offset-4 hover:text-blue-400 hover:decoration-blue-400"
+                >
+                  Click here to access the Learney AI Tutor:{" "}
+                  {userData.questions_streak}
+                </a>
+              ),
+              Icon: ChipIcon,
+              colour: "blue",
+              show: true,
+              side: "left",
+              bottom: true,
+            }}
+          />
+        )}
     </div>
   );
 }
