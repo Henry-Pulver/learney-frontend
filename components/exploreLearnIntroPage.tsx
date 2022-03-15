@@ -10,6 +10,7 @@ import {
   NodeSingular,
 } from "cytoscape";
 import { XCloseButton } from "./utils";
+import { getSearchArray, getSearchTopicDataLookup } from "../lib/search";
 
 export default function ExploreLearnIntroPage({
   hideExploreLearn,
@@ -130,10 +131,22 @@ export default function ExploreLearnIntroPage({
               >
                 <ConceptSearchBox
                   mapJson={mapJson}
-                  onSelect={buttonPressFunction(
-                    (item) => addGoalSet(item.id),
-                    "Learn Explore Intro Page Goal Selected"
-                  )}
+                  onSelect={buttonPressFunction((item) => {
+                    if (item.nodetype === "concept") addGoalSet(item.id);
+                    else {
+                      const searchArray = getSearchArray(mapJson, true);
+                      const goalsObj = {};
+                      searchArray.forEach((concept) => {
+                        if (
+                          concept.nodetype === "concept" &&
+                          concept.parent === item.id
+                        ) {
+                          goalsObj[concept.id] = true;
+                        }
+                      });
+                      setGoalsSet({ ...goalsSet, ...goalsObj });
+                    }
+                  }, "Learn Explore Intro Page Goal Selected")}
                   classes="animate-none z-10"
                   searchStyling={
                     learnClicked === false && Object.keys(goalsSet).length === 0
@@ -146,6 +159,7 @@ export default function ExploreLearnIntroPage({
                   maxResults={5}
                   showTitle={true}
                   setShowTitle={() => {}}
+                  allowTopics={true}
                 />
               </div>
               <p
