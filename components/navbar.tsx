@@ -272,6 +272,7 @@ function Navbar({
                   }
                   showTitle={showTitle}
                   setShowTitle={setShowTitle}
+                  allowTopics={true}
                 />
                 <div className="hidden lg:flex lg:items-center lg:justify-evenly lg:gap-8">
                   {rightSideButtons.map((button, idx) => (
