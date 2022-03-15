@@ -75,7 +75,7 @@ export default function MapPage({
   // TODO: Move all these into a redux/MST store
   const [sessionId, setSessionId] = React.useState<string | null>(null);
   // Whether to show LearnExploreIntroPage on load
-  const [showExploreLearn, setExploreLearn] = useState<boolean | null>(true);
+  const [showExploreLearn, setExploreLearn] = useState<boolean | null>(null);
   const [isNewUser, setIsNewUser] = useState<boolean>(false);
   useEffect(() => setIsNewUser(!localStorage.getItem("userId")), []);
 
