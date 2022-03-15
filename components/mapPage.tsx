@@ -429,8 +429,7 @@ export default function MapPage({
                   href={"https://app.learney.me/questions"}
                   className="text-semibold text-gray-900 underline decoration-blue-300 underline-offset-4 hover:text-blue-400 hover:decoration-blue-400"
                 >
-                  Click here to access the Learney AI Tutor:{" "}
-                  {userData.questions_streak}
+                  Click here to access the Learney AI Tutor.
                 </a>
               ),
               Icon: ChipIcon,
