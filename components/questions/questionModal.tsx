@@ -121,8 +121,8 @@ export default function QuestionModal({
         setQuestionSet({ ...emptyQuestionSet });
       }
     }
-    setFeedbackExpanded(false);
   }, [questionSet, nextQuestionPressed]);
+  useEffect(() => setFeedbackExpanded(false), [nextQuestionPressed]);
 
   useEffect(() => {
     if (questionSet.questions.length === 0) {
@@ -257,19 +257,7 @@ export default function QuestionModal({
                 currentStepRef={currentStepRef}
                 maxSteps={questionSet.max_num_questions}
               />
-              <div className="mt-3 text-center sm:mt-5">
-                {/*<div className="my-8 mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">*/}
-                {/*  <AcademicCapIcon*/}
-                {/*    className="h-6 w-6 text-blue-600"*/}
-                {/*    aria-hidden="true"*/}
-                {/*  />*/}
-                {/*</div>*/}
-                {/*<Dialog.Title*/}
-                {/*  as="h3"*/}
-                {/*  className="text-lg leading-6 font-medium text-gray-900"*/}
-                {/*>*/}
-                {/*  {`Question ${currentQidx + 1}`}*/}
-                {/*</Dialog.Title>*/}
+              <div className="mt-3 text-left sm:mt-5">
                 <div className="my-8 flex w-full flex-row justify-center">
                   <div className="max-w-lg text-lg text-black">
                     <QuestionText
@@ -298,11 +286,11 @@ export default function QuestionModal({
                   />
                 </div>
               </div>
-              {/*FEEBACK*/}
+              {/* FEEDBACK */}
               {answersGiven.length > currentQidx && // Check that the question has been answered
                 questionSet.questions[currentQidx].feedback && ( // Check that there is some feedback
                   <div className="flex justify-center">
-                    <div className="my-6 max-w-full rounded bg-gray-200 px-4 py-4 text-center text-black md:px-6 xl:max-w-xl">
+                    <div className="my-6 max-w-full rounded bg-gray-200 px-4 py-4 text-left text-black md:px-6 xl:max-w-xl">
                       {!isCorrectArray(answersGiven, questionSet)[
                         currentQidx
                       ] ? ( // If incorrect, simply show the feedback
