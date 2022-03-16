@@ -86,3 +86,24 @@ export function TrophyIcon() {
     </svg>
   );
 }
+
+export function BoltIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="pl-1.5"
+    >
+      <path
+        d="M8.8335 1.25V6.5H14.6668L7.16683 14.75V9.5H1.3335L8.8335 1.25Z"
+        stroke="#3F3F46"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}

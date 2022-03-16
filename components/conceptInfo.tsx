@@ -20,6 +20,7 @@ import LevelBadge from "./questions/levelBadge";
 import { LevelsProgressBar } from "./questions/progressBars";
 import { useRouter } from "next/router";
 import { signInTooltip } from "../lib/learningAndPlanning/learningAndPlanning";
+import { BoltIcon } from "./svgs/icons";
 
 type OnVote = (node: NodeSingular, url: string, up: boolean | null) => void;
 
@@ -97,8 +98,8 @@ export function ConceptInfo({
       >
         <div className="flex justify-center ">
           {/* TODO: Remove hard coded time estimates */}
-          <div className="mb-4 flex max-w-sm justify-center rounded-full bg-[#E9EAFF]">
-            <img src="/images/thunderbolt.svg" className="pl-2 " />
+          <div className="mb-4 flex max-w-sm items-center justify-center rounded-full bg-[#E9EAFF]">
+            <BoltIcon />
             <span className="pt-2 pb-2 pr-4 pl-2 font-sans font-semibold">
               Estimated completion time: 10 mins
             </span>
