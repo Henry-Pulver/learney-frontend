@@ -80,7 +80,6 @@ export function ConceptInfo({
   if (node === undefined) return <></>;
   return (
     <>
-   
       <Overlay
         open={visible}
         hide={
@@ -97,9 +96,14 @@ export function ConceptInfo({
         className={questionModalShown ? "z-[15]" : ""}
       >
         <div className="flex justify-center ">
-         {/* TODO: Remove hard coded time estimates */}
-         <div className="flex justify-center rounded-full max-w-sm mb-4" style={{backgroundColor:'#E9EAFF'}}><img src="/images/thunderbolt.svg" className="pl-2 "/><span className="pt-2 pb-2 pr-4 pl-2 font-sans font-semibold">Estimated completion time: 10 mins</span></div>
-         </div>
+          {/* TODO: Remove hard coded time estimates */}
+          <div className="mb-4 flex max-w-sm justify-center rounded-full bg-[#E9EAFF]">
+            <img src="/images/thunderbolt.svg" className="pl-2 " />
+            <span className="pt-2 pb-2 pr-4 pl-2 font-sans font-semibold">
+              Estimated completion time: 10 mins
+            </span>
+          </div>
+        </div>
         <div
           className={classNames(
             !questionsEnabled && "hidden",
