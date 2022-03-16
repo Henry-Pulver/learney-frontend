@@ -12,6 +12,7 @@ export const ConceptSearchBox = ({
   maxResults = 10,
   showTitle,
   setShowTitle,
+  allowTopics = false,
 }: {
   mapJson: ElementsDefinition;
   onSelect: (item: { id: string }) => void;
@@ -20,11 +21,14 @@ export const ConceptSearchBox = ({
   maxResults?: number;
   showTitle: boolean;
   setShowTitle: (show: boolean) => void;
+  allowTopics?: boolean;
 }) => {
   /** Component responsible for rendering the search bar. **/
-  const autocompleteData = getSearchArray(mapJson);
-  const [topicDataLookup, conceptDataLookup] =
-    getSearchTopicDataLookup(mapJson);
+  const autocompleteData = getSearchArray(mapJson, allowTopics);
+  const [topicDataLookup, conceptDataLookup] = getSearchTopicDataLookup(
+    mapJson,
+    allowTopics
+  );
 
   const handleOnSearch = (string, results) => {
     // onSearch will have as the first callback parameter
@@ -34,20 +38,33 @@ export const ConceptSearchBox = ({
   const handleOnHover = (result) => {};
   const handleOnFocus = () => {};
 
-  const formatResult = (conceptName) => {
+  const formatResult = (conceptName: string) => {
     /** Format result as HTML **/
     const itemConceptData = conceptDataLookup[conceptName];
-    const topicData = topicDataLookup[itemConceptData.parent];
-
+    if (itemConceptData.nodetype === "concept") {
+      const topicData = topicDataLookup[itemConceptData.parent];
+      return (
+        <p>
+          <div className="flex justify-between align-middle">
+            <p className="text-xs sm:text-lg">{conceptName}</p>
+            <p
+              className="absolute right-1 hidden rounded-lg px-2.5 py-0.5 text-base text-gray-300 sm:block"
+              style={{ backgroundColor: `${topicData.colour}` }}
+            >
+              {itemConceptData.parent}
+            </p>
+          </div>
+        </p>
+      );
+    }
     return (
       <p>
         <div className="flex justify-between align-middle">
-          <p className="text-xs sm:text-lg">{conceptName}</p>
           <p
-            className="absolute right-1 hidden rounded-lg px-2.5 py-0.5 text-base text-gray-300 sm:block"
-            style={{ backgroundColor: `${topicData.colour}` }}
+            className="rounded-lg px-2.5 py-0.5 text-xs text-gray-300 sm:block sm:text-lg"
+            style={{ backgroundColor: `${itemConceptData.colour}` }}
           >
-            {itemConceptData.parent}
+            {conceptName}
           </p>
         </div>
       </p>
