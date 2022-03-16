@@ -9,6 +9,7 @@ import cytoscape, {
   ElementsDefinition,
   NodeCollection,
   NodeSingular,
+  Stylesheet,
 } from "cytoscape";
 import popper from "cytoscape-popper";
 import dagre from "cytoscape-dagre";
@@ -44,23 +45,6 @@ const fieldOpacity = 0.7;
 const cyColours = {
   background: "#000000",
   nodeDark: "#475569",
-  nodeMed: "#546379",
-  nodeMedBright: "#7C8CA2",
-  nodeBright: "#94a3b8",
-  edgeDark: "#334155",
-  edgeMed: "#3D4A5E",
-  edgeMedBright: "#546379",
-  edgeBright: "#64748b",
-  edgeArrowDark: "#475569",
-  edgeArrowMed: "#546379",
-  edgeArrowMedBright: "#7C8CA2",
-  edgeArrowBright: "#94a3b8",
-  path: "#1D4ED8",
-  pathArrow: "#93C5FD",
-  goal: "#ff9e00",
-  learned: "#059669",
-  learnedArrow: "#34D399",
-  currentConcept: "#ff0080",
 };
 const nodeBaseSize = 48;
 
@@ -68,7 +52,7 @@ let selectedNodeID = "";
 
 export function initCy(
   mapJson: ElementsDefinition,
-  styleText: any,
+  styleText: Stylesheet[],
   backendUrl: string,
   userId: string,
   mapUUID: string,
@@ -268,21 +252,22 @@ export function setNodeBrightness(
 ): void {
   nodes.forEach((node: NodeSingular) => {
     const nId = node.id();
-    const parentColour: string | undefined = node
-      .parent()
-      .style("background-color");
     node.removeStyle("background-color");
-    if (node.hasClass("current-concept")) {
-      node.style("background-color", cyColours.currentConcept);
-    } else if (nId in learnedNodes && learnedNodes[nId]) {
-      node.style("background-color", cyColours.learned);
-    } else if (nId in goalNodes) {
-      node.style("background-color", cyColours.goal);
-    } else if (nId in pathNodes) {
-      node.style("background-color", cyColours.path);
-    } else if (nId !== selectedNodeID) {
+    node.removeClass("node-med node-med-bright node-bright");
+
+    if (
+      !node.hasClass("current-concept") &&
+      !(nId in learnedNodes && learnedNodes[nId]) &&
+      !(nId in goalNodes) &&
+      !(nId in pathNodes) &&
+      nId !== selectedNodeID &&
+      !(selectedNodeID in node.neighborhood())
+    ) {
       switch (brightnessLevel) {
-        case 0:
+        case 0: {
+          const parentColour: string | undefined = node
+            .parent()
+            .style("background-color");
           node.style(
             "background-color",
             getOpacityEquivalentColour(
@@ -292,14 +277,15 @@ export function setNodeBrightness(
             )
           );
           break;
+        }
         case 1:
-          node.style("background-color", cyColours.nodeMed);
+          node.classes("node-med");
           break;
         case 2:
-          node.style("background-color", cyColours.nodeMedBright);
+          node.classes("node-med-bright");
           break;
         case 3:
-          node.style("background-color", cyColours.nodeBright);
+          node.classes("node-bright");
           break;
       }
     }
@@ -311,67 +297,38 @@ export function setEdgeBrightness(
   brightnessLevel = 0
 ): void {
   edges.forEach((edge) => {
-    const sId = edge.source().id();
-    const tId = edge.target().id();
+    const sId = edge.source().id(); // source id
+    const tId = edge.target().id(); // target id
 
-    edge.style("opacity", 1);
     if (
-      sId in learnedNodes &&
-      tId in learnedNodes &&
-      learnedNodes[sId] &&
-      learnedNodes[tId]
+      !(
+        sId in learnedNodes &&
+        tId in learnedNodes &&
+        learnedNodes[sId] &&
+        learnedNodes[tId]
+      ) &&
+      !(
+        (sId in pathNodes || sId in goalNodes) &&
+        (tId in pathNodes || tId in goalNodes)
+      )
     ) {
-      edge.style("line-color", cyColours.learned);
-      edge.style("mid-target-arrow-color", cyColours.learnedArrow);
-    } else if (
-      (sId in pathNodes || sId in goalNodes) &&
-      (tId in pathNodes || tId in goalNodes)
-    ) {
-      edge.style("line-color", cyColours.path);
-      edge.style("mid-target-arrow-color", cyColours.pathArrow);
-    } else {
+      edge.style("opacity", 1);
       switch (brightnessLevel) {
         case 0: {
-          let parentColour;
-          const sourceParent = edge.source().parent()[0],
-            targetParent = edge.target().parent()[0];
-          if (
-            edge.target().data().name !== undefined &&
-            sourceParent.id() === targetParent.id()
-          ) {
-            parentColour = edge.source().parent().style("background-color");
-            edge.style(
-              "line-color",
-              getOpacityEquivalentColour(cyColours.edgeDark, parentColour, 0.6)
-            );
-            edge.style(
-              "mid-target-arrow-color",
-              getOpacityEquivalentColour(
-                cyColours.edgeArrowDark,
-                parentColour,
-                0.6
-              )
-            );
-          } else {
-            edge.style("line-color", cyColours.edgeDark);
-            edge.style("mid-target-arrow-color", cyColours.edgeArrowDark);
-            edge.style("opacity", 0.6);
-          }
+          edge.classes("edge-dark");
           if (checkEdgeInvisible(edge)) edge.style("opacity", 0.4);
+          else edge.style("opacity", 0.6);
           break;
         }
         case 1:
-          edge.style("line-color", cyColours.edgeMed);
-          edge.style("mid-target-arrow-color", cyColours.edgeArrowMed);
+          edge.classes("edge-med");
           if (checkEdgeInvisible(edge)) edge.style("opacity", 0.4);
           break;
         case 2:
-          edge.style("line-color", cyColours.edgeMedBright);
-          edge.style("mid-target-arrow-color", cyColours.edgeArrowMedBright);
+          edge.classes("edge-med-bright");
           break;
         case 3:
-          edge.style("line-color", cyColours.edgeBright);
-          edge.style("mid-target-arrow-color", cyColours.edgeArrowBright);
+          edge.classes("edge-bright");
           break;
       }
     }
@@ -484,8 +441,8 @@ export function bindRouters(
 
   // Mouse over concept nodes
   window.cy.on("mouseover", 'node[nodetype = "concept"]', (e) => {
-    const concept = e.target;
     setHoverNode(true);
+    const concept = e.target;
 
     // 1. Everything for fields
     concept.parent().style("background-color", concept.parent().data().colour);
@@ -493,7 +450,7 @@ export function bindRouters(
 
     // 2. Make connected nodes & edges opacity = 1
     setNodeBrightness(concept.neighborhood("node"), 2);
-    setEdgeBrightness(concept.connectedEdges(), 2);
+    setEdgeBrightness(concept.connectedEdges(), 3);
 
     // 3. Make highlighted node opacity=1 and bigger
     highlightNodes(concept, true);
@@ -501,9 +458,8 @@ export function bindRouters(
   window.cy.on("mouseout", 'node[nodetype = "concept"]', (e) => {
     const concept = e.target;
     setHoverNode(false);
-    resetTopicColour(concept.parent());
-    setGraphBrightness(concept.parent().children(), 1);
-    unhighlightNodes(concept);
+    setNodeBrightness(concept.neighborhood("node"), 0);
+    resizeNodes(concept, "small");
   });
 
   // Mouse over edges
@@ -511,25 +467,26 @@ export function bindRouters(
     const edge = e.target;
 
     // Everything for fields, plus:
-    edge
-      .connectedNodes()
+    const connectedNodes = edge.connectedNodes();
+    window.cy.startBatch();
+    connectedNodes
       .parents()
       .forEach((topic) => topic.style("background-color", topic.data().colour));
-    setGraphBrightness(edge.connectedNodes().parents().children(), 1);
-
-    // 1. Make connected nodes opacity=1
-    highlightNodes(edge.connectedNodes(), false);
-
-    // 2. Make highlighted edge opacity = 1
-    setEdgeBrightness(edge, 3);
+    const nodes = connectedNodes.parents().children();
+    setNodeBrightness(nodes, 1);
+    setEdgeBrightness(nodes.connectedEdges(), 1);
+    window.cy.endBatch();
   });
   window.cy.on("mouseout", "edge", (e) => {
     const edge = e.target;
-    const nodes = edge.connectedNodes();
+    const connectedNodes = edge.connectedNodes();
 
+    window.cy.startBatch();
     resetTopicColour(edge.connectedNodes().parents());
-    setGraphBrightness(edge.connectedNodes().parents().children(), 0);
-    unhighlightNodes(nodes);
+    if (edge.target().parent().id() !== edge.source().parent().id())
+      setGraphBrightness(edge.connectedNodes().parents().children(), 0);
+    unhighlightNodes(connectedNodes);
+    window.cy.endBatch();
   });
 
   if (!editMap) {
@@ -541,6 +498,10 @@ export function bindRouters(
       if (!isAnimated) {
         setIsAnimated(true);
         showConceptInfo(concept);
+
+        window.cy.resize(); // .resize() forces cytoscape to recalculate the viewport bounds - since concept overlay
+        // changes screen size, it's needed to make sure the animation takes the viewport to the right place
+
         fitCytoTo({ eles: concept.neighborhood(), padding: 50 }, () => {
           const previousSelectedNodeID = selectedNodeID;
           selectedNodeID = concept.id();

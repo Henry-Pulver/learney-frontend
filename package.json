@@ -14,7 +14,7 @@
     "@tailwindcss/nesting": "^0.0.0-insiders.565cd3e",
     "@tippyjs/react": "^4.2.5",
     "@types/react-redux": "^7.1.22",
-    "cytoscape": "^3.19.1",
+    "cytoscape": "^3.21.0",
     "cytoscape-dagre": "^2.3.2",
     "cytoscape-edgehandles": "^4.0.1",
     "cytoscape-popper": "^2.0.0",

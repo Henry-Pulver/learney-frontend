@@ -20,7 +20,6 @@ import LevelBadge from "./questions/levelBadge";
 import { LevelsProgressBar } from "./questions/progressBars";
 import { useRouter } from "next/router";
 import { signInTooltip } from "../lib/learningAndPlanning/learningAndPlanning";
-import { ContentModal } from "./contentModal";
 
 type OnVote = (node: NodeSingular, url: string, up: boolean | null) => void;
 
