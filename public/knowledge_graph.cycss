@@ -111,12 +111,6 @@ edge[line_name] {
   transition-timing-function: ease-in-out;
 }
 
-.learned {
-  background-color: #059669;
-  line-color: #059669;
-  mid-target-arrow-color: #34D399;
-}
-
 .path {
   background-color: #1D4ED8;
   line-color: #1D4ED8;
@@ -129,4 +123,10 @@ edge[line_name] {
 
 .current-concept {
   background-color: #ff0080;
+}
+
+.learned {
+  background-color: #059669;
+  line-color: #059669;
+  mid-target-arrow-color: #34D399;
 }
