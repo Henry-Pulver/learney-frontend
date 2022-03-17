@@ -20,6 +20,8 @@ import LevelBadge from "./questions/levelBadge";
 import { LevelsProgressBar } from "./questions/progressBars";
 import { useRouter } from "next/router";
 import { signInTooltip } from "../lib/learningAndPlanning/learningAndPlanning";
+import { ContentModal } from "./contentModal";
+import { ContentCard } from "./contentCard";
 
 type OnVote = (node: NodeSingular, url: string, up: boolean | null) => void;
 
@@ -368,7 +370,7 @@ function ConceptLinkPreview({
                 data &&
                   (data as LinkPreviewData).description &&
                   "hidden sm:block",
-                "my-0 max-w-xs overflow-hidden text-ellipsis whitespace-nowrap text-xxs text-gray-500 sm:text-sm"
+                "text-xxs my-0 max-w-xs overflow-hidden text-ellipsis whitespace-nowrap text-gray-500 sm:text-sm"
               )}
             >
               {url}
@@ -423,6 +425,7 @@ function ConceptLinkPreview({
           </div>
         </div>
       </li>
+      <ContentCard />
     </>
   );
 }
