@@ -58,14 +58,13 @@ export function EditConceptDataSidebar({
         }
       />
       <EditDataLabel>Resource URLs (separate with a comma)</EditDataLabel>
-      <EditDataInput
-        type="text"
+      <EditDataTextArea
         value={
           typeof editNodeData.urls === "string"
             ? editNodeData.urls
             : editNodeData.urls.join(",")
         }
-        onChange={(e) =>
+        editValue={(e) =>
           setEditNodeData({ ...editNodeData, urls: e.target.value })
         }
       />
@@ -209,12 +208,21 @@ function EditDataLabel(props) {
 }
 
 function EditDataTextArea({ value, editValue }) {
+  /** This text area auto-grows using a hack I found on the internet:
+      https://css-tricks.com/the-cleanest-trick-for-autogrowing-textareas/ **/
   return (
-    <textarea
-      className="border-sm mx-6 mt-0.5 mb-4 min-h-30 w-108 resize-none rounded-lg"
-      value={value}
-      onChange={editValue}
-    />
+    <div className="container mx-auto mx-6 mt-0.5 mb-4 w-108">
+      <div className="relative flex max-h-36 min-h-16 w-full py-2.5 px-3">
+        <div className="invisible w-full overflow-y-auto whitespace-pre-wrap break-words text-base">
+          {value}
+        </div>
+        <textarea
+          className="border-sm absolute inset-0 h-full w-full resize-none resize-none overflow-y-auto rounded-lg text-base"
+          value={value}
+          onChange={editValue}
+        />
+      </div>
+    </div>
   );
 }
 
