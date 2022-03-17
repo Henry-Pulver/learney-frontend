@@ -248,11 +248,13 @@ function Navbar({
                       src="/images/learney_logo_256x256.png"
                       alt="Learney"
                     />
-                    <img
-                      className="hidden h-10 w-auto group-hover:block"
-                      src="/learney_logo_emoji_size.gif"
-                      alt="Learney"
-                    />
+                    <a href={window.location.origin}>
+                      <img
+                        className="hidden h-10 w-auto group-hover:block"
+                        src="/learney_logo_emoji_size.gif"
+                        alt="Learney"
+                      />
+                    </a>
                   </div>
                 </div>
                 <div className="hidden lg:flex lg:items-center lg:justify-evenly lg:gap-8">
