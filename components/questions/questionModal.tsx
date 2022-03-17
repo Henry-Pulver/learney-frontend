@@ -349,7 +349,7 @@ export default function QuestionModal({
                 )}
               {/*NEXT QUESTION BUTTON*/}
               <div className="flex justify-center">
-                <div className="mt-5 flex w-full max-w-lg justify-between sm:mt-6">
+                <div className="mt-5 flex w-full max-w-2xl justify-between sm:mt-6">
                   <ReportQuestionButton
                     question={questionSet.questions[currentQidx]}
                     buttonPressFunction={buttonPressFunction}
