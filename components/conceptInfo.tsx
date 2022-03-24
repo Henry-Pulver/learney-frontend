@@ -426,7 +426,15 @@ function ConceptLinkPreview({
           </div>
         </div>
       </li>
-      <ContentCard />
+      <ContentCard
+        node={node}
+        url={url}
+        backendUrl={backendUrl}
+        mapUUID={mapUUID}
+        userId={userId}
+        userVotes={userVotes}
+        onVote={onVote}
+      />
     </>
   );
 }
