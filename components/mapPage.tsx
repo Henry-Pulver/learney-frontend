@@ -18,7 +18,6 @@ import {
 import { EditNavbar, LearnNavbar } from "./navbar";
 import Editor from "./editor/editor";
 import { Notification } from "./notifications";
-import ExploreLearnIntroPage from "./exploreLearnIntroPage";
 import {
   handleIntroAnimation,
   unhighlightNodes,
@@ -74,8 +73,6 @@ export default function MapPage({
 
   // TODO: Move all these into a redux/MST store
   const [sessionId, setSessionId] = React.useState<string | null>(null);
-  // Whether to show LearnExploreIntroPage on load
-  const [showExploreLearn, setExploreLearn] = useState<boolean | null>(null);
   const [isNewUser, setIsNewUser] = useState<boolean>(false);
   useEffect(() => setIsNewUser(!localStorage.getItem("userId")), []);
 
@@ -210,18 +207,6 @@ export default function MapPage({
   const [editType, setEditType] = React.useState<EditType | null>(null);
 
   useEffect(() => {
-    const query = router.query;
-    // Don't show explore-learn page if in editor, a goal is set, or they're using a specific url
-    if (
-      !editMap &&
-      showExploreLearn === null &&
-      ((sessionId && Object.keys(goals).length === 0) || isNewUser) &&
-      !URLQuerySet(query)
-    )
-      setExploreLearn(true);
-  }, [isNewUser, goals, pageLoaded]);
-
-  useEffect(() => {
     // The version of updateCurrentConceptId without questions enabled uses
     // window.cy so requires the page to be loaded before running!
     if (userData.id && questionsEnabled) updateCurrentConceptId(userData.id);
@@ -230,11 +215,7 @@ export default function MapPage({
   useEffect(() => {
     let query = router.query;
     const querySet = URLQuerySet(query);
-    if (
-      pageLoaded &&
-      !showExploreLearn &&
-      (querySet || Object.keys(goals).length > 0)
-    ) {
+    if (pageLoaded && (querySet || Object.keys(goals).length > 0)) {
       (async () => {
         // The version of updateCurrentConceptId without questions enabled uses
         // window.cy so requires the page to be loaded before running!
@@ -253,7 +234,7 @@ export default function MapPage({
         handleIntroAnimation(router, query, goals);
       })();
     }
-  }, [pageLoaded, showExploreLearn]);
+  }, [pageLoaded]);
 
   const [notificationInfo, setNotificationInfo] = useState<NotificationData>({
     title: "",
@@ -346,25 +327,12 @@ export default function MapPage({
             buttonPressFunction={buttonPressFunction}
             mapJson={mapJson}
             isNewUser={isNewUser}
-            showExploreLearn={showExploreLearn}
             showTitle={showTitle}
             setShowTitle={setShowTitle}
             questionsEnabled={questionsEnabled}
           />
         ))}
 
-      {showExploreLearn && (
-        <ExploreLearnIntroPage
-          hideExploreLearn={() => setExploreLearn(false)}
-          mapName={mapTitle ? mapTitle : mapUrlExtension + " map"}
-          mapJson={mapJson}
-          setGoal={onSetGoalClick}
-          pageLoaded={pageLoaded}
-          userId={userData.id}
-          sessionId={sessionId}
-          buttonPressFunction={buttonPressFunction}
-        />
-      )}
       <Map
         mapTitle={mapTitle ? mapTitle : mapUrlExtension}
         mapDescription={mapDescription}

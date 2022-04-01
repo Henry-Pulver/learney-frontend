@@ -12,6 +12,10 @@ import {
 import { XCloseButton } from "./utils";
 import { getSearchArray, getSearchTopicDataLookup } from "../lib/search";
 
+// Kept in case it's useful as a part of onboarding in the future
+// I think onboarding should probably be redesigned to be much easier
+// to understand, but I'm not sure this is what we want. Maybe it can
+// be a part of the onboarding process, but not the whole thing.
 export default function ExploreLearnIntroPage({
   hideExploreLearn,
   mapName,

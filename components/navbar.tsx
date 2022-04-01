@@ -88,7 +88,6 @@ export function LearnNavbar({
   buttonPressFunction,
   mapJson,
   isNewUser,
-  showExploreLearn,
   showTitle,
   setShowTitle,
   questionsEnabled,
@@ -99,15 +98,12 @@ export function LearnNavbar({
   buttonPressFunction: ButtonPressFunction;
   mapJson: ElementsDefinition;
   isNewUser: boolean;
-  showExploreLearn: boolean;
   showTitle: boolean;
   setShowTitle: (show: boolean) => void;
   questionsEnabled: boolean;
 }) {
   const [introShown, setIntroShown] = useState<boolean>(false);
-  useEffect(() => {
-    if (!showExploreLearn) setIntroShown(isNewUser);
-  }, [showExploreLearn, isNewUser]);
+  useEffect(() => setIntroShown(isNewUser), [isNewUser]);
 
   // Here so the slide number is remembered between closing & opening the modal
   const [introSlideNumber, setIntroSlide] = useState<number>(0);
