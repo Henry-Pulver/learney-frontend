@@ -151,7 +151,7 @@ export function EditTopicDataSidebar({
       />
       <EditDataLabel>Colour</EditDataLabel>
       <EditDataInput
-        type="color"
+        type="text"
         value={editParentNodeData.colour}
         onChange={(e) =>
           setEditParentNodeData({
