@@ -3,6 +3,7 @@ import { classNames } from "../../lib/reactUtils";
 import { NodeData } from "./types";
 import { ButtonPressFunction } from "../../lib/types";
 import { XCloseButton } from "../utils";
+import { Editor } from "@tinymce/tinymce-react";
 
 export function EditConceptDataSidebar({
   editNodeData,
@@ -21,6 +22,10 @@ export function EditConceptDataSidebar({
   userId: string;
   buttonPressFunction: ButtonPressFunction;
 }) {
+  const editorRef = React.useRef(null);
+  const onChange = (content) => {
+    setEditNodeData({ ...editNodeData, description: content });
+  };
   return (
     <div className="max-h-screen-80 w-120 absolute right-1 top-24 overflow-y-auto rounded-lg bg-white py-6">
       {/* Close X in top right */}
@@ -42,12 +47,30 @@ export function EditConceptDataSidebar({
         }
       />
       <EditDataLabel>Description</EditDataLabel>
-      <EditDataTextArea
-        value={editNodeData.description}
-        editValue={(e) =>
-          setEditNodeData({ ...editNodeData, description: e.target.value })
-        }
-      />
+      <div className="w-108 container mx-auto mx-6 mt-0.5 mb-4">
+        <Editor
+          onInit={(evt, editor) => (editorRef.current = editor)}
+          value={editNodeData.description}
+          tinymceScriptSrc="/tinymce/tinymce.min.js"
+          init={{
+            height: 200,
+            menubar: false,
+            plugins: [
+              "advlist autolink lists link image charmap print preview anchor",
+              "searchreplace visualblocks code fullscreen",
+              "insertdatetime media table paste code help wordcount",
+            ],
+            toolbar:
+              "undo redo | formatselect | " +
+              "bold italic backcolor | alignleft aligncenter " +
+              "alignright alignjustify | bullist numlist outdent indent | " +
+              "removeformat | help",
+            content_style:
+              "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+          }}
+          onEditorChange={onChange}
+        />
+      </div>
       <EditDataLabel>Topic Name</EditDataLabel>
       <EditDataInput
         classes="text-black"
