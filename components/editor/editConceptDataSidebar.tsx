@@ -23,9 +23,6 @@ export function EditConceptDataSidebar({
   buttonPressFunction: ButtonPressFunction;
 }) {
   const editorRef = React.useRef(null);
-  const onChange = (content) => {
-    setEditNodeData({ ...editNodeData, description: content });
-  };
   return (
     <div className="max-h-screen-80 w-120 absolute right-1 top-24 overflow-y-auto rounded-lg bg-white py-6">
       {/* Close X in top right */}
@@ -53,12 +50,12 @@ export function EditConceptDataSidebar({
           value={editNodeData.description}
           tinymceScriptSrc="/tinymce/tinymce.min.js"
           init={{
-            height: 200,
-            menubar: false,
+            height: 300,
+            menubar: true,
             plugins: [
-              "advlist autolink lists link image charmap print preview anchor",
-              "searchreplace visualblocks code fullscreen",
-              "insertdatetime media table paste code help wordcount",
+              "advlist autolink lists linkcharmap print anchor",
+              "visualblocks code",
+              "paste code help",
             ],
             toolbar:
               "undo redo | formatselect | " +
@@ -68,7 +65,9 @@ export function EditConceptDataSidebar({
             content_style:
               "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
           }}
-          onEditorChange={onChange}
+          onEditorChange={(content) =>
+            setEditNodeData({ ...editNodeData, description: content })
+          }
         />
       </div>
       <EditDataLabel>Topic Name</EditDataLabel>
