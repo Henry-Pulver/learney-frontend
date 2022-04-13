@@ -192,7 +192,11 @@ export const ContentCard = (props: {
               <div
                 className="m-auto h-full w-full overflow-hidden rounded-l bg-contain bg-center bg-no-repeat"
                 style={{
-                  backgroundImage: `url(${data.image_url})`,
+                  backgroundImage: `url(${
+                    data.image_url
+                      ? data.image_url
+                      : "/images/learney_logo_256x256.png"
+                  })`,
                 }}
               />
             ) : (
@@ -200,7 +204,7 @@ export const ContentCard = (props: {
             )}
             <div className="absolute bottom-1 right-1 z-20 rounded bg-gray-900 px-0.5 opacity-80">
               <p className="font-sans text-xs text-white opacity-100">
-                {data
+                {data && data.estimated_time_to_complete !== "None"
                   ? convertToTimeString(data.estimated_time_to_complete)
                   : ""}
               </p>
@@ -209,7 +213,7 @@ export const ContentCard = (props: {
               <Tippy
                 theme="dark"
                 placement="bottom"
-                content={data.content_type}
+                content={data.content_type ? data.content_type : "website"}
               >
                 <div className="absolute top-1 right-1 rounded-full bg-gray-200 opacity-95">
                   <ContentTypeIcon
@@ -273,44 +277,51 @@ export const ContentCard = (props: {
                   <button
                     onClick={onVoteUpHandler}
                     className={classNames(
-                      "flex items-center justify-center rounded-full hover:bg-green-100"
+                      "flex items-center justify-center rounded-full hover:bg-green-100",
+                      props.userVotes[props.url] === true
+                        ? "bg-green-200 hover:bg-green-300"
+                        : ""
                     )}
                   >
                     <ThumbUpIcon
                       className={classNames(
                         "h-6 w-6 p-0.5",
-                        props.userVotes[props.url] ? "text-green-300" : ""
+                        props.userVotes[props.url]
+                          ? "text-green-400 hover:text-green-500"
+                          : ""
                       )}
                     />
                   </button>
                   <button
                     onClick={onVoteDownHandler}
                     className={classNames(
-                      "flex items-center justify-center rounded-full hover:bg-red-100 ",
-                      props.userVotes[props.url] === false ? "bg-red-300" : ""
+                      "flex items-center justify-center rounded-full hover:bg-red-100",
+                      props.userVotes[props.url] === false
+                        ? "bg-red-200 hover:bg-red-300"
+                        : ""
                     )}
                   >
                     <ThumbDownIcon
                       className={classNames(
                         "h-6 w-6 p-0.5",
                         props.userVotes[props.url] == false
-                          ? "text-red-500"
+                          ? "text-red-400 hover:text-red-500"
                           : ""
                       )}
                     />
                   </button>
                 </div>
-                {props.allVotes && (
-                  <VoteBar
-                    votes={{ for: props.allVotes[props.url], against: 0 }}
-                  />
-                )}
+                {/*{props.allVotes && (*/}
+                {/*  <VoteBar*/}
+                {/*    votes={{ for: props.allVotes[props.url], against: 0 }}*/}
+                {/*  />*/}
+                {/*)}*/}
               </div>
             </div>
           </div>
         </div>
         {data && data.description && (
-          <div className="group-hover:duration-800 max-h-0 transition-[max-height] ease-in-out group-hover:z-30 group-hover:delay-500">
+          <div className="max-h-0 group-hover:z-30">
             <div className="duration-800 h-[6.5rem] max-w-[516px] -translate-y-full overflow-hidden whitespace-pre-line rounded-b bg-white px-4 py-2 text-left leading-normal text-black transition-transform ease-in-out group-hover:translate-y-0 group-hover:shadow-xl group-hover:delay-500">
               {data.description.slice(0, 512)}
             </div>

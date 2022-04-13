@@ -291,7 +291,7 @@ export const fetchLinkPreview = async (props: {
       title: "",
       description: "",
       image_url: "",
-      content_type: "",
+      content_type: "website",
       estimated_time_to_complete: "",
       author: {
         id: "",
