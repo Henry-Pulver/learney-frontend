@@ -53,7 +53,7 @@ export function EditConceptDataSidebar({
             height: 300,
             menubar: true,
             plugins: [
-              "advlist autolink lists linkcharmap print anchor",
+              "advlist autolink lists link charmap print anchor",
               "visualblocks code",
               "paste code help",
             ],
