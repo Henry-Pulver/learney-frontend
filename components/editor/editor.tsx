@@ -287,7 +287,8 @@ export default function Editor({
   const saveEditParentNodeData = (newParentNodeData: ParentNodeData) => {
     const prevId = newParentNodeData.id;
     const newId = newParentNodeData.name;
-    if (newId !== prevId) {
+    // Make new id match the name if it's not empty
+    if (newId && newId !== prevId) {
       newParentNodeData.id = newId;
       // TODO: Undo-ing this doesn't work - try changing the topic name and then
       //  undo-ing. Figure this out & then delete lines before 'else' below!
