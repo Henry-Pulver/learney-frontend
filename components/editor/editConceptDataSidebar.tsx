@@ -44,7 +44,7 @@ export function EditConceptDataSidebar({
         }
       />
       <EditDataLabel>Description</EditDataLabel>
-      <div className="w-108 container mx-auto mx-6 mt-0.5 mb-4">
+      <div className="container mx-auto mx-6 mt-0.5 mb-4 w-108">
         <Editor
           onInit={(evt, editor) => (editorRef.current = editor)}
           value={editNodeData.description}
