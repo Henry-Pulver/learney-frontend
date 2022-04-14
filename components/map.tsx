@@ -96,7 +96,7 @@ export default function Map({
       setUserVote((prevVotes) => ({ ...prevVotes, [url]: voteDirection }));
     }
   };
-  const onVote = (node, url, up) => {
+  const onVote = (node: NodeSingular, url: string, up: boolean | null) => {
     setUserVote((prevVotes) => ({ ...prevVotes, [url]: up }));
     saveVote(url, up, node, backendUrl, userData.id, mapUUID, sessionId);
   };

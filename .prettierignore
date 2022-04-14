@@ -1,3 +1,5 @@
 package-lock.json
 .next
 node_modules/
+public/
+components/react-search-autocomplete
