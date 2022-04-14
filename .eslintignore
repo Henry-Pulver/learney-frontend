@@ -3,3 +3,4 @@ node_modules
 *.config.js
 *.config.wizardcopy.js
 components/react-search-autocomplete
+public/tinymce
