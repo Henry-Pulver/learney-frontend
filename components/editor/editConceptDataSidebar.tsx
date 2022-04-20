@@ -24,7 +24,7 @@ export function EditConceptDataSidebar({
 }) {
   const editorRef = React.useRef(null);
   return (
-    <div className="max-h-screen-80 w-120 absolute right-1 top-24 overflow-y-auto rounded-lg bg-white py-6">
+    <div className="absolute right-1 top-24 max-h-screen-80 w-120 overflow-y-auto rounded-lg bg-white py-6">
       {/* Close X in top right */}
       <XCloseButton
         onClick={buttonPressFunction(
@@ -44,7 +44,7 @@ export function EditConceptDataSidebar({
         }
       />
       <EditDataLabel>Description</EditDataLabel>
-      <div className="w-108 container mx-auto mx-6 mt-0.5 mb-4">
+      <div className="container mx-auto mx-6 mt-0.5 mb-4 w-108">
         <Editor
           onInit={(evt, editor) => (editorRef.current = editor)}
           value={editNodeData.description}
@@ -149,7 +149,7 @@ export function EditTopicDataSidebar({
   setShowEditData,
 }) {
   return (
-    <div className="max-h-screen-80 w-120 absolute right-1 top-24 rounded-lg bg-white py-6">
+    <div className="absolute right-1 top-24 max-h-screen-80 w-120 rounded-lg bg-white py-6">
       {/* X IN THE TOP RIGHT */}
       <XCloseButton
         onClick={buttonPressFunction(
@@ -250,8 +250,8 @@ function EditDataTextArea({ value, editValue }) {
   /** This text area auto-grows using a hack I found on the internet:
       https://css-tricks.com/the-cleanest-trick-for-autogrowing-textareas/ **/
   return (
-    <div className="w-108 container mx-auto mx-6 mt-0.5 mb-4">
-      <div className="min-h-16 relative flex max-h-36 w-full py-2.5 px-3">
+    <div className="container mx-auto mx-6 mt-0.5 mb-4 w-108">
+      <div className="relative flex max-h-36 min-h-16 w-full py-2.5 px-3">
         <div className="invisible w-full overflow-y-auto whitespace-pre-wrap break-words text-base">
           {value}
         </div>
@@ -280,7 +280,7 @@ function EditDataInput({
     <input
       className={classNames(
         classes && classes,
-        "w-108 mx-6 mt-0.5 mb-4 rounded-lg text-black"
+        "mx-6 mt-0.5 mb-4 w-108 rounded-lg text-black"
       )}
       type={type}
       value={value}
