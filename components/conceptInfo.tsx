@@ -369,7 +369,7 @@ function ConceptLinkPreview({
                 data &&
                   (data as LinkPreviewData).description &&
                   "hidden sm:block",
-                "text-xxs my-0 max-w-xs overflow-hidden text-ellipsis whitespace-nowrap text-gray-500 sm:text-sm"
+                "my-0 max-w-xs overflow-hidden text-ellipsis whitespace-nowrap text-xxs text-gray-500 sm:text-sm"
               )}
             >
               {url}
