@@ -198,7 +198,7 @@ export default function MapPage({
           initialiseSignInTooltip();
           initialiseMixpanelTracking(responseJson.user_id, user);
         }
-        setupTracking(questionsEnabled);
+        setupTracking();
         ReactGA.pageview(window.location.pathname);
       }
     })();
@@ -296,6 +296,58 @@ export default function MapPage({
     );
   };
   const [showTitle, setShowTitle] = useState<boolean>(true);
+  const [bottomLeftNotifInfo, setBottomLeftNotifInfo] =
+    useState<NotificationData>({
+      title: "",
+      message: "",
+      Icon: ChipIcon,
+      colour: "blue",
+      show: false,
+      side: "left",
+      bottom: true,
+    });
+  useEffect(() => {
+    if (
+      // Below is trying to stop people we don't want seeing this from seeing it
+      !editMap &&
+      !["noj@janussysteme.de", "josh.starmer@statquest.org"].includes(
+        userData.email
+      ) &&
+      !userData.email.includes("@covestro.com")
+    ) {
+      setBottomLeftNotifInfo({
+        ...bottomLeftNotifInfo,
+        title: "Learn Python with team coding games!",
+        message: (
+          <a
+            href={"https://delta-academy.xyz"}
+            className="text-semibold text-gray-900 underline decoration-blue-300 underline-offset-4 hover:text-blue-400 hover:decoration-blue-400"
+          >
+            Click here to learn more...
+          </a>
+        ),
+        show: true,
+      });
+    } else if (
+      !questionsEnabled &&
+      userData.questions_streak !== undefined &&
+      !editMap
+    ) {
+      setBottomLeftNotifInfo({
+        ...bottomLeftNotifInfo,
+        title: "Learney AI Tutor Access!",
+        message: (
+          <a
+            href={"https://app.learney.me/questions"}
+            className="text-semibold text-gray-900 underline decoration-blue-300 underline-offset-4 hover:text-blue-400 hover:decoration-blue-400"
+          >
+            Click here to access the Learney AI Tutor.
+          </a>
+        ),
+        show: true,
+      });
+    }
+  }, [userData]);
 
   return (
     <div>
@@ -386,28 +438,10 @@ export default function MapPage({
         info={notificationInfo}
         setNotificationInfo={setNotificationInfo}
       />
-      {!questionsEnabled &&
-        userData.questions_streak !== undefined &&
-        !editMap && (
-          <Notification
-            info={{
-              title: "Learney AI Tutor Access!",
-              message: (
-                <a
-                  href={"https://app.learney.me/questions"}
-                  className="text-semibold text-gray-900 underline decoration-blue-300 underline-offset-4 hover:text-blue-400 hover:decoration-blue-400"
-                >
-                  Click here to access the Learney AI Tutor.
-                </a>
-              ),
-              Icon: ChipIcon,
-              colour: "blue",
-              show: true,
-              side: "left",
-              bottom: true,
-            }}
-          />
-        )}
+      <Notification
+        info={bottomLeftNotifInfo}
+        setNotificationInfo={setBottomLeftNotifInfo}
+      />
     </div>
   );
 }
