@@ -317,7 +317,7 @@ export default function MapPage({
     ) {
       setBottomLeftNotifInfo({
         ...bottomLeftNotifInfo,
-        title: "Learn Python with team coding games!",
+        title: "Learn Deep RL with weekly AI contests!",
         message: (
           <a
             href={"https://delta-academy.xyz"}
