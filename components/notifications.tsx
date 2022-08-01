@@ -79,6 +79,7 @@ export function Notification({
                           show: false,
                         }))
                       }
+                      visibleOnMobile={true}
                     />
                   )}
                 </div>
