@@ -320,7 +320,7 @@ export default function MapPage({
         title: "Learn Deep RL with weekly AI contests!",
         message: (
           <a
-            href={"https://delta-academy.xyz"}
+            href={"https://joindeltaacademy.com"}
             className="text-semibold text-gray-900 underline decoration-blue-300 underline-offset-4 hover:text-blue-400 hover:decoration-blue-400"
           >
             Click here to learn more...
