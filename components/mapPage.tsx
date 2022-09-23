@@ -338,7 +338,7 @@ export default function MapPage({
         title: "Learney AI Tutor Access!",
         message: (
           <a
-            href={"https://app.learney.me/questions"}
+            href={"https://maps.joindeltaacademy.com/questions"}
             className="text-semibold text-gray-900 underline decoration-blue-300 underline-offset-4 hover:text-blue-400 hover:decoration-blue-400"
           >
             Click here to access the Learney AI Tutor.
