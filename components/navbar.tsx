@@ -238,18 +238,12 @@ function Navbar({
             <div className="mx-auto max-w-full px-2 sm:px-4 lg:px-4">
               <div className="relative flex justify-evenly lg:gap-x-3">
                 <div className="flex flex-none md:absolute md:inset-y-0 md:left-0 lg:static xl:col-span-2">
-                  <div className="group flex items-center">
-                    <img
-                      className="block h-10 w-auto group-hover:hidden"
-                      src="/images/learney_logo_256x256.png"
-                      alt="Learney"
-                    />
-                    <a href={window.location.origin}>
-                      <img
-                        className="hidden h-10 w-auto group-hover:block"
-                        src="/learney_logo_emoji_size.gif"
-                        alt="Learney"
-                      />
+                  <div className="flex items-center">
+                    <a
+                      href="https://joindeltaacademy.com"
+                      className="flex h-10 w-10 place-items-center justify-center rounded bg-gray-900 font-serif text-4xl text-amber-500"
+                    >
+                      &#916;
                     </a>
                   </div>
                 </div>
