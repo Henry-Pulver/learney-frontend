@@ -28,7 +28,7 @@ export default function AdminPageForQuestions({
   const [userChosen, setUserChosen] = React.useState<UserInfo>({
     name: "",
     id: "",
-    picture: "https://app.learney.me/favicon_new-32x32.png",
+    picture: "https://maps.joindeltaacademy.com/favicon_new-32x32.png",
   });
   const mapJson: ElementsDefinition = JSON.parse(mapJsonString);
 

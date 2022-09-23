@@ -23,7 +23,7 @@ export default function MapHeader({
           ? "Learney - StatQuest"
           : "Learney"}
       </title>
-      <link rel="icon" href="/favicon_new-32x32.png" />
+      <link rel="icon" href="/delta_logo.png" />
       <meta
         name="title"
         property="og:title"
@@ -32,18 +32,18 @@ export default function MapHeader({
       <meta
         name="image"
         property="og:image"
-        content="https://app.learney.me/images/2021/05/19/learney_background.png"
+        content="https://maps.joindeltaacademy.com/images/2021/05/19/learney_background.png"
       />
       <meta
         property="og:image:url"
-        content="https://app.learney.me/images/2021/05/19/learney_background.png"
+        content="https://maps.joindeltaacademy.com/images/2021/05/19/learney_background.png"
       />
       <meta
         property="og:image:secure_url"
-        content="https://app.learney.me/images/2021/05/19/learney_background.png"
+        content="https://maps.joindeltaacademy.com/images/2021/05/19/learney_background.png"
       />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://app.learney.me" />
+      <meta property="og:url" content="https://maps.joindeltaacademy.com" />
       <meta
         name="description"
         property="og:description"
